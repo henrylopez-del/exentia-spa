@@ -4,7 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Exentia — Spa & Beauty Salon · Cancún</title>
-<meta name="description" content="Spa y Salón de belleza en Cancún. Masajes, faciales, uñas, cabello y más. Realzamos la belleza de tu esencia.">
+<meta name="description" content="Exentia Spa & Beauty Salon en Cancún · Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales. Reserva en minutos. Realzamos la belleza de tu esencia.">
+<meta name="keywords" content="spa cancún, salón de belleza cancún, masajes cancún, faciales orgánicos, uñas acrílicas cancún, spa kids cancún, wellness cancún, exentia, beauty salon huayacán">
+<link rel="canonical" href="https://0victorrodriguez0.github.io/exentia-spa/exentia-pagina.html">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Exentia — Spa & Beauty Salon · Cancún">
+<meta property="og:description" content="Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales. Reserva en minutos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://0victorrodriguez0.github.io/exentia-spa/exentia-pagina.html">
+<meta property="og:image" content="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf982fd67a35f25867.jpg">
+<meta property="og:locale" content="es_MX">
+<meta property="og:site_name" content="Exentia Spa & Beauty Salon">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Exentia — Spa & Beauty Salon · Cancún">
+<meta name="twitter:description" content="Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Reserva en minutos.">
+<meta name="twitter:image" content="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf982fd67a35f25867.jpg">
 
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -1113,6 +1130,56 @@
     margin: 0 auto 40px;
     opacity: 0.9;
     line-height: 1.7;
+  }
+
+  /* ============ FAQ ============ */
+  .faq { padding: 80px 0; background: var(--cream-soft); }
+  .faq-grid { max-width: 800px; margin: 40px auto 0; }
+  .faq-item {
+    border-bottom: 1px solid rgba(154,152,84,0.18);
+    padding: 0;
+  }
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--brown);
+    transition: color 0.2s;
+    gap: 16px;
+  }
+  .faq-question:hover { color: var(--olive-dark); }
+  .faq-question .faq-icon {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    transition: transform 0.3s;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    padding: 0 0 0;
+  }
+  .faq-item.open .faq-answer {
+    max-height: 400px;
+    padding: 0 0 22px;
+  }
+  .faq-answer p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-light);
+  }
+  @media (max-width: 768px) {
+    .faq-question { font-size: 17px; }
   }
 
   /* ============ FOOTER ============ */
@@ -2801,6 +2868,72 @@
 })();
 
 </script>
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BeautySalon",
+      "name": "Exentia Spa & Beauty Salon",
+      "description": "Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales.",
+      "url": "https://0victorrodriguez0.github.io/exentia-spa/exentia-pagina.html",
+      "telephone": "+529984803595",
+      "image": "https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf982fd67a35f25867.jpg",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Av. Huayacán, Plaza Hive",
+        "addressLocality": "Cancún",
+        "addressRegion": "Quintana Roo",
+        "addressCountry": "MX"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 21.0959,
+        "longitude": -86.8696
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+          "opens": "10:00",
+          "closes": "18:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.instagram.com/exentiaspabeautysalon/",
+        "https://www.facebook.com/exentiaspabeautysalon/"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Servicios Exentia",
+        "itemListElement": [
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Masajes", "description": "Masajes relajantes, piedras calientes, aromaterapia y descontracturante"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Faciales Orgánicos", "description": "Limpieza profunda, hidratante, antiedad y desintoxicante con productos naturales"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Uñas", "description": "Acrílicas, gel, dip powder, manicure y pedicure spa"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Cabello", "description": "Corte, color, keratina, nanoplastia y peinado"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Depilación & Maquillaje", "description": "Depilación con cera, diseño de cejas, lash lifting y maquillaje social"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Spa Kids & Teens", "description": "Mini manicure, mini pedicure, mini spa y peinado princesa"}}
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type": "Question", "name": "¿Necesito hacer cita previa?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, te recomendamos agendar tu cita con anticipación para garantizar tu espacio. Puedes reservar desde nuestra página en pocos pasos o por WhatsApp."}},
+        {"@type": "Question", "name": "¿Qué tipo de productos utilizan?", "acceptedAnswer": {"@type": "Answer", "text": "Trabajamos con productos orgánicos y naturales cuidadosamente seleccionados. Utilizamos ingredientes reales y fórmulas limpias que nutren y restauran."}},
+        {"@type": "Question", "name": "¿Cuál es su horario de atención?", "acceptedAnswer": {"@type": "Answer", "text": "Atendemos de lunes a sábado de 10:00 AM a 6:00 PM. Domingos permanecemos cerrados."}},
+        {"@type": "Question", "name": "¿Dónde están ubicados?", "acceptedAnswer": {"@type": "Answer", "text": "Nos encontramos en Plaza Hive, sobre Avenida Huayacán en Cancún, Quintana Roo."}},
+        {"@type": "Question", "name": "¿Tienen servicios para niños?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, contamos con Spa Kids & Teens, experiencias diseñadas para niños y adolescentes con mini manicure, mini pedicure, mini spa y peinado princesa."}},
+        {"@type": "Question", "name": "¿Ofrecen servicio a domicilio?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, a través de Exentia At Home llevamos experiencias de bienestar personalizadas a tu hogar, hotel o evento."}},
+        {"@type": "Question", "name": "¿Puedo combinar varios servicios en una sola visita?", "acceptedAnswer": {"@type": "Answer", "text": "Por supuesto. En Exentia reunimos spa, belleza y wellness en un solo lugar para que puedas resolver diferentes necesidades en una sola visita."}}
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -2834,8 +2967,8 @@
       <div class="hero-eyebrow">Spa &amp; Beauty Salon · Cancún</div>
       <h1>Realzamos<br><em>tu esencia</em></h1>
       <p class="hero-desc">
-        Descubre el oasis de relajación y belleza que mereces.
-        Un espacio pensado para equilibrar tu mente y tu cuerpo.
+        Un espacio creado para desconectarte del mundo y volver a ti.
+        Bienestar, belleza y relajación con productos orgánicos y naturales en el corazón de Cancún.
       </p>
       <div class="hero-btns">
         <button class="btn btn-cream" onclick="smartAgendar()">Agendar Cita</button>
@@ -2908,13 +3041,14 @@
           <span class="eyebrow">Nuestra Filosofía</span>
           <h2>Equilibrio para tu <em>mente y cuerpo</em></h2>
           <p>
-            En Exentia creemos que el bienestar no es un lujo, es una necesidad.
-            Por eso diseñamos cada experiencia para que te desconectes del mundo
-            y te reconectes contigo misma.
+            Cuidarte no debería sentirse como un lujo lejano, sino como algo que mereces cada día.
+            Desde que llegas, el ritmo del exterior se queda atrás y comienza una experiencia
+            de calma, bienestar y reconexión.
           </p>
           <p>
-            Ámate más a ti misma, consiéntete y deja el estrés atrás. Eso es
-            exactamente lo que necesitas para tener la paz que mereces.
+            Trabajamos con productos orgánicos y naturales porque creemos que lo que toca tu piel
+            es tan importante como lo que sientes mientras te cuidan. Escuchamos primero,
+            recomendamos después y adaptamos cada servicio a lo que tu cuerpo necesita hoy.
           </p>
           <div class="filosofia-features">
             <div class="filosofia-feature">
@@ -2950,7 +3084,7 @@
               </div>
               <div>
                 <h4>Horario Flexible</h4>
-                <p>Lun-Sáb 9AM - 6PM, reservas online</p>
+                <p>Lun-Sáb 10AM - 6PM, reservas online</p>
               </div>
             </div>
           </div>
@@ -3026,7 +3160,7 @@
             </div>
             <div class="text">
               <div class="label">Horario</div>
-              <div class="value">Lunes a Sábado<br>9:00 AM - 6:00 PM</div>
+              <div class="value">Lunes a Sábado<br>10:00 AM - 6:00 PM</div>
             </div>
           </li>
         </ul>
@@ -3034,6 +3168,67 @@
       </div>
       <div class="map-wrap">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7!2d-86.8696!3d21.0959093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4c2b33912ba525%3A0xbc9f4c55274b261a!2sExentia%20Spa%20%26%20Beauty%20Sal%C3%B3n!5e0!3m2!1ses!2smx!4v1700000000000" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq full-bleed" id="faq">
+  <div class="container">
+    <div class="section-title">
+      <span class="eyebrow">Resolvemos tus dudas</span>
+      <h2>Preguntas <em>Frecuentes</em></h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>¿Necesito hacer cita previa?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Sí, te recomendamos agendar tu cita con anticipación para garantizar tu espacio y que podamos preparar todo para tu experiencia. Puedes reservar directamente desde nuestra página en pocos pasos o por WhatsApp.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>¿Qué tipo de productos utilizan?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Trabajamos con productos orgánicos y naturales cuidadosamente seleccionados. Creemos que lo que toca tu piel es tan importante como lo que sientes mientras te cuidan. Utilizamos ingredientes reales y fórmulas limpias que nutren y restauran.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>¿Cuál es su horario de atención?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Atendemos de lunes a sábado de 10:00 AM a 6:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>¿Dónde están ubicados?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Nos encontramos en Plaza Hive, sobre Avenida Huayacán en Cancún, Quintana Roo. Un espacio diseñado para tu desconexión en una zona accesible y tranquila de la ciudad.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>¿Tienen servicios para niños?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Sí, contamos con Spa Kids & Teens, experiencias diseñadas especialmente para niños y adolescentes en un entorno cálido, seguro y relajante. Incluye mini manicure, mini pedicure, mini spa y peinado princesa.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>¿Ofrecen servicio a domicilio?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Sí, a través de Exentia At Home llevamos experiencias de bienestar personalizadas a tu hogar, hotel o evento con la misma esencia cálida y sensorial que nos caracteriza. Contáctanos por WhatsApp para más detalles.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>¿Puedo combinar varios servicios en una sola visita?</span>
+          <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Por supuesto. En Exentia reunimos spa, belleza y wellness en un solo lugar para que puedas resolver diferentes necesidades de bienestar en una sola visita sin trasladarte a múltiples lugares. Selecciona todos los servicios que desees al momento de agendar.</p></div>
       </div>
     </div>
   </div>
@@ -3061,7 +3256,7 @@
         </span>
         <p class="footer-desc">
           Realzamos la belleza de tu esencia.
-          Un oasis de relajación y bienestar en el corazón de Cancún.
+          Spa y salón de belleza con productos orgánicos y naturales en Cancún.
         </p>
         <div class="footer-social">
           <a href="https://www.instagram.com/exentiaspabeautysalon/" target="_blank" aria-label="Instagram">
@@ -3098,7 +3293,7 @@
           <li>Av. Huayacán</li>
           <li>Plaza Hive</li>
           <li>Cancún, Q. Roo</li>
-          <li>Lun-Sáb 9AM-6PM</li>
+          <li>Lun-Sáb 10AM-6PM</li>
         </ul>
       </div>
     </div>
