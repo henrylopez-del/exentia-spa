@@ -17,7 +17,7 @@ Pagina web + sistema de reservas + tracking para Exentia (Cancun). Sigue el play
 | 3 | **Bridge script** | Antes de `</body>`. Hookea `openModal`, postMessage de iframes GHL, cart events, CTAs Agendar. Page titles dinámicos al abrir modales |
 | 4 | **6 workflows n8n** | `exentia-track`, `-reserva`, `-checkin`, `-resena`, `-upload-conversions` (cron, scaffold), `-cita-creada` (NUEVO 2026-04-30) |
 | 5 | **Schema Supabase `exentia.*`** | 7 tablas + vistas + RLS + 2 storage buckets. `bookings.ghl_appointment_id` agregado para idempotencia. `lead_ref` eliminado de `bookings` (no se usaba) |
-| 6 | **GHL Exentia (`0hGSRrhxkdywVQxCsNOi`)** | 27 custom fields `exentia_*` + 60 tags + Pipeline `Reservas` (9 stages) + form `ElRuF6DqgcwUiSyJaXoi` + calendar `ep6YHJFqv8qFzrzJpL2W` + Workflow GHL "Appointment Created" → POST `/webhook/envio-exentia` |
+| 6 | **GHL Exentia (`0hGSRrhxkdywVQxCsNOi`)** | 27 custom fields `exentia_*` + 60 tags + Pipeline `Reservas` (9 stages) + form `ElRuF6DqgcwUiSyJaXoi` + calendar `VUbTtrop8lZFx8HRmJzV` + Workflow GHL "Appointment Created" → POST `/webhook/envio-exentia` |
 | 7 | **Dashboard interno** | Standalone HTML en `monitoreo/dashboard/` (Variante B srcdoc, lista para pegar en GHL Custom Menu) |
 | 8 | **GA4 instalado** | Property `Exentia` bajo account Arqalum. Measurement ID `G-LQ4YJQ2MZV` en `<head>` de la pagina. Eventos en español llegando con segmentación por traffic_source/device_type/came_from |
 | 9 | **Lifecycle verificado** | reservo → asistio → resenado end-to-end testeado, todos los webhooks responden. Fechas de citas guardandose correctamente desde 2026-04-30 |
@@ -171,7 +171,7 @@ GHL Form/Calendar iframes (cross-origin)
 | Item | ID |
 |---|---|
 | Location | `0hGSRrhxkdywVQxCsNOi` |
-| Calendar embed | `ep6YHJFqv8qFzrzJpL2W` |
+| Calendar embed | `VUbTtrop8lZFx8HRmJzV` |
 | Form | `ElRuF6DqgcwUiSyJaXoi` |
 | Pipeline `Reservas` | `0yWVmwR1YLLZfwjPXRcw` |
 | CDN Base | `https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/` |
