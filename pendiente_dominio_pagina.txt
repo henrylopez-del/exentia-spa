@@ -1,0 +1,56 @@
+PENDIENTES DE CONFIGURACIÓN - Exentia Spa
+Fecha: 2026-05-13
+
+=== 1. PÁGINA WEB (GHL) ===
+Estado: www.exentiaspabeauty.com → "All Set" ✅
+Estado: exentiaspabeauty.com → Email "Verification Pending" ⚠️
+Estado: Website → "1 Website" conectado, falta "Set default 404/Error Page"
+
+Registros DNS para página (ya configurados en Domain.com):
+- A record: @ → 162.159.140.166
+- CNAME: www → sites.ludicrous.cloud
+
+=== 2. CORREO MICROSOFT 365 ===
+Estado: Propagación pendiente (MX viejos de mailgun aún en caché)
+
+Lo que Microsoft necesita (ya configurado en Domain.com):
+- MX: @ → exentiaspabeauty-com.mail.protection.outlook.com (prioridad 0) ✅
+- CNAME: autodiscover → autodiscover.outlook.com ✅ (verificado en verde)
+- TXT SPF combinado: v=spf1 include:spf.protection.outlook.com include:spf.leadconnectorhq.com include:mailgun.org ~all ✅ (verificado en verde)
+- TXT verificación: MS=ms45320073 ✅
+
+Pendiente: Microsoft sigue viendo los MX de mailgun (ya eliminados). Esperar propagación DNS (hasta 48h) y volver a verificar.
+
+=== 3. CORREO GHL (Mailgun) ===
+Estado: Migrando a subdominio notificaciones.exentiaspabeauty.com
+Dedicated Header: Name: Exentia Spa & Beauty Salon, Email: citas@exentiaspabeauty.com
+Reply Address: yazminagis@hotmail.com
+
+PLAN: Usar subdominio para que GHL y Microsoft coexistan sin conflicto.
+- Dominio raíz (exentiaspabeauty.com) → Microsoft 365 (recibir correo en Outlook)
+- Subdominio (notificaciones.exentiaspabeauty.com) → GHL/Mailgun (enviar correos)
+
+REGISTROS QUE GHL PEDÍA PARA EL DOMINIO RAÍZ (respaldo antes de eliminar):
+TXT    | @              | v=spf1 include:spf.leadconnectorhq.com include:mailgun.org ~all | Verified
+TXT    | pic._domainkey | k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/HiMY80vaz9FxUeV3+ZaXg8ZeGkgbsEyOwu9xFGVOVUnyxhOgYYjIsQd0MeNe1aswMfe90fa16l4M5RGIA/5ccj6ayTulW7ItjsFNqZuHcREy98YhUnOpKL/LsGznusgFheoEDWGB3pQmRwATYvnup2FzmMuQ/OPWcXcyg9FVsQIDAQAB | Verified
+CNAME  | email          | mailgun.org | Verified
+MX     | @              | mxa.mailgun.org (prioridad 10) | Not Verified (eliminado de DNS)
+MX     | @              | mxb.mailgun.org (prioridad 10) | Not Verified (eliminado de DNS)
+TXT    | _dmarc         | v=DMARC1;p=none; | Verified
+
+PENDIENTE:
+1. Eliminar exentiaspabeauty.com como dedicated domain en GHL
+2. Agregar notificaciones.exentiaspabeauty.com como nuevo dedicated domain en GHL
+3. GHL dará registros DNS nuevos para el subdominio → agregarlos en Domain.com
+4. Los registros viejos del dominio raíz (CNAME email, TXT pic._domainkey) se podrán eliminar después si GHL da nuevos para el subdominio
+
+=== REGISTROS DNS FINALES EN DOMAIN.COM ===
+A      | @              | 162.159.140.166
+CNAME  | www            | sites.ludicrous.cloud
+CNAME  | autodiscover   | autodiscover.outlook.com
+CNAME  | email          | mailgun.org
+MX     | @              | exentiaspabeauty-com.mail.protection.outlook.com
+TXT    | @              | MS=ms45320073
+TXT    | @              | v=spf1 include:spf.protection.outlook.com include:spf.leadconnectorhq.com include:mailgun.org ~all
+TXT    | pic._domainkey | k=rsa; p=MIGfMA0GCSqGSIb3DQE... (DKIM key)
+TXT    | _dmarc         | v=DMARC1;p=none;

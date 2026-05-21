@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarah&#237; Jaramillo &#8212; UTM Dashboard</title>
+<style>
+/* GHL PAGE BUILDER OVERRIDES */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #ffffff !important;
+  overflow-x: hidden !important;
+}
+.c-section .inner, .c-row .inner, .c-column .inner,
+.c-section > .inner, .c-row > .inner, .c-column > .inner,
+.inner, .vertical.inner {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.c-section, .c-row, .c-column, .c-wrapper, .c-custom-code,
+.fullSection, [id^="section-"], [id^="row-"], [id^="col-"],
+[id^="custom-code-"], [class*="c-section"], [class*="c-row"],
+[class*="c-column"], [class*="c-wrapper"], [class*="c-custom-code"] {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  overflow: visible !important;
+}
+.row-align-center {
+  max-width: 100vw !important;
+  width: 100vw !important;
+}
+
+/* VARIABLES */
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f5f5f7;
+  --border: #e0e0e0;
+  --text: #1a1a1a;
+  --text-dim: #6b7280;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.15);
+  --green: #10b981;
+  --radius: 8px;
+}
+
+/* RESET & BASE */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+  line-height: 1.5 !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+/* LAYOUT */
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.status {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.status .dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  margin-right: 5px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.count-badge {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.count-badge strong {
+  color: var(--text);
+}
+
+/* CONTROLS BAR */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+.search-box {
+  flex: 1 1 260px;
+  min-width: 200px;
+  position: relative;
+}
+.search-box input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.search-box input::placeholder { color: var(--text-dim); }
+.search-box .icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.filter-select {
+  flex: 0 1 170px;
+  min-width: 130px;
+}
+.filter-select select {
+  width: 100%;
+  padding: 10px 32px 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238892a8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.2s;
+}
+.filter-select select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.btn-reset {
+  padding: 10px 18px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.btn-reset:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* TABLE WRAPPER */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: auto;
+  max-height: 70vh;
+  position: relative;
+}
+
+/* TABLE */
+table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--surface2);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+}
+thead th:hover {
+  color: var(--text);
+}
+thead th .sort-arrow {
+  margin-left: 4px;
+  font-size: 10px;
+  opacity: 0.4;
+}
+thead th.sorted .sort-arrow {
+  opacity: 1;
+  color: var(--accent);
+}
+tbody tr {
+  transition: background 0.15s;
+}
+tbody tr:hover {
+  background: rgba(37, 99, 235, 0.04);
+}
+tbody td {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(42, 49, 70, 0.5);
+  color: var(--text);
+  white-space: nowrap;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+tbody td:hover {
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  max-width: none;
+  background: var(--surface2);
+  position: relative;
+  z-index: 5;
+}
+
+/* EMPTY / LOADING STATES */
+.state-msg {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+  font-size: 15px;
+}
+.state-msg .spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .dashboard { padding: 16px 12px; }
+  .header h1 { font-size: 18px; }
+  .filter-select { flex: 1 1 calc(50% - 5px); }
+  .table-wrap { max-height: 60vh; }
+  tbody td { padding: 8px 12px; font-size: 12px; }
+  thead th { padding: 10px 12px; font-size: 10px; }
+}
+@media (max-width: 480px) {
+  .filter-select { flex: 1 1 100%; }
+  .search-box { flex: 1 1 100%; }
+}
+</style>
+</head>
+<body style="margin:0!important;padding:0!important;background:#ffffff!important;">
+<div class="dashboard">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>UTM Dashboard</h1>
+    <div class="header-right">
+      <span class="count-badge" id="rowCount">&#8212;</span>
+      <span class="status"><span class="dot"></span>Live &mdash; <span id="lastUpdate">cargando...</span></span>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="search-box">
+      <span class="icon">&#128269;</span>
+      <input type="text" id="searchInput" placeholder="Buscar por nombre, correo, tel&#233;fono...">
+    </div>
+    <div class="filter-select">
+      <select id="filter_estado"><option value="">Estado</option></select>
+    </div>
+    <div class="filter-select">
+      <select id="filter_utm_source"><option value="">utm_source</option></select>
+    </div>
+    <div class="filter-select">
+      <select id="filter_utm_medium"><option value="">utm_medium</option></select>
+    </div>
+    <div class="filter-select">
+      <select id="filter_utm_campaign"><option value="">utm_campaign</option></select>
+    </div>
+    <div class="filter-select">
+      <select id="filter_utm_content"><option value="">utm_content</option></select>
+    </div>
+    <button class="btn-reset" id="btnReset">&#10005; Limpiar filtros</button>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap" id="tableWrap">
+    <div class="state-msg" id="loadingState">
+      <div class="spinner"></div><br>Cargando datos...
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var SHEET_ID = '1PZ8KHyTZtkbSJH3t25Ki5UO3JRRfnnwZKPza9LlNA64';
+  var REFRESH_MS = 60000;
+  var COLUMNS = [
+    'fecha','nombre','telefono','correo',
+    'utm_source','utm_medium','utm_campaign','utm_adset','utm_content',
+    'utm_source_first_click','utm_medium_first_click','utm_campaign_first_click',
+    'utm_adset_first_click','utm_content_first_click','estado'
+  ];
+  var FILTER_FIELDS = {
+    filter_estado: 14,
+    filter_utm_source: 4,
+    filter_utm_medium: 5,
+    filter_utm_campaign: 6,
+    filter_utm_content: 8
+  };
+
+  var allRows = [];
+  var sortCol = -1;
+  var sortAsc = true;
+  var refreshTimer = null;
+  var callbackName = '_sheetCB_' + Math.random().toString(36).substr(2, 8);
+
+  /* ---- JSONP CALLBACK (bypasses CORS) ---- */
+  window[callbackName] = function(response) {
+    if (!response || !response.table) return;
+    var table = response.table;
+    var rows = [];
+    for (var r = 0; r < table.rows.length; r++) {
+      var cells = table.rows[r].c;
+      var row = [];
+      for (var c = 0; c < cells.length; c++) {
+        row.push(cells[c] && cells[c].v != null ? String(cells[c].v) : '');
+      }
+      rows.push(row);
+    }
+    allRows = rows;
+    populateFilters();
+    applyFilters();
+    updateTimestamp();
+  };
+
+  /* ---- FETCH DATA VIA SCRIPT TAG (no CORS issues) ---- */
+  function fetchData() {
+    var old = document.getElementById('sheetLoader');
+    if (old) old.parentNode.removeChild(old);
+
+    var script = document.createElement('script');
+    script.id = 'sheetLoader';
+    script.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+      '/gviz/tq?tqx=responseHandler:' + callbackName + '&_cb=' + Date.now();
+    script.onerror = function() {
+      console.error('Failed to load sheet data');
+    };
+    document.body.appendChild(script);
+  }
+
+  /* ---- POPULATE DROPDOWN FILTERS ---- */
+  function populateFilters() {
+    var keys = Object.keys(FILTER_FIELDS);
+    for (var k = 0; k < keys.length; k++) {
+      var selId = keys[k];
+      var colIdx = FILTER_FIELDS[selId];
+      var sel = document.getElementById(selId);
+      var currentVal = sel.value;
+      var label = sel.options[0].text;
+      var vals = {};
+
+      for (var i = 0; i < allRows.length; i++) {
+        var v = (allRows[i][colIdx] || '').trim();
+        if (v) vals[v] = true;
+      }
+
+      var sorted = Object.keys(vals).sort();
+      sel.innerHTML = '';
+      var opt0 = document.createElement('option');
+      opt0.value = '';
+      opt0.textContent = label;
+      sel.appendChild(opt0);
+
+      for (var j = 0; j < sorted.length; j++) {
+        var opt = document.createElement('option');
+        opt.value = sorted[j];
+        opt.textContent = sorted[j];
+        sel.appendChild(opt);
+      }
+      sel.value = currentVal;
+    }
+  }
+
+  /* ---- FILTER + RENDER ---- */
+  function applyFilters() {
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var filters = {};
+    var keys = Object.keys(FILTER_FIELDS);
+    for (var k = 0; k < keys.length; k++) {
+      filters[keys[k]] = document.getElementById(keys[k]).value;
+    }
+
+    var filtered = [];
+    for (var i = 0; i < allRows.length; i++) {
+      var row = allRows[i];
+      var pass = true;
+
+      // dropdown filters
+      for (var k2 = 0; k2 < keys.length; k2++) {
+        var fv = filters[keys[k2]];
+        if (fv && (row[FILTER_FIELDS[keys[k2]]] || '') !== fv) {
+          pass = false;
+          break;
+        }
+      }
+      if (!pass) continue;
+
+      // search
+      if (search) {
+        var found = false;
+        for (var c = 0; c < row.length; c++) {
+          if ((row[c] || '').toLowerCase().indexOf(search) > -1) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) continue;
+      }
+
+      filtered.push(row);
+    }
+
+    // sort
+    if (sortCol >= 0) {
+      filtered.sort(function(a, b) {
+        var va = (a[sortCol] || '').toLowerCase();
+        var vb = (b[sortCol] || '').toLowerCase();
+        if (va < vb) return sortAsc ? -1 : 1;
+        if (va > vb) return sortAsc ? 1 : -1;
+        return 0;
+      });
+    }
+
+    renderTable(filtered);
+    document.getElementById('rowCount').innerHTML = '<strong>' + filtered.length + '</strong> / ' + allRows.length + ' registros';
+  }
+
+  /* ---- RENDER TABLE ---- */
+  function renderTable(rows) {
+    var wrap = document.getElementById('tableWrap');
+
+    if (rows.length === 0 && allRows.length === 0) {
+      wrap.innerHTML = '<div class="state-msg"><div class="spinner"></div><br>Cargando datos...</div>';
+      return;
+    }
+
+    var html = '<table><thead><tr>';
+    for (var h = 0; h < COLUMNS.length; h++) {
+      var cls = sortCol === h ? ' class="sorted"' : '';
+      var arrow = sortCol === h ? (sortAsc ? ' &#9650;' : ' &#9660;') : ' &#9650;';
+      html += '<th' + cls + ' data-col="' + h + '">' + escapeHTML(COLUMNS[h]) + '<span class="sort-arrow">' + arrow + '</span></th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    if (rows.length === 0) {
+      html += '<tr><td colspan="' + COLUMNS.length + '" style="text-align:center;color:var(--text-dim);padding:40px;">Sin resultados para los filtros aplicados</td></tr>';
+    } else {
+      for (var i = 0; i < rows.length; i++) {
+        html += '<tr>';
+        for (var j = 0; j < COLUMNS.length; j++) {
+          html += '<td>' + escapeHTML(rows[i][j] || '') + '</td>';
+        }
+        html += '</tr>';
+      }
+    }
+
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+
+    // sort click handlers
+    var ths = wrap.querySelectorAll('thead th');
+    for (var t = 0; t < ths.length; t++) {
+      ths[t].addEventListener('click', handleSort);
+    }
+  }
+
+  function handleSort(e) {
+    var col = parseInt(e.currentTarget.getAttribute('data-col'));
+    if (sortCol === col) {
+      sortAsc = !sortAsc;
+    } else {
+      sortCol = col;
+      sortAsc = true;
+    }
+    applyFilters();
+  }
+
+  function escapeHTML(str) {
+    var d = document.createElement('div');
+    d.appendChild(document.createTextNode(str));
+    return d.innerHTML;
+  }
+
+  function updateTimestamp() {
+    var now = new Date();
+    var h = ('0' + now.getHours()).slice(-2);
+    var m = ('0' + now.getMinutes()).slice(-2);
+    var s = ('0' + now.getSeconds()).slice(-2);
+    document.getElementById('lastUpdate').textContent = h + ':' + m + ':' + s;
+  }
+
+  /* ---- RESET FILTERS ---- */
+  document.getElementById('btnReset').addEventListener('click', function() {
+    document.getElementById('searchInput').value = '';
+    var keys = Object.keys(FILTER_FIELDS);
+    for (var k = 0; k < keys.length; k++) {
+      document.getElementById(keys[k]).value = '';
+    }
+    sortCol = -1;
+    sortAsc = true;
+    applyFilters();
+  });
+
+  /* ---- LIVE SEARCH ---- */
+  var searchTimeout;
+  document.getElementById('searchInput').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(applyFilters, 200);
+  });
+
+  /* ---- DROPDOWN CHANGE ---- */
+  var keys = Object.keys(FILTER_FIELDS);
+  for (var k = 0; k < keys.length; k++) {
+    document.getElementById(keys[k]).addEventListener('change', applyFilters);
+  }
+
+  /* ---- INIT ---- */
+  fetchData();
+  refreshTimer = setInterval(fetchData, REFRESH_MS);
+
+})();
+</script>
+</body>
+</html>

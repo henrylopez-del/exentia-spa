@@ -1,0 +1,118 @@
+{
+  "name": "Arqalum Click Tracker v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "arqalum-track",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false,
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300],
+      "webhookId": "arqalum-track"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || $input.item.json;\nconst headers = $input.item.json.headers || {};\n\nfunction genRef() {\n  return Math.random().toString(36).slice(2, 10).toUpperCase();\n}\n\nconst lead = {\n  lead_ref: body.lead_ref || genRef(),\n  click_type: body.click_type || 'unknown',\n  page_path: body.page_path || '',\n  landing_version: body.landing_version || 'v1',\n  gclid: body.gclid || null,\n  gbraid: body.gbraid || null,\n  wbraid: body.wbraid || null,\n  utm_source: body.utm_source || null,\n  utm_medium: body.utm_medium || null,\n  utm_campaign: body.utm_campaign || null,\n  utm_term: body.utm_term || null,\n  utm_content: body.utm_content || null,\n  referrer: body.referrer || null,\n  session_id: body.session_id || genRef(),\n  time_on_page_ms: body.time_on_page_ms || null,\n  scroll_depth_pct: body.scroll_depth_pct || null,\n  user_agent: body.user_agent || headers['user-agent'] || null,\n  device_type: body.device_type || null,\n  screen_size: body.screen_size || null,\n  language: body.language || null,\n  extra: body.extra || null\n};\n\nreturn { json: lead };"
+      },
+      "id": "normalize",
+      "name": "Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://fneppfjeywhayknrgahe.supabase.co/rest/v1/arqalum_leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuZXBwZmpleXdoYXlrbnJnYWhlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTg2MzMxNCwiZXhwIjoyMDc1NDM5MzE0fQ.Hc3NQ0WoEoK3olrwabnwRkg2oG5f-808AhJOk4_yYgo"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuZXBwZmpleXdoYXlrbnJnYWhlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTg2MzMxNCwiZXhwIjoyMDc1NDM5MzE0fQ.Hc3NQ0WoEoK3olrwabnwRkg2oG5f-808AhJOk4_yYgo"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "id": "supabase-insert",
+      "name": "Supabase Insert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "{\"ok\":true}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [860, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Normalize", "type": "main", "index": 0 }]]
+    },
+    "Normalize": {
+      "main": [[{ "node": "Supabase Insert", "type": "main", "index": 0 }]]
+    },
+    "Supabase Insert": {
+      "main": [[{ "node": "Respond 200", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

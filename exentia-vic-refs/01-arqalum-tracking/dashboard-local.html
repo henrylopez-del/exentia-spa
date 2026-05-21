@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Arqalum Leads Live</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#0a0a0a;--surface:#141414;--surface2:#1f1f1f;--text:#f5f5f5;--dim:#a8a8a8;--accent:#00c4b8;--wa:#25d366;--call:#ffa500;--form:#b36cff;--view:#666;--warn:#ff6b6b;--outline:rgba(255,255,255,0.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:20px;min-height:100vh}
+h1{font-size:1.4rem;margin-bottom:4px}
+.sub{color:var(--dim);font-size:0.85rem;margin-bottom:16px}
+.controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.controls button,.controls select,.controls input{background:var(--surface);color:var(--text);border:1px solid var(--outline);padding:8px 12px;border-radius:8px;font-size:0.9rem;cursor:pointer;font-family:inherit}
+.controls button:hover{background:var(--surface2)}
+.controls button.active{background:var(--accent);color:#0a0a0a;border-color:var(--accent)}
+.controls input{cursor:text;width:280px}
+.meta{margin-left:auto;color:var(--dim);font-size:0.8rem;display:flex;gap:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--outline);border-radius:10px;padding:12px}
+.stat__num{font-size:1.5rem;font-weight:800}
+.stat__label{color:var(--dim);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em}
+.stat.wa .stat__num{color:var(--wa)}
+.stat.call .stat__num{color:var(--call)}
+.stat.form .stat__num{color:var(--form)}
+.stat.view .stat__num{color:var(--view)}
+table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:10px;overflow:hidden}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--outline);font-size:0.85rem;vertical-align:top}
+th{background:var(--surface2);color:var(--dim);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.05em;position:sticky;top:0}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.pill{display:inline-block;padding:2px 8px;border-radius:100px;font-size:0.72rem;font-weight:600}
+.pill.wa{background:rgba(37,211,102,0.18);color:var(--wa)}
+.pill.call{background:rgba(255,165,0,0.18);color:var(--call)}
+.pill.form{background:rgba(179,108,255,0.18);color:var(--form)}
+.pill.view{background:rgba(200,200,200,0.1);color:var(--dim)}
+.pill.scroll{background:rgba(0,196,184,0.14);color:var(--accent)}
+.pill.other{background:rgba(255,255,255,0.06);color:var(--dim)}
+.ref{font-family:"SF Mono",Consolas,monospace;color:var(--accent)}
+.dim{color:var(--dim)}
+.empty{padding:40px;text-align:center;color:var(--dim)}
+.err{padding:16px;background:rgba(255,107,107,0.1);border:1px solid var(--warn);border-radius:10px;color:var(--warn);margin-bottom:16px}
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--wa);animation:pulse 2s infinite;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@media(max-width:700px){
+  .controls input{width:100%}
+  th,td{font-size:0.75rem;padding:6px 8px}
+  .ua,.ref{display:none}
+}
+</style>
+</head>
+<body>
+
+<h1>Arqalum Leads Live</h1>
+<p class="sub"><span class="pulse"></span>Auto-refresh cada 15s · Conectado directo a Supabase</p>
+
+<div id="err-panel"></div>
+
+<div class="controls">
+  <button data-filter="all" class="active">Todos</button>
+  <button data-filter="whatsapp_click">WhatsApp</button>
+  <button data-filter="call_click">Llamadas</button>
+  <button data-filter="form">Form</button>
+  <button data-filter="pageview">Views</button>
+  <input type="text" id="search" placeholder="Buscar por ref, keyword, campaign, gclid...">
+  <div class="meta">
+    <span id="last-update">—</span>
+    <span id="row-count">0 filas</span>
+  </div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Hora</th>
+      <th>Evento</th>
+      <th>Ref</th>
+      <th>Keyword / Campaign</th>
+      <th>Device</th>
+      <th>Scroll</th>
+      <th>Time on page</th>
+      <th class="ua">Session</th>
+    </tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
+
+<script>
+(function(){
+  'use strict';
+  // ===== CONFIG =====
+  // Paste your Supabase service_role JWT below.
+  // Local-only dashboard (don't host publicly).
+  var SUPABASE_URL = 'https://fneppfjeywhayknrgahe.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuZXBwZmpleXdoYXlrbnJnYWhlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTg2MzMxNCwiZXhwIjoyMDc1NDM5MzE0fQ.Hc3NQ0WoEoK3olrwabnwRkg2oG5f-808AhJOk4_yYgo';
+  var REFRESH_MS = 15000;
+  var LIMIT = 200;
+
+  var allRows = [];
+  var activeFilter = 'all';
+  var searchTerm = '';
+
+  function fmt(dt){
+    var d = new Date(dt);
+    var now = new Date();
+    var sameDay = d.toDateString() === now.toDateString();
+    var time = d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    return sameDay ? time : d.toLocaleDateString('es-MX',{month:'short',day:'numeric'}) + ' ' + time;
+  }
+  function fmtDuration(ms){
+    if(!ms) return '—';
+    if(ms < 1000) return ms+'ms';
+    var s = Math.round(ms/1000);
+    if(s < 60) return s+'s';
+    var m = Math.floor(s/60); s = s%60;
+    return m+'m '+s+'s';
+  }
+  function pillClass(ct){
+    if(ct==='whatsapp_click') return 'wa';
+    if(ct==='call_click') return 'call';
+    if(ct==='form_start'||ct==='form_submit_intent'||ct==='form_submit') return 'form';
+    if(ct==='pageview') return 'view';
+    if(ct&&ct.indexOf('scroll_')===0) return 'scroll';
+    return 'other';
+  }
+  function esc(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+
+  function render(){
+    var rows = allRows.slice();
+    if(activeFilter !== 'all'){
+      rows = rows.filter(function(r){
+        if(activeFilter === 'form') return (r.click_type||'').indexOf('form') === 0;
+        return r.click_type === activeFilter;
+      });
+    }
+    if(searchTerm){
+      var q = searchTerm.toLowerCase();
+      rows = rows.filter(function(r){
+        return JSON.stringify(r).toLowerCase().indexOf(q) !== -1;
+      });
+    }
+
+    var counts = { whatsapp_click:0, call_click:0, form:0, pageview:0, total: allRows.length };
+    allRows.forEach(function(r){
+      if(r.click_type === 'whatsapp_click') counts.whatsapp_click++;
+      else if(r.click_type === 'call_click') counts.call_click++;
+      else if((r.click_type||'').indexOf('form') === 0) counts.form++;
+      else if(r.click_type === 'pageview') counts.pageview++;
+    });
+    document.getElementById('stats').innerHTML =
+      '<div class="stat wa"><div class="stat__num">'+counts.whatsapp_click+'</div><div class="stat__label">WhatsApp clicks</div></div>'+
+      '<div class="stat call"><div class="stat__num">'+counts.call_click+'</div><div class="stat__label">Llamadas</div></div>'+
+      '<div class="stat form"><div class="stat__num">'+counts.form+'</div><div class="stat__label">Form events</div></div>'+
+      '<div class="stat view"><div class="stat__num">'+counts.pageview+'</div><div class="stat__label">Pageviews</div></div>'+
+      '<div class="stat"><div class="stat__num">'+counts.total+'</div><div class="stat__label">Total eventos</div></div>';
+
+    document.getElementById('row-count').textContent = rows.length + ' filas';
+
+    var tbody = document.getElementById('rows');
+    if(!rows.length){
+      tbody.innerHTML = '<tr><td colspan="8" class="empty">Sin eventos. Haz una visita de prueba a arqalum.com/cotizacion-residencial</td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(function(r){
+      var kw = [r.utm_term, r.utm_campaign].filter(Boolean).join(' · ');
+      var gcl = r.gclid ? '<br><span class="dim">gclid: '+esc(r.gclid.slice(0,20))+'...</span>' : '';
+      return '<tr>'+
+        '<td>'+fmt(r.created_at)+'</td>'+
+        '<td><span class="pill '+pillClass(r.click_type)+'">'+esc(r.click_type)+'</span></td>'+
+        '<td class="ref">'+esc(r.lead_ref||'—')+'</td>'+
+        '<td>'+esc(kw||'')+gcl+'</td>'+
+        '<td>'+esc(r.device_type||'—')+'</td>'+
+        '<td>'+(r.scroll_depth_pct!=null? r.scroll_depth_pct+'%' : '—')+'</td>'+
+        '<td>'+fmtDuration(r.time_on_page_ms)+'</td>'+
+        '<td class="ua dim">'+esc((r.session_id||'').slice(0,12))+'</td>'+
+      '</tr>';
+    }).join('');
+  }
+
+  function fetchLeads(){
+    fetch(SUPABASE_URL + '/rest/v1/arqalum_leads?select=*&order=created_at.desc&limit='+LIMIT, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer '+SUPABASE_KEY
+      }
+    })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(data){
+      allRows = data || [];
+      document.getElementById('err-panel').innerHTML = '';
+      document.getElementById('last-update').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-MX');
+      render();
+    })
+    .catch(function(err){
+      document.getElementById('err-panel').innerHTML = '<div class="err">Error al cargar: '+esc(err.message)+'. Revisa que la tabla arqalum_leads exista y que la llave sea correcta.</div>';
+    });
+  }
+
+  document.querySelectorAll('.controls button[data-filter]').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.controls button[data-filter]').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      activeFilter = b.getAttribute('data-filter');
+      render();
+    });
+  });
+  document.getElementById('search').addEventListener('input', function(e){
+    searchTerm = e.target.value;
+    render();
+  });
+
+  fetchLeads();
+  setInterval(fetchLeads, REFRESH_MS);
+})();
+</script>
+</body>
+</html>
