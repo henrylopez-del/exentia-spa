@@ -4310,9 +4310,12 @@
         try { document.getElementById('cf-email').focus(); } catch(_){}
         return false;
       }
-      // Validar formato de email
-      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-      if (!emailRegex.test(email)) {
+    }
+
+    // Validación de email para AMBOS modos (si hay email capturado)
+    if (email) {
+      var emailRegex2 = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!emailRegex2.test(email)) {
         err.textContent = 'Por favor escribe un correo válido (ej: tu@correo.com).';
         err.style.display = 'block';
         try { document.getElementById('cf-email').focus(); } catch(_){}
@@ -4320,17 +4323,41 @@
       }
       // Detectar errores de tipeo comunes en dominios de correo
       var emailTypos = {
+        // Gmail
         'gmial.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gamil.com': 'gmail.com',
         'gnail.com': 'gmail.com', 'gmail.co': 'gmail.com', 'gmaill.com': 'gmail.com',
         'gmail.con': 'gmail.com', 'gmail.comm': 'gmail.com', 'gmail.om': 'gmail.com',
+        'gmai.com': 'gmail.com', 'gmil.com': 'gmail.com', 'gemail.com': 'gmail.com',
+        'gimail.com': 'gmail.com', 'gmail.cm': 'gmail.com', 'gmail.cim': 'gmail.com',
+        'gmail.cpm': 'gmail.com', 'gmail.vom': 'gmail.com', 'gmail.xom': 'gmail.com',
+        // Hotmail
         'hotmial.com': 'hotmail.com', 'hotmal.com': 'hotmail.com', 'hotmil.com': 'hotmail.com',
         'hotmail.con': 'hotmail.com', 'hotmail.comm': 'hotmail.com', 'hotamil.com': 'hotmail.com',
+        'hotmai.com': 'hotmail.com', 'hotmaill.com': 'hotmail.com', 'hotmail.cm': 'hotmail.com',
+        'hotmail.co': 'hotmail.com', 'hotmail.om': 'hotmail.com', 'hotmails.com': 'hotmail.com',
+        'hotmaul.com': 'hotmail.com', 'hotnail.com': 'hotmail.com', 'hotmeil.com': 'hotmail.com',
+        // Outlook
         'outlok.com': 'outlook.com', 'outllok.com': 'outlook.com', 'ourlook.com': 'outlook.com',
-        'outlook.con': 'outlook.com', 'outook.com': 'outlook.com',
+        'outlook.con': 'outlook.com', 'outook.com': 'outlook.com', 'outloock.com': 'outlook.com',
+        'outlool.com': 'outlook.com', 'outlookk.com': 'outlook.com', 'outloook.com': 'outlook.com',
+        'outlook.cm': 'outlook.com', 'outlook.co': 'outlook.com', 'outlook.om': 'outlook.com',
+        'outlook.comm': 'outlook.com', 'outlook.vom': 'outlook.com', 'outlook.cpm': 'outlook.com',
+        'outllook.com': 'outlook.com', 'outluk.com': 'outlook.com', 'autlook.com': 'outlook.com',
+        'ooutlook.com': 'outlook.com', 'outlokk.com': 'outlook.com', 'outlock.com': 'outlook.com',
+        'otlook.com': 'outlook.com', 'outlok.es': 'outlook.es', 'outlook.es.com': 'outlook.es',
+        // Yahoo
         'yahooo.com': 'yahoo.com', 'yaho.com': 'yahoo.com', 'yahoo.con': 'yahoo.com',
+        'yahoo.cm': 'yahoo.com', 'yahoo.comm': 'yahoo.com', 'yahoo.om': 'yahoo.com',
+        'yhaoo.com': 'yahoo.com', 'yahho.com': 'yahoo.com', 'yaoo.com': 'yahoo.com',
+        // iCloud
         'iclud.com': 'icloud.com', 'icould.com': 'icloud.com', 'icloud.con': 'icloud.com',
+        'icloud.cm': 'icloud.com', 'icluod.com': 'icloud.com', 'iclod.com': 'icloud.com',
+        // Live
+        'live.con': 'live.com', 'live.comm': 'live.com', 'live.cm': 'live.com',
+        'live.om': 'live.com', 'lve.com': 'live.com',
+        // Protonmail
         'protonmal.com': 'protonmail.com', 'protonmail.con': 'protonmail.com',
-        'live.con': 'live.com', 'live.comm': 'live.com'
+        'protonmial.com': 'protonmail.com', 'protonmail.cm': 'protonmail.com'
       };
       var emailDomain = email.split('@')[1];
       if (emailDomain && emailTypos[emailDomain.toLowerCase()]) {
