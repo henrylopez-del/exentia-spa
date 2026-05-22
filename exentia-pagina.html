@@ -4323,20 +4323,25 @@
       }
       // Detectar errores de tipeo comunes en dominios de correo
       var emailTypos = {
-        // Gmail
+        // Gmail (incluye combinaciones de doble error: nombre+extensión)
         'gmial.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gamil.com': 'gmail.com',
         'gnail.com': 'gmail.com', 'gmail.co': 'gmail.com', 'gmaill.com': 'gmail.com',
         'gmail.con': 'gmail.com', 'gmail.comm': 'gmail.com', 'gmail.om': 'gmail.com',
         'gmai.com': 'gmail.com', 'gmil.com': 'gmail.com', 'gemail.com': 'gmail.com',
         'gimail.com': 'gmail.com', 'gmail.cm': 'gmail.com', 'gmail.cim': 'gmail.com',
         'gmail.cpm': 'gmail.com', 'gmail.vom': 'gmail.com', 'gmail.xom': 'gmail.com',
-        // Hotmail
+        'gmaid.com': 'gmail.com', 'gmaid.con': 'gmail.com', 'gmai.con': 'gmail.com',
+        'gmial.con': 'gmail.com', 'gmal.con': 'gmail.com', 'gnail.con': 'gmail.com',
+        'gamil.con': 'gmail.com', 'gmeil.com': 'gmail.com', 'gmeil.con': 'gmail.com',
+        // Hotmail (incluye combinaciones de doble error)
         'hotmial.com': 'hotmail.com', 'hotmal.com': 'hotmail.com', 'hotmil.com': 'hotmail.com',
         'hotmail.con': 'hotmail.com', 'hotmail.comm': 'hotmail.com', 'hotamil.com': 'hotmail.com',
         'hotmai.com': 'hotmail.com', 'hotmaill.com': 'hotmail.com', 'hotmail.cm': 'hotmail.com',
         'hotmail.co': 'hotmail.com', 'hotmail.om': 'hotmail.com', 'hotmails.com': 'hotmail.com',
         'hotmaul.com': 'hotmail.com', 'hotnail.com': 'hotmail.com', 'hotmeil.com': 'hotmail.com',
-        // Outlook
+        'hotmial.con': 'hotmail.com', 'hotmal.con': 'hotmail.com', 'hotmai.con': 'hotmail.com',
+        'hotnail.con': 'hotmail.com', 'hotmeil.con': 'hotmail.com',
+        // Outlook (incluye combinaciones de doble error)
         'outlok.com': 'outlook.com', 'outllok.com': 'outlook.com', 'ourlook.com': 'outlook.com',
         'outlook.con': 'outlook.com', 'outook.com': 'outlook.com', 'outloock.com': 'outlook.com',
         'outlool.com': 'outlook.com', 'outlookk.com': 'outlook.com', 'outloook.com': 'outlook.com',
@@ -4345,6 +4350,8 @@
         'outllook.com': 'outlook.com', 'outluk.com': 'outlook.com', 'autlook.com': 'outlook.com',
         'ooutlook.com': 'outlook.com', 'outlokk.com': 'outlook.com', 'outlock.com': 'outlook.com',
         'otlook.com': 'outlook.com', 'outlok.es': 'outlook.es', 'outlook.es.com': 'outlook.es',
+        'outlok.con': 'outlook.com', 'outlock.con': 'outlook.com', 'ourlook.con': 'outlook.com',
+        'outook.con': 'outlook.com', 'outluk.con': 'outlook.com', 'autlook.con': 'outlook.com',
         // Yahoo
         'yahooo.com': 'yahoo.com', 'yaho.com': 'yahoo.com', 'yahoo.con': 'yahoo.com',
         'yahoo.cm': 'yahoo.com', 'yahoo.comm': 'yahoo.com', 'yahoo.om': 'yahoo.com',
