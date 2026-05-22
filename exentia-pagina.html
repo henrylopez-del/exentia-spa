@@ -4321,58 +4321,48 @@
         try { document.getElementById('cf-email').focus(); } catch(_){}
         return false;
       }
-      // Detectar errores de tipeo comunes en dominios de correo
-      var emailTypos = {
-        // Gmail (incluye combinaciones de doble error: nombre+extensión)
-        'gmial.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gamil.com': 'gmail.com',
-        'gnail.com': 'gmail.com', 'gmail.co': 'gmail.com', 'gmaill.com': 'gmail.com',
-        'gmail.con': 'gmail.com', 'gmail.comm': 'gmail.com', 'gmail.om': 'gmail.com',
-        'gmai.com': 'gmail.com', 'gmil.com': 'gmail.com', 'gemail.com': 'gmail.com',
-        'gimail.com': 'gmail.com', 'gmail.cm': 'gmail.com', 'gmail.cim': 'gmail.com',
-        'gmail.cpm': 'gmail.com', 'gmail.vom': 'gmail.com', 'gmail.xom': 'gmail.com',
-        'gmaid.com': 'gmail.com', 'gmaid.con': 'gmail.com', 'gmai.con': 'gmail.com',
-        'gmial.con': 'gmail.com', 'gmal.con': 'gmail.com', 'gnail.con': 'gmail.com',
-        'gamil.con': 'gmail.com', 'gmeil.com': 'gmail.com', 'gmeil.con': 'gmail.com',
-        // Hotmail (incluye combinaciones de doble error)
-        'hotmial.com': 'hotmail.com', 'hotmal.com': 'hotmail.com', 'hotmil.com': 'hotmail.com',
-        'hotmail.con': 'hotmail.com', 'hotmail.comm': 'hotmail.com', 'hotamil.com': 'hotmail.com',
-        'hotmai.com': 'hotmail.com', 'hotmaill.com': 'hotmail.com', 'hotmail.cm': 'hotmail.com',
-        'hotmail.co': 'hotmail.com', 'hotmail.om': 'hotmail.com', 'hotmails.com': 'hotmail.com',
-        'hotmaul.com': 'hotmail.com', 'hotnail.com': 'hotmail.com', 'hotmeil.com': 'hotmail.com',
-        'hotmial.con': 'hotmail.com', 'hotmal.con': 'hotmail.com', 'hotmai.con': 'hotmail.com',
-        'hotnail.con': 'hotmail.com', 'hotmeil.con': 'hotmail.com',
-        // Outlook (incluye combinaciones de doble error)
-        'outlok.com': 'outlook.com', 'outllok.com': 'outlook.com', 'ourlook.com': 'outlook.com',
-        'outlook.con': 'outlook.com', 'outook.com': 'outlook.com', 'outloock.com': 'outlook.com',
-        'outlool.com': 'outlook.com', 'outlookk.com': 'outlook.com', 'outloook.com': 'outlook.com',
-        'outlook.cm': 'outlook.com', 'outlook.co': 'outlook.com', 'outlook.om': 'outlook.com',
-        'outlook.comm': 'outlook.com', 'outlook.vom': 'outlook.com', 'outlook.cpm': 'outlook.com',
-        'outllook.com': 'outlook.com', 'outluk.com': 'outlook.com', 'autlook.com': 'outlook.com',
-        'ooutlook.com': 'outlook.com', 'outlokk.com': 'outlook.com', 'outlock.com': 'outlook.com',
-        'otlook.com': 'outlook.com', 'outlok.es': 'outlook.es', 'outlook.es.com': 'outlook.es',
-        'outlok.con': 'outlook.com', 'outlock.con': 'outlook.com', 'ourlook.con': 'outlook.com',
-        'outook.con': 'outlook.com', 'outluk.con': 'outlook.com', 'autlook.con': 'outlook.com',
-        // Yahoo
-        'yahooo.com': 'yahoo.com', 'yaho.com': 'yahoo.com', 'yahoo.con': 'yahoo.com',
-        'yahoo.cm': 'yahoo.com', 'yahoo.comm': 'yahoo.com', 'yahoo.om': 'yahoo.com',
-        'yhaoo.com': 'yahoo.com', 'yahho.com': 'yahoo.com', 'yaoo.com': 'yahoo.com',
-        // iCloud
-        'iclud.com': 'icloud.com', 'icould.com': 'icloud.com', 'icloud.con': 'icloud.com',
-        'icloud.cm': 'icloud.com', 'icluod.com': 'icloud.com', 'iclod.com': 'icloud.com',
-        // Live
-        'live.con': 'live.com', 'live.comm': 'live.com', 'live.cm': 'live.com',
-        'live.om': 'live.com', 'lve.com': 'live.com',
-        // Protonmail
-        'protonmal.com': 'protonmail.com', 'protonmail.con': 'protonmail.com',
-        'protonmial.com': 'protonmail.com', 'protonmail.cm': 'protonmail.com'
-      };
+      // Detectar typos en dominios populares usando distancia de edición (Levenshtein)
+      // Si el dominio se parece a uno conocido (≤2 ediciones), sugiere corrección.
+      // Dominios personalizados (empresa.com) pasan sin problema.
+      var knownDomains = [
+        'gmail.com', 'hotmail.com', 'outlook.com', 'outlook.es',
+        'yahoo.com', 'yahoo.com.mx', 'icloud.com', 'live.com',
+        'live.com.mx', 'protonmail.com', 'hotmail.es'
+      ];
+      function levenshtein(a, b) {
+        var m = a.length, n = b.length;
+        var d = [];
+        for (var i = 0; i <= m; i++) { d[i] = [i]; }
+        for (var j = 0; j <= n; j++) { d[0][j] = j; }
+        for (var i = 1; i <= m; i++) {
+          for (var j = 1; j <= n; j++) {
+            var cost = a[i-1] === b[j-1] ? 0 : 1;
+            d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + cost);
+          }
+        }
+        return d[m][n];
+      }
       var emailDomain = email.split('@')[1];
-      if (emailDomain && emailTypos[emailDomain.toLowerCase()]) {
-        var suggestion = emailTypos[emailDomain.toLowerCase()];
-        err.innerHTML = '¿Quisiste escribir <b>' + email.split('@')[0] + '@' + suggestion + '</b>? Corrige tu correo para continuar.';
-        err.style.display = 'block';
-        try { document.getElementById('cf-email').focus(); } catch(_){}
-        return false;
+      if (emailDomain) {
+        var domLower = emailDomain.toLowerCase();
+        // Si es exactamente un dominio conocido, está bien
+        var isKnown = knownDomains.indexOf(domLower) !== -1;
+        if (!isKnown) {
+          // Buscar el dominio conocido más cercano
+          var bestMatch = null;
+          var bestDist = 999;
+          for (var k = 0; k < knownDomains.length; k++) {
+            var dist = levenshtein(domLower, knownDomains[k]);
+            if (dist < bestDist) { bestDist = dist; bestMatch = knownDomains[k]; }
+          }
+          // Si está a ≤2 ediciones de un dominio conocido, es probablemente un typo
+          if (bestMatch && bestDist > 0 && bestDist <= 2) {
+            err.innerHTML = '¿Quisiste escribir <b>' + email.split('@')[0] + '@' + bestMatch + '</b>? Corrige tu correo para continuar.';
+            err.style.display = 'block';
+            try { document.getElementById('cf-email').focus(); } catch(_){}
+            return false;
+          }
+        }
       }
     }
     err.style.display = 'none';
