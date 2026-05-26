@@ -3882,6 +3882,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         </div>
 
         <div id="cf-services-chip" class="form-chip"></div>
+        <div id="cf-edit-data" style="display:none; text-align:center; margin: -8px 0 8px; font-size: 12px;">
+          <a href="#" onclick="window._formUserData={}; document.getElementById('cf-firstname').value=''; document.getElementById('cf-lastname').value=''; var p=document.getElementById('cf-phone'); if(p) p.value=''; var e=document.getElementById('cf-email'); if(e) e.value=''; this.parentElement.style.display='none'; return false;" style="color: var(--brown-light); text-decoration: underline;">¿Datos incorrectos? Editar</a>
+        </div>
         <div id="cf-error" class="form-error" style="display:none;"></div>
         <button type="submit" class="btn" id="cf-submit" style="width:100%; justify-content:center;">
           <span class="only-default">Continuar a WhatsApp</span>
@@ -4891,6 +4894,15 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     if (em && d.email) em.value = d.email;
     var err = document.getElementById('cf-error');
     if (err) err.style.display = 'none';
+    // Show "edit data" link if form is pre-filled
+    var editLink = document.getElementById('cf-edit-data');
+    if (editLink) {
+      if (d.firstName || d.phone || d.email) {
+        editLink.style.display = 'block';
+      } else {
+        editLink.style.display = 'none';
+      }
+    }
     openModal('modal-form');
     try { if (window.exentiaTrack) window.exentiaTrack('form_modal_open', { source: 'custom_form', mode: mode, servicios: (cart || []).join(',') }); } catch(e){}
   }
@@ -5095,6 +5107,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     var url = 'https://wa.me/529984803595?text=' + encodeURIComponent(msg);
     try { if (window.exentiaTrack) window.exentiaTrack('form_submit_whatsapp', { source: 'choice_modal', booking_code: window._bookingCode || null, has_email: !!d.email, has_phone: !!d.phone, n_servicios: serv.length }); } catch(e){}
     window.open(url, '_blank');
+    // Reset flow so user can start over
+    closeModal('modal-choice');
+    cart.length = 0;
+    localStorage.setItem('exentia_cart', JSON.stringify(cart));
+    updateBadge();
+    window._formUserData = {};
   };
 
   window.goCalendar = function() {
@@ -5430,6 +5448,14 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     if (asObj.type === 'BOOKING_SUCCESS' || asObj.type === 'CALENDAR_BOOKED' ||
         /booking_success|calendar_booked|appointment_created/i.test(asStr)) {
       T('calendar_booking_success', { source: 'ghl_postmessage' });
+      // Reset flow after successful booking
+      setTimeout(function(){
+        cart.length = 0;
+        localStorage.setItem('exentia_cart', JSON.stringify(cart));
+        if (typeof updateBadge === 'function') updateBadge();
+        window._formUserData = {};
+        closeModal('modal-calendar');
+      }, 1500);
     }
     // GHL form submit success
     if (asObj.type === 'FORM_SUBMITTED' || asObj.type === 'form_submission_success' ||
