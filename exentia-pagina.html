@@ -131,13 +131,34 @@
     align-items: center;
     justify-content: space-between;
   }
+  .nav-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+    line-height: 1;
+  }
   .nav-logo {
     display: block;
     cursor: pointer;
-    height: 52px;
+    height: 48px;
     width: auto;
     object-fit: contain;
-    object-position: left center;
+    object-position: left top;
+    filter: brightness(0.45) contrast(1.6) saturate(0.75);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 68%, transparent 78%);
+    mask-image: linear-gradient(to bottom, black 0%, black 68%, transparent 78%);
+  }
+  .nav-logo-sub {
+    display: block;
+    margin-top: -4px;
+    margin-left: 3px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    letter-spacing: 2.8px;
+    color: var(--brown);
+    font-weight: 600;
+    text-transform: uppercase;
   }
   .nav-links {
     display: flex;
@@ -500,6 +521,149 @@
     background: var(--olive);
     color: var(--white);
     transform: translateX(4px);
+  }
+
+  /* ============ PROMOCIONES Y PAQUETES ============ */
+  .promos {
+    background: var(--cream-soft, #f3e4c7);
+    padding: 64px 0;
+  }
+  .promos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 8px;
+  }
+  .promo-card {
+    background: var(--white);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 24px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .promo-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px var(--shadow-lg);
+  }
+  .promo-tag {
+    position: absolute;
+    top: 16px; left: 16px;
+    z-index: 2;
+    background: var(--olive);
+    color: var(--white);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .promo-tag-soft {
+    background: var(--cream);
+    color: var(--brown);
+  }
+  .promo-img {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .promo-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(92, 58, 30, 0.25));
+  }
+  .promo-body {
+    padding: 26px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .promo-body h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    color: var(--brown);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .promo-desc {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .promo-list {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid rgba(154, 152, 84, 0.15);
+    padding-top: 14px;
+  }
+  .promo-list li {
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .promo-list li::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--olive);
+    flex-shrink: 0;
+  }
+  .promo-foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(154, 152, 84, 0.15);
+    gap: 12px;
+  }
+  .promo-prices {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .promo-old {
+    font-size: 12px;
+    color: var(--text-light);
+    text-decoration: line-through;
+  }
+  .promo-new {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    color: var(--olive-dark);
+    font-style: italic;
+    font-weight: 500;
+  }
+  .promo-btn {
+    padding: 10px 18px;
+    font-size: 12px;
+  }
+  .promos-disclaimer {
+    margin-top: 20px;
+    font-size: 11px;
+    color: var(--text-light);
+    text-align: center;
+    opacity: 0.75;
+    letter-spacing: 0.3px;
+  }
+  @media (max-width: 900px) {
+    .promos-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .promos-grid { grid-template-columns: 1fr; gap: 18px; }
+    .promos { padding: 48px 0; }
   }
 
   /* ============ FILOSOFIA ============ */
@@ -1460,6 +1624,13 @@
     font-weight: 600;
     color: var(--text);
     line-height: 1.3;
+  }
+  .sv-treat .desc {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.45;
+    margin-top: 2px;
+    max-width: 56ch;
   }
   .sv-treat .dur {
     font-size: 13px;
@@ -2940,12 +3111,14 @@
 <!-- ========== NAV ========== -->
 <nav id="navbar">
   <div class="nav-wrap">
-    <a data-nav="home" style="display:flex; align-items:center;">
+    <a data-nav="home" class="nav-brand">
       <img src="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817b4a4e6aa34cb5a6e52.png" alt="Exentia Spa & Beauty Salon" class="nav-logo">
+      <span class="nav-logo-sub">Spa &amp; Beauty Salon</span>
     </a>
     <ul class="nav-links">
       <li><a data-nav="home">Inicio</a></li>
       <li><a data-scroll="#servicios-anchor" data-nav="home">Servicios</a></li>
+      <li><a data-scroll="#promos-anchor" data-nav="home">Promociones</a></li>
       <li><a data-scroll="#filosofia-anchor" data-nav="home">Filosofía</a></li>
       <li><a onclick="smartAgendar()" style="cursor:pointer">Agendar</a></li>
       <li><a data-scroll="#ubicacion">Ubicación</a></li>
@@ -3029,6 +3202,78 @@
       <div class="services-grid" id="services-grid">
         <!-- Populated by JavaScript -->
       </div>
+    </div>
+  </section>
+
+  <!-- PROMOCIONES Y PAQUETES (mockup placeholder · contenido final pendiente Yaz) -->
+  <section class="promos full-bleed" id="promos-anchor">
+    <div class="container">
+      <div class="section-title">
+        <span class="eyebrow">Experiencias completas con beneficio</span>
+        <h2>Promociones y <em>Paquetes</em></h2>
+        <p>Combinamos tus servicios favoritos en experiencias diseñadas para un cuidado integral.</p>
+      </div>
+      <div class="promos-grid">
+        <article class="promo-card">
+          <div class="promo-tag">Más vendido</div>
+          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cfd7871cddf7e0694d.jpg')"></div>
+          <div class="promo-body">
+            <h3>Ritual Exentia</h3>
+            <p class="promo-desc">Masaje relajante y facial orgánico premium. La pausa que tu cuerpo y tu piel necesitan.</p>
+            <ul class="promo-list">
+              <li>Masaje Exentia · 50 min</li>
+              <li>Facial Orgánico · 50 min</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$3,100</span>
+                <span class="promo-new">$2,650</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
+          </div>
+        </article>
+        <article class="promo-card">
+          <div class="promo-tag promo-tag-soft">Recomendado</div>
+          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817b493f130b2000ccac7.jpg')"></div>
+          <div class="promo-body">
+            <h3>Look Completo</h3>
+            <p class="promo-desc">Cabello, manos y maquillaje listo. Sales del salón preparada para esa ocasión especial.</p>
+            <ul class="promo-list">
+              <li>Corte y peinado</li>
+              <li>Manicura Exentia con Gel</li>
+              <li>Maquillaje Social</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$3,240</span>
+                <span class="promo-new">$2,750</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
+          </div>
+        </article>
+        <article class="promo-card">
+          <div class="promo-tag promo-tag-soft">Mamá y mini</div>
+          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf019dc508d3d450f0.jpg')"></div>
+          <div class="promo-body">
+            <h3>Tarde de Princesas</h3>
+            <p class="promo-desc">Spa para mamá y experiencia SpaKids para la peque. Tiempo de calidad en paralelo.</p>
+            <ul class="promo-list">
+              <li>Masaje Exentia (mamá)</li>
+              <li>Spa Kids (peque)</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$3,100</span>
+                <span class="promo-new">$2,490</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
+          </div>
+        </article>
+      </div>
+      <p class="promos-disclaimer">Promociones de muestra. Confirmamos disponibilidad y combinación al reservar.</p>
     </div>
   </section>
 
@@ -4590,6 +4835,7 @@
       const selectedCount = cart.filter(c => s.treatments.some(t => t.name === c)).length;
 
       // Category card
+      const showDesc = ['masajes', 'faciales', 'spakids'].includes(s.slug);
       html += `
         <div class="sv-group" data-cat="${s.slug}">
           <div class="sv-cat ${hasSelected ? 'has-selected' : ''}">
@@ -4608,6 +4854,7 @@
               <div class="ck">&#10003;</div>
               <div class="info">
                 <div class="name">${t.name}</div>
+                ${showDesc && t.desc ? `<div class="desc">${t.desc}</div>` : ''}
                 <div class="dur">${t.duration}</div>
               </div>
               <div class="price">${t.price}</div>
