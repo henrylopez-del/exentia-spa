@@ -6,7 +6,7 @@ Pagina web + sistema de reservas + tracking para Exentia (Cancun). Sigue el play
 
 ---
 
-## Estado actual (Fase 1 · 2026-04-30)
+## Estado actual (Fase 1 · 2026-05-26)
 
 ### ✅ Lo que ya esta en produccion
 
@@ -16,7 +16,7 @@ Pagina web + sistema de reservas + tracking para Exentia (Cancun). Sigue el play
 | 2 | **Tracker.js inline** | Inyectado en `<head>` de `exentia-pagina.html`. ~20 eventos canonicos con nombres en español para GA4 (cita_agendada, vio_servicio, click_whatsapp, etc.) + user properties + service params enriquecidos |
 | 3 | **Bridge script** | Antes de `</body>`. Hookea `openModal`, postMessage de iframes GHL, cart events, CTAs Agendar. Page titles dinámicos al abrir modales |
 | 4 | **6 workflows n8n** | `exentia-track`, `-reserva`, `-checkin`, `-resena`, `-upload-conversions` (cron, scaffold), `-cita-creada` (NUEVO 2026-04-30) |
-| 5 | **Schema Supabase `exentia.*`** | 7 tablas + vistas + RLS + 2 storage buckets. `bookings.ghl_appointment_id` agregado para idempotencia. `lead_ref` eliminado de `bookings` (no se usaba) |
+| 5 | **Schema Supabase `exentia.*`** | 7 tablas + vistas + RLS + 2 storage buckets. `bookings.ghl_appointment_id` para idempotencia + `lead_ref`, `atribucion` JSONB, `valor_ticket_mxn` (migration 03, 2026-05-26) + index en `ghl_contact_id` |
 | 6 | **GHL Exentia (`0hGSRrhxkdywVQxCsNOi`)** | 27 custom fields `exentia_*` + 60 tags + Pipeline `Reservas` (9 stages) + form `ElRuF6DqgcwUiSyJaXoi` + calendar `VUbTtrop8lZFx8HRmJzV` + Workflow GHL "Appointment Created" → POST `/webhook/envio-exentia` |
 | 7 | **Dashboard interno** | Standalone HTML en `monitoreo/dashboard/` (Variante B srcdoc, lista para pegar en GHL Custom Menu) |
 | 8 | **GA4 instalado** | Property `Exentia` bajo account Arqalum. Measurement ID `G-LQ4YJQ2MZV` en `<head>` de la pagina. Eventos en español llegando con segmentación por traffic_source/device_type/came_from |
@@ -80,21 +80,39 @@ monitoreo/
 
 ---
 
-## Workflow `exentia-cita-creada` (2026-04-30)
+## Workflow `exentia-cita-creada` (actualizado 2026-05-26)
 
-Captura las fechas reales de las citas que GHL crea cuando un cliente agenda en el calendario.
+Captura las fechas reales de las citas que GHL crea cuando un cliente agenda en el calendario. Enriquece con custom fields de GHL (servicios, atribución, lead_ref) y hace merge inteligente con el pre-booking de `exentia-reserva`.
 
-### Flujo
+### Flujo completo de booking
 
 ```
-Calendario GHL (cliente agenda)
+Página web (usuario llena form + elige servicios)
+   ↓ POST /webhook/exentia-reserva (best-effort)
+n8n exentia-reserva → INSERT booking con servicios (sin appointment_id)
+   ↓
+Usuario elige "Agendar cita" → Calendario GHL
    ↓
 GHL Workflow "Appointment Status: Booked"
    ↓ POST /webhook/envio-exentia
-n8n exentia-cita-creada
-   ↓ parse + UPSERT (idempotente por ghl_appointment_id)
-Supabase exentia.bookings (fecha_agendada + hora_agendada poblados)
+n8n exentia-cita-creada:
+   1. Normalize payload (parse fecha GHL → ISO -05:00)
+   2. Validate (appointment_id + fecha requeridos)
+   3. GET Contact GHL → lee custom fields (servicios, UTMs, lead_ref)
+   4. Extract Custom Fields → mapea IDs → datos legibles
+   5. UPSERT CTE:
+      a. UPDATE: busca booking existente por teléfono/email (2h window) → link
+      b. INSERT ON CONFLICT: si no hay match, crea nuevo
+   6. Respond 200/400
 ```
+
+### Merge logic (CTE de 2 pasos)
+
+El pre-booking de `exentia-reserva` tiene servicios pero **no** `ghl_appointment_id` ni `ghl_contact_id`.
+El appointment de GHL tiene `ghl_appointment_id` + `ghl_contact_id` pero **no** servicios (a menos que estén en custom fields).
+
+**Step 1 — link_existing:** `UPDATE bookings WHERE ghl_appointment_id IS NULL AND (telefono = X OR email = Y) AND created_at > NOW() - 2h`
+**Step 2 — insert_new:** Solo si step 1 no matcheó. `INSERT ON CONFLICT (ghl_appointment_id) DO UPDATE` (idempotente para re-fires).
 
 ### Body que GHL manda al webhook
 
@@ -113,13 +131,39 @@ Supabase exentia.bookings (fecha_agendada + hora_agendada poblados)
 
 ⚠️ **Placeholders en snake_case** (`start_time`, no `startTime`). Con camelCase los campos llegan vacios.
 
-### Lógica del workflow (n8n)
+### GHL Custom Fields extraídos
+
+| Custom Field | ID | Uso |
+|---|---|---|
+| `exentia_servicio_elegido` | `ETSBOfoZqy1ng2RFBPzm` | servicios jsonb |
+| `exentia_lead_ref` | `JgsK2j4h1p6Gf7pw0WDS` | lead_ref |
+| `exentia_fbclid` | `vx52ah4vkjC7OENE0lWU` | atribucion.fbclid |
+| `exentia_gclid` | `xgBoQXRSmURvYvhaxEzN` | atribucion.gclid |
+| `exentia_utm_source_last` | `37CfTVmnM6SUFq6XUnHh` | atribucion.utm_source |
+| `exentia_utm_medium_last` | `NZPrbivrqIQFQx40cSsD` | atribucion.utm_medium |
+| `exentia_utm_campaign_last` | `Kc5n7iZqisG3PBKhufQd` | atribucion.utm_campaign |
+| `exentia_zona` | `vVUbV7gxxxTpfefQyCLG` | zona_colonia |
+| `exentia_preferencia_sexo` | `Ufj0CBEGwYouDqvcwPXD` | preferencia_sexo |
+| `exentia_valor_ticket_mxn` | `E3eEAnNb1rXfbh0Up3EE` | valor_ticket_mxn |
+
+### Credencial pendiente
+
+⚠️ **Se necesita crear un credential `httpHeaderAuth` en n8n** con:
+- Name: `GHL Exentia Bearer`
+- Header Name: `Authorization`
+- Header Value: `Bearer pit-67d64213-09c5-433f-aa22-d16615ce2758`
+- Luego actualizar el ID en el nodo "Get Contact GHL" del workflow
+
+### Lógica del workflow (n8n) — 8 nodos
 
 1. **Webhook** POST `/envio-exentia`
 2. **Normalize payload** (Code) — parsea fecha "Thursday, April 30, 2026 3:30 PM" → ISO con offset Cancún (-05:00). Normaliza phone a formato MX `52XXXXXXXXXX`. Calcula `duracion_total_min`. Genera `booking_code` corto.
 3. **Validate** (IF) — requiere `ghl_appointment_id` + `fecha_agendada` no vacios.
-4. **UPSERT bookings** — `ON CONFLICT (ghl_appointment_id) DO UPDATE`. Preserva datos previos con `COALESCE` (no sobrescribe nombre/teléfono/email del form si ya estaban).
-5. **Respond** 200 con `{ ok: true, booking: {...} }` o 400 con detalle.
+4. **Get Contact GHL** (HTTP Request) — GET `/contacts/{contactId}` con Bearer auth. `continueOnFail: true`.
+5. **Extract Custom Fields** (Code) — mapea customFields array por ID → servicios jsonb + atribucion jsonb + lead_ref + zona + preferencia.
+6. **UPSERT bookings** (Postgres) — CTE de 2 pasos: link existing + insert new. 14 params.
+7. **Respond OK** 200 con `{ ok: true, booking, enriched, source }`.
+8. **Respond 400** con detalle si falla validación.
 
 ### GA4 — eventos en español
 
