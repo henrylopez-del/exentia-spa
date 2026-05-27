@@ -4792,27 +4792,32 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     var btn = document.getElementById('cf-submit');
     if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
 
-    // POST best-effort a n8n exentia-reserva (no esperamos para abrir el choice)
-    try {
-      var leadRef = '';
-      try { leadRef = localStorage.getItem('ex_lead_ref') || ''; } catch(_e){}
-      fetch('https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-reserva', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cliente_nombre: firstName + (lastName ? ' ' + lastName : ''),
-          cliente_telefono: phone,
-          cliente_email: email,
-          servicios: (cart || []).map(function(s){ return { slug: s }; }),
-          notas: '',
-          lead_ref: leadRef,
-          mode: isCalendar ? 'calendar' : 'whatsapp'
-        })
-      }).then(function(r){ return r.json(); }).then(function(j){
-        if (j && j.booking_code) window._bookingCode = j.booking_code;
-        if (j && j.wa_link) window._waLink = j.wa_link;
-      }).catch(function(){});
-    } catch(ex) {}
+    // POST best-effort a n8n exentia-reserva — solo si NO se ha posteado antes para esta sesión
+    // y tenemos datos suficientes (modo calendar SIEMPRE, modo whatsapp SOLO si llenó phone+email).
+    // Evita duplicar booking cuando el usuario reabre el form para añadir datos.
+    var shouldPost = !window._bookingCode && (isCalendar || (phone && email));
+    if (shouldPost) {
+      try {
+        var leadRef = '';
+        try { leadRef = localStorage.getItem('ex_lead_ref') || ''; } catch(_e){}
+        fetch('https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-reserva', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cliente_nombre: firstName + (lastName ? ' ' + lastName : ''),
+            cliente_telefono: phoneClean,
+            cliente_email: email,
+            servicios: (cart || []).map(function(s){ return { slug: s }; }),
+            notas: '',
+            lead_ref: leadRef,
+            mode: isCalendar ? 'calendar' : 'whatsapp'
+          })
+        }).then(function(r){ return r.json(); }).then(function(j){
+          if (j && j.booking_code) window._bookingCode = j.booking_code;
+          if (j && j.wa_link) window._waLink = j.wa_link;
+        }).catch(function(){});
+      } catch(ex) {}
+    }
 
     try { if (window.exentiaTrack) window.exentiaTrack('form_submit_intent', { has_email: !!email, has_phone: !!phone, source: 'custom_form' }); } catch(e){}
 

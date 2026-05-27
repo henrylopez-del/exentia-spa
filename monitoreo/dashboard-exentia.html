@@ -497,7 +497,11 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     confirmNoAsistio: '¿Marcar este cliente como NO ASISTIÓ? Esta acción notifica al CRM.',
     searchPlaceholder: 'Buscar por nombre, teléfono o código...',
     csvBtn: 'Descargar CSV',
-    dfAll: 'Todo el tiempo', dfToday: 'Hoy', dfYesterday: 'Ayer', dfWeek: 'Esta semana', dfMonth: 'Este mes', df30d: 'Últimos 30 días', df90d: 'Últimos 90 días',
+    dfAll: 'Todo el tiempo', dfToday: 'Hoy', dfYesterday: 'Ayer', dfTomorrow: 'Mañana',
+    dfWeek: 'Esta semana', dfMonth: 'Este mes',
+    df30d: 'Últimos 30 días', df90d: 'Últimos 90 días',
+    dfNext7: 'Próximos 7 días', dfNext30: 'Próximos 30 días', dfNext90: 'Próximos 90 días',
+    dfNextWeek: 'Próxima semana', dfNextMonth: 'Próximo mes',
     modalPagoTitle: 'Registrar pago',
     pagoCliLabel: 'Cliente:', pagoSvcLabel: 'Servicios:', pagoCodLabel: 'Código:',
     pagoMontoLabel: 'Monto (MXN)', pagoMetodoLabel: 'Método de pago', pagoNotasLabel: 'Notas (opcional)',
@@ -568,8 +572,19 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
   });
 
   var dfOpts = [
-    {k:'all', l:T.dfAll}, {k:'today', l:T.dfToday}, {k:'yesterday', l:T.dfYesterday},
-    {k:'week', l:T.dfWeek}, {k:'month', l:T.dfMonth}, {k:'30d', l:T.df30d}, {k:'90d', l:T.df90d}
+    {k:'all', l:T.dfAll},
+    {k:'today', l:T.dfToday},
+    {k:'tomorrow', l:T.dfTomorrow},
+    {k:'yesterday', l:T.dfYesterday},
+    {k:'week', l:T.dfWeek},
+    {k:'next_week', l:T.dfNextWeek},
+    {k:'month', l:T.dfMonth},
+    {k:'next_month', l:T.dfNextMonth},
+    {k:'next_7d', l:T.dfNext7},
+    {k:'next_30d', l:T.dfNext30},
+    {k:'next_90d', l:T.dfNext90},
+    {k:'30d', l:T.df30d},
+    {k:'90d', l:T.df90d}
   ];
   var dfSel = $('date-filter');
   dfOpts.forEach(function(o){ var op = document.createElement('option'); op.value = o.k; op.textContent = o.l; dfSel.appendChild(op); });
@@ -674,9 +689,16 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     function ymd(date){ return date.toLocaleDateString('en-CA',{timeZone:TZ}); }
     if(key === 'today') return {from: today, to: today, useCreated: false};
     if(key === 'yesterday'){ var y = new Date(d); y.setDate(d.getDate()-1); var yd = ymd(y); return {from: yd, to: yd, useCreated: false}; }
+    if(key === 'tomorrow'){ var t = new Date(d); t.setDate(d.getDate()+1); var td = ymd(t); return {from: td, to: td, useCreated: false}; }
     if(key === 'week'){
       var dow = d.getDay();
       var s = new Date(d); s.setDate(d.getDate() - dow + (dow === 0 ? -6 : 1));
+      var e = new Date(s); e.setDate(s.getDate() + 6);
+      return {from: ymd(s), to: ymd(e), useCreated: false};
+    }
+    if(key === 'next_week'){
+      var dow2 = d.getDay();
+      var s = new Date(d); s.setDate(d.getDate() - dow2 + (dow2 === 0 ? -6 : 1) + 7);
       var e = new Date(s); e.setDate(s.getDate() + 6);
       return {from: ymd(s), to: ymd(e), useCreated: false};
     }
@@ -684,6 +706,17 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
       var sm = new Date(d.getFullYear(), d.getMonth(), 1);
       var em = new Date(d.getFullYear(), d.getMonth()+1, 0);
       return {from: ymd(sm), to: ymd(em), useCreated: false};
+    }
+    if(key === 'next_month'){
+      var sm = new Date(d.getFullYear(), d.getMonth()+1, 1);
+      var em = new Date(d.getFullYear(), d.getMonth()+2, 0);
+      return {from: ymd(sm), to: ymd(em), useCreated: false};
+    }
+    if(key === 'next_7d' || key === 'next_30d' || key === 'next_90d'){
+      var fwd = key === 'next_7d' ? 7 : (key === 'next_30d' ? 30 : 90);
+      var s3 = new Date(d);
+      var e3 = new Date(d); e3.setDate(d.getDate() + fwd);
+      return {from: ymd(s3), to: ymd(e3), useCreated: false};
     }
     if(key === '30d' || key === '90d'){
       var days = key === '30d' ? 30 : 90;
