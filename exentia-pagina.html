@@ -41,39 +41,57 @@
   gtag('config', 'G-LQ4YJQ2MZV');
 </script>
 
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1405416301317321');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --olive: #9a9854;
-    --olive-dark: #7d7c3f;
-    --olive-soft: #b3b074;
-    --olive-light: #c9c793;
-    --cream: #f3e4c7;
-    --cream-soft: #faf4e4;
-    --brown: #5c3a1e;
-    --brown-light: #8b6340;
+    --olive: #B0A96F;
+    --olive-dark: #8e8850;
+    --olive-soft: #c4be8e;
+    --olive-light: #d4d0ab;
+    --cream: #F2DAB2;
+    --cream-soft: #faf0dc;
+    --brown: #826040;
+    --brown-light: #a07a55;
     --white: #ffffff;
     --off-white: #fdfbf4;
-    --text: #3d2d1a;
-    --text-light: #8a7a66;
-    --shadow: rgba(92, 58, 30, 0.08);
-    --shadow-lg: rgba(92, 58, 30, 0.15);
-    --shadow-xl: rgba(92, 58, 30, 0.22);
+    --text: #4a3520;
+    --text-light: #9a8672;
+    --shadow: rgba(130, 96, 64, 0.08);
+    --shadow-lg: rgba(130, 96, 64, 0.15);
+    --shadow-xl: rgba(130, 96, 64, 0.22);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lato', sans-serif;
     background: var(--off-white);
     color: var(--text);
     line-height: 1.6;
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+  h1, h2, h3, h4 { font-family: 'Playfair Display', serif; font-weight: 400; }
   a { text-decoration: none; color: inherit; }
   img { max-width: 100%; display: block; }
   button { font-family: inherit; }
@@ -153,7 +171,7 @@
     display: block;
     margin-top: -4px;
     margin-left: 3px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lato', sans-serif;
     font-size: 9px;
     letter-spacing: 2.8px;
     color: var(--brown);
@@ -347,7 +365,7 @@
     align-items: center;
     justify-content: center;
     color: var(--brown);
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 64px;
     font-weight: 500;
     box-shadow: 0 16px 48px rgba(0,0,0,0.2);
@@ -414,7 +432,7 @@
     margin-bottom: 4px;
   }
   .value-item .label {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 22px;
     font-style: italic;
     color: var(--brown);
@@ -424,6 +442,325 @@
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--text-light);
+  }
+
+  /* ============ RIBBON TOP (promo subtle) ============ */
+  .promo-ribbon {
+    background: var(--brown);
+    color: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    padding: 0;
+    min-height: 32px;
+    font-size: 12px;
+    overflow: hidden;
+    transition: max-height 0.4s ease, min-height 0.4s ease, padding 0.3s ease;
+    max-height: 60px;
+  }
+  .promo-ribbon.hidden { max-height: 0; min-height: 0; padding: 0; border: none; }
+  .promo-ribbon-link {
+    display: inline-flex; align-items: center; gap: 12px;
+    color: var(--cream); text-decoration: none;
+    padding: 8px 44px 8px 16px;
+    transition: opacity 0.2s;
+  }
+  .promo-ribbon-link:hover { opacity: 0.88; }
+  .promo-ribbon-icon { color: var(--cream); opacity: 0.7; font-size: 14px; }
+  .promo-ribbon-text { letter-spacing: 0.3px; }
+  .promo-ribbon-text b { font-weight: 600; }
+  .promo-ribbon-cta {
+    color: var(--cream);
+    border-bottom: 1px solid rgba(243, 228, 199, 0.5);
+    padding-bottom: 1px;
+    font-weight: 500;
+    margin-left: 4px;
+  }
+  .promo-ribbon-close {
+    position: absolute; right: 12px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    color: var(--cream); opacity: 0.6;
+    cursor: pointer; padding: 4px 8px;
+    font-size: 14px;
+    transition: opacity 0.2s;
+  }
+  .promo-ribbon-close:hover { opacity: 1; }
+
+  /* ============ EXIT-INTENT POPUP ============ */
+  .exit-popup {
+    position: fixed; inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .exit-popup.open { display: flex; opacity: 1; }
+  .exit-popup-overlay {
+    position: absolute; inset: 0;
+    background: rgba(92, 58, 30, 0.55);
+    backdrop-filter: blur(3px);
+  }
+  .exit-popup-card {
+    position: relative;
+    background: var(--off-white);
+    border-radius: 14px;
+    padding: 40px 36px 32px;
+    max-width: 440px; width: 100%;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(92, 58, 30, 0.35);
+    transform: translateY(10px) scale(0.96);
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+  .exit-popup.open .exit-popup-card {
+    transform: translateY(0) scale(1);
+  }
+  .exit-popup-close {
+    position: absolute; top: 14px; right: 14px;
+    background: none; border: none;
+    color: var(--text-light); cursor: pointer;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+  .exit-popup-close:hover { background: var(--cream); }
+  .exit-popup-eyebrow {
+    display: inline-block;
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 12px;
+  }
+  .exit-popup-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 400;
+    color: var(--brown);
+    margin: 0 0 12px;
+    line-height: 1.15;
+  }
+  .exit-popup-card h3 em {
+    font-style: italic; color: var(--olive);
+  }
+  .exit-popup-card p {
+    font-size: 13.5px; color: var(--text);
+    line-height: 1.55;
+    margin: 0 0 22px;
+  }
+  .exit-popup-code {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 0 0 22px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .exit-popup-code span {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-light);
+  }
+  .exit-popup-code code {
+    font-family: 'Lato', monospace;
+    font-size: 22px; font-weight: 600;
+    color: var(--brown);
+    letter-spacing: 2px;
+  }
+  .exit-popup-card .btn {
+    width: 100%; margin-bottom: 10px;
+  }
+  .exit-popup-secondary {
+    background: none; border: none;
+    color: var(--text-light);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: color 0.2s;
+  }
+  .exit-popup-secondary:hover { color: var(--brown); }
+
+  /* ============ PAQUETES / PROMOCIONES ============ */
+  .promos {
+    background: linear-gradient(180deg, var(--off-white) 0%, var(--cream-soft, #f7f0db) 100%);
+    padding: 96px 0 80px;
+  }
+  .promos-header { text-align: center; max-width: 720px; margin: 0 auto 40px; }
+  .promos-header .eyebrow {
+    display: inline-block;
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--olive); margin-bottom: 16px;
+  }
+  .promos-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px; font-weight: 400; color: var(--brown);
+    margin: 0 0 16px;
+  }
+  .promos-header h2 em { color: var(--olive); font-style: italic; }
+  .promos-header p {
+    color: var(--text); font-size: 15px; line-height: 1.6; margin: 0;
+  }
+
+  /* Banner evergreen */
+  .promo-banner {
+    display: flex; align-items: center; gap: 20px;
+    background: var(--brown);
+    color: var(--cream);
+    padding: 22px 28px;
+    border-radius: 10px;
+    margin: 0 0 40px;
+    box-shadow: 0 6px 24px rgba(92, 58, 30, 0.15);
+  }
+  .promo-banner-icon {
+    font-size: 28px; color: var(--cream);
+    flex-shrink: 0; opacity: 0.85;
+  }
+  .promo-banner-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .promo-banner-content strong {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 400; font-style: italic;
+    color: var(--cream);
+  }
+  .promo-banner-content span {
+    font-size: 13px; opacity: 0.85; line-height: 1.5;
+  }
+  .promo-banner-content code {
+    background: var(--cream);
+    color: var(--brown);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Lato', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .promo-banner .btn-sm {
+    padding: 11px 22px; font-size: 12px;
+    background: var(--cream); color: var(--brown);
+    border-color: var(--cream);
+    flex-shrink: 0;
+  }
+  .promo-banner .btn-sm:hover {
+    background: var(--off-white); border-color: var(--off-white);
+  }
+
+  /* Grid de cards */
+  .promo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  .promo-card {
+    background: var(--white);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 28px rgba(92, 58, 30, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .promo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px rgba(92, 58, 30, 0.15);
+  }
+  .promo-card-img {
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .promo-card-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(92, 58, 30, 0.25) 100%);
+  }
+  .promo-badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--olive);
+    color: var(--cream);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(154, 152, 84, 0.4);
+    z-index: 2;
+  }
+  .promo-badge.popular { background: var(--brown); }
+  .promo-card-body {
+    padding: 24px 26px 26px;
+    display: flex; flex-direction: column;
+    flex: 1;
+  }
+  .promo-card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 500; font-style: italic;
+    color: var(--brown);
+    margin: 0 0 8px;
+    line-height: 1.15;
+  }
+  .promo-card-tagline {
+    font-size: 13px; color: var(--text-light);
+    font-style: italic;
+    line-height: 1.5;
+    margin: 0 0 18px;
+  }
+  .promo-card-includes {
+    list-style: none; margin: 0 0 22px; padding: 0;
+    display: flex; flex-direction: column; gap: 8px;
+    border-top: 1px solid var(--cream);
+    border-bottom: 1px solid var(--cream);
+    padding: 16px 0;
+  }
+  .promo-card-includes li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--text);
+    line-height: 1.4;
+  }
+  .promo-card-includes li::before {
+    content: '✓';
+    color: var(--olive);
+    font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .promo-card-pricing {
+    display: flex; align-items: baseline;
+    gap: 12px; margin: 0 0 18px;
+  }
+  .promo-original {
+    font-size: 14px;
+    color: var(--text-light);
+    text-decoration: line-through;
+    text-decoration-color: rgba(140, 120, 100, 0.6);
+  }
+  .promo-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 500;
+    color: var(--brown);
+    font-style: italic;
+    line-height: 1;
+  }
+  .promo-save {
+    background: rgba(154, 152, 84, 0.15);
+    color: var(--olive-dark);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .promo-card .btn {
+    width: 100%;
+    margin-top: auto;
+  }
+  .promos-note {
+    text-align: center;
+    margin: 36px auto 0;
+    max-width: 560px;
+    font-size: 11.5px;
+    color: var(--text-light);
+    font-style: italic;
+    line-height: 1.6;
   }
 
   /* ============ SERVICES GRID (home) ============ */
@@ -523,149 +860,6 @@
     transform: translateX(4px);
   }
 
-  /* ============ PROMOCIONES Y PAQUETES ============ */
-  .promos {
-    background: var(--cream-soft, #f3e4c7);
-    padding: 64px 0;
-  }
-  .promos-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-top: 8px;
-  }
-  .promo-card {
-    background: var(--white);
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 2px 24px var(--shadow);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .promo-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 24px 48px var(--shadow-lg);
-  }
-  .promo-tag {
-    position: absolute;
-    top: 16px; left: 16px;
-    z-index: 2;
-    background: var(--olive);
-    color: var(--white);
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    border-radius: 2px;
-    font-weight: 500;
-  }
-  .promo-tag-soft {
-    background: var(--cream);
-    color: var(--brown);
-  }
-  .promo-img {
-    height: 180px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-  }
-  .promo-img::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 50%, rgba(92, 58, 30, 0.25));
-  }
-  .promo-body {
-    padding: 26px 24px 24px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  .promo-body h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    color: var(--brown);
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  .promo-desc {
-    font-size: 13px;
-    color: var(--text-light);
-    line-height: 1.55;
-    margin-bottom: 14px;
-  }
-  .promo-list {
-    list-style: none;
-    margin: 0 0 18px;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-top: 1px solid rgba(154, 152, 84, 0.15);
-    padding-top: 14px;
-  }
-  .promo-list li {
-    font-size: 13px;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .promo-list li::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--olive);
-    flex-shrink: 0;
-  }
-  .promo-foot {
-    margin-top: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid rgba(154, 152, 84, 0.15);
-    gap: 12px;
-  }
-  .promo-prices {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-  }
-  .promo-old {
-    font-size: 12px;
-    color: var(--text-light);
-    text-decoration: line-through;
-  }
-  .promo-new {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    color: var(--olive-dark);
-    font-style: italic;
-    font-weight: 500;
-  }
-  .promo-btn {
-    padding: 10px 18px;
-    font-size: 12px;
-  }
-  .promos-disclaimer {
-    margin-top: 20px;
-    font-size: 11px;
-    color: var(--text-light);
-    text-align: center;
-    opacity: 0.75;
-    letter-spacing: 0.3px;
-  }
-  @media (max-width: 900px) {
-    .promos-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 600px) {
-    .promos-grid { grid-template-columns: 1fr; gap: 18px; }
-    .promos { padding: 48px 0; }
-  }
-
   /* ============ FILOSOFIA ============ */
   .filosofia {
     background: var(--olive);
@@ -678,7 +872,7 @@
     content: 'X';
     position: absolute;
     top: -60px; right: -60px;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 380px;
     font-weight: 400;
     color: var(--olive-dark);
@@ -1014,7 +1208,7 @@
     border-left-color: var(--olive);
   }
   .treatment-num {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 48px;
     font-weight: 300;
     color: var(--olive);
@@ -1045,7 +1239,7 @@
     white-space: nowrap;
   }
   .treatment-price {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 32px;
     color: var(--olive);
     font-weight: 500;
@@ -1313,7 +1507,7 @@
     border: none;
     cursor: pointer;
     text-align: left;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 20px;
     font-weight: 500;
     color: var(--brown);
@@ -1359,7 +1553,7 @@
     margin-bottom: 48px;
   }
   .footer-logo {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 38px;
     font-style: italic;
     color: var(--cream);
@@ -1368,7 +1562,7 @@
   }
   .footer-logo .sub {
     display: block;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lato', sans-serif;
     font-size: 9px;
     letter-spacing: 4px;
     color: var(--olive-light);
@@ -1387,7 +1581,7 @@
     text-transform: uppercase;
     color: var(--olive-light);
     margin-bottom: 24px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lato', sans-serif;
     font-weight: 600;
   }
   .footer ul { list-style: none; }
@@ -1456,7 +1650,7 @@
   }
   .sv-back:hover { background: var(--olive); color: var(--white); }
   .sv-title {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: clamp(36px, 4vw, 52px);
     color: var(--brown);
     margin-bottom: 8px;
@@ -1533,7 +1727,7 @@
     justify-content: space-between;
   }
   .sv-cat-name {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 19px;
     color: var(--brown);
     font-weight: 500;
@@ -1565,11 +1759,24 @@
     box-shadow: 0 2px 16px var(--shadow);
   }
   .sv-treatments.open {
-    max-height: 600px;
+    max-height: 1400px;
     padding: 8px 0;
   }
   .sv-group:has(.sv-treatments.open) {
     grid-column: span 2;
+  }
+  /* Intro contextual de categoria (solo masajes / faciales / spakids) */
+  .sv-intro {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--brown);
+    background: var(--cream-soft, #f7f0db);
+    border-left: 3px solid var(--olive);
+    padding: 14px 20px;
+    margin: 4px 16px 12px 16px;
+    border-radius: 6px;
   }
   .sv-treat {
     display: flex;
@@ -1626,11 +1833,11 @@
     line-height: 1.3;
   }
   .sv-treat .desc {
-    font-size: 13px;
-    color: var(--text-light);
+    font-size: 12.5px;
     line-height: 1.45;
-    margin-top: 2px;
-    max-width: 56ch;
+    color: var(--text-light);
+    margin: 2px 0 4px 0;
+    font-weight: 400;
   }
   .sv-treat .dur {
     font-size: 13px;
@@ -1650,7 +1857,7 @@
     opacity: 0.7;
   }
   .sv-treat .price {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 24px;
     color: var(--olive-dark);
     font-style: italic;
@@ -1867,21 +2074,22 @@
     text-align: center;
   }
   .modal-header .logo {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 28px;
     font-style: italic;
     color: var(--brown);
   }
   .modal-header .sub {
-    font-size: 8px;
+    font-size: 9px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: var(--olive);
+    color: var(--brown);
     display: block;
     margin-bottom: 16px;
+    font-weight: 500;
   }
   .modal-header h2 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 26px;
     font-weight: 300;
     color: var(--brown);
@@ -2039,7 +2247,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 18px;
     font-weight: 600;
     color: var(--olive-light);
@@ -2471,6 +2679,19 @@
     .hero-right { min-height: 400px; }
     .hero-values { position: static; margin-top: 40px; flex-wrap: wrap; }
     .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .promo-grid { grid-template-columns: 1fr; gap: 22px; }
+    .promos { padding: 64px 0 56px; }
+    .promos-header h2 { font-size: 34px; }
+    .promo-banner { flex-direction: column; align-items: flex-start; padding: 20px 22px; }
+    .promo-banner .btn-sm { width: 100%; text-align: center; }
+    .promo-card-img { height: 180px; }
+    .promo-ribbon { font-size: 11px; }
+    .promo-ribbon-link { gap: 8px; padding: 8px 36px 8px 12px; }
+    .promo-ribbon-cta { display: none; }
+    .promo-ribbon-text { letter-spacing: 0; }
+    .exit-popup-card { padding: 32px 24px 26px; }
+    .exit-popup-card h3 { font-size: 24px; }
+    .exit-popup-code code { font-size: 18px; }
     .filosofia-grid, .ubicacion-grid, .intro-grid { grid-template-columns: 1fr; gap: 48px; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .nav-links { display: none; }
@@ -2490,7 +2711,7 @@
 
     /* Nav */
     .nav-wrap { padding: 12px 16px; }
-    .nav-logo { height: 36px; }
+    .nav-logo { height: 34px; }
     nav .btn { padding: 10px 16px; font-size: 10px; letter-spacing: 1px; }
 
     /* Hero */
@@ -3108,6 +3329,33 @@
 </head>
 <body>
 
+<!-- ========== RIBBON TOP (promos visibility) ========== -->
+<div id="promo-ribbon" class="promo-ribbon" role="region" aria-label="Promociones">
+  <a href="#promos-anchor" class="promo-ribbon-link">
+    <span class="promo-ribbon-icon">✦</span>
+    <span class="promo-ribbon-text">Reserva paquetes desde <b>$2,600</b> · Ahorra hasta <b>20%</b></span>
+    <span class="promo-ribbon-cta">Ver paquetes →</span>
+  </a>
+  <button class="promo-ribbon-close" aria-label="Cerrar" onclick="closePromoRibbon()">&#10005;</button>
+</div>
+
+<!-- ========== EXIT-INTENT POPUP ========== -->
+<div id="exit-popup" class="exit-popup" role="dialog" aria-modal="true" aria-labelledby="exit-popup-title">
+  <div class="exit-popup-overlay" onclick="closeExitPopup()"></div>
+  <div class="exit-popup-card">
+    <button class="exit-popup-close" aria-label="Cerrar" onclick="closeExitPopup()">&#10005;</button>
+    <span class="exit-popup-eyebrow">Antes de irte</span>
+    <h3 id="exit-popup-title">Tu <em>primera visita</em> con 15% off</h3>
+    <p>Te damos la bienvenida a Exentia con un descuento exclusivo en cualquier servicio individual.</p>
+    <div class="exit-popup-code">
+      <span>Menciona el código</span>
+      <code>PRIMERA15</code>
+    </div>
+    <a href="https://wa.me/529984803595?text=Hola%2C%20es%20mi%20primera%20visita.%20Quiero%20agendar%20con%20el%20codigo%20PRIMERA15" target="_blank" class="btn" onclick="trackExitConversion()">Reservar por WhatsApp</a>
+    <button class="exit-popup-secondary" onclick="closeExitPopup()">Seguir explorando</button>
+  </div>
+</div>
+
 <!-- ========== NAV ========== -->
 <nav id="navbar">
   <div class="nav-wrap">
@@ -3118,7 +3366,7 @@
     <ul class="nav-links">
       <li><a data-nav="home">Inicio</a></li>
       <li><a data-scroll="#servicios-anchor" data-nav="home">Servicios</a></li>
-      <li><a data-scroll="#promos-anchor" data-nav="home">Promociones</a></li>
+      <li><a data-scroll="#promos-anchor" data-nav="home">Paquetes</a></li>
       <li><a data-scroll="#filosofia-anchor" data-nav="home">Filosofía</a></li>
       <li><a onclick="smartAgendar()" style="cursor:pointer">Agendar</a></li>
       <li><a data-scroll="#ubicacion">Ubicación</a></li>
@@ -3205,75 +3453,31 @@
     </div>
   </section>
 
-  <!-- PROMOCIONES Y PAQUETES (mockup placeholder · contenido final pendiente Yaz) -->
+  <!-- ========== PAQUETES & PROMOCIONES ========== -->
   <section class="promos full-bleed" id="promos-anchor">
     <div class="container">
-      <div class="section-title">
-        <span class="eyebrow">Experiencias completas con beneficio</span>
-        <h2>Promociones y <em>Paquetes</em></h2>
-        <p>Combinamos tus servicios favoritos en experiencias diseñadas para un cuidado integral.</p>
+      <div class="promos-header">
+        <span class="eyebrow">Paquetes & rituales</span>
+        <h2>Experiencias <em>diseñadas</em> para ti</h2>
+        <p>Combina tus tratamientos favoritos en rituales pensados con cuidado. Reserva paquetes completos y obtén un ahorro significativo.</p>
       </div>
-      <div class="promos-grid">
-        <article class="promo-card">
-          <div class="promo-tag">Más vendido</div>
-          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cfd7871cddf7e0694d.jpg')"></div>
-          <div class="promo-body">
-            <h3>Ritual Exentia</h3>
-            <p class="promo-desc">Masaje relajante y facial orgánico premium. La pausa que tu cuerpo y tu piel necesitan.</p>
-            <ul class="promo-list">
-              <li>Masaje Exentia · 50 min</li>
-              <li>Facial Orgánico · 50 min</li>
-            </ul>
-            <div class="promo-foot">
-              <div class="promo-prices">
-                <span class="promo-old">$3,100</span>
-                <span class="promo-new">$2,650</span>
-              </div>
-              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
-            </div>
-          </div>
-        </article>
-        <article class="promo-card">
-          <div class="promo-tag promo-tag-soft">Recomendado</div>
-          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817b493f130b2000ccac7.jpg')"></div>
-          <div class="promo-body">
-            <h3>Look Completo</h3>
-            <p class="promo-desc">Cabello, manos y maquillaje listo. Sales del salón preparada para esa ocasión especial.</p>
-            <ul class="promo-list">
-              <li>Corte y peinado</li>
-              <li>Manicura Exentia con Gel</li>
-              <li>Maquillaje Social</li>
-            </ul>
-            <div class="promo-foot">
-              <div class="promo-prices">
-                <span class="promo-old">$3,240</span>
-                <span class="promo-new">$2,750</span>
-              </div>
-              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
-            </div>
-          </div>
-        </article>
-        <article class="promo-card">
-          <div class="promo-tag promo-tag-soft">Mamá y mini</div>
-          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf019dc508d3d450f0.jpg')"></div>
-          <div class="promo-body">
-            <h3>Tarde de Princesas</h3>
-            <p class="promo-desc">Spa para mamá y experiencia SpaKids para la peque. Tiempo de calidad en paralelo.</p>
-            <ul class="promo-list">
-              <li>Masaje Exentia (mamá)</li>
-              <li>Spa Kids (peque)</li>
-            </ul>
-            <div class="promo-foot">
-              <div class="promo-prices">
-                <span class="promo-old">$3,100</span>
-                <span class="promo-new">$2,490</span>
-              </div>
-              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
-            </div>
-          </div>
-        </article>
+
+      <!-- Banner Evergreen: primera visita -->
+      <div class="promo-banner">
+        <div class="promo-banner-icon">✦</div>
+        <div class="promo-banner-content">
+          <strong>¿Tu primera visita?</strong>
+          <span>Disfruta <b>15% de descuento</b> en cualquier servicio individual. Menciona el código <code>PRIMERA15</code> al reservar por WhatsApp.</span>
+        </div>
+        <a href="https://wa.me/529984803595?text=Hola%2C%20es%20mi%20primera%20visita.%20Quiero%20agendar%20con%20el%20codigo%20PRIMERA15" target="_blank" class="btn btn-outline btn-sm">Reservar</a>
       </div>
-      <p class="promos-disclaimer">Promociones de muestra. Confirmamos disponibilidad y combinación al reservar.</p>
+
+      <!-- Grid de paquetes -->
+      <div class="promo-grid" id="promo-grid">
+        <!-- Populated by JS desde PACKAGES -->
+      </div>
+
+      <p class="promos-note">Los precios y combinaciones de paquetes son una <b>propuesta inicial</b>. Tu equipo de Exentia puede ajustarlos según disponibilidad y promociones vigentes.</p>
     </div>
   </section>
 
@@ -3633,7 +3837,7 @@
       <p>Selecciona el día y horario que mejor te acomode.</p>
     </div>
     <div class="modal-body modal-body-calendar">
-      <iframe src="https://api.leadconnectorhq.com/widget/booking/VUbTtrop8lZFx8HRmJzV" class="calendar-iframe-tall" scrolling="no" title="Calendario de citas Exentia"></iframe>
+      <iframe src="https://api.leadconnectorhq.com/widget/booking/zamElEDAAOQysgG8As0b" class="calendar-iframe-tall" scrolling="no" title="Calendario de citas Exentia"></iframe>
       <script src="https://api.leadconnectorhq.com/js/form_embed.js" type="text/javascript"></script>
     </div>
   </div>
@@ -3700,6 +3904,9 @@
         </div>
 
         <div id="cf-services-chip" class="form-chip"></div>
+        <div id="cf-edit-data" style="display:none; text-align:center; margin: -8px 0 8px; font-size: 12px;">
+          <a href="#" onclick="window._formUserData={}; document.getElementById('cf-firstname').value=''; document.getElementById('cf-lastname').value=''; var p=document.getElementById('cf-phone'); if(p) p.value=''; var e=document.getElementById('cf-email'); if(e) e.value=''; this.parentElement.style.display='none'; return false;" style="color: var(--brown-light); text-decoration: underline;">¿Datos incorrectos? Editar</a>
+        </div>
         <div id="cf-error" class="form-error" style="display:none;"></div>
         <button type="submit" class="btn" id="cf-submit" style="width:100%; justify-content:center;">
           <span class="only-default">Continuar a WhatsApp</span>
@@ -3965,6 +4172,211 @@
   };
 
   // ============================================
+  // PACKAGES (paquetes de servicios con descuento — Yaz ajustar)
+  // ============================================
+  const TEL_EXENTIA = '529984803595';
+  const PACKAGES = window.PACKAGES = [
+    {
+      slug: 'ritual-dia-completo',
+      name: 'Ritual Día Completo',
+      tagline: 'Una pausa para reconectarte contigo misma — masaje, facial y manicura en una sola tarde.',
+      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf982fd67a35f25867.jpg',
+      includes: ['Masaje Exentia', 'Facial Orgánico', 'Manicura Exentia con Esmalte'],
+      original: 3490,
+      price: 2900,
+      badge: 'Más popular',
+      badgeClass: 'popular',
+      mode: 'cart'
+    },
+    {
+      slug: 'sol-luna-pareja',
+      name: 'Sol & Luna',
+      tagline: 'Ritual diseñado para dos. Masaje y facial sincronizados para celebrar lo que los une.',
+      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cfd5a667daf6574559.jpg',
+      includes: ['2 × Masaje Exentia (en pareja)', '2 × Facial Orgánico', 'Detalle de bienvenida'],
+      original: 6200,
+      price: 4990,
+      badge: 'Para parejas',
+      mode: 'whatsapp'
+    },
+    {
+      slug: 'novia-radiante',
+      name: 'Novia Radiante',
+      tagline: 'Preparación integral para tu día especial. Lucir y sentirte radiante de pies a cabeza.',
+      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cfd7871cddf7e0694d.jpg',
+      includes: ['Facial Orgánico', 'Laminado de Ceja', 'Maquillaje de Novia', 'Peinado Novia'],
+      original: 6000,
+      price: 4900,
+      badge: 'Bodas',
+      mode: 'whatsapp'
+    },
+    {
+      slug: 'mama-embarazada',
+      name: 'Mamá Embarazada',
+      tagline: 'Bienestar suave y seguro para esta etapa única. Diseñado especialmente para futuras mamás.',
+      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf9c84d38e9e886f5b.jpg',
+      includes: ['Masaje Prenatal', 'Facial Orgánico'],
+      original: 3100,
+      price: 2600,
+      badge: 'Prenatal',
+      mode: 'cart'
+    }
+  ];
+
+  function renderPromos() {
+    const grid = document.getElementById('promo-grid');
+    if (!grid) return;
+    grid.innerHTML = PACKAGES.map(p => {
+      const saved = p.original - p.price;
+      const savedPct = Math.round((saved / p.original) * 100);
+      return `
+        <article class="promo-card" data-pkg="${p.slug}">
+          <div class="promo-card-img" style="background-image:url('${p.img}')">
+            <span class="promo-badge ${p.badgeClass || ''}">${p.badge}</span>
+          </div>
+          <div class="promo-card-body">
+            <h3 class="promo-card-name">${p.name}</h3>
+            <p class="promo-card-tagline">${p.tagline}</p>
+            <ul class="promo-card-includes">
+              ${p.includes.map(i => `<li>${i}</li>`).join('')}
+            </ul>
+            <div class="promo-card-pricing">
+              <span class="promo-original">$${p.original.toLocaleString('es-MX')}</span>
+              <span class="promo-price">$${p.price.toLocaleString('es-MX')}</span>
+              <span class="promo-save">Ahorra $${saved.toLocaleString('es-MX')} (${savedPct}%)</span>
+            </div>
+            <button class="btn" data-pkg-cta="${p.slug}">Reservar paquete</button>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    grid.querySelectorAll('[data-pkg-cta]').forEach(btn => {
+      btn.addEventListener('click', function(){
+        reservarPaquete(this.getAttribute('data-pkg-cta'));
+      });
+    });
+  }
+
+  function reservarPaquete(slug) {
+    const pkg = PACKAGES.find(p => p.slug === slug);
+    if (!pkg) return;
+    try { if (window.exentiaTrack) window.exentiaTrack('package_click', { package_slug: slug, package_name: pkg.name }); } catch(e){}
+
+    if (pkg.mode === 'whatsapp') {
+      // Multi-persona / coordinación especial → WhatsApp con mensaje pre-llenado
+      const lines = [
+        'Hola, quiero reservar el paquete "' + pkg.name + '"',
+        '',
+        'Incluye:',
+        ...pkg.includes.map(i => '- ' + i),
+        '',
+        'Precio paquete: $' + pkg.price.toLocaleString('es-MX'),
+        '',
+        '¿Me pueden ayudar a coordinar fechas? Gracias.'
+      ];
+      const text = encodeURIComponent(lines.join('\n'));
+      window.open('https://wa.me/' + TEL_EXENTIA + '?text=' + text, '_blank');
+    } else {
+      // Modo cart: limpiar carrito, agregar servicios del paquete, abrir form modal
+      cart.length = 0;
+      pkg.includes.forEach(name => {
+        // Solo agregar si el servicio existe en SERVICES (algunos son "2 ×" etc — ignorados aquí)
+        const exists = Object.values(SERVICES).some(cat =>
+          cat.treatments.some(t => t.name === name)
+        );
+        if (exists) cart.push(name);
+      });
+      try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(e){}
+      updateBadge();
+      if (typeof openFormModal === 'function') openFormModal();
+      else if (typeof window.openFormModal === 'function') window.openFormModal();
+    }
+  }
+  window.reservarPaquete = reservarPaquete;
+
+  // ============================================
+  // RIBBON TOP (close + persist dismissal session)
+  // ============================================
+  function closePromoRibbon() {
+    var r = document.getElementById('promo-ribbon');
+    if (r) r.classList.add('hidden');
+    try { sessionStorage.setItem('ex_ribbon_closed', '1'); } catch(e){}
+    try { if (window.exentiaTrack) window.exentiaTrack('promo_ribbon_close'); } catch(e){}
+  }
+  window.closePromoRibbon = closePromoRibbon;
+
+  function initPromoRibbon() {
+    try {
+      if (sessionStorage.getItem('ex_ribbon_closed') === '1') {
+        var r = document.getElementById('promo-ribbon');
+        if (r) r.classList.add('hidden');
+      }
+    } catch(e){}
+    // Track clicks en el ribbon link
+    var link = document.querySelector('.promo-ribbon-link');
+    if (link) link.addEventListener('click', function(){
+      try { if (window.exentiaTrack) window.exentiaTrack('promo_ribbon_click'); } catch(e){}
+    });
+  }
+
+  // ============================================
+  // EXIT-INTENT POPUP
+  // ============================================
+  var _exitPopupShown = false;
+  function showExitPopup() {
+    if (_exitPopupShown) return;
+    try {
+      if (sessionStorage.getItem('ex_exit_popup_seen') === '1') return;
+      sessionStorage.setItem('ex_exit_popup_seen', '1');
+    } catch(e){}
+    _exitPopupShown = true;
+    var p = document.getElementById('exit-popup');
+    if (p) p.classList.add('open');
+    try { if (window.exentiaTrack) window.exentiaTrack('exit_popup_shown'); } catch(e){}
+  }
+  function closeExitPopup() {
+    var p = document.getElementById('exit-popup');
+    if (p) p.classList.remove('open');
+    try { if (window.exentiaTrack) window.exentiaTrack('exit_popup_close'); } catch(e){}
+  }
+  function trackExitConversion() {
+    try { if (window.exentiaTrack) window.exentiaTrack('exit_popup_wa_click', { code: 'PRIMERA15' }); } catch(e){}
+  }
+  window.closeExitPopup = closeExitPopup;
+  window.trackExitConversion = trackExitConversion;
+
+  function initExitIntent() {
+    // Desktop: mouse hacia el top (mouseleave evento top edge)
+    document.addEventListener('mouseleave', function(e){
+      if (e.clientY <= 0 && e.relatedTarget == null) {
+        showExitPopup();
+      }
+    });
+    // Mobile / tablet: scroll-up rapido (intencion de cerrar tab pull-down)
+    var lastY = window.scrollY;
+    var lastT = Date.now();
+    window.addEventListener('scroll', function(){
+      var now = Date.now();
+      var dy = lastY - window.scrollY; // positivo = scroll up
+      var dt = now - lastT;
+      if (dt > 0 && dt < 500 && dy > 200) {
+        // Solo si ya hizo scroll de al menos 1500px durante la sesion (no recien aterrizar)
+        if (lastY > 1500) showExitPopup();
+      }
+      lastY = window.scrollY;
+      lastT = now;
+    }, { passive: true });
+    // Fallback en mobile: si pasa 60s sin interaccion despues de scroll
+    var hasScrolled = false;
+    window.addEventListener('scroll', function(){ hasScrolled = true; }, { passive: true, once: true });
+    setTimeout(function(){
+      if (hasScrolled && !_exitPopupShown && document.visibilityState === 'hidden') {
+        showExitPopup();
+      }
+    }, 60000);
+  }
+
   // RENDERING FUNCTIONS
   // ============================================
 
@@ -4259,9 +4671,12 @@
   // ============================================
   document.addEventListener('DOMContentLoaded', () => {
     renderServicesGrid();
+    renderPromos();
     renderFooterServices();
     updateBadge();
     handleRoute();
+    initPromoRibbon();
+    initExitIntent();
 
     // Nav scroll effect
     const navbar = document.getElementById('navbar');
@@ -4378,7 +4793,7 @@
     history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
 
     // Also set iframe src with params as backup
-    var calUrl = 'https://api.leadconnectorhq.com/widget/booking/VUbTtrop8lZFx8HRmJzV';
+    var calUrl = 'https://api.leadconnectorhq.com/widget/booking/zamElEDAAOQysgG8As0b';
     var p = ['locale=es'];
     if (window._formUserData.firstName) p.push('first_name=' + encodeURIComponent(window._formUserData.firstName));
     if (window._formUserData.lastName) p.push('last_name=' + encodeURIComponent(window._formUserData.lastName));
@@ -4501,6 +4916,15 @@
     if (em && d.email) em.value = d.email;
     var err = document.getElementById('cf-error');
     if (err) err.style.display = 'none';
+    // Show "edit data" link if form is pre-filled
+    var editLink = document.getElementById('cf-edit-data');
+    if (editLink) {
+      if (d.firstName || d.phone || d.email) {
+        editLink.style.display = 'block';
+      } else {
+        editLink.style.display = 'none';
+      }
+    }
     openModal('modal-form');
     try { if (window.exentiaTrack) window.exentiaTrack('form_modal_open', { source: 'custom_form', mode: mode, servicios: (cart || []).join(',') }); } catch(e){}
   }
@@ -4566,51 +4990,48 @@
         try { document.getElementById('cf-email').focus(); } catch(_){}
         return false;
       }
-      // Detectar errores de tipeo comunes en dominios de correo
-      var emailTypos = {
-        // Gmail
-        'gmial.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gamil.com': 'gmail.com',
-        'gnail.com': 'gmail.com', 'gmail.co': 'gmail.com', 'gmaill.com': 'gmail.com',
-        'gmail.con': 'gmail.com', 'gmail.comm': 'gmail.com', 'gmail.om': 'gmail.com',
-        'gmai.com': 'gmail.com', 'gmil.com': 'gmail.com', 'gemail.com': 'gmail.com',
-        'gimail.com': 'gmail.com', 'gmail.cm': 'gmail.com', 'gmail.cim': 'gmail.com',
-        'gmail.cpm': 'gmail.com', 'gmail.vom': 'gmail.com', 'gmail.xom': 'gmail.com',
-        // Hotmail
-        'hotmial.com': 'hotmail.com', 'hotmal.com': 'hotmail.com', 'hotmil.com': 'hotmail.com',
-        'hotmail.con': 'hotmail.com', 'hotmail.comm': 'hotmail.com', 'hotamil.com': 'hotmail.com',
-        'hotmai.com': 'hotmail.com', 'hotmaill.com': 'hotmail.com', 'hotmail.cm': 'hotmail.com',
-        'hotmail.co': 'hotmail.com', 'hotmail.om': 'hotmail.com', 'hotmails.com': 'hotmail.com',
-        'hotmaul.com': 'hotmail.com', 'hotnail.com': 'hotmail.com', 'hotmeil.com': 'hotmail.com',
-        // Outlook
-        'outlok.com': 'outlook.com', 'outllok.com': 'outlook.com', 'ourlook.com': 'outlook.com',
-        'outlook.con': 'outlook.com', 'outook.com': 'outlook.com', 'outloock.com': 'outlook.com',
-        'outlool.com': 'outlook.com', 'outlookk.com': 'outlook.com', 'outloook.com': 'outlook.com',
-        'outlook.cm': 'outlook.com', 'outlook.co': 'outlook.com', 'outlook.om': 'outlook.com',
-        'outlook.comm': 'outlook.com', 'outlook.vom': 'outlook.com', 'outlook.cpm': 'outlook.com',
-        'outllook.com': 'outlook.com', 'outluk.com': 'outlook.com', 'autlook.com': 'outlook.com',
-        'ooutlook.com': 'outlook.com', 'outlokk.com': 'outlook.com', 'outlock.com': 'outlook.com',
-        'otlook.com': 'outlook.com', 'outlok.es': 'outlook.es', 'outlook.es.com': 'outlook.es',
-        // Yahoo
-        'yahooo.com': 'yahoo.com', 'yaho.com': 'yahoo.com', 'yahoo.con': 'yahoo.com',
-        'yahoo.cm': 'yahoo.com', 'yahoo.comm': 'yahoo.com', 'yahoo.om': 'yahoo.com',
-        'yhaoo.com': 'yahoo.com', 'yahho.com': 'yahoo.com', 'yaoo.com': 'yahoo.com',
-        // iCloud
-        'iclud.com': 'icloud.com', 'icould.com': 'icloud.com', 'icloud.con': 'icloud.com',
-        'icloud.cm': 'icloud.com', 'icluod.com': 'icloud.com', 'iclod.com': 'icloud.com',
-        // Live
-        'live.con': 'live.com', 'live.comm': 'live.com', 'live.cm': 'live.com',
-        'live.om': 'live.com', 'lve.com': 'live.com',
-        // Protonmail
-        'protonmal.com': 'protonmail.com', 'protonmail.con': 'protonmail.com',
-        'protonmial.com': 'protonmail.com', 'protonmail.cm': 'protonmail.com'
-      };
+      // Detectar typos en dominios populares usando distancia de edición (Levenshtein)
+      // Si el dominio se parece a uno conocido (≤2 ediciones), sugiere corrección.
+      // Dominios personalizados (empresa.com) pasan sin problema.
+      var knownDomains = [
+        'gmail.com', 'hotmail.com', 'outlook.com', 'outlook.es',
+        'yahoo.com', 'yahoo.com.mx', 'icloud.com', 'live.com',
+        'live.com.mx', 'protonmail.com', 'hotmail.es'
+      ];
+      function levenshtein(a, b) {
+        var m = a.length, n = b.length;
+        var d = [];
+        for (var i = 0; i <= m; i++) { d[i] = [i]; }
+        for (var j = 0; j <= n; j++) { d[0][j] = j; }
+        for (var i = 1; i <= m; i++) {
+          for (var j = 1; j <= n; j++) {
+            var cost = a[i-1] === b[j-1] ? 0 : 1;
+            d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + cost);
+          }
+        }
+        return d[m][n];
+      }
       var emailDomain = email.split('@')[1];
-      if (emailDomain && emailTypos[emailDomain.toLowerCase()]) {
-        var suggestion = emailTypos[emailDomain.toLowerCase()];
-        err.innerHTML = '¿Quisiste escribir <b>' + email.split('@')[0] + '@' + suggestion + '</b>? Corrige tu correo para continuar.';
-        err.style.display = 'block';
-        try { document.getElementById('cf-email').focus(); } catch(_){}
-        return false;
+      if (emailDomain) {
+        var domLower = emailDomain.toLowerCase();
+        // Si es exactamente un dominio conocido, está bien
+        var isKnown = knownDomains.indexOf(domLower) !== -1;
+        if (!isKnown) {
+          // Buscar el dominio conocido más cercano
+          var bestMatch = null;
+          var bestDist = 999;
+          for (var k = 0; k < knownDomains.length; k++) {
+            var dist = levenshtein(domLower, knownDomains[k]);
+            if (dist < bestDist) { bestDist = dist; bestMatch = knownDomains[k]; }
+          }
+          // Si está a ≤2 ediciones de un dominio conocido, es probablemente un typo
+          if (bestMatch && bestDist > 0 && bestDist <= 2) {
+            err.innerHTML = '¿Quisiste escribir <b>' + email.split('@')[0] + '@' + bestMatch + '</b>? Corrige tu correo para continuar.';
+            err.style.display = 'block';
+            try { document.getElementById('cf-email').focus(); } catch(_){}
+            return false;
+          }
+        }
       }
     }
     err.style.display = 'none';
@@ -4708,6 +5129,12 @@
     var url = 'https://wa.me/529984803595?text=' + encodeURIComponent(msg);
     try { if (window.exentiaTrack) window.exentiaTrack('form_submit_whatsapp', { source: 'choice_modal', booking_code: window._bookingCode || null, has_email: !!d.email, has_phone: !!d.phone, n_servicios: serv.length }); } catch(e){}
     window.open(url, '_blank');
+    // Reset flow so user can start over
+    closeModal('modal-choice');
+    cart.length = 0;
+    localStorage.setItem('exentia_cart', JSON.stringify(cart));
+    updateBadge();
+    window._formUserData = {};
   };
 
   window.goCalendar = function() {
@@ -4724,7 +5151,7 @@
       }, 280);
       return;
     }
-    var calUrl = 'https://api.leadconnectorhq.com/widget/booking/VUbTtrop8lZFx8HRmJzV';
+    var calUrl = 'https://api.leadconnectorhq.com/widget/booking/zamElEDAAOQysgG8As0b';
     var p = ['locale=es'];
     if (d.firstName) p.push('first_name=' + encodeURIComponent(d.firstName));
     if (d.lastName) p.push('last_name=' + encodeURIComponent(d.lastName));
@@ -4770,7 +5197,7 @@
     const el = document.getElementById('cart-panel-items');
     if (!el) return;
     if (cart.length === 0) {
-      el.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:#8a7a66;">No hay servicios seleccionados</div>';
+      el.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:#9a8672;">No hay servicios seleccionados</div>';
       return;
     }
     el.innerHTML = cart.map((s, i) =>
@@ -4847,6 +5274,11 @@
             <span class="arrow">&#9660;</span>
           </div>
           <div class="sv-treatments" id="sv-t-${s.slug}">`;
+      // Intro de contexto solo para categorias con explicacion relevante
+      const showIntro = ['masajes', 'faciales', 'spakids'].includes(s.slug);
+      if (showIntro && s.shortDesc) {
+        html += `<div class="sv-intro">${s.shortDesc}</div>`;
+      }
       s.treatments.forEach(t => {
         const isOn = cart.includes(t.name);
         html += `
@@ -5039,6 +5471,14 @@
     if (asObj.type === 'BOOKING_SUCCESS' || asObj.type === 'CALENDAR_BOOKED' ||
         /booking_success|calendar_booked|appointment_created/i.test(asStr)) {
       T('calendar_booking_success', { source: 'ghl_postmessage' });
+      // Reset flow after successful booking
+      setTimeout(function(){
+        cart.length = 0;
+        localStorage.setItem('exentia_cart', JSON.stringify(cart));
+        if (typeof updateBadge === 'function') updateBadge();
+        window._formUserData = {};
+        closeModal('modal-calendar');
+      }, 1500);
     }
     // GHL form submit success
     if (asObj.type === 'FORM_SUBMITTED' || asObj.type === 'form_submission_success' ||

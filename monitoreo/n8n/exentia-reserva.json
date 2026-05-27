@@ -10,28 +10,22 @@
           "allowedOrigins": "*"
         }
       },
-      "id": "exentia-reserva-wh",
+      "id": "a98fa516-f032-4acb-8e43-3ba7e78b8fa6",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [
-        240,
-        300
-      ],
+      "position": [-160, -80],
       "webhookId": "exentia-reserva"
     },
     {
       "parameters": {
-        "jsCode": "// Normalize form submit, gen booking_code, build wa.me link\nlet body = $input.item.json.body || $input.item.json;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch(e) { body = {}; } }\nbody = body || {};\n\nfunction genCode() {\n  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\n  let r = 'EX-';\n  for (let i = 0; i < 8; i++) r += chars[Math.floor(Math.random()*chars.length)];\n  return r;\n}\n\nconst booking_code = genCode();\nconst telYaz = '529982XXXXXXX';\n\nlet servicios = body.servicios;\nif (typeof servicios === 'string') servicios = [{ slug: servicios }];\nif (!Array.isArray(servicios)) servicios = [];\n\nconst servicioSlug = servicios[0]?.slug || 'masaje';\nconst pref = (body.preferencia_sexo || 'I').toUpperCase();\nconst prefTexto = pref === 'H' ? 'Hombre' : pref === 'M' ? 'Mujer' : 'Indistinto';\nconst zona = body.zona_colonia || 'Cancun';\nconst waText = ('Hola, quiero reservar un masaje ' + servicioSlug + ' en zona ' + zona + '. Preferencia: ' + prefTexto + '. Folio ' + booking_code + '.')\n  .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');\nconst wa_link = 'https://wa.me/' + telYaz + '?text=' + encodeURIComponent(waText);\n\nconst payload = {\n  booking_code,\n  lead_ref: body.lead_ref || null,\n  ghl_contact_id: body.ghl_contact_id || null,\n  cliente_nombre: body.cliente_nombre || null,\n  cliente_telefono: body.cliente_telefono || null,\n  cliente_email: body.cliente_email || null,\n  servicios: servicios,\n  preferencia_sexo: pref,\n  zona_municipio: 'Cancun',\n  zona_colonia: body.zona_colonia || null,\n  direccion_libre: body.direccion_libre || null,\n  direccion_maps_url: body.direccion_maps_url || null,\n  notas_cliente: body.notas_cliente || null,\n  modo_asignacion: 'whatsapp_group',\n  estado: 'reservo'\n};\nreturn { json: { payload, booking_code, wa_link } };"
+        "jsCode": "// Normalize form submit, gen booking_code, build wa.me link\nlet body = $input.item.json.body || $input.item.json;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch(e) { body = {}; } }\nbody = body || {};\n\nfunction genCode() {\n  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\n  let r = 'EX-';\n  for (let i = 0; i < 8; i++) r += chars[Math.floor(Math.random()*chars.length)];\n  return r;\n}\n\nconst booking_code = genCode();\nconst telYaz = '529984803595';\n\nlet servicios = body.servicios;\nif (typeof servicios === 'string') servicios = [{ slug: servicios }];\nif (!Array.isArray(servicios)) servicios = [];\n\nconst servicioSlug = servicios[0]?.slug || 'masaje';\nconst pref = (body.preferencia_sexo || 'I').toUpperCase();\nconst prefTexto = pref === 'H' ? 'Hombre' : pref === 'M' ? 'Mujer' : 'Indistinto';\nconst zona = body.zona_colonia || 'Cancun';\nconst waText = ('Hola, quiero reservar ' + servicioSlug + ' en zona ' + zona + '. Preferencia: ' + prefTexto + '. Folio ' + booking_code + '.')\n  .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');\nconst wa_link = 'https://wa.me/' + telYaz + '?text=' + encodeURIComponent(waText);\n\n// Servicios como string comma-separated para GHL custom field\nconst serviciosStr = servicios.map(s => s.slug || s).filter(Boolean).join(',');\n\nconst payload = {\n  booking_code,\n  lead_ref: body.lead_ref || null,\n  ghl_contact_id: body.ghl_contact_id || null,\n  cliente_nombre: body.cliente_nombre || null,\n  cliente_telefono: body.cliente_telefono || null,\n  cliente_email: body.cliente_email || null,\n  servicios: servicios,\n  preferencia_sexo: pref,\n  zona_municipio: 'Cancun',\n  zona_colonia: body.zona_colonia || null,\n  direccion_libre: body.direccion_libre || null,\n  direccion_maps_url: body.direccion_maps_url || null,\n  notas_cliente: body.notas_cliente || null,\n  modo_asignacion: 'whatsapp_group',\n  estado: 'reservo'\n};\n\n// Split nombre for GHL upsert\nconst nombre = (body.cliente_nombre || '').trim();\nconst parts = nombre.split(' ');\nconst firstName = parts[0] || '';\nconst lastName = parts.slice(1).join(' ') || '';\n\nreturn { json: {\n  payload,\n  booking_code,\n  wa_link,\n  serviciosStr,\n  firstName,\n  lastName,\n  phone: body.cliente_telefono || null,\n  email: body.cliente_email || null,\n  lead_ref: body.lead_ref || null\n} };"
       },
-      "id": "exentia-reserva-nm",
+      "id": "5ba4a3c0-f510-4b66-8aaf-caa9efadfce7",
       "name": "Normalize",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        460,
-        300
-      ]
+      "position": [64, -80]
     },
     {
       "parameters": {
@@ -41,33 +35,67 @@
           "queryReplacement": "={{ JSON.stringify($json.payload) }}"
         }
       },
-      "id": "exentia-reserva-pg",
+      "id": "6544ea61-0fd7-4854-a77b-79d44caa91d5",
       "name": "Postgres",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [
-        680,
-        300
-      ],
+      "position": [288, -80],
       "credentials": {
         "postgres": {
-          "id": "gmDIcD6HxZUR2ixx",
-          "name": "Postgres account 2"
+          "id": "fR7LZX8uV0iHS9oP",
+          "name": "Postgres account"
         }
       }
     },
     {
       "parameters": {
-        "jsCode": "return [{ json: {\n  success: true,\n  booking_code: $('Postgres').item.json.booking_code,\n  id: $('Postgres').item.json.id,\n  wa_link: $('Normalize').item.json.wa_link\n} }];"
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/contacts/upsert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ locationId: '0hGSRrhxkdywVQxCsNOi', firstName: $('Normalize').item.json.firstName, lastName: $('Normalize').item.json.lastName, email: $('Normalize').item.json.email, phone: $('Normalize').item.json.phone, customFields: [ { id: 'ETSBOfoZqy1ng2RFBPzm', field_value: $('Normalize').item.json.serviciosStr }, $('Normalize').item.json.lead_ref ? { id: 'JgsK2j4h1p6Gf7pw0WDS', field_value: $('Normalize').item.json.lead_ref } : null ].filter(Boolean) }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false
+            }
+          }
+        }
       },
-      "id": "exentia-reserva-br",
+      "id": "ghl-upsert-contact",
+      "name": "Upsert Contact GHL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [508, -80],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PBgp7jLU2uAJz3t8",
+          "name": "GHL Exentia Bearer"
+        }
+      },
+      "continueOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Save ghl_contact_id from upsert response for downstream use\nconst ghlResp = $input.first().json;\nconst contactId = ghlResp?.contact?.id || ghlResp?.contactId || null;\n\nreturn [{ json: {\n  success: true,\n  booking_code: $('Postgres').item.json.booking_code,\n  id: $('Postgres').item.json.id,\n  wa_link: $('Normalize').item.json.wa_link,\n  ghl_contact_id: contactId\n} }];"
+      },
+      "id": "2a3324d3-1b30-4647-b3f8-b3af8b1f67e2",
       "name": "Build Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        900,
-        300
-      ]
+      "position": [728, -80]
     },
     {
       "parameters": {
@@ -88,69 +116,33 @@
           }
         }
       },
-      "id": "exentia-reserva-rs",
+      "id": "9913e000-e0a1-4291-ae5d-b47c9abc38fb",
       "name": "Respond 200",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [
-        1120,
-        300
-      ]
+      "position": [948, -80]
     }
   ],
   "connections": {
     "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Normalize",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Normalize", "type": "main", "index": 0}]]
     },
     "Normalize": {
-      "main": [
-        [
-          {
-            "node": "Postgres",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Postgres", "type": "main", "index": 0}]]
     },
     "Postgres": {
-      "main": [
-        [
-          {
-            "node": "Build Response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Upsert Contact GHL", "type": "main", "index": 0}]]
+    },
+    "Upsert Contact GHL": {
+      "main": [[{"node": "Build Response", "type": "main", "index": 0}]]
     },
     "Build Response": {
-      "main": [
-        [
-          {
-            "node": "Respond 200",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Respond 200", "type": "main", "index": 0}]]
     }
   },
-  "active": false,
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate"
   },
-  "tags": [
-    {
-      "name": "exentia"
-    }
-  ]
+  "active": true
 }
