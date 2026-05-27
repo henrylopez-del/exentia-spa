@@ -19,7 +19,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Accept payloads from BOTH:\n//  A) GHL Workflow trigger 'tag added pago' → { contact_id, tag, trigger_type }\n//  B) Dashboard payment register → { contact_id, monto, metodo, source:'dashboard', pago_id, booking_code, notas }\nlet body = $input.item.json.body || $input.item.json;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch(e) { body = {}; } }\nbody = body || {};\n\nconst contact_id = body.contact_id || body.contactId || (body.contact && body.contact.id) || null;\nconst tag = body.tag || null;\nconst opp_id = body.opportunity_id || body.opportunityId || null;\n\nconst source = body.source || (body.pago_id ? 'dashboard' : (body.tag ? 'ghl_tag' : 'unknown'));\nconst pago_id = body.pago_id || null;\nconst monto = body.monto != null ? parseFloat(body.monto) : null;\nconst metodo = body.metodo || null;\nconst booking_code = body.booking_code || null;\nconst notas = body.notas || null;\nconst trigger_type = body.trigger_type || (source === 'dashboard' ? 'dashboard_payment' : (tag ? 'tag_added' : 'unknown'));\n\nif (!contact_id) {\n  return { json: { valid: false, error: 'contact_id missing' } };\n}\n\nreturn { json: {\n  valid: true,\n  contact_id,\n  trigger_type,\n  tag,\n  opp_id,\n  source,\n  pago_id,\n  monto,\n  metodo,\n  booking_code,\n  notas,\n  is_dashboard: source === 'dashboard' && monto && monto > 0,\n  is_ghl_tag: source === 'ghl_tag' || (tag === 'pago' && !pago_id),\n  received_at: new Date().toISOString()\n} };"
+        "jsCode": "// Accept payloads from BOTH:\n//  A) GHL Workflow Webhook Action — Custom Data llega en body.customData.*\n//  B) Dashboard fetch directo — todo en body.*\nlet rawBody = $input.item.json.body || $input.item.json;\nif (typeof rawBody === 'string') { try { rawBody = JSON.parse(rawBody); } catch(e) { rawBody = {}; } }\nrawBody = rawBody || {};\n\n// Mergear customData (GHL Workflow Action) en el body raíz\nconst customData = (rawBody.customData && typeof rawBody.customData === 'object') ? rawBody.customData : {};\nconst body = Object.assign({}, customData, rawBody);\n\nconst contact_id = body.contact_id || body.contactId || (body.contact && body.contact.id) || null;\nconst tag = body.tag || null;\nconst opp_id = body.opportunity_id || body.opportunityId || null;\n\nconst source = body.source || (body.pago_id ? 'dashboard' : (body.tag ? 'ghl_tag' : 'unknown'));\nconst pago_id = body.pago_id || null;\nconst monto = body.monto != null ? parseFloat(body.monto) : null;\nconst metodo = body.metodo || null;\nconst booking_code = body.booking_code || null;\nconst notas = body.notas || null;\nconst trigger_type = body.trigger_type || (source === 'dashboard' ? 'dashboard_payment' : (tag ? 'tag_added' : 'unknown'));\n\nif (!contact_id) {\n  return { json: { valid: false, error: 'contact_id missing' } };\n}\n\nreturn { json: {\n  valid: true,\n  contact_id,\n  trigger_type,\n  tag,\n  opp_id,\n  source,\n  pago_id,\n  monto,\n  metodo,\n  booking_code,\n  notas,\n  is_dashboard: source === 'dashboard' && monto && monto > 0,\n  is_ghl_tag: source === 'ghl_tag' || (tag === 'pago' && !pago_id),\n  received_at: new Date().toISOString()\n} };"
       },
       "id": "norm-pago-002",
       "name": "Normalize",
@@ -309,6 +309,12 @@
       "parameters": {
         "method": "POST",
         "url": "={{ $('Extract & Build CAPI').item.json.capi_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($('Extract & Build CAPI').item.json.capi_payload) }}",
