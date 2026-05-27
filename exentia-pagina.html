@@ -149,13 +149,34 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     align-items: center;
     justify-content: space-between;
   }
+  .nav-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+    line-height: 1;
+  }
   .nav-logo {
     display: block;
     cursor: pointer;
-    height: 46px;
+    height: 48px;
     width: auto;
     object-fit: contain;
-    object-position: left center;
+    object-position: left top;
+    filter: brightness(0.45) contrast(1.6) saturate(0.75);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 68%, transparent 78%);
+    mask-image: linear-gradient(to bottom, black 0%, black 68%, transparent 78%);
+  }
+  .nav-logo-sub {
+    display: block;
+    margin-top: -4px;
+    margin-left: 3px;
+    font-family: 'Lato', sans-serif;
+    font-size: 9px;
+    letter-spacing: 2.8px;
+    color: var(--brown);
+    font-weight: 600;
+    text-transform: uppercase;
   }
   .nav-links {
     display: flex;
@@ -3338,8 +3359,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 <!-- ========== NAV ========== -->
 <nav id="navbar">
   <div class="nav-wrap">
-    <a data-nav="home" style="display:flex; align-items:center;">
-      <img src="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/0694aa24-76c0-4d11-95a2-e87da5594b1e.png" alt="Exentia Spa & Beauty Salon" class="nav-logo">
+    <a data-nav="home" class="nav-brand">
+      <img src="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817b4a4e6aa34cb5a6e52.png" alt="Exentia Spa & Beauty Salon" class="nav-logo">
+      <span class="nav-logo-sub">Spa &amp; Beauty Salon</span>
     </a>
     <ul class="nav-links">
       <li><a data-nav="home">Inicio</a></li>
@@ -5240,6 +5262,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       const selectedCount = cart.filter(c => s.treatments.some(t => t.name === c)).length;
 
       // Category card
+      const showDesc = ['masajes', 'faciales', 'spakids'].includes(s.slug);
       html += `
         <div class="sv-group" data-cat="${s.slug}">
           <div class="sv-cat ${hasSelected ? 'has-selected' : ''}">
@@ -5263,7 +5286,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
               <div class="ck">&#10003;</div>
               <div class="info">
                 <div class="name">${t.name}</div>
-                ${t.desc ? `<div class="desc">${t.desc}</div>` : ''}
+                ${showDesc && t.desc ? `<div class="desc">${t.desc}</div>` : ''}
                 <div class="dur">${t.duration}</div>
               </div>
               <div class="price">${t.price}</div>
