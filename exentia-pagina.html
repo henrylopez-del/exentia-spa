@@ -4770,7 +4770,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     }
     err.style.display = 'none';
 
-    window._formUserData = { firstName: firstName, lastName: lastName, phone: phone, email: email, notes: '' };
+    // Normalizar phone a E.164 (solo dígitos, prefijo MX 52 si falta).
+    // URLSearchParams.set() codifica espacios como '+', y GHL los lee literal — por eso quitamos todo lo no numérico.
+    var phoneClean = (phone || '').replace(/\D/g,'');
+    if (phoneClean && !phoneClean.startsWith('52') && phoneClean.length === 10) phoneClean = '52' + phoneClean;
+
+    window._formUserData = { firstName: firstName, lastName: lastName, phone: phoneClean, email: email, notes: '' };
 
     // Sincronizar URL params del padre para que el iframe del calendario auto-rellene
     try {
@@ -4778,7 +4783,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       if (firstName) urlParams.set('first_name', firstName);
       if (lastName) urlParams.set('last_name', lastName);
       if (email) urlParams.set('email', email);
-      if (phone) urlParams.set('phone', phone);
+      if (phoneClean) urlParams.set('phone', phoneClean);
       history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
     } catch(ex) {}
 
