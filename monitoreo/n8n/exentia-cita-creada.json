@@ -14,18 +14,24 @@
       "name": "Webhook (GHL appointment)",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "envio-exentia"
     },
     {
       "parameters": {
-        "jsCode": "// Normaliza payload — GHL puede mandar como query, body, o body string\n// IMPORTANTE: cuando viene de GHL Workflow Webhook Action, los Custom Data fields\n// llegan EN body.customData.*, mientras que contact_id, first_name, etc.\n// llegan al ROOT de body.*. Mergeamos ambos.\nconst raw = $input.first().json;\nlet root = {};\nif (raw && typeof raw.body === 'object' && Object.keys(raw.body).length) root = raw.body;\nelse if (raw && typeof raw.query === 'object' && Object.keys(raw.query).length) root = raw.query;\nelse if (typeof raw === 'object') root = raw;\n\n// Merge: root keys ganan, pero customData fills appointment_id/start_time/end_time si faltan en root\nconst customData = (root.customData && typeof root.customData === 'object') ? root.customData : {};\nconst src = Object.assign({}, customData, root);\n// Si appointment_id/start_time aún no están en src, tomarlos de customData explícitamente\nif (!src.appointment_id && customData.appointment_id) src.appointment_id = customData.appointment_id;\nif (!src.start_time && customData.start_time) src.start_time = customData.start_time;\nif (!src.end_time && customData.end_time) src.end_time = customData.end_time;\n// También revisar calendar.appointmentId como fallback\nif (!src.appointment_id && root.calendar && root.calendar.appointmentId) src.appointment_id = root.calendar.appointmentId;\n\n// Parser de fecha GHL: \"Thursday, April 30, 2026 3:30 PM\" → ISO con offset Cancún (-05:00)\nconst MONTHS = {January:0,February:1,March:2,April:3,May:4,June:5,July:6,August:7,September:8,October:9,November:10,December:11};\nfunction parseGHLDate(s) {\n  if (!s || typeof s !== 'string') return null;\n  const m = s.match(/\\w+,\\s+(\\w+)\\s+(\\d+),\\s+(\\d+)\\s+(\\d+):(\\d+)\\s*(AM|PM)/i);\n  if (!m) return null;\n  let [, mon, day, year, h, mi, ap] = m;\n  let H = parseInt(h, 10) % 12;\n  if (/PM/i.test(ap)) H += 12;\n  const mon_n = MONTHS[mon];\n  if (mon_n === undefined) return null;\n  const pad = (n) => String(n).padStart(2, '0');\n  return `${year}-${pad(mon_n + 1)}-${pad(day)}T${pad(H)}:${pad(mi)}:00-05:00`;\n}\n\nfunction normalizePhone(p) {\n  if (!p) return null;\n  const digits = String(p).replace(/\\D/g, '');\n  if (!digits) return null;\n  if (digits.startsWith('52')) return digits;\n  if (digits.length === 10) return '52' + digits;\n  return digits;\n}\n\nconst startISO = parseGHLDate(src.start_time);\nconst endISO = parseGHLDate(src.end_time);\nconst startDate = startISO ? startISO.slice(0, 10) : null;\nconst startTimeOnly = startISO ? startISO.slice(11, 19) : null;\nconst durationMin = (startISO && endISO) ? Math.round((new Date(endISO) - new Date(startISO)) / 60000) : null;\n\nfunction shortCode() {\n  const ts = Date.now().toString(36).toUpperCase().slice(-5);\n  const rnd = Math.random().toString(36).toUpperCase().slice(2, 5);\n  return `EX-${ts}${rnd}`;\n}\n\nconst nombre = [src.first_name, src.last_name].filter(Boolean).join(' ').trim() || null;\n\nreturn [{\n  json: {\n    ghl_appointment_id: src.appointment_id || null,\n    ghl_contact_id: src.contact_id || null,\n    cliente_email: src.email || null,\n    cliente_telefono: normalizePhone(src.phone),\n    cliente_nombre: nombre,\n    fecha_agendada: startDate,\n    hora_agendada: startTimeOnly,\n    duracion_total_min: durationMin,\n    start_iso: startISO,\n    end_iso: endISO,\n    booking_code: shortCode(),\n    raw_start_time: src.start_time,\n    raw_end_time: src.end_time\n  }\n}];"
+        "jsCode": "// Workaround del n8n Proxy bug: clonar profundamente para des-proxiear\nconst rawIn = $input.first().json;\nconst raw = JSON.parse(JSON.stringify(rawIn || {}));\n\nlet rawBody = {};\nif (raw && typeof raw.body === 'object' && Object.keys(raw.body).length) rawBody = raw.body;\nelse if (raw && typeof raw.query === 'object' && Object.keys(raw.query).length) rawBody = raw.query;\nelse if (typeof raw === 'object') rawBody = raw;\n\nfunction tk(obj){ const o={}; for(const k in obj) o[String(k).trim()] = obj[k]; return o; }\nconst customData = (rawBody.customData && typeof rawBody.customData === 'object') ? tk(rawBody.customData) : {};\nconst body = tk(rawBody);\n\nfunction pick(key){\n  if (body[key] !== undefined && body[key] !== null && body[key] !== '') return body[key];\n  if (customData[key] !== undefined && customData[key] !== null && customData[key] !== '') return customData[key];\n  return null;\n}\n\nconst MONTHS = {January:0,February:1,March:2,April:3,May:4,June:5,July:6,August:7,September:8,October:9,November:10,December:11};\nfunction parseGHLDate(s) {\n  if (!s || typeof s !== 'string') return null;\n  const m = s.match(/\\w+,\\s+(\\w+)\\s+(\\d+),\\s+(\\d+)\\s+(\\d+):(\\d+)\\s*(AM|PM)/i);\n  if (!m) return null;\n  let [, mon, day, year, h, mi, ap] = m;\n  let H = parseInt(h, 10) % 12;\n  if (/PM/i.test(ap)) H += 12;\n  const mon_n = MONTHS[mon]; if (mon_n === undefined) return null;\n  const pad = n => String(n).padStart(2, '0');\n  return `${year}-${pad(mon_n+1)}-${pad(day)}T${pad(H)}:${pad(mi)}:00-05:00`;\n}\nfunction normalizePhone(p) {\n  if (!p) return null;\n  const d = String(p).replace(/\\D/g, '');\n  if (!d) return null;\n  if (d.length === 10) return '52' + d;\n  if (d.length === 12 && d.startsWith('52')) return d;\n  if (d.length === 13 && d.startsWith('521')) return '52' + d.slice(3);\n  return d;\n}\nfunction shortCode() {\n  const ts = Date.now().toString(36).toUpperCase().slice(-5);\n  const rnd = Math.random().toString(36).toUpperCase().slice(2, 5);\n  return `EX-${ts}${rnd}`;\n}\n\nconst appointment_id = pick('appointment_id') || (body.calendar && body.calendar.appointmentId) || null;\nconst contact_id = pick('contact_id');\nconst email = pick('email');\nconst phone = pick('phone');\nconst first_name = pick('first_name');\nconst last_name = pick('last_name');\nconst start_time = pick('start_time');\nconst end_time = pick('end_time');\n\nconst startISO = parseGHLDate(start_time);\nconst endISO = parseGHLDate(end_time);\nconst startDate = startISO ? startISO.slice(0,10) : null;\nconst startTimeOnly = startISO ? startISO.slice(11,19) : null;\nconst durationMin = (startISO && endISO) ? Math.round((new Date(endISO)-new Date(startISO))/60000) : null;\nconst nombre = [first_name, last_name].filter(Boolean).join(' ').trim() || null;\n\nconst BODY_KEYS = {\n  servicio_elegido: ['exentia_servicio_elegido'],\n  lead_ref: ['exentia_lead_ref'],\n  fbclid: ['exentia_fbclid'],\n  gclid: ['exentia_gclid'],\n  utm_source: ['exentia_utm_source_last','exentia_utm_source_first'],\n  utm_medium: ['exentia_utm_medium_last','exentia_utm_medium_first'],\n  utm_campaign: ['exentia_utm_campaign_last','exentia_utm_campaign_first'],\n  zona: ['exentia_zona'],\n  preferencia_sexo: ['exentia_preferencia_sexo'],\n  valor_ticket_mxn: ['exentia_valor_ticket_mxn']\n};\nconst extracted = {};\nfor (const [key, sources] of Object.entries(BODY_KEYS)) {\n  for (const s of sources) { if (body[s]) { extracted[key] = body[s]; break; } }\n  if (!extracted[key]) extracted[key] = null;\n}\n\nlet servicios = [];\nif (extracted.servicio_elegido) {\n  servicios = String(extracted.servicio_elegido)\n    .split(',').map(s => s.trim()).filter(Boolean).map(s => ({ slug: s }));\n}\n\nconst atribucion = {};\nif (extracted.fbclid) atribucion.fbclid = extracted.fbclid;\nif (extracted.gclid) atribucion.gclid = extracted.gclid;\nif (extracted.utm_source) atribucion.utm_source = extracted.utm_source;\nif (extracted.utm_medium) atribucion.utm_medium = extracted.utm_medium;\nif (extracted.utm_campaign) atribucion.utm_campaign = extracted.utm_campaign;\n\nreturn [{\n  json: {\n    ghl_appointment_id: appointment_id,\n    ghl_contact_id: contact_id,\n    cliente_email: email,\n    cliente_telefono: normalizePhone(phone),\n    cliente_nombre: nombre,\n    fecha_agendada: startDate,\n    hora_agendada: startTimeOnly,\n    duracion_total_min: durationMin,\n    booking_code: shortCode(),\n    servicios: servicios,\n    lead_ref: extracted.lead_ref,\n    zona_colonia: extracted.zona,\n    preferencia_sexo: (extracted.preferencia_sexo || 'I').toUpperCase().charAt(0),\n    valor_ticket_mxn: extracted.valor_ticket_mxn ? parseFloat(String(extracted.valor_ticket_mxn).replace(/[^0-9.]/g,'')) : null,\n    atribucion: Object.keys(atribucion).length > 0 ? atribucion : null,\n    ghl_enriched: Object.keys(body).some(k => String(k).startsWith('exentia_'))\n  }\n}];\n"
       },
       "id": "normalize",
       "name": "Normalize payload",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -63,7 +69,10 @@
       "name": "Validate required fields",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [680, 300]
+      "position": [
+        680,
+        300
+      ]
     },
     {
       "parameters": {
@@ -92,7 +101,10 @@
       "name": "Get Contact GHL",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [900, 300],
+      "position": [
+        900,
+        300
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "PBgp7jLU2uAJz3t8",
@@ -104,27 +116,33 @@
     },
     {
       "parameters": {
-        "jsCode": "// Merge appointment data (from Normalize) with GHL custom fields\nconst appt = $('Normalize payload').item.json;\nconst ghlResp = $input.first().json;\n\n// Extract custom fields from GHL contact response\nconst cfs = ghlResp?.contact?.customFields || ghlResp?.customFields || [];\nconst cfMap = {};\nfor (const cf of cfs) {\n  if (cf.id && cf.value !== undefined && cf.value !== null && cf.value !== '') {\n    cfMap[cf.id] = cf.value;\n  }\n}\n\n// Custom field IDs → readable keys\nconst CF_IDS = {\n  'ETSBOfoZqy1ng2RFBPzm': 'servicio_elegido',\n  'JgsK2j4h1p6Gf7pw0WDS': 'lead_ref',\n  'vx52ah4vkjC7OENE0lWU': 'fbclid',\n  'xgBoQXRSmURvYvhaxEzN': 'gclid',\n  '37CfTVmnM6SUFq6XUnHh': 'utm_source',\n  'NZPrbivrqIQFQx40cSsD': 'utm_medium',\n  'Kc5n7iZqisG3PBKhufQd': 'utm_campaign',\n  'vVUbV7gxxxTpfefQyCLG': 'zona',\n  'Ufj0CBEGwYouDqvcwPXD': 'preferencia_sexo',\n  'E3eEAnNb1rXfbh0Up3EE': 'valor_ticket_mxn'\n};\n\nconst extracted = {};\nfor (const [id, key] of Object.entries(CF_IDS)) {\n  extracted[key] = cfMap[id] || null;\n}\n\n// Build servicios jsonb array from the comma-separated string\nlet servicios = [];\nif (extracted.servicio_elegido) {\n  servicios = extracted.servicio_elegido\n    .split(',')\n    .map(s => s.trim())\n    .filter(Boolean)\n    .map(s => ({ slug: s }));\n}\n\n// Build attribution object\nconst atribucion = {};\nif (extracted.fbclid) atribucion.fbclid = extracted.fbclid;\nif (extracted.gclid) atribucion.gclid = extracted.gclid;\nif (extracted.utm_source) atribucion.utm_source = extracted.utm_source;\nif (extracted.utm_medium) atribucion.utm_medium = extracted.utm_medium;\nif (extracted.utm_campaign) atribucion.utm_campaign = extracted.utm_campaign;\n\nreturn [{\n  json: {\n    // Appointment fields\n    ...appt,\n    // Enriched fields from GHL custom fields\n    servicios: servicios,\n    lead_ref: extracted.lead_ref,\n    zona_colonia: extracted.zona,\n    preferencia_sexo: (extracted.preferencia_sexo || 'I').toUpperCase().charAt(0),\n    valor_ticket_mxn: extracted.valor_ticket_mxn ? parseFloat(extracted.valor_ticket_mxn) : null,\n    atribucion: Object.keys(atribucion).length > 0 ? atribucion : null,\n    // Flag: did we get GHL data?\n    ghl_enriched: cfs.length > 0\n  }\n}];"
+        "jsCode": "// Versi\u00f3n defensiva: lee TODO del Webhook body directamente, sin depender de paired items.\n// Replica la l\u00f3gica del Normalize aqu\u00ed mismo para evitar el bug de pairing cuando Get Contact GHL falla.\n\nconst webhookOut = $('Webhook (GHL appointment)').first().json || {};\nconst rawBody = webhookOut.body || webhookOut.query || webhookOut || {};\n\nfunction tk(obj){ const o={}; for(const k in obj) o[String(k).trim()] = obj[k]; return o; }\nconst customData = (rawBody.customData && typeof rawBody.customData === 'object') ? tk(rawBody.customData) : {};\nconst body = tk(rawBody);\n\nfunction pick(key){\n  if (body[key] !== undefined && body[key] !== null && body[key] !== '') return body[key];\n  if (customData[key] !== undefined && customData[key] !== null && customData[key] !== '') return customData[key];\n  return null;\n}\n\n// === RE-NORMALIZE: parse appointment data ===\nconst MONTHS = {January:0,February:1,March:2,April:3,May:4,June:5,July:6,August:7,September:8,October:9,November:10,December:11};\nfunction parseGHLDate(s) {\n  if (!s || typeof s !== 'string') return null;\n  const m = s.match(/\\w+,\\s+(\\w+)\\s+(\\d+),\\s+(\\d+)\\s+(\\d+):(\\d+)\\s*(AM|PM)/i);\n  if (!m) return null;\n  let [, mon, day, year, h, mi, ap] = m;\n  let H = parseInt(h, 10) % 12;\n  if (/PM/i.test(ap)) H += 12;\n  const mon_n = MONTHS[mon]; if (mon_n === undefined) return null;\n  const pad = (n) => String(n).padStart(2, '0');\n  return `${year}-${pad(mon_n + 1)}-${pad(day)}T${pad(H)}:${pad(mi)}:00-05:00`;\n}\nfunction normalizePhone(p) {\n  if (!p) return null;\n  const d = String(p).replace(/\\D/g, '');\n  if (!d) return null;\n  if (d.length === 10) return '52' + d;\n  if (d.length === 12 && d.startsWith('52')) return d;\n  if (d.length === 13 && d.startsWith('521')) return '52' + d.slice(3);\n  return d;\n}\nfunction shortCode() {\n  const ts = Date.now().toString(36).toUpperCase().slice(-5);\n  const rnd = Math.random().toString(36).toUpperCase().slice(2, 5);\n  return `EX-${ts}${rnd}`;\n}\n\nconst appointment_id = pick('appointment_id') || (body.calendar && body.calendar.appointmentId) || null;\nconst contact_id = pick('contact_id');\nconst email = pick('email');\nconst phone = pick('phone');\nconst first_name = pick('first_name');\nconst last_name = pick('last_name');\nconst start_time_raw = pick('start_time');\nconst end_time_raw = pick('end_time');\n\nconst startISO = parseGHLDate(start_time_raw);\nconst endISO = parseGHLDate(end_time_raw);\nconst startDate = startISO ? startISO.slice(0, 10) : null;\nconst startTimeOnly = startISO ? startISO.slice(11, 19) : null;\nconst durationMin = (startISO && endISO) ? Math.round((new Date(endISO) - new Date(startISO)) / 60000) : null;\nconst nombre = [first_name, last_name].filter(Boolean).join(' ').trim() || null;\n\n// === Custom Fields from Webhook body (GHL Standard Data) ===\nconst BODY_KEYS = {\n  servicio_elegido: ['exentia_servicio_elegido'],\n  lead_ref: ['exentia_lead_ref'],\n  fbclid: ['exentia_fbclid'],\n  gclid: ['exentia_gclid'],\n  utm_source: ['exentia_utm_source_last', 'exentia_utm_source_first'],\n  utm_medium: ['exentia_utm_medium_last', 'exentia_utm_medium_first'],\n  utm_campaign: ['exentia_utm_campaign_last', 'exentia_utm_campaign_first'],\n  zona: ['exentia_zona'],\n  preferencia_sexo: ['exentia_preferencia_sexo'],\n  valor_ticket_mxn: ['exentia_valor_ticket_mxn']\n};\n\n// Also try Get Contact GHL response (cfMap by ID)\nconst CF_IDS = {\n  'ETSBOfoZqy1ng2RFBPzm': 'servicio_elegido',\n  'JgsK2j4h1p6Gf7pw0WDS': 'lead_ref',\n  'vx52ah4vkjC7OENE0lWU': 'fbclid',\n  'xgBoQXRSmURvYvhaxEzN': 'gclid',\n  '37CfTVmnM6SUFq6XUnHh': 'utm_source',\n  'NZPrbivrqIQFQx40cSsD': 'utm_medium',\n  'Kc5n7iZqisG3PBKhufQd': 'utm_campaign',\n  'vVUbV7gxxxTpfefQyCLG': 'zona',\n  'Ufj0CBEGwYouDqvcwPXD': 'preferencia_sexo',\n  'E3eEAnNb1rXfbh0Up3EE': 'valor_ticket_mxn'\n};\nconst ghlResp = $input.first().json || {};\nconst cfs = (ghlResp.contact && ghlResp.contact.customFields) || ghlResp.customFields || [];\nconst cfMap = {};\nfor (const cf of cfs) {\n  if (cf.id && cf.value !== undefined && cf.value !== null && cf.value !== '') cfMap[cf.id] = cf.value;\n}\n\nconst extracted = {};\nfor (const [id, key] of Object.entries(CF_IDS)) {\n  let v = cfMap[id];\n  if (!v && BODY_KEYS[key]) {\n    for (const bk of BODY_KEYS[key]) {\n      if (body[bk]) { v = body[bk]; break; }\n    }\n  }\n  extracted[key] = v || null;\n}\n\nlet servicios = [];\nif (extracted.servicio_elegido) {\n  servicios = String(extracted.servicio_elegido)\n    .split(',').map(s => s.trim()).filter(Boolean).map(s => ({ slug: s }));\n}\n\nconst atribucion = {};\nif (extracted.fbclid) atribucion.fbclid = extracted.fbclid;\nif (extracted.gclid) atribucion.gclid = extracted.gclid;\nif (extracted.utm_source) atribucion.utm_source = extracted.utm_source;\nif (extracted.utm_medium) atribucion.utm_medium = extracted.utm_medium;\nif (extracted.utm_campaign) atribucion.utm_campaign = extracted.utm_campaign;\n\nreturn [{\n  json: {\n    ghl_appointment_id: appointment_id,\n    ghl_contact_id: contact_id,\n    cliente_email: email,\n    cliente_telefono: normalizePhone(phone),\n    cliente_nombre: nombre,\n    fecha_agendada: startDate,\n    hora_agendada: startTimeOnly,\n    duracion_total_min: durationMin,\n    booking_code: shortCode(),\n    servicios: servicios,\n    lead_ref: extracted.lead_ref,\n    zona_colonia: extracted.zona,\n    preferencia_sexo: (extracted.preferencia_sexo || 'I').toUpperCase().charAt(0),\n    valor_ticket_mxn: extracted.valor_ticket_mxn ? parseFloat(String(extracted.valor_ticket_mxn).replace(/[^0-9.]/g,'')) : null,\n    atribucion: Object.keys(atribucion).length > 0 ? atribucion : null,\n    ghl_enriched: cfs.length > 0 || Object.keys(body).some(k => String(k).startsWith('exentia_'))\n  }\n}];\n"
       },
       "id": "extract-cfs",
       "name": "Extract Custom Fields",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1120, 300]
+      "position": [
+        1120,
+        300
+      ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "-- Step 1: Try to link with existing booking from exentia-reserva (no appointment yet)\n-- IMPORTANT: subquery with LIMIT 1 to avoid duplicate-key when multiple bookings match\nWITH target AS (\n  SELECT id FROM exentia.bookings\n  WHERE ghl_appointment_id IS NULL\n    AND (\n      (cliente_telefono IS NOT NULL AND RIGHT(cliente_telefono, 10) = RIGHT($6, 10))\n      OR (cliente_email IS NOT NULL AND LOWER(cliente_email) = LOWER($7))\n    )\n    AND created_at > NOW() - INTERVAL '2 hours'\n  ORDER BY created_at DESC\n  LIMIT 1\n),\nlink_existing AS (\n  UPDATE exentia.bookings\n  SET ghl_appointment_id = $1,\n      fecha_agendada = $2::date,\n      hora_agendada = $3::time,\n      duracion_total_min = $4,\n      cliente_nombre = COALESCE(NULLIF($5, ''), cliente_nombre),\n      cliente_telefono = COALESCE($6, cliente_telefono),\n      cliente_email = COALESCE(NULLIF($7, ''), cliente_email),\n      servicios = CASE WHEN $8::jsonb != '[]'::jsonb THEN $8::jsonb ELSE servicios END,\n      lead_ref = COALESCE($9, lead_ref),\n      zona_colonia = COALESCE($10, zona_colonia),\n      preferencia_sexo = COALESCE(NULLIF($11, ''), preferencia_sexo),\n      atribucion = CASE WHEN NULLIF($12,'') IS NOT NULL THEN $12::jsonb ELSE atribucion END,\n      ghl_contact_id = COALESCE($13, ghl_contact_id),\n      estado = COALESCE(estado, 'reservo')\n  WHERE id = (SELECT id FROM target)\n  RETURNING id, booking_code, ghl_appointment_id, fecha_agendada, hora_agendada, 'linked' AS merge_type\n),\n-- Step 2: If no existing booking matched, insert new\ninsert_new AS (\n  INSERT INTO exentia.bookings (\n    booking_code, ghl_appointment_id, ghl_contact_id,\n    cliente_nombre, cliente_telefono, cliente_email,\n    servicios, fecha_agendada, hora_agendada, duracion_total_min,\n    lead_ref, zona_colonia, preferencia_sexo, atribucion,\n    estado\n  )\n  SELECT\n    $14, $1, $13,\n    $5, $6, $7,\n    $8::jsonb, $2::date, $3::time, $4,\n    $9, $10, $11, NULLIF($12,'')::jsonb,\n    'reservo'\n  WHERE NOT EXISTS (SELECT 1 FROM link_existing)\n  ON CONFLICT (ghl_appointment_id) WHERE ghl_appointment_id IS NOT NULL\n  DO UPDATE SET\n    fecha_agendada = EXCLUDED.fecha_agendada,\n    hora_agendada = EXCLUDED.hora_agendada,\n    duracion_total_min = COALESCE(EXCLUDED.duracion_total_min, exentia.bookings.duracion_total_min),\n    cliente_nombre = COALESCE(NULLIF(EXCLUDED.cliente_nombre, ''), exentia.bookings.cliente_nombre),\n    cliente_telefono = COALESCE(EXCLUDED.cliente_telefono, exentia.bookings.cliente_telefono),\n    cliente_email = COALESCE(NULLIF(EXCLUDED.cliente_email, ''), exentia.bookings.cliente_email),\n    servicios = CASE WHEN EXCLUDED.servicios != '[]'::jsonb THEN EXCLUDED.servicios ELSE exentia.bookings.servicios END,\n    lead_ref = COALESCE(EXCLUDED.lead_ref, exentia.bookings.lead_ref),\n    zona_colonia = COALESCE(EXCLUDED.zona_colonia, exentia.bookings.zona_colonia),\n    preferencia_sexo = COALESCE(NULLIF(EXCLUDED.preferencia_sexo, ''), exentia.bookings.preferencia_sexo),\n    atribucion = COALESCE(EXCLUDED.atribucion, exentia.bookings.atribucion),\n    ghl_contact_id = COALESCE(EXCLUDED.ghl_contact_id, exentia.bookings.ghl_contact_id)\n  RETURNING id, booking_code, ghl_appointment_id, fecha_agendada, hora_agendada, 'inserted' AS merge_type\n)\nSELECT * FROM link_existing\nUNION ALL\nSELECT * FROM insert_new;",
+        "query": "-- Simplified UPSERT: solo TEXT params (sin jsonb en queryReplacement)\nWITH target AS (\n  SELECT id FROM exentia.bookings\n  WHERE ghl_appointment_id IS NULL\n    AND (\n      (cliente_telefono IS NOT NULL AND RIGHT(cliente_telefono, 10) = RIGHT(, 10))\n      OR (cliente_email IS NOT NULL AND LOWER(cliente_email) = LOWER())\n    )\n    AND created_at > NOW() - INTERVAL '2 hours'\n  ORDER BY created_at DESC\n  LIMIT 1\n),\nlink_existing AS (\n  UPDATE exentia.bookings\n  SET ghl_appointment_id = ,\n      fecha_agendada = ::date,\n      hora_agendada = ::time,\n      duracion_total_min = ,\n      cliente_nombre = COALESCE(NULLIF(, ''), cliente_nombre),\n      cliente_telefono = COALESCE(, cliente_telefono),\n      cliente_email = COALESCE(NULLIF(, ''), cliente_email),\n      lead_ref = COALESCE(, lead_ref),\n      zona_colonia = COALESCE(, zona_colonia),\n      preferencia_sexo = COALESCE(NULLIF(, ''), preferencia_sexo),\n      ghl_contact_id = COALESCE(, ghl_contact_id),\n      estado = COALESCE(estado, 'reservo')\n  WHERE id = (SELECT id FROM target)\n  RETURNING id, booking_code, ghl_appointment_id, fecha_agendada, hora_agendada, 'linked' AS merge_type\n),\ninsert_new AS (\n  INSERT INTO exentia.bookings (\n    booking_code, ghl_appointment_id, ghl_contact_id,\n    cliente_nombre, cliente_telefono, cliente_email,\n    fecha_agendada, hora_agendada, duracion_total_min,\n    lead_ref, zona_colonia, preferencia_sexo,\n    estado\n  )\n  SELECT\n    , , ,\n    , , ,\n    ::date, ::time, ,\n    , , ,\n    'reservo'\n  WHERE NOT EXISTS (SELECT 1 FROM link_existing)\n  ON CONFLICT (ghl_appointment_id) WHERE ghl_appointment_id IS NOT NULL\n  DO UPDATE SET\n    fecha_agendada = EXCLUDED.fecha_agendada,\n    hora_agendada = EXCLUDED.hora_agendada,\n    cliente_nombre = COALESCE(NULLIF(EXCLUDED.cliente_nombre, ''), exentia.bookings.cliente_nombre),\n    cliente_telefono = COALESCE(EXCLUDED.cliente_telefono, exentia.bookings.cliente_telefono),\n    cliente_email = COALESCE(NULLIF(EXCLUDED.cliente_email, ''), exentia.bookings.cliente_email),\n    ghl_contact_id = COALESCE(EXCLUDED.ghl_contact_id, exentia.bookings.ghl_contact_id)\n  RETURNING id, booking_code, ghl_appointment_id, fecha_agendada, hora_agendada, 'inserted' AS merge_type\n)\nSELECT * FROM link_existing UNION ALL SELECT * FROM insert_new;",
         "options": {
-          "queryReplacement": "={{ $json.ghl_appointment_id }},={{ $json.fecha_agendada }},={{ $json.hora_agendada }},={{ $json.duracion_total_min }},={{ $json.cliente_nombre }},={{ $json.cliente_telefono }},={{ $json.cliente_email }},={{ JSON.stringify($json.servicios || []) }},={{ $json.lead_ref }},={{ $json.zona_colonia }},={{ $json.preferencia_sexo }},={{ $json.atribucion ? JSON.stringify($json.atribucion) : '' }},={{ $json.ghl_contact_id }},={{ $json.booking_code }}"
+          "queryReplacement": "={{ .ghl_appointment_id }},={{ .fecha_agendada }},={{ .hora_agendada }},={{ .duracion_total_min }},={{ .cliente_nombre }},={{ .cliente_telefono }},={{ .cliente_email }},,={{ .lead_ref }},={{ .zona_colonia }},={{ .preferencia_sexo }},,={{ .ghl_contact_id }},={{ .booking_code }}"
         }
       },
       "id": "upsert-booking",
       "name": "UPSERT bookings",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [1340, 220],
+      "position": [
+        1340,
+        220
+      ],
       "credentials": {
         "postgres": {
           "id": "fR7LZX8uV0iHS9oP",
@@ -141,7 +159,10 @@
         "options": {
           "responseHeaders": {
             "entries": [
-              {"name": "Access-Control-Allow-Origin", "value": "*"}
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
             ]
           }
         }
@@ -150,7 +171,10 @@
       "name": "Respond OK",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1560, 220]
+      "position": [
+        1560,
+        220
+      ]
     },
     {
       "parameters": {
@@ -162,35 +186,94 @@
       "name": "Respond 400",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [900, 460]
+      "position": [
+        900,
+        460
+      ]
     }
   ],
   "connections": {
     "Webhook (GHL appointment)": {
-      "main": [[{"node": "Normalize payload", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Normalize payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Normalize payload": {
-      "main": [[{"node": "Validate required fields", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Validate required fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Validate required fields": {
       "main": [
-        [{"node": "Get Contact GHL", "type": "main", "index": 0}],
-        [{"node": "Respond 400", "type": "main", "index": 0}]
+        [
+          {
+            "node": "Get Contact GHL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Get Contact GHL": {
-      "main": [[{"node": "Extract Custom Fields", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Extract Custom Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Extract Custom Fields": {
-      "main": [[{"node": "UPSERT bookings", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "UPSERT bookings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "UPSERT bookings": {
-      "main": [[{"node": "Respond OK", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "tags": [{"name": "exentia"}]
+  "tags": [
+    {
+      "name": "exentia"
+    }
+  ]
 }
