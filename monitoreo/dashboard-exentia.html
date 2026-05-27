@@ -1,0 +1,1079 @@
+<style>
+#exentia-dash-iframe {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  width: 100vw !important; height: 100vh !important; height: 100dvh !important;
+  border: 0 !important;
+  z-index: 2147483647 !important;
+  background: #FAFAFA;
+}
+html, body { overflow: hidden !important; margin: 0 !important; padding: 0 !important; }
+.c-section, .c-row, .c-column, .c-wrapper, .c-custom-code, .fullSection,
+[class*="c-section"], [class*="c-row"], [class*="c-column"], [class*="c-custom-code"] {
+  max-width: 100vw !important; width: 100vw !important; padding: 0 !important; margin: 0 !important;
+  background: transparent !important; border: none !important;
+}
+</style>
+<iframe id="exentia-dash-iframe" allow="fullscreen" loading="eager" srcdoc="<!--
+  EXENTIA DASHBOARD - bulletproof encoding (GHL-style).
+  All Spanish text injected via JS with unicode escapes.
+-->
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, viewport-fit=cover&quot;>
+<link rel=&quot;preconnect&quot; href=&quot;https://fneppfjeywhayknrgahe.supabase.co&quot; crossorigin>
+<link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
+<link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&amp;display=swap');
+
+html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !important; overflow: auto !important; }
+#ex-dash, #ex-dash * { margin: 0; padding: 0; box-sizing: border-box; min-width: 0; }
+
+#ex-dash {
+  --gray-50:  #FAFAFA;
+  --gray-100: #F4F4F5;
+  --gray-200: #E4E4E7;
+  --gray-300: #D4D4D8;
+  --gray-400: #A1A1AA;
+  --gray-500: #71717A;
+  --gray-600: #52525B;
+  --gray-700: #3F3F46;
+  --gray-800: #27272A;
+  --gray-900: #18181B;
+  --success-50:  #F0FDF4;
+  --success-100: #DCFCE7;
+  --success-500: #22C55E;
+  --success-600: #16A34A;
+  --success-700: #15803D;
+  --warn-50:  #FFFBEB;
+  --warn-100: #FEF3C7;
+  --warn-500: #F59E0B;
+  --warn-700: #B45309;
+  --danger-50:  #FEF2F2;
+  --danger-100: #FEE2E2;
+  --danger-500: #EF4444;
+  --danger-600: #DC2626;
+  --danger-700: #B91C1C;
+  --blue-50:  #EFF6FF;
+  --blue-100: #DBEAFE;
+  --blue-500: #3B82F6;
+  --blue-700: #1D4ED8;
+  --purple-50: #F5F3FF;
+  --purple-100: #EDE9FE;
+  --purple-500: #8B5CF6;
+  --purple-700: #6D28D9;
+  --bg: var(--gray-50);
+  --surface: #FFFFFF;
+  --border: var(--gray-200);
+  --border-strong: var(--gray-300);
+  --text: var(--gray-900);
+  --text-muted: var(--gray-500);
+  --text-subtle: var(--gray-400);
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  width: 100vw !important; height: 100vh !important; height: 100dvh !important;
+  z-index: 2147483647 !important;
+  overflow-y: auto !important;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter Tight', -apple-system, sans-serif;
+  font-feature-settings: &quot;ss01&quot;, &quot;cv11&quot;, &quot;tnum&quot;;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  padding: 32px;
+  padding-top: calc(32px + env(safe-area-inset-top));
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+#ex-dash .wrap { max-width: 1440px; margin: 0 auto; }
+
+#ex-dash .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+#ex-dash .brand { display: flex; align-items: center; gap: 14px; }
+#ex-dash .logo { width: 40px; height: 40px; border-radius: var(--r-md); background: var(--gray-900); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+#ex-dash .brand-meta .eyebrow { font-size: 12px; font-weight: 500; color: var(--text-muted); line-height: 1.2; }
+#ex-dash .brand-meta h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.3; color: var(--text); }
+#ex-dash .header-actions { display: flex; align-items: center; gap: 12px; }
+#ex-dash .status-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--success-50); border: 1px solid var(--success-100); border-radius: 999px; font-size: 12px; font-weight: 500; color: var(--success-700); }
+#ex-dash .status-chip .dot { width: 6px; height: 6px; background: var(--success-500); border-radius: 50%; box-shadow: 0 0 0 0 rgba(34,197,94,0.5); animation: ex-pulse 2s infinite; }
+@keyframes ex-pulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 70% { box-shadow: 0 0 0 6px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+#ex-dash .meta-date { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+#ex-dash .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+#ex-dash .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; transition: border-color 0.15s, box-shadow 0.15s; }
+#ex-dash .kpi:hover { border-color: var(--border-strong); }
+#ex-dash .kpi-label { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; }
+#ex-dash .kpi-icon { width: 20px; height: 20px; border-radius: var(--r-sm); display: grid; place-items: center; background: var(--gray-100); color: var(--gray-600); }
+#ex-dash .kpi-icon svg { width: 12px; height: 12px; }
+#ex-dash .kpi-value { font-size: 32px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+#ex-dash .kpi-sub { margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+#ex-dash .kpi.primary { background: var(--gray-900); border-color: var(--gray-900); }
+#ex-dash .kpi.primary .kpi-label { color: var(--gray-400); }
+#ex-dash .kpi.primary .kpi-icon { background: var(--gray-800); color: var(--gray-300); }
+#ex-dash .kpi.primary .kpi-value { color: #fff; }
+#ex-dash .kpi.primary .kpi-sub { color: var(--gray-400); }
+
+#ex-dash .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+#ex-dash .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; }
+#ex-dash .panel-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+#ex-dash .panel-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+#ex-dash .panel-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+#ex-dash .panel-badge { font-size: 11px; font-weight: 500; color: var(--text-muted); padding: 3px 8px; background: var(--gray-100); border-radius: 999px; }
+
+#ex-dash .today-list { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
+#ex-dash .today-card { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--r-md); transition: border-color 0.15s; }
+#ex-dash .today-card:hover { border-color: var(--border-strong); }
+#ex-dash .tc-time { display: flex; flex-direction: column; align-items: center; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); min-width: 60px; }
+#ex-dash .tc-time .hr { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.1; font-variant-numeric: tabular-nums; }
+#ex-dash .tc-time .period { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+#ex-dash .tc-info { flex: 1; min-width: 0; }
+#ex-dash .tc-name { font-size: 13px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#ex-dash .tc-services { font-size: 11px; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#ex-dash .tc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+#ex-dash .empty { padding: 40px 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+#ex-dash .estado-list { display: flex; flex-direction: column; gap: 14px; }
+#ex-dash .estado-row { display: flex; flex-direction: column; gap: 6px; }
+#ex-dash .estado-row .e-head { display: flex; align-items: center; justify-content: space-between; }
+#ex-dash .estado-row .e-name { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text); }
+#ex-dash .estado-row .e-dot { width: 8px; height: 8px; border-radius: 2px; }
+#ex-dash .estado-row.reservo .e-dot, #ex-dash .estado-row.reservo .e-fill { background: var(--warn-500); }
+#ex-dash .estado-row.asistio .e-dot, #ex-dash .estado-row.asistio .e-fill { background: var(--success-500); }
+#ex-dash .estado-row.pagado .e-dot, #ex-dash .estado-row.pagado .e-fill { background: var(--blue-500); }
+#ex-dash .estado-row.no_asistio .e-dot, #ex-dash .estado-row.no_asistio .e-fill { background: var(--danger-500); }
+#ex-dash .estado-row .e-nums { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text); font-weight: 500; }
+#ex-dash .estado-row .e-nums .total { color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+#ex-dash .estado-row .e-track { height: 6px; background: var(--gray-100); border-radius: 999px; overflow: hidden; }
+#ex-dash .estado-row .e-fill { height: 100%; transition: width 0.7s cubic-bezier(0.22,1,0.36,1); }
+
+#ex-dash .table-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+#ex-dash .table-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#ex-dash .table-head h2 { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+#ex-dash .table-toolbar { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--gray-50); }
+#ex-dash .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
+#ex-dash .search-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-subtle); pointer-events: none; }
+#ex-dash .search-input { width: 100%; padding: 8px 12px 8px 32px; border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); transition: border-color 0.15s, box-shadow 0.15s; }
+#ex-dash .search-input:focus { outline: none; border-color: var(--gray-900); box-shadow: 0 0 0 3px rgba(24,24,27,0.08); }
+#ex-dash .select { padding: 8px 28px 8px 12px; border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 13px; font-family: inherit; background: var(--surface) url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 12%22%3E%3Cpath fill=%22%2371717A%22 d=%22M6 9L1 4h10z%22/%3E%3C/svg%3E') no-repeat right 8px center; background-size: 10px; color: var(--text); cursor: pointer; appearance: none; }
+#ex-dash .select:focus { outline: none; border-color: var(--gray-900); box-shadow: 0 0 0 3px rgba(24,24,27,0.08); }
+#ex-dash .toolbar-spacer { flex: 1; }
+#ex-dash .csv-btn { padding: 8px 14px; border: 1px solid var(--gray-900); border-radius: var(--r-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; background: var(--gray-900); color: #fff; display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s; }
+#ex-dash .csv-btn:hover { background: var(--gray-800); }
+#ex-dash .csv-btn svg { width: 14px; height: 14px; }
+#ex-dash .table-wrap { overflow-x: auto; }
+#ex-dash table { width: 100%; border-collapse: collapse; font-size: 13px; }
+#ex-dash thead th { text-align: left; padding: 10px 20px; background: var(--gray-50); font-size: 11px; font-weight: 500; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.04em; }
+#ex-dash tbody tr { border-bottom: 1px solid var(--border); animation: ex-rowin 0.3s cubic-bezier(.2,.9,.3,1) both; }
+#ex-dash tbody tr:last-child { border-bottom: 0; }
+#ex-dash tbody tr:hover { background: var(--gray-50); }
+@keyframes ex-rowin { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+#ex-dash tbody td { padding: 12px 20px; color: var(--text); font-variant-numeric: tabular-nums; vertical-align: middle; }
+#ex-dash tbody td.name { font-weight: 500; white-space: nowrap; }
+#ex-dash tbody td.muted { color: var(--text-muted); font-size: 12px; }
+#ex-dash tbody td.services { max-width: 220px; font-size: 12px; color: var(--text-muted); }
+#ex-dash tbody td.actions-cell { white-space: nowrap; }
+#ex-dash .table-count { font-size: 11px; font-weight: 500; color: var(--text-muted); padding: 3px 8px; background: var(--gray-100); border-radius: 999px; }
+
+#ex-dash .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; border: 1px solid transparent; white-space: nowrap; letter-spacing: 0.01em; }
+#ex-dash .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+#ex-dash .badge.reservo { background: var(--warn-50); color: var(--warn-700); border-color: var(--warn-100); }
+#ex-dash .badge.reservo::before { background: var(--warn-500); }
+#ex-dash .badge.confirmado { background: var(--blue-50); color: var(--blue-700); border-color: var(--blue-100); }
+#ex-dash .badge.confirmado::before { background: var(--blue-500); }
+#ex-dash .badge.asistio { background: var(--success-50); color: var(--success-700); border-color: var(--success-100); }
+#ex-dash .badge.asistio::before { background: var(--success-500); }
+#ex-dash .badge.pagado { background: var(--blue-50); color: var(--blue-700); border-color: var(--blue-100); }
+#ex-dash .badge.pagado::before { background: var(--blue-500); }
+#ex-dash .badge.cancelado { background: var(--gray-100); color: var(--gray-600); border-color: var(--gray-200); }
+#ex-dash .badge.cancelado::before { background: var(--gray-400); }
+#ex-dash .badge.vencido { background: var(--danger-50); color: var(--danger-700); border-color: var(--danger-100); }
+#ex-dash .badge.vencido::before { background: var(--danger-500); }
+#ex-dash .badge.hoy { background: var(--blue-50); color: var(--blue-700); border-color: var(--blue-100); }
+#ex-dash .badge.hoy::before { background: var(--blue-500); }
+#ex-dash .badge.no_asistio { background: var(--danger-50); color: var(--danger-700); border-color: var(--danger-100); }
+#ex-dash .badge.no_asistio::before { background: var(--danger-500); }
+
+#ex-dash .btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; background: var(--surface); color: var(--text); }
+#ex-dash .btn:hover { border-color: var(--border-strong); background: var(--gray-50); }
+#ex-dash .btn.btn-success { background: var(--success-600); color: #fff; border-color: var(--success-700); }
+#ex-dash .btn.btn-success:hover { background: var(--success-700); }
+#ex-dash .btn.btn-blue { background: var(--blue-500); color: #fff; border-color: var(--blue-700); }
+#ex-dash .btn.btn-blue:hover { background: var(--blue-700); }
+#ex-dash .btn.btn-danger { background: var(--danger-500); color: #fff; border-color: var(--danger-600); }
+#ex-dash .btn.btn-danger:hover { background: var(--danger-600); }
+#ex-dash .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+#ex-dash .btn-history { padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; }
+#ex-dash .btn-history:hover { background: var(--gray-100); color: var(--text); }
+#ex-dash .btn-history svg { width: 12px; height: 12px; }
+
+#ex-dash .footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-subtle); }
+
+#ex-dash .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+#ex-dash .toast { padding: 12px 16px; border-radius: var(--r-md); font-size: 13px; font-weight: 500; color: #fff; animation: ex-toast-in 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+#ex-dash .toast.success { background: var(--success-600); }
+#ex-dash .toast.error { background: var(--danger-500); }
+@keyframes ex-toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+#ex-dash .modal-overlay { position: fixed; inset: 0; background: rgba(24,24,27,0.55); backdrop-filter: blur(2px); z-index: 9998; display: none; align-items: center; justify-content: center; padding: 20px; animation: ex-fade 0.18s ease; }
+#ex-dash .modal-overlay.open { display: flex; }
+@keyframes ex-fade { from { opacity: 0; } to { opacity: 1; } }
+#ex-dash .modal { background: var(--surface); border-radius: var(--r-lg); width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: ex-modal-in 0.22s cubic-bezier(.2,.9,.3,1); }
+@keyframes ex-modal-in { from { opacity: 0; transform: scale(0.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+#ex-dash .modal-head { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+#ex-dash .modal-head h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+#ex-dash .modal-close { width: 28px; height: 28px; border: none; background: transparent; border-radius: var(--r-sm); cursor: pointer; color: var(--text-muted); display: grid; place-items: center; transition: background 0.15s, color 0.15s; }
+#ex-dash .modal-close:hover { background: var(--gray-100); color: var(--text); }
+#ex-dash .modal-close svg { width: 16px; height: 16px; }
+#ex-dash .modal-body { padding: 20px 22px; }
+#ex-dash .modal-foot { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; background: var(--gray-50); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+#ex-dash .info-row { display: flex; gap: 12px; padding: 10px 14px; background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--r-sm); margin-bottom: 18px; font-size: 13px; flex-wrap: wrap; }
+#ex-dash .info-row b { color: var(--text); font-weight: 600; min-width: 80px; }
+#ex-dash .form-group { margin-bottom: 16px; }
+#ex-dash .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+#ex-dash .form-label .req { color: var(--danger-500); }
+#ex-dash .form-input, #ex-dash .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 14px; font-family: inherit; background: var(--surface); color: var(--text); transition: border-color 0.15s, box-shadow 0.15s; }
+#ex-dash .form-input:focus, #ex-dash .form-textarea:focus { outline: none; border-color: var(--gray-900); box-shadow: 0 0 0 3px rgba(24,24,27,0.08); }
+#ex-dash .form-textarea { min-height: 60px; resize: vertical; font-family: inherit; }
+#ex-dash .form-input.has-prefix { padding-left: 28px; }
+#ex-dash .input-prefix-wrap { position: relative; }
+#ex-dash .input-prefix-wrap .prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; pointer-events: none; }
+#ex-dash .radio-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+#ex-dash .radio-card { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 12px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text); user-select: none; }
+#ex-dash .radio-card input { margin: 0; accent-color: var(--gray-900); }
+#ex-dash .radio-card:hover { border-color: var(--border-strong); }
+#ex-dash .radio-card.selected { border-color: var(--gray-900); background: var(--gray-50); }
+#ex-dash .radio-card .emoji { font-size: 16px; line-height: 1; }
+#ex-dash .btn-primary { background: var(--gray-900); color: #fff; border-color: var(--gray-900); padding: 9px 18px; font-size: 13px; font-weight: 600; }
+#ex-dash .btn-primary:hover { background: var(--gray-800); }
+#ex-dash .btn-secondary { padding: 9px 16px; font-size: 13px; }
+#ex-dash .field-error { color: var(--danger-700); font-size: 12px; margin-top: 4px; display: none; }
+#ex-dash .field-error.show { display: block; }
+
+#ex-dash .hist-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+#ex-dash .hist-stat { padding: 14px; background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--r-md); }
+#ex-dash .hist-stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+#ex-dash .hist-stat-value { font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+#ex-dash .hist-list { display: flex; flex-direction: column; gap: 10px; }
+#ex-dash .hist-empty { text-align: center; padding: 30px 10px; color: var(--text-muted); font-size: 13px; }
+#ex-dash .hist-item { padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); }
+#ex-dash .hist-item-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+#ex-dash .hist-monto { font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+#ex-dash .hist-metodo { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+#ex-dash .hist-metodo.tarjeta { background: var(--blue-50); color: var(--blue-700); }
+#ex-dash .hist-metodo.transferencia { background: var(--purple-50); color: var(--purple-700); }
+#ex-dash .hist-metodo.efectivo { background: var(--success-50); color: var(--success-700); }
+#ex-dash .hist-metodo.otro { background: var(--gray-100); color: var(--gray-600); }
+#ex-dash .hist-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; }
+#ex-dash .hist-meta .dot-sep { color: var(--text-subtle); }
+#ex-dash .hist-notas { font-size: 12px; color: var(--text-muted); margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
+
+@media (max-width: 1024px) {
+  #ex-dash { padding: 20px; }
+  #ex-dash .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  #ex-dash .main-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  #ex-dash { padding: 12px; padding-top: calc(12px + env(safe-area-inset-top)); }
+  #ex-dash .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  #ex-dash .brand-meta h1 { font-size: 18px; }
+  #ex-dash .kpi-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  #ex-dash .kpi { padding: 14px; }
+  #ex-dash .kpi-value { font-size: 24px; }
+  #ex-dash .table-toolbar { flex-direction: column; align-items: stretch; }
+  #ex-dash .search-wrap { max-width: none; width: 100%; }
+  #ex-dash .select { width: 100%; }
+  #ex-dash .csv-btn { width: 100%; padding: 10px; justify-content: center; }
+  #ex-dash thead th, #ex-dash tbody td { padding: 8px 12px; font-size: 12px; }
+  #ex-dash .btn { padding: 8px 12px; min-height: 36px; }
+  #ex-dash .modal-overlay { padding: 0; align-items: stretch; }
+  #ex-dash .modal { max-width: none; max-height: 100vh; max-height: 100dvh; border-radius: 0; display: flex; flex-direction: column; }
+  #ex-dash .modal-body { flex: 1; overflow-y: auto; padding: 16px; }
+  #ex-dash .modal-foot .btn { flex: 1; padding: 12px; font-size: 14px; min-height: 44px; }
+  #ex-dash .form-input { padding: 12px; font-size: 16px; }
+  #ex-dash .radio-card { padding: 12px; min-height: 48px; }
+}
+@media (max-width: 380px) { #ex-dash .kpi-row { grid-template-columns: 1fr; } }
+</style>
+
+<div id=&quot;ex-dash&quot;>
+  <div class=&quot;wrap&quot;>
+    <header class=&quot;header&quot;>
+      <div class=&quot;brand&quot;>
+        <div class=&quot;logo&quot;>E</div>
+        <div class=&quot;brand-meta&quot;>
+          <div class=&quot;eyebrow&quot; id=&quot;t-eyebrow&quot;></div>
+          <h1 id=&quot;t-title&quot;></h1>
+        </div>
+      </div>
+      <div class=&quot;header-actions&quot;>
+        <span class=&quot;meta-date&quot; id=&quot;meta-date&quot;>&#8212;</span>
+        <span class=&quot;status-chip&quot;><span class=&quot;dot&quot;></span><span id=&quot;t-live&quot;></span></span>
+      </div>
+    </header>
+
+    <section class=&quot;kpi-row&quot;>
+      <div class=&quot;kpi primary&quot;>
+        <div class=&quot;kpi-label&quot;><span class=&quot;kpi-icon&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;3&quot; y=&quot;4&quot; width=&quot;18&quot; height=&quot;18&quot; rx=&quot;2&quot;/><line x1=&quot;16&quot; y1=&quot;2&quot; x2=&quot;16&quot; y2=&quot;6&quot;/><line x1=&quot;8&quot; y1=&quot;2&quot; x2=&quot;8&quot; y2=&quot;6&quot;/></svg></span><span id=&quot;t-k1&quot;></span></div>
+        <div class=&quot;kpi-value&quot; id=&quot;kpi-total&quot;>0</div>
+        <div class=&quot;kpi-sub&quot; id=&quot;t-k1-sub&quot;></div>
+      </div>
+      <div class=&quot;kpi&quot;>
+        <div class=&quot;kpi-label&quot;><span class=&quot;kpi-icon&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;10&quot;/><polyline points=&quot;12 6 12 12 16 14&quot;/></svg></span><span id=&quot;t-k2&quot;></span></div>
+        <div class=&quot;kpi-value&quot; id=&quot;kpi-today&quot;>0</div>
+        <div class=&quot;kpi-sub&quot; id=&quot;t-k2-sub&quot;></div>
+      </div>
+      <div class=&quot;kpi&quot;>
+        <div class=&quot;kpi-label&quot;><span class=&quot;kpi-icon&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2.5&quot;><polyline points=&quot;20 6 9 17 4 12&quot;/></svg></span><span id=&quot;t-k3&quot;></span></div>
+        <div class=&quot;kpi-value&quot; id=&quot;kpi-attended&quot;>0</div>
+        <div class=&quot;kpi-sub&quot; id=&quot;t-k3-sub&quot;></div>
+      </div>
+      <div class=&quot;kpi&quot;>
+        <div class=&quot;kpi-label&quot;><span class=&quot;kpi-icon&quot;><svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><line x1=&quot;12&quot; y1=&quot;1&quot; x2=&quot;12&quot; y2=&quot;23&quot;/><path d=&quot;M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6&quot;/></svg></span><span id=&quot;t-k4&quot;></span></div>
+        <div class=&quot;kpi-value&quot; id=&quot;kpi-revenue&quot;>$0</div>
+        <div class=&quot;kpi-sub&quot; id=&quot;t-k4-sub&quot;></div>
+      </div>
+    </section>
+
+    <section class=&quot;main-grid&quot;>
+      <div class=&quot;panel&quot;>
+        <div class=&quot;panel-head&quot;>
+          <div>
+            <div class=&quot;panel-title&quot; id=&quot;t-today-title&quot;></div>
+            <div class=&quot;panel-sub&quot; id=&quot;t-today-sub&quot;></div>
+          </div>
+          <span class=&quot;panel-badge&quot; id=&quot;today-count&quot;>0</span>
+        </div>
+        <div class=&quot;today-list&quot; id=&quot;today-list&quot;></div>
+      </div>
+
+      <div class=&quot;panel&quot;>
+        <div class=&quot;panel-head&quot;>
+          <div>
+            <div class=&quot;panel-title&quot; id=&quot;t-estado-title&quot;></div>
+            <div class=&quot;panel-sub&quot; id=&quot;t-estado-sub&quot;></div>
+          </div>
+          <span class=&quot;panel-badge&quot; id=&quot;estado-count&quot;>0</span>
+        </div>
+        <div class=&quot;estado-list&quot; id=&quot;estado-list&quot;></div>
+      </div>
+    </section>
+
+    <section class=&quot;table-panel&quot;>
+      <div class=&quot;table-head&quot;>
+        <h2 id=&quot;t-table-title&quot;></h2>
+        <span class=&quot;table-count&quot; id=&quot;table-count&quot;>0</span>
+      </div>
+      <div class=&quot;table-toolbar&quot;>
+        <div class=&quot;search-wrap&quot;>
+          <svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/><path d=&quot;M21 21l-4.35-4.35&quot;/></svg>
+          <input type=&quot;text&quot; class=&quot;search-input&quot; id=&quot;search-input&quot; placeholder=&quot;Buscar&quot;>
+        </div>
+        <select class=&quot;select&quot; id=&quot;date-filter&quot;></select>
+        <div class=&quot;toolbar-spacer&quot;></div>
+        <button type=&quot;button&quot; class=&quot;csv-btn&quot; id=&quot;csv-btn&quot;>
+          <svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><path d=&quot;M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4&quot;/><polyline points=&quot;7 10 12 15 17 10&quot;/><line x1=&quot;12&quot; y1=&quot;15&quot; x2=&quot;12&quot; y2=&quot;3&quot;/></svg>
+          <span id=&quot;t-csv-btn&quot;></span>
+        </button>
+      </div>
+      <div class=&quot;table-wrap&quot;>
+        <table>
+          <thead><tr id=&quot;table-header&quot;></tr></thead>
+          <tbody id=&quot;table-body&quot;></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class=&quot;footer&quot;>
+      <span id=&quot;t-foot-l&quot;></span>
+      <span id=&quot;t-foot-r&quot;></span>
+    </div>
+  </div>
+
+  <div class=&quot;modal-overlay&quot; id=&quot;modal-pago&quot;>
+    <div class=&quot;modal&quot;>
+      <div class=&quot;modal-head&quot;>
+        <h3 id=&quot;t-modal-pago-title&quot;></h3>
+        <button class=&quot;modal-close&quot; data-close=&quot;modal-pago&quot; type=&quot;button&quot;>
+          <svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><line x1=&quot;18&quot; y1=&quot;6&quot; x2=&quot;6&quot; y2=&quot;18&quot;/><line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;18&quot; y2=&quot;18&quot;/></svg>
+        </button>
+      </div>
+      <div class=&quot;modal-body&quot;>
+        <div class=&quot;info-row&quot;>
+          <div><b id=&quot;t-pago-cli-label&quot;></b> <span id=&quot;pago-cli-nombre&quot;></span></div>
+          <div><b id=&quot;t-pago-svc-label&quot;></b> <span id=&quot;pago-cli-servicios&quot;></span></div>
+          <div><b id=&quot;t-pago-cod-label&quot;></b> <span id=&quot;pago-cli-codigo&quot;></span></div>
+        </div>
+        <div class=&quot;form-group&quot;>
+          <label class=&quot;form-label&quot; for=&quot;pago-monto&quot;><span id=&quot;t-pago-monto-label&quot;></span> <span class=&quot;req&quot;>*</span></label>
+          <div class=&quot;input-prefix-wrap&quot;>
+            <span class=&quot;prefix&quot;>$</span>
+            <input type=&quot;number&quot; class=&quot;form-input has-prefix&quot; id=&quot;pago-monto&quot; min=&quot;1&quot; step=&quot;0.01&quot; placeholder=&quot;0.00&quot;>
+          </div>
+          <div class=&quot;field-error&quot; id=&quot;err-monto&quot;></div>
+        </div>
+        <div class=&quot;form-group&quot;>
+          <label class=&quot;form-label&quot;><span id=&quot;t-pago-metodo-label&quot;></span> <span class=&quot;req&quot;>*</span></label>
+          <div class=&quot;radio-group&quot; id=&quot;pago-metodo-group&quot;></div>
+        </div>
+        <div class=&quot;form-group&quot;>
+          <label class=&quot;form-label&quot; for=&quot;pago-notas&quot;><span id=&quot;t-pago-notas-label&quot;></span></label>
+          <textarea class=&quot;form-textarea&quot; id=&quot;pago-notas&quot; placeholder=&quot;&quot;></textarea>
+        </div>
+      </div>
+      <div class=&quot;modal-foot&quot;>
+        <button type=&quot;button&quot; class=&quot;btn btn-secondary&quot; data-close=&quot;modal-pago&quot;><span id=&quot;t-btn-cancelar&quot;></span></button>
+        <button type=&quot;button&quot; class=&quot;btn btn-primary&quot; id=&quot;pago-submit&quot;><span id=&quot;t-btn-registrar&quot;></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class=&quot;modal-overlay&quot; id=&quot;modal-historial&quot;>
+    <div class=&quot;modal&quot;>
+      <div class=&quot;modal-head&quot;>
+        <h3 id=&quot;t-modal-hist-title&quot;></h3>
+        <button class=&quot;modal-close&quot; data-close=&quot;modal-historial&quot; type=&quot;button&quot;>
+          <svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><line x1=&quot;18&quot; y1=&quot;6&quot; x2=&quot;6&quot; y2=&quot;18&quot;/><line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;18&quot; y2=&quot;18&quot;/></svg>
+        </button>
+      </div>
+      <div class=&quot;modal-body&quot;>
+        <div class=&quot;info-row&quot;>
+          <div><b id=&quot;t-hist-cli-label&quot;></b> <span id=&quot;hist-cli-nombre&quot;></span></div>
+          <div><b id=&quot;t-hist-tel-label&quot;></b> <span id=&quot;hist-cli-tel&quot;></span></div>
+        </div>
+        <div class=&quot;hist-summary&quot;>
+          <div class=&quot;hist-stat&quot;>
+            <div class=&quot;hist-stat-label&quot; id=&quot;t-hist-total-label&quot;></div>
+            <div class=&quot;hist-stat-value&quot; id=&quot;hist-total-value&quot;>$0</div>
+          </div>
+          <div class=&quot;hist-stat&quot;>
+            <div class=&quot;hist-stat-label&quot; id=&quot;t-hist-count-label&quot;></div>
+            <div class=&quot;hist-stat-value&quot; id=&quot;hist-count-value&quot;>0</div>
+          </div>
+        </div>
+        <div class=&quot;hist-list&quot; id=&quot;hist-list&quot;></div>
+      </div>
+      <div class=&quot;modal-foot&quot;>
+        <button type=&quot;button&quot; class=&quot;btn btn-secondary&quot; data-close=&quot;modal-historial&quot;><span id=&quot;t-btn-cerrar&quot;></span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class=&quot;toast-container&quot; id=&quot;toast-container&quot;></div>
+</div>
+
+<script>
+(function(){
+  var SB_URL = 'https://fneppfjeywhayknrgahe.supabase.co';
+  var SB_KEY = 'sb_publishable_zLroeuC3ZrE-K_zVGFwi3Q_UyYG6ZYB';
+  var N8N_PAGO_WEBHOOK = 'https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-pago';
+  var N8N_TAG_WEBHOOK = 'https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-tag';
+  var TZ = 'America/Cancun';
+  var POLL_MS = 10000;
+  var Q = String.fromCharCode(34);
+
+  var T = {
+    eyebrow: 'Exentia · Citas',
+    title: 'Panel de Control',
+    live: 'En vivo',
+    k1: 'Total de citas', k1_sub: 'Todas las reservaciones',
+    k2: 'Citas hoy', k2_sub: 'Programadas para hoy',
+    k3: 'Asistieron', k3_sub: 'Asistieron o pagaron',
+    k4: 'Revenue del mes', k4_sub: 'Pagado en el mes actual',
+    todayTitle: 'Citas de hoy', todaySub: 'Lista del día con acciones rápidas',
+    estadoTitle: 'Distribución por estado', estadoSub: 'Activas (excluye canceladas)',
+    tableTitle: 'Todas las citas',
+    thName: 'Nombre', thServices: 'Servicios', thDate: 'Fecha', thTime: 'Hora', thStatus: 'Estado', thActions: 'Acciones',
+    emptyToday: 'No hay citas programadas para hoy',
+    noDate: 'Sin fecha',
+    btnAsistio: 'Asistió', btnNoAsistio: 'No vino', btnPago: 'Pagó', btnHistorial: 'Historial',
+    badgeReservo: 'Reservó', badgeConfirmado: 'Confirmado', badgeAsistio: 'Asistió', badgePagado: 'Pagado',
+    badgeCancelado: 'Cancelado', badgeVencido: 'Vencido', badgeHoy: 'Hoy', badgeNoAsistio: 'No vino',
+    estadoLabels: { reservo:'Reservó', asistio:'Asistió', pagado:'Pagado', no_asistio:'No vino' },
+    footL: 'Exentia Spa · Beauty Salon', footR: 'Actualización automática cada 10s',
+    toastAsistio: 'Marcado como asistió', toastNoAsistio: 'Marcado como no asistió', toastPago: 'Pago registrado correctamente', toastError: 'Error al actualizar',
+    errMonto: 'Ingresa un monto válido mayor a 0', errMetodo: 'Selecciona un método de pago',
+    confirmNoAsistio: '¿Marcar este cliente como NO ASISTIÓ? Esta acción notifica al CRM.',
+    searchPlaceholder: 'Buscar por nombre, teléfono o código...',
+    csvBtn: 'Descargar CSV',
+    dfAll: 'Todo el tiempo', dfToday: 'Hoy', dfYesterday: 'Ayer', dfWeek: 'Esta semana', dfMonth: 'Este mes', df30d: 'Últimos 30 días', df90d: 'Últimos 90 días',
+    modalPagoTitle: 'Registrar pago',
+    pagoCliLabel: 'Cliente:', pagoSvcLabel: 'Servicios:', pagoCodLabel: 'Código:',
+    pagoMontoLabel: 'Monto (MXN)', pagoMetodoLabel: 'Método de pago', pagoNotasLabel: 'Notas (opcional)',
+    pagoNotasPlaceholder: 'Ej. Pagó la mitad ahora, resto la próxima cita...',
+    btnCancelar: 'Cancelar', btnRegistrar: 'Registrar pago', btnCerrar: 'Cerrar',
+    metodoTarjeta: 'Tarjeta', metodoTransferencia: 'Transferencia', metodoEfectivo: 'Efectivo', metodoOtro: 'Otro',
+    modalHistTitle: 'Historial de pagos',
+    histCliLabel: 'Cliente:', histTelLabel: 'Teléfono:',
+    histTotalLabel: 'Total pagado', histCountLabel: 'Número de pagos',
+    histEmpty: 'Este cliente aún no tiene pagos registrados', histLoading: 'Cargando historial...',
+    csvFilename: 'exentia-citas',
+    csvHeaders: 'Codigo,Cliente,Telefono,Email,Servicio,Fecha,Hora,Estado,Monto MXN,Modalidad,Notas Cliente,Fecha Creacion'
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  $('t-eyebrow').textContent = T.eyebrow;
+  $('t-title').textContent = T.title;
+  $('t-live').textContent = T.live;
+  $('t-k1').textContent = T.k1; $('t-k1-sub').textContent = T.k1_sub;
+  $('t-k2').textContent = T.k2; $('t-k2-sub').textContent = T.k2_sub;
+  $('t-k3').textContent = T.k3; $('t-k3-sub').textContent = T.k3_sub;
+  $('t-k4').textContent = T.k4; $('t-k4-sub').textContent = T.k4_sub;
+  $('t-today-title').textContent = T.todayTitle;
+  $('t-today-sub').textContent = T.todaySub;
+  $('t-estado-title').textContent = T.estadoTitle;
+  $('t-estado-sub').textContent = T.estadoSub;
+  $('t-table-title').textContent = T.tableTitle;
+  $('t-csv-btn').textContent = T.csvBtn;
+  $('search-input').setAttribute('placeholder', T.searchPlaceholder);
+  $('t-foot-l').textContent = T.footL;
+  $('t-foot-r').textContent = T.footR;
+  $('t-modal-pago-title').textContent = T.modalPagoTitle;
+  $('t-pago-cli-label').textContent = T.pagoCliLabel;
+  $('t-pago-svc-label').textContent = T.pagoSvcLabel;
+  $('t-pago-cod-label').textContent = T.pagoCodLabel;
+  $('t-pago-monto-label').textContent = T.pagoMontoLabel;
+  $('t-pago-metodo-label').textContent = T.pagoMetodoLabel;
+  $('t-pago-notas-label').textContent = T.pagoNotasLabel;
+  $('pago-notas').setAttribute('placeholder', T.pagoNotasPlaceholder);
+  $('t-btn-cancelar').textContent = T.btnCancelar;
+  $('t-btn-registrar').textContent = T.btnRegistrar;
+  $('t-modal-hist-title').textContent = T.modalHistTitle;
+  $('t-hist-cli-label').textContent = T.histCliLabel;
+  $('t-hist-tel-label').textContent = T.histTelLabel;
+  $('t-hist-total-label').textContent = T.histTotalLabel;
+  $('t-hist-count-label').textContent = T.histCountLabel;
+  $('t-btn-cerrar').textContent = T.btnCerrar;
+
+  var metodos = [
+    {k:'tarjeta', l:T.metodoTarjeta, emoji:'💳'},
+    {k:'transferencia', l:T.metodoTransferencia, emoji:'🏦'},
+    {k:'efectivo', l:T.metodoEfectivo, emoji:'💵'},
+    {k:'otro', l:T.metodoOtro, emoji:'📝'}
+  ];
+  var mGroup = $('pago-metodo-group');
+  metodos.forEach(function(m){
+    var lbl = document.createElement('label'); lbl.className = 'radio-card';
+    var input = document.createElement('input'); input.type = 'radio'; input.name = 'metodo'; input.value = m.k;
+    var sp = document.createElement('span'); sp.className = 'emoji'; sp.textContent = m.emoji;
+    var tx = document.createElement('span'); tx.textContent = m.l;
+    lbl.appendChild(input); lbl.appendChild(sp); lbl.appendChild(tx); mGroup.appendChild(lbl);
+    input.addEventListener('change', function(){
+      var cards = mGroup.querySelectorAll('.radio-card');
+      for(var i=0;i<cards.length;i++) cards[i].classList.remove('selected');
+      lbl.classList.add('selected');
+    });
+  });
+
+  var dfOpts = [
+    {k:'all', l:T.dfAll}, {k:'today', l:T.dfToday}, {k:'yesterday', l:T.dfYesterday},
+    {k:'week', l:T.dfWeek}, {k:'month', l:T.dfMonth}, {k:'30d', l:T.df30d}, {k:'90d', l:T.df90d}
+  ];
+  var dfSel = $('date-filter');
+  dfOpts.forEach(function(o){ var op = document.createElement('option'); op.value = o.k; op.textContent = o.l; dfSel.appendChild(op); });
+  dfSel.value = 'all';
+
+  var cols = [T.thName, T.thServices, T.thDate, T.thTime, T.thStatus, T.thActions];
+  $('table-header').innerHTML = cols.map(function(c){ return '<th>' + c + '</th>'; }).join('');
+
+  function todayCancun(){ return new Date().toLocaleDateString('en-CA', {timeZone: TZ}); }
+  function nowCancun(){ return new Date(new Date().toLocaleString('en-US', {timeZone: TZ})); }
+  function formatDateDisplay(dateStr){
+    if(!dateStr) return '<span style=' + Q + 'color:var(--text-subtle)' + Q + '>' + T.noDate + '</span>';
+    var p = dateStr.split('-');
+    var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    return p[2].replace(/^0/,'') + ' ' + months[parseInt(p[1],10)-1] + ' ' + p[0];
+  }
+  function formatTimeDisplay(timeStr){
+    if(!timeStr) return '--';
+    var p = timeStr.split(':');
+    var h = parseInt(p[0],10); var m = p[1];
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    if(h > 12) h -= 12; if(h === 0) h = 12;
+    return h + ':' + m + ' ' + ampm;
+  }
+  function updateMetaDate(){
+    var d = nowCancun();
+    var months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    var hh = String(d.getHours()).padStart(2,'0');
+    var mm = String(d.getMinutes()).padStart(2,'0');
+    $('meta-date').textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' · ' + hh + ':' + mm;
+  }
+
+  function parseServices(svc){
+    if(!svc || (Array.isArray(svc) && svc.length === 0)) return '—';
+    if(!Array.isArray(svc)) return '—';
+    var names = [];
+    svc.forEach(function(s){
+      var slug = s.slug || s.name || '';
+      if(slug.indexOf(',') > -1) slug.split(',').forEach(function(p){ var t=p.trim(); if(t) names.push(t); });
+      else if(slug) names.push(slug);
+    });
+    return names.length ? names.join(', ') : '—';
+  }
+  function getDisplayStatus(b){
+    var today = todayCancun();
+    if(b.estado === 'cancelado') return 'cancelado';
+    if(b.estado === 'no_asistio') return 'no_asistio';
+    if(b.estado === 'pagado') return 'pagado';
+    if(b.estado === 'asistio') return 'asistio';
+    if(b.estado === 'confirmado'){ if(b.fecha_agendada === today) return 'hoy'; return 'confirmado'; }
+    if(!b.fecha_agendada) return 'reservo';
+    if(b.fecha_agendada === today) return 'hoy';
+    if(b.fecha_agendada < today) return 'vencido';
+    return 'reservo';
+  }
+  function badgeHTML(status){
+    var labels = {reservo:T.badgeReservo, confirmado:T.badgeConfirmado, asistio:T.badgeAsistio, pagado:T.badgePagado, cancelado:T.badgeCancelado, vencido:T.badgeVencido, hoy:T.badgeHoy, no_asistio:T.badgeNoAsistio};
+    return '<span class=' + Q + 'badge ' + status + Q + '>' + (labels[status]||status) + '</span>';
+  }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function sortBookings(arr){
+    var today = todayCancun();
+    return arr.slice().sort(function(a,b){
+      var sa = sortKey(a, today); var sb = sortKey(b, today);
+      if(sa !== sb) return sa - sb;
+      var ta = a.hora_agendada || '99:99'; var tb = b.hora_agendada || '99:99';
+      return ta.localeCompare(tb);
+    });
+  }
+  function sortKey(b, today){
+    if(b.fecha_agendada === today) return 0;
+    if(b.fecha_agendada && b.fecha_agendada > today) return 1;
+    if(!b.fecha_agendada) return 2;
+    return 3;
+  }
+
+  function actionBtns(b){
+    var status = getDisplayStatus(b);
+    var html = '';
+    if(status === 'reservo' || status === 'hoy' || status === 'confirmado' || status === 'vencido'){
+      html += '<button class=' + Q + 'btn btn-success' + Q + ' data-action=' + Q + 'asistio' + Q + ' data-id=' + Q + b.id + Q + '>' + T.btnAsistio + '</button> ';
+      html += '<button class=' + Q + 'btn btn-danger' + Q + ' data-action=' + Q + 'no_asistio' + Q + ' data-id=' + Q + b.id + Q + '>' + T.btnNoAsistio + '</button> ';
+    }
+    if(status === 'asistio' || status === 'pagado'){
+      html += '<button class=' + Q + 'btn btn-blue' + Q + ' data-action=' + Q + 'pago' + Q + ' data-id=' + Q + b.id + Q + '>' + T.btnPago + '</button> ';
+    }
+    if((b.num_pagos && b.num_pagos > 0) || status === 'pagado'){
+      html += '<button class=' + Q + 'btn btn-history' + Q + ' data-action=' + Q + 'historial' + Q + ' data-id=' + Q + b.id + Q + '>';
+      html += '<svg viewBox=' + Q + '0 0 24 24' + Q + ' fill=' + Q + 'none' + Q + ' stroke=' + Q + 'currentColor' + Q + ' stroke-width=' + Q + '2' + Q + '><circle cx=' + Q + '12' + Q + ' cy=' + Q + '12' + Q + ' r=' + Q + '10' + Q + '/><polyline points=' + Q + '12 6 12 12 16 14' + Q + '/></svg>';
+      html += T.btnHistorial + '</button>';
+    }
+    return html || '—';
+  }
+
+  var allBookings = [];
+  var searchQuery = '';
+  var dateFilterKey = 'all';
+
+  function dateRangeForFilter(key){
+    var today = todayCancun(); var d = nowCancun();
+    function ymd(date){ return date.toLocaleDateString('en-CA',{timeZone:TZ}); }
+    if(key === 'today') return {from: today, to: today, useCreated: false};
+    if(key === 'yesterday'){ var y = new Date(d); y.setDate(d.getDate()-1); var yd = ymd(y); return {from: yd, to: yd, useCreated: false}; }
+    if(key === 'week'){
+      var dow = d.getDay();
+      var s = new Date(d); s.setDate(d.getDate() - dow + (dow === 0 ? -6 : 1));
+      var e = new Date(s); e.setDate(s.getDate() + 6);
+      return {from: ymd(s), to: ymd(e), useCreated: false};
+    }
+    if(key === 'month'){
+      var sm = new Date(d.getFullYear(), d.getMonth(), 1);
+      var em = new Date(d.getFullYear(), d.getMonth()+1, 0);
+      return {from: ymd(sm), to: ymd(em), useCreated: false};
+    }
+    if(key === '30d' || key === '90d'){
+      var days = key === '30d' ? 30 : 90;
+      var s2 = new Date(d); s2.setDate(d.getDate() - days);
+      return {from: ymd(s2), to: ymd(d), useCreated: true};
+    }
+    return null;
+  }
+  function dateMatchesFilter(b, key){
+    var range = dateRangeForFilter(key);
+    if(!range) return true;
+    if(range.useCreated){
+      var c = b.created_at ? b.created_at.substring(0,10) : null;
+      if(!c) return false;
+      return c >= range.from && c <= range.to;
+    }
+    if(!b.fecha_agendada) return false;
+    return b.fecha_agendada >= range.from && b.fecha_agendada <= range.to;
+  }
+  function matchesSearch(b, q){
+    if(!q) return true;
+    q = q.toLowerCase().trim();
+    var fields = [b.cliente_nombre, b.cliente_telefono, b.cliente_email, b.booking_code, b.zona_colonia];
+    for(var i=0;i<fields.length;i++){ if(fields[i] && String(fields[i]).toLowerCase().indexOf(q) !== -1) return true; }
+    var svc = parseServices(b.servicios);
+    if(svc && svc.toLowerCase().indexOf(q) !== -1) return true;
+    return false;
+  }
+  function filterForTable(arr){
+    return arr.filter(function(b){ return matchesSearch(b, searchQuery) && dateMatchesFilter(b, dateFilterKey); });
+  }
+
+  function renderTodayList(bookings){
+    var today = todayCancun();
+    var filtered = sortBookings(bookings.filter(function(b){ return b.fecha_agendada === today && b.estado !== 'cancelado'; }));
+    $('today-count').textContent = filtered.length;
+    var container = $('today-list');
+    if(filtered.length === 0){
+      container.innerHTML = '<div class=' + Q + 'empty' + Q + '>' + T.emptyToday + '</div>';
+      return;
+    }
+    var html = '';
+    filtered.forEach(function(b){
+      var time = b.hora_agendada ? formatTimeDisplay(b.hora_agendada) : '--';
+      var timeParts = time.split(' ');
+      var services = parseServices(b.servicios);
+      var status = getDisplayStatus(b);
+      var canAsistio = (status === 'reservo' || status === 'hoy' || status === 'confirmado' || status === 'vencido');
+      var canPago = (status === 'asistio');
+      html += '<div class=' + Q + 'today-card' + Q + '>';
+      html += '<div class=' + Q + 'tc-time' + Q + '><div class=' + Q + 'hr' + Q + '>' + timeParts[0] + '</div>' + (timeParts[1] ? '<div class=' + Q + 'period' + Q + '>' + timeParts[1] + '</div>' : '') + '</div>';
+      html += '<div class=' + Q + 'tc-info' + Q + '><div class=' + Q + 'tc-name' + Q + '>' + esc(b.cliente_nombre || '—') + '</div>';
+      html += '<div class=' + Q + 'tc-services' + Q + '>' + esc(services) + '</div></div>';
+      html += '<div class=' + Q + 'tc-actions' + Q + '>';
+      if(canAsistio) html += '<button class=' + Q + 'btn btn-success' + Q + ' data-action=' + Q + 'asistio' + Q + ' data-id=' + Q + b.id + Q + '>✓</button>';
+      if(canPago) html += '<button class=' + Q + 'btn btn-blue' + Q + ' data-action=' + Q + 'pago' + Q + ' data-id=' + Q + b.id + Q + '>$</button>';
+      if(!canAsistio && !canPago) html += badgeHTML(status);
+      html += '</div></div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function renderEstadoList(bookings){
+    var counts = {reservo:0, asistio:0, pagado:0, no_asistio:0};
+    var total = 0;
+    bookings.forEach(function(b){
+      if(b.estado === 'cancelado') return;
+      var s = getDisplayStatus(b);
+      if(s === 'hoy' || s === 'vencido' || s === 'confirmado') s = 'reservo';
+      if(counts[s] !== undefined){ counts[s]++; total++; }
+    });
+    $('estado-count').textContent = total;
+    var rows = [
+      {key:'reservo', label:T.estadoLabels.reservo, count:counts.reservo},
+      {key:'asistio', label:T.estadoLabels.asistio, count:counts.asistio},
+      {key:'pagado', label:T.estadoLabels.pagado, count:counts.pagado},
+      {key:'no_asistio', label:T.estadoLabels.no_asistio, count:counts.no_asistio}
+    ];
+    var html = '';
+    rows.forEach(function(r){
+      var pct = total ? Math.round((r.count/total)*100) : 0;
+      html += '<div class=' + Q + 'estado-row ' + r.key + Q + '>';
+      html += '<div class=' + Q + 'e-head' + Q + '>';
+      html += '<div class=' + Q + 'e-name' + Q + '><span class=' + Q + 'e-dot' + Q + '></span>' + esc(r.label) + '</div>';
+      html += '<div class=' + Q + 'e-nums' + Q + '>' + r.count + '<span class=' + Q + 'total' + Q + '>/ ' + total + ' · ' + pct + '%</span></div>';
+      html += '</div>';
+      html += '<div class=' + Q + 'e-track' + Q + '><div class=' + Q + 'e-fill' + Q + ' style=' + Q + 'width:' + pct + '%' + Q + '></div></div>';
+      html += '</div>';
+    });
+    $('estado-list').innerHTML = html;
+  }
+
+  function renderTable(bookings){
+    var filtered = filterForTable(bookings);
+    var sorted = sortBookings(filtered);
+    $('table-count').textContent = sorted.length + ' registros';
+    var tbody = $('table-body');
+    if(sorted.length === 0){
+      tbody.innerHTML = '<tr><td colspan=' + Q + '6' + Q + ' style=' + Q + 'text-align:center;padding:40px;color:var(--text-muted)' + Q + '>Sin resultados</td></tr>';
+      return;
+    }
+    var html = '';
+    sorted.forEach(function(b,i){
+      var status = getDisplayStatus(b);
+      html += '<tr style=' + Q + 'animation-delay:' + (Math.min(i,20)*0.03) + 's' + Q + '>';
+      html += '<td class=' + Q + 'name' + Q + '>' + esc(b.cliente_nombre || '—') + '</td>';
+      html += '<td class=' + Q + 'services' + Q + '>' + esc(parseServices(b.servicios)) + '</td>';
+      html += '<td class=' + Q + 'muted' + Q + '>' + formatDateDisplay(b.fecha_agendada) + '</td>';
+      html += '<td class=' + Q + 'muted' + Q + '>' + (b.hora_agendada ? formatTimeDisplay(b.hora_agendada) : '--') + '</td>';
+      html += '<td>' + badgeHTML(status) + '</td>';
+      html += '<td class=' + Q + 'actions-cell' + Q + '>' + actionBtns(b) + '</td>';
+      html += '</tr>';
+    });
+    tbody.innerHTML = html;
+  }
+
+  function renderKPIs(bookings){
+    var today = todayCancun();
+    var d = nowCancun();
+    var curYear = d.getFullYear();
+    var curMonth = d.getMonth();
+    var total = bookings.length;
+    var todayCount = bookings.filter(function(b){ return b.fecha_agendada === today; }).length;
+    var attended = bookings.filter(function(b){ return b.estado === 'asistio' || b.estado === 'pagado'; }).length;
+    var revenue = bookings.reduce(function(sum, b){
+      if(b.estado !== 'pagado') return sum;
+      if(!b.pago_recibido_at) return sum;
+      var pd = new Date(b.pago_recibido_at);
+      var mx = new Date(pd.toLocaleString('en-US', {timeZone: TZ}));
+      if(mx.getFullYear() !== curYear || mx.getMonth() !== curMonth) return sum;
+      var amt = parseFloat(b.total_pagado || b.valor_ticket_mxn || 0);
+      return sum + (isNaN(amt) ? 0 : amt);
+    }, 0);
+    $('kpi-total').textContent = total;
+    $('kpi-today').textContent = todayCount;
+    $('kpi-attended').textContent = attended;
+    $('kpi-revenue').textContent = '$' + revenue.toLocaleString('es-MX', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+  }
+
+  document.getElementById('ex-dash').addEventListener('click', function(e){
+    var closeBtn = e.target.closest('[data-close]');
+    if(closeBtn){ closeModal(closeBtn.getAttribute('data-close')); return; }
+    var overlay = e.target.classList && e.target.classList.contains('modal-overlay') ? e.target : null;
+    if(overlay){ closeModal(overlay.id); return; }
+    var btn = e.target.closest('[data-action]');
+    if(!btn) return;
+    var id = btn.getAttribute('data-id');
+    var action = btn.getAttribute('data-action');
+    if(!id || !action) return;
+    if(action === 'asistio') window._exMarcarAsistio(id);
+    else if(action === 'no_asistio') window._exMarcarNoAsistio(id);
+    else if(action === 'pago') window._exAbrirModalPago(id);
+    else if(action === 'historial') window._exAbrirHistorial(id);
+  });
+
+  function openModal(id){ var el = $(id); if(el) el.classList.add('open'); }
+  function closeModal(id){ var el = $(id); if(el) el.classList.remove('open'); }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ var open = document.querySelector('.modal-overlay.open'); if(open) closeModal(open.id); }
+  });
+
+  function fireTag(contact_id, tag, action){
+    if(!contact_id) return;
+    fetch(N8N_TAG_WEBHOOK, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({contact_id: contact_id, tag: tag, action: action || 'add'})
+    }).catch(function(err){ console.warn('Tag webhook failed:', err); });
+  }
+
+  function rpc(fn, args){
+    return fetch(SB_URL + '/rest/v1/rpc/' + fn, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(args)
+    }).then(function(r){
+      if(!r.ok) return r.text().then(function(t){ throw new Error(t); });
+      return r.json();
+    });
+  }
+
+  window._exMarcarAsistio = function(id){
+    var booking = allBookings.filter(function(x){ return x.id === id; })[0];
+    rpc('exentia_marcar_asistio', {p_booking_id: id}).then(function(){
+      if(booking && booking.ghl_contact_id) fireTag(booking.ghl_contact_id, 'asistio', 'add');
+      showToast(T.toastAsistio, 'success');
+      fetchBookings();
+    }).catch(function(err){ console.error(err); showToast(T.toastError, 'error'); });
+  };
+
+  window._exMarcarNoAsistio = function(id){
+    if(!confirm(T.confirmNoAsistio)) return;
+    var booking = allBookings.filter(function(x){ return x.id === id; })[0];
+    rpc('exentia_marcar_no_asistio', {p_booking_id: id}).then(function(){
+      if(booking && booking.ghl_contact_id) fireTag(booking.ghl_contact_id, 'no_asistio', 'add');
+      showToast(T.toastNoAsistio, 'success');
+      fetchBookings();
+    }).catch(function(err){ console.error(err); showToast(T.toastError, 'error'); });
+  };
+
+  var pagoCurrentBookingId = null;
+  window._exAbrirModalPago = function(id){
+    var b = allBookings.filter(function(x){ return x.id === id; })[0];
+    if(!b){ showToast(T.toastError, 'error'); return; }
+    pagoCurrentBookingId = id;
+    $('pago-cli-nombre').textContent = b.cliente_nombre || '—';
+    $('pago-cli-servicios').textContent = parseServices(b.servicios);
+    $('pago-cli-codigo').textContent = b.booking_code || '—';
+    $('pago-monto').value = b.valor_ticket_mxn ? Number(b.valor_ticket_mxn).toFixed(2) : '';
+    $('pago-notas').value = '';
+    $('err-monto').classList.remove('show');
+    var cards = $('pago-metodo-group').querySelectorAll('.radio-card');
+    for(var i=0;i<cards.length;i++) cards[i].classList.remove('selected');
+    var radios = $('pago-metodo-group').querySelectorAll('input[type=radio]');
+    for(var j=0;j<radios.length;j++) radios[j].checked = false;
+    openModal('modal-pago');
+    setTimeout(function(){ $('pago-monto').focus(); }, 120);
+  };
+
+  $('pago-submit').addEventListener('click', function(){
+    if(!pagoCurrentBookingId) return;
+    var monto = parseFloat($('pago-monto').value);
+    var metodo = null;
+    var radios = $('pago-metodo-group').querySelectorAll('input[type=radio]');
+    for(var i=0;i<radios.length;i++) if(radios[i].checked){ metodo = radios[i].value; break; }
+    var notas = $('pago-notas').value.trim();
+    if(!monto || isNaN(monto) || monto <= 0){
+      var err = $('err-monto'); err.textContent = T.errMonto; err.classList.add('show');
+      $('pago-monto').focus(); return;
+    }
+    if(!metodo){ showToast(T.errMetodo, 'error'); return; }
+
+    var btn = $('pago-submit');
+    btn.disabled = true;
+    var origText = $('t-btn-registrar').textContent;
+    $('t-btn-registrar').textContent = '...';
+    var bookingSnapshot = allBookings.filter(function(x){ return x.id === pagoCurrentBookingId; })[0];
+
+    rpc('exentia_registrar_pago', { p_booking_id: pagoCurrentBookingId, p_monto: monto, p_metodo: metodo, p_notas: notas || null })
+      .then(function(result){
+        var pagoId = (result && result[0]) ? result[0].id : null;
+        if(bookingSnapshot && bookingSnapshot.ghl_contact_id){
+          // 1) Crear invoice GHL + Meta CAPI
+          fetch(N8N_PAGO_WEBHOOK, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              contact_id: bookingSnapshot.ghl_contact_id, monto: monto, metodo: metodo,
+              source: 'dashboard', pago_id: pagoId, booking_code: bookingSnapshot.booking_code, notas: notas || null
+            })
+          }).catch(function(err){ console.warn('Webhook pago failed:', err); });
+          // 2) Mover opportunity al stage Pago
+          fireTag(bookingSnapshot.ghl_contact_id, 'pago', 'add');
+        }
+        showToast(T.toastPago, 'success');
+        closeModal('modal-pago');
+        pagoCurrentBookingId = null;
+        fetchBookings();
+      })
+      .catch(function(err){ console.error(err); showToast(T.toastError, 'error'); })
+      .then(function(){ btn.disabled = false; $('t-btn-registrar').textContent = origText; });
+  });
+
+  window._exAbrirHistorial = function(id){
+    var b = allBookings.filter(function(x){ return x.id === id; })[0];
+    if(!b){ showToast(T.toastError, 'error'); return; }
+    $('hist-cli-nombre').textContent = b.cliente_nombre || '—';
+    $('hist-cli-tel').textContent = b.cliente_telefono || '—';
+    $('hist-list').innerHTML = '<div class=' + Q + 'hist-empty' + Q + '>' + T.histLoading + '</div>';
+    $('hist-total-value').textContent = '$0';
+    $('hist-count-value').textContent = '0';
+    openModal('modal-historial');
+    var url = SB_URL + '/rest/v1/exentia_pagos_dash?order=created_at.desc';
+    if(b.ghl_contact_id) url += '&ghl_contact_id=eq.' + encodeURIComponent(b.ghl_contact_id);
+    else if(b.cliente_telefono) url += '&cliente_telefono=eq.' + encodeURIComponent(b.cliente_telefono);
+    else { $('hist-list').innerHTML = '<div class=' + Q + 'hist-empty' + Q + '>' + T.histEmpty + '</div>'; return; }
+    fetch(url, { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } })
+    .then(function(r){ return r.json(); })
+    .then(function(pagos){
+      if(!Array.isArray(pagos) || pagos.length === 0){
+        $('hist-list').innerHTML = '<div class=' + Q + 'hist-empty' + Q + '>' + T.histEmpty + '</div>';
+        return;
+      }
+      var total = pagos.reduce(function(s,p){ return s + parseFloat(p.monto_mxn || 0); }, 0);
+      $('hist-total-value').textContent = '$' + total.toLocaleString('es-MX', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+      $('hist-count-value').textContent = pagos.length;
+      var metodoLabels = {tarjeta:T.metodoTarjeta, transferencia:T.metodoTransferencia, efectivo:T.metodoEfectivo, otro:T.metodoOtro};
+      var html = '';
+      pagos.forEach(function(p){
+        var dt = p.created_at ? new Date(p.created_at) : null;
+        var dateStr = dt ? dt.toLocaleDateString('es-MX', {timeZone:TZ, day:'numeric', month:'short', year:'numeric'}) + ' · ' + dt.toLocaleTimeString('es-MX', {timeZone:TZ, hour:'2-digit', minute:'2-digit'}) : '';
+        var svc = parseServices(p.booking_servicios);
+        html += '<div class=' + Q + 'hist-item' + Q + '>';
+        html += '<div class=' + Q + 'hist-item-top' + Q + '>';
+        html += '<div class=' + Q + 'hist-monto' + Q + '>$' + parseFloat(p.monto_mxn).toLocaleString('es-MX',{minimumFractionDigits:0, maximumFractionDigits:2}) + '</div>';
+        html += '<span class=' + Q + 'hist-metodo ' + p.metodo + Q + '>' + (metodoLabels[p.metodo] || p.metodo) + '</span>';
+        html += '</div>';
+        html += '<div class=' + Q + 'hist-meta' + Q + '>';
+        html += '<span>' + esc(dateStr) + '</span>';
+        if(p.booking_code){ html += '<span class=' + Q + 'dot-sep' + Q + '>·</span><span>' + esc(p.booking_code) + '</span>'; }
+        if(svc && svc !== '—'){ html += '<span class=' + Q + 'dot-sep' + Q + '>·</span><span>' + esc(svc) + '</span>'; }
+        html += '</div>';
+        if(p.notas){ html += '<div class=' + Q + 'hist-notas' + Q + '>' + esc(p.notas) + '</div>'; }
+        html += '</div>';
+      });
+      $('hist-list').innerHTML = html;
+    })
+    .catch(function(err){ console.error(err); $('hist-list').innerHTML = '<div class=' + Q + 'hist-empty' + Q + '>' + T.toastError + '</div>'; });
+  };
+
+  function showToast(msg, type){
+    var tc = $('toast-container');
+    var t = document.createElement('div');
+    t.className = 'toast ' + (type || 'success');
+    t.textContent = msg;
+    tc.appendChild(t);
+    setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity 0.3s'; setTimeout(function(){ if(t.parentNode) tc.removeChild(t); },300); }, 3000);
+  }
+
+  function fetchBookings(){
+    return fetch(SB_URL + '/rest/v1/exentia_bookings_dash?select=*&order=created_at.desc', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(Array.isArray(data)){
+        allBookings = data;
+        renderKPIs(data);
+        renderTodayList(data);
+        renderEstadoList(data);
+        renderTable(data);
+      }
+    })
+    .catch(function(err){ console.error('Fetch error:', err); });
+  }
+
+  var searchInput = $('search-input');
+  var debounceTimer;
+  searchInput.addEventListener('input', function(){
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function(){
+      searchQuery = searchInput.value;
+      renderTable(allBookings);
+    }, 180);
+  });
+  dfSel.addEventListener('change', function(){ dateFilterKey = dfSel.value; renderTable(allBookings); });
+
+  function escapeCSV(val){
+    if(val === null || val === undefined) return '';
+    var s = String(val);
+    if(s.indexOf(',') !== -1 || s.indexOf(Q) !== -1 || s.indexOf('\n') !== -1 || s.indexOf('\r') !== -1){
+      return Q + s.split(Q).join(Q+Q) + Q;
+    }
+    return s;
+  }
+  function bookingToCSVRows(b){
+    var services = [];
+    if(Array.isArray(b.servicios)){
+      b.servicios.forEach(function(s){
+        var slug = (s && (s.slug || s.name)) || '';
+        if(slug.indexOf(',') > -1) slug.split(',').forEach(function(p){ var t=p.trim(); if(t) services.push(t); });
+        else if(slug) services.push(slug);
+      });
+    }
+    if(services.length === 0) services = [''];
+    return services.map(function(svc){
+      return [
+        b.booking_code || '', b.cliente_nombre || '', b.cliente_telefono || '', b.cliente_email || '',
+        svc, b.fecha_agendada || '', b.hora_agendada || '', b.estado || '',
+        b.valor_ticket_mxn || 0, b.modalidad || '', b.notas_cliente || '', b.created_at || ''
+      ].map(escapeCSV).join(',');
+    });
+  }
+  $('csv-btn').addEventListener('click', function(){
+    var filtered = filterForTable(allBookings);
+    var sorted = sortBookings(filtered);
+    var rows = [T.csvHeaders];
+    sorted.forEach(function(b){ rows = rows.concat(bookingToCSVRows(b)); });
+    var csv = '﻿' + rows.join('\r\n');
+    var blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var stamp = new Date().toISOString().substring(0,10);
+    a.href = url; a.download = T.csvFilename + '-' + stamp + '.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+    showToast('CSV descargado (' + (rows.length-1) + ' filas)', 'success');
+  });
+
+  updateMetaDate();
+  fetchBookings();
+  setInterval(function(){ updateMetaDate(); fetchBookings(); }, POLL_MS);
+})();
+</script>
+"></iframe>

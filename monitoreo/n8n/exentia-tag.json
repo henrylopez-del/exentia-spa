@@ -1,0 +1,179 @@
+{
+  "name": "exentia-tag",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "exentia-tag",
+        "responseMode": "responseNode",
+        "options": { "allowedOrigins": "*" }
+      },
+      "id": "wh-tag-001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-440, 0],
+      "webhookId": "exentia-tag"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recibe { contact_id, tag, action: 'add'|'remove' }\nlet body = $input.item.json.body || $input.item.json;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch(e) { body = {}; } }\nbody = body || {};\n\nconst contact_id = body.contact_id || body.contactId || null;\nconst tag = (body.tag || '').toLowerCase().trim();\nconst action = (body.action || 'add').toLowerCase();\n\nconst ALLOWED_TAGS = ['asistio', 'no_asistio', 'no-show', 'cancelado_cliente', 'pago', 'pagado'];\n\nif (!contact_id) return { json: { valid: false, error: 'contact_id missing' } };\nif (!tag) return { json: { valid: false, error: 'tag missing' } };\nif (ALLOWED_TAGS.indexOf(tag) === -1) return { json: { valid: false, error: 'tag not allowed: ' + tag } };\nif (['add','remove'].indexOf(action) === -1) return { json: { valid: false, error: 'invalid action' } };\n\nreturn { json: { valid: true, contact_id, tag, action } };"
+      },
+      "id": "norm-tag-002",
+      "name": "Normalize & Validate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict" },
+          "conditions": [
+            { "id": "valid-check", "leftValue": "={{ $json.valid }}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } }
+          ]
+        }
+      },
+      "id": "if-valid-003",
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict" },
+          "conditions": [
+            { "id": "is-add", "leftValue": "={{ $json.action }}", "rightValue": "add", "operator": { "type": "string", "operation": "equals" } }
+          ]
+        }
+      },
+      "id": "if-action-004",
+      "name": "Action = add?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [220, -60]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Normalize & Validate').item.json.contact_id }}/tags",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Version", "value": "2021-07-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ tags: [ $('Normalize & Validate').item.json.tag ] }) }}",
+        "options": { "timeout": 10000 }
+      },
+      "id": "add-tag-005",
+      "name": "Add Tag GHL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, -120],
+      "credentials": {
+        "httpHeaderAuth": { "id": "PBgp7jLU2uAJz3t8", "name": "GHL Exentia Bearer" }
+      },
+      "continueOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Normalize & Validate').item.json.contact_id }}/tags",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Version", "value": "2021-07-28" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ tags: [ $('Normalize & Validate').item.json.tag ] }) }}",
+        "options": { "timeout": 10000 }
+      },
+      "id": "remove-tag-006",
+      "name": "Remove Tag GHL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 80],
+      "credentials": {
+        "httpHeaderAuth": { "id": "PBgp7jLU2uAJz3t8", "name": "GHL Exentia Bearer" }
+      },
+      "continueOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, contact_id: $('Normalize & Validate').item.json.contact_id, tag: $('Normalize & Validate').item.json.tag, action: $('Normalize & Validate').item.json.action }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Content-Type", "value": "application/json" },
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "resp-200-007",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: $('Normalize & Validate').item.json.error || 'invalid' }) }}",
+        "options": {
+          "responseCode": "400",
+          "responseHeaders": {
+            "entries": [
+              { "name": "Content-Type", "value": "application/json" },
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "resp-400-008",
+      "name": "Respond 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [220, 200]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Normalize & Validate", "type": "main", "index": 0 }]] },
+    "Normalize & Validate": { "main": [[{ "node": "Valid?", "type": "main", "index": 0 }]] },
+    "Valid?": {
+      "main": [
+        [{ "node": "Action = add?", "type": "main", "index": 0 }],
+        [{ "node": "Respond 400", "type": "main", "index": 0 }]
+      ]
+    },
+    "Action = add?": {
+      "main": [
+        [{ "node": "Add Tag GHL", "type": "main", "index": 0 }],
+        [{ "node": "Remove Tag GHL", "type": "main", "index": 0 }]
+      ]
+    },
+    "Add Tag GHL": { "main": [[{ "node": "Respond 200", "type": "main", "index": 0 }]] },
+    "Remove Tag GHL": { "main": [[{ "node": "Respond 200", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "active": false
+}

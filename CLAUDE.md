@@ -18,7 +18,7 @@ Pagina web + sistema de reservas + tracking para Exentia (Cancun). Sigue el play
 | 4 | **6 workflows n8n** | `exentia-track`, `-reserva`, `-checkin`, `-resena`, `-upload-conversions` (cron, scaffold), `-cita-creada` (NUEVO 2026-04-30) |
 | 5 | **Schema Supabase `exentia.*`** | 7 tablas + vistas + RLS + 2 storage buckets. `bookings.ghl_appointment_id` para idempotencia + `lead_ref`, `atribucion` JSONB, `valor_ticket_mxn` (migration 03, 2026-05-26) + index en `ghl_contact_id` |
 | 6 | **GHL Exentia (`0hGSRrhxkdywVQxCsNOi`)** | 27 custom fields `exentia_*` + 60 tags + Pipeline `Reservas` (9 stages) + form `ElRuF6DqgcwUiSyJaXoi` + calendar `VUbTtrop8lZFx8HRmJzV` + Workflow GHL "Appointment Created" → POST `/webhook/envio-exentia` |
-| 7 | **Dashboard interno** | Standalone HTML en `monitoreo/dashboard/` (Variante B srcdoc, lista para pegar en GHL Custom Menu) |
+| 7 | **Dashboard interno** | Standalone HTML en `monitoreo/dashboard-exentia.html` (iframe srcdoc para GHL Custom Menu). KPIs en vivo, tabs Hoy/Semana/Todas, búsqueda fuzzy, filtro temporal, **modal registrar pago**, **modal historial por cliente**, **export CSV** (1 servicio = 1 fila), event delegation (sin inline onclick). Auto-refresh 10s. Conecta a Supabase vía RPCs `exentia_marcar_asistio` y `exentia_registrar_pago` |
 | 8 | **GA4 instalado** | Property `Exentia` bajo account Arqalum. Measurement ID `G-LQ4YJQ2MZV` en `<head>` de la pagina. Eventos en español llegando con segmentación por traffic_source/device_type/came_from |
 | 9 | **Lifecycle verificado** | reservo → asistio → resenado end-to-end testeado, todos los webhooks responden. Fechas de citas guardandose correctamente desde 2026-04-30 |
 
@@ -69,14 +69,231 @@ exentia-spa/
 monitoreo/
 ├── sql/
 │   ├── 01_schema_init.sql                            # Schema exentia.* aplicado
-│   └── 02_alter_bookings_add_ghl_appointment.sql     # ghl_appointment_id + drop lead_ref (2026-04-30)
-├── n8n/                              # 6 workflows JSON listos para importar
+│   ├── 02_alter_bookings_add_ghl_appointment.sql     # ghl_appointment_id + drop lead_ref (2026-04-30)
+│   ├── 03_exentia_pagos_y_view_dash.sql              # tabla pagos + view recreada con ghl_contact_id + RPCs (2026-05-27)
+├── n8n/                              # 7 workflows JSON listos para importar
 │   ├── exentia-{track,reserva,checkin,resena,upload-conversions}.json
-│   └── exentia-cita-creada.json                      # GHL appointment → bookings (2026-04-30)
+│   ├── exentia-cita-creada.json                      # GHL appointment → bookings (2026-04-30)
+│   └── exentia-crear-invoice-ghl.json                # registra pago en GHL Invoices manualmente (2026-05-27)
 ├── ghl/                              # IDs de CFs, tags, pipeline + PENDIENTES.md
 ├── tracking/                         # tracker.js source + guias GA4/Clarity + tracking_ids.json (G-LQ4YJQ2MZV)
-└── dashboard/                        # Dashboard standalone + deploy-srcdoc.py
+├── dashboard/                        # Dashboard standalone + deploy-srcdoc.py (legacy V1)
+└── dashboard-exentia.html            # Dashboard V2 con pagos y CSV (2026-05-27)
 ```
+
+---
+
+## Dashboard V2 — Pagos, Historial y Export (2026-05-27)
+
+Reemplaza el dashboard legacy en `dashboard/`. Pegar en GHL Custom Menu Link.
+
+### Funcionalidades
+- **KPIs**: Total citas, Citas hoy, Asistieron, **Revenue del Mes** (solo pagos del mes actual usando `pago_recibido_at`)
+- **Tabs**: Hoy / Esta Semana / Todas (cards visuales en la parte superior)
+- **Tabla "Todas las Citas"** con:
+  - 🔍 Búsqueda fuzzy por nombre, teléfono, email, código booking, servicio, zona
+  - 📅 Filtro temporal: Todo / Hoy / Ayer / Esta semana / Este mes / Últimos 30d / Últimos 90d
+  - ⬇️ Botón "Descargar CSV" — exporta con el filtro actual aplicado
+- **Botones por fila** (acción rápida + tag automático en GHL):
+  - "Asistió" (verde) — RPC `exentia_marcar_asistio` + tag "asistio" en GHL
+  - "No vino" (rojo) — RPC `exentia_marcar_no_asistio` + tag "no_asistio" en GHL (con confirmación)
+  - "Pagó" (dorado) — abre modal de pago
+  - "Historial" (gris) — abre modal con todos los pagos de ese cliente
+
+### Modal Registrar Pago
+- Pre-llenado con cliente, servicios, código
+- Monto (MXN) con prefix `$`
+- 4 métodos visuales: 💳 Tarjeta · 🏦 Transferencia · 💵 Efectivo · 📝 Otro
+- Notas opcionales
+- Submit → llama RPC `public.exentia_registrar_pago(uuid, numeric, text, text)` que:
+  1. Inserta en `exentia.pagos`
+  2. Actualiza `exentia.bookings.estado = 'pagado'`, suma al `valor_ticket_mxn`
+  3. Devuelve total pagado y num_pagos
+
+### Modal Historial de Pagos
+- Cliente + Teléfono visible
+- **Total Pagado** y **Número de Pagos** como cards
+- Lista cronológica (más reciente primero) con:
+  - Monto + badge método (color por tipo)
+  - Fecha y hora · código booking · servicios
+  - Notas (si las hay)
+- Query: `public.exentia_pagos_dash?ghl_contact_id=eq.X` (fallback teléfono)
+
+### CSV Export
+- 1 servicio = 1 fila (desnormalizado para análisis)
+- Columnas: Código, Cliente, Telefono, Email, Servicio, Fecha, Hora, Estado, Monto MXN, Modalidad, Notas Cliente, Fecha Creacion
+- BOM UTF-8 para Excel
+- Respeta filtro y búsqueda activos
+
+### SQL aplicado (migration 03)
+```sql
+-- Tabla pagos (audit log de pagos)
+CREATE TABLE exentia.pagos (
+  id uuid PK, booking_id uuid FK, ghl_contact_id, cliente_telefono, cliente_nombre,
+  monto_mxn numeric, metodo text (tarjeta/transferencia/efectivo/otro),
+  notas, ghl_invoice_id, ghl_invoice_status, registrado_por, created_at
+);
+
+-- Vista recreada con ghl_contact_id + total_pagado + num_pagos
+CREATE VIEW public.exentia_bookings_dash AS SELECT b.*, p.total_pagado, p.num_pagos
+FROM exentia.bookings b LEFT JOIN LATERAL (SELECT SUM(monto_mxn) ..., COUNT(*) ...) p ON true;
+
+-- Vista historial
+CREATE VIEW public.exentia_pagos_dash AS
+SELECT p.*, b.booking_code, b.servicios as booking_servicios, b.fecha_agendada as booking_fecha
+FROM exentia.pagos p LEFT JOIN exentia.bookings b ON ...;
+
+-- RPCs (anon callable)
+CREATE FUNCTION public.exentia_registrar_pago(p_booking_id uuid, p_monto numeric, p_metodo text, p_notas text)
+RETURNS TABLE(id uuid, total_pagado numeric, num_pagos bigint) SECURITY DEFINER ...;
+
+CREATE FUNCTION public.exentia_marcar_asistio(p_booking_id uuid) SECURITY DEFINER ...;
+```
+
+### Workflow n8n `exentia-pago.json` — UNIFICADO (2026-05-27)
+
+Un solo workflow que maneja DOS triggers:
+
+**Trigger A — GHL Workflow "Tag Added 'pago'":**
+```json
+{ "contact_id": "...", "tag": "pago", "trigger_type": "tag_added" }
+```
+Para casos manuales (Yaz marca tag desde móvil GHL).
+
+**Trigger B — Dashboard "Registrar Pago":**
+```json
+{
+  "contact_id": "...",
+  "monto": 850,
+  "metodo": "tarjeta",
+  "source": "dashboard",
+  "pago_id": "uuid",
+  "booking_code": "EX-XXXXXXXX",
+  "notas": "..."
+}
+```
+
+**Flujo:**
+```
+Webhook → Normalize (detecta source)
+       → Validate
+       → Get Contact GHL (lee custom fields)
+       → IF Is Dashboard Source?
+           ├── True: Preparar Invoice (line items prorrateados)
+           │        → Crear Invoice GHL (POST /invoices/)
+           │        → Record Payment GHL (POST /invoices/{id}/record-payment con método)
+           │        → Save invoice_id (UPDATE exentia.pagos SET ghl_invoice_id)
+           │        → Extract & Build CAPI
+           └── False: Extract & Build CAPI (skip invoice creation)
+       → Has fbclid?
+           ├── True: Send Meta CAPI → Log Meta CAPI
+           └── False: Log Skipped
+       → Build Response → Respond 200
+```
+
+**Características:**
+- Meta CAPI siempre se ejecuta (Trigger A o B) si el contacto tiene fbclid
+- Invoice GHL solo se crea cuando viene del dashboard
+- `Extract & Build CAPI` usa `$('Get Contact GHL').item.json` para acceder a los datos del contacto independiente del path
+- `event_id` para Meta usa `pago_id` si viene del dashboard (idempotencia natural)
+- Si el contacto vino del dashboard, el `valor_ticket_mxn` para CAPI usa el monto del pago (más preciso que el custom field GHL)
+- Todos los pasos GHL tienen `continueOnFail: true` — si la API GHL falla, no rompe Meta CAPI
+
+**Conexión desde el dashboard:**
+```javascript
+// En dashboard-exentia.html, tras RPC exentia_registrar_pago exitoso:
+fetch('https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-pago', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({
+    contact_id: booking.ghl_contact_id,
+    monto, metodo,
+    source: 'dashboard',
+    pago_id: rpcResult.id,
+    booking_code: booking.booking_code,
+    notas
+  })
+}).catch(err => console.warn('webhook failed:', err));
+```
+Fire-and-forget — si el webhook falla, el pago YA está en Supabase. No bloquea la UX.
+
+### Anti-loop integrado (2026-05-27)
+
+El flujo "dashboard → tag pago → GHL workflow → webhook" tiene un loop natural. Solución implementada:
+
+1. **Rama dashboard**: después de crear invoice + record payment, llama GHL API `POST /contacts/{id}/tags` con `["pago"]`
+2. **GHL workflow "Tag Added pago"** se dispara automáticamente → llama webhook con `source=ghl_tag`
+3. **Node "Check Recent Pago"**: query a `exentia.pagos WHERE ghl_contact_id = X AND created_at > NOW() - INTERVAL '5 minutes'`
+4. **Node "Detect Loop"**: si es ghl_tag Y hay pago reciente → marca `is_loop=true`
+5. **Node "Is Loop?"**: si true → "Respond Loop Skipped" 200 OK con `{skipped:true, reason:loop_prevention}`. Si false → continúa flujo normal (Get Contact GHL → Meta CAPI)
+
+Esto garantiza: el dashboard dispara TODO (invoice + tag + Meta CAPI). El re-trigger por tag no duplica Meta CAPI. Pero si Yaz agrega tag manualmente (sin pago previo), el flujo sí ejecuta Meta CAPI normalmente.
+
+---
+
+## Workflow n8n `exentia-tag.json` (2026-05-27)
+
+Webhook helper para add/remove tags en GHL desde el dashboard. Whitelist de tags permitidos para prevenir abuso.
+
+**Endpoint:** `POST /webhook/exentia-tag`
+
+**Body:**
+```json
+{
+  "contact_id": "abc123",
+  "tag": "asistio" | "no_asistio" | "no-show" | "cancelado_cliente",
+  "action": "add" | "remove"
+}
+```
+
+**Whitelist en el Code node:**
+```js
+const ALLOWED_TAGS = ['asistio', 'no_asistio', 'no-show', 'cancelado_cliente'];
+```
+
+**Flujo:**
+```
+Webhook → Normalize & Validate → Valid?
+  ├── True: Action = add?
+  │          ├── add: POST /contacts/{id}/tags
+  │          └── remove: DELETE /contacts/{id}/tags
+  │   → Respond 200
+  └── False: Respond 400
+```
+
+**Uso desde dashboard:**
+```javascript
+// Al marcar "Asistió" en dashboard:
+fireTag(booking.ghl_contact_id, 'asistio', 'add');
+// Al marcar "No vino":
+fireTag(booking.ghl_contact_id, 'no_asistio', 'add');
+```
+
+---
+
+## Mobile Responsive (2026-05-27)
+
+CSS media queries añadidas para tres breakpoints:
+
+| Breakpoint | Cambios |
+|---|---|
+| `max-width: 900px` | KPIs en 2 cols, toolbar wrap, today-cards 1 col |
+| `max-width: 600px` | Header stacked, modales fullscreen, table compacta, botones más grandes (min 44px touch), input font-size 16px (evita zoom iOS), toolbar vertical |
+| `max-width: 380px` | KPIs en 1 col, botones de acción en línea con wrap |
+
+**Reglas mobile clave:**
+- Modales con `max-height: 100dvh` + `display: flex; flex-direction: column` → header/body/foot bien distribuidos
+- `padding-top: calc(12px + env(safe-area-inset-top))` para notch iOS
+- `padding: 12px` con `font-size: 16px` en inputs (evita zoom auto-iOS)
+- Toast container con `bottom/left/right: 10px` en móvil
+- Tags en GHL aparecen siempre que se haga acción en dashboard (consistencia desktop/mobile)
+
+### Encoding srcdoc — lecciones aprendidas
+- **Nunca usar `\"` dentro del srcdoc** (HTML parser lo interpreta como cierre del atributo)
+- **Nunca usar comillas dobles literales** en JS-generated HTML strings → usar `var Q = String.fromCharCode(34)`
+- **CSS con `url("...")`** rompe srcdoc → usar `url('...')` con single quotes
+- **Inline `onclick="..."` rompe srcdoc** → usar `data-action` + event delegation
+- Todas las strings con caracteres especiales (acentos, ñ, ·) van en objeto T y se inyectan vía JS para evitar mojibake
 
 ---
 
