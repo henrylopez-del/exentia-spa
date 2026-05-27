@@ -486,98 +486,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .promo-ribbon-close:hover { opacity: 1; }
 
-  /* ============ EXIT-INTENT POPUP ============ */
-  .exit-popup {
-    position: fixed; inset: 0;
-    z-index: 9999;
-    display: none;
-    align-items: center; justify-content: center;
-    padding: 20px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  .exit-popup.open { display: flex; opacity: 1; }
-  .exit-popup-overlay {
-    position: absolute; inset: 0;
-    background: rgba(92, 58, 30, 0.55);
-    backdrop-filter: blur(3px);
-  }
-  .exit-popup-card {
-    position: relative;
-    background: var(--off-white);
-    border-radius: 14px;
-    padding: 40px 36px 32px;
-    max-width: 440px; width: 100%;
-    text-align: center;
-    box-shadow: 0 30px 80px rgba(92, 58, 30, 0.35);
-    transform: translateY(10px) scale(0.96);
-    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
-  }
-  .exit-popup.open .exit-popup-card {
-    transform: translateY(0) scale(1);
-  }
-  .exit-popup-close {
-    position: absolute; top: 14px; right: 14px;
-    background: none; border: none;
-    color: var(--text-light); cursor: pointer;
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    display: grid; place-items: center;
-    font-size: 14px;
-    transition: background 0.2s;
-  }
-  .exit-popup-close:hover { background: var(--cream); }
-  .exit-popup-eyebrow {
-    display: inline-block;
-    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--olive);
-    margin-bottom: 12px;
-  }
-  .exit-popup-card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 30px; font-weight: 400;
-    color: var(--brown);
-    margin: 0 0 12px;
-    line-height: 1.15;
-  }
-  .exit-popup-card h3 em {
-    font-style: italic; color: var(--olive);
-  }
-  .exit-popup-card p {
-    font-size: 13.5px; color: var(--text);
-    line-height: 1.55;
-    margin: 0 0 22px;
-  }
-  .exit-popup-code {
-    background: var(--cream);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 0 0 22px;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-  }
-  .exit-popup-code span {
-    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--text-light);
-  }
-  .exit-popup-code code {
-    font-family: 'Lato', monospace;
-    font-size: 22px; font-weight: 600;
-    color: var(--brown);
-    letter-spacing: 2px;
-  }
-  .exit-popup-card .btn {
-    width: 100%; margin-bottom: 10px;
-  }
-  .exit-popup-secondary {
-    background: none; border: none;
-    color: var(--text-light);
-    font-size: 12px;
-    cursor: pointer;
-    padding: 8px 12px;
-    transition: color 0.2s;
-  }
-  .exit-popup-secondary:hover { color: var(--brown); }
-
   /* ============ PROMOCIONES Y PAQUETES (Henry mockup style) ============ */
   .promos {
     background: var(--cream-soft, #f3e4c7);
@@ -2666,9 +2574,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .promo-ribbon-link { gap: 8px; padding: 8px 36px 8px 12px; }
     .promo-ribbon-cta { display: none; }
     .promo-ribbon-text { letter-spacing: 0; }
-    .exit-popup-card { padding: 32px 24px 26px; }
-    .exit-popup-card h3 { font-size: 24px; }
-    .exit-popup-code code { font-size: 18px; }
     .filosofia-grid, .ubicacion-grid, .intro-grid { grid-template-columns: 1fr; gap: 48px; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .nav-links { display: none; }
@@ -3314,23 +3219,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     <span class="promo-ribbon-cta">Ver paquetes →</span>
   </a>
   <button class="promo-ribbon-close" aria-label="Cerrar" onclick="closePromoRibbon()">&#10005;</button>
-</div>
-
-<!-- ========== EXIT-INTENT POPUP ========== -->
-<div id="exit-popup" class="exit-popup" role="dialog" aria-modal="true" aria-labelledby="exit-popup-title">
-  <div class="exit-popup-overlay" onclick="closeExitPopup()"></div>
-  <div class="exit-popup-card">
-    <button class="exit-popup-close" aria-label="Cerrar" onclick="closeExitPopup()">&#10005;</button>
-    <span class="exit-popup-eyebrow">Antes de irte</span>
-    <h3 id="exit-popup-title">Tu <em>primera visita</em> con 15% off</h3>
-    <p>Te damos la bienvenida a Exentia con un descuento exclusivo en cualquier servicio individual.</p>
-    <div class="exit-popup-code">
-      <span>Menciona el código</span>
-      <code>PRIMERA15</code>
-    </div>
-    <a href="https://wa.me/529984803595?text=Hola%2C%20es%20mi%20primera%20visita.%20Quiero%20agendar%20con%20el%20codigo%20PRIMERA15" target="_blank" class="btn" onclick="trackExitConversion()">Reservar por WhatsApp</a>
-    <button class="exit-popup-secondary" onclick="closeExitPopup()">Seguir explorando</button>
-  </div>
 </div>
 
 <!-- ========== NAV ========== -->
@@ -4222,61 +4110,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
 
   // ============================================
-  // EXIT-INTENT POPUP
+  // EXIT-INTENT POPUP: eliminado por petición del cliente
   // ============================================
-  var _exitPopupShown = false;
-  function showExitPopup() {
-    if (_exitPopupShown) return;
-    try {
-      if (sessionStorage.getItem('ex_exit_popup_seen') === '1') return;
-      sessionStorage.setItem('ex_exit_popup_seen', '1');
-    } catch(e){}
-    _exitPopupShown = true;
-    var p = document.getElementById('exit-popup');
-    if (p) p.classList.add('open');
-    try { if (window.exentiaTrack) window.exentiaTrack('exit_popup_shown'); } catch(e){}
-  }
-  function closeExitPopup() {
-    var p = document.getElementById('exit-popup');
-    if (p) p.classList.remove('open');
-    try { if (window.exentiaTrack) window.exentiaTrack('exit_popup_close'); } catch(e){}
-  }
-  function trackExitConversion() {
-    try { if (window.exentiaTrack) window.exentiaTrack('exit_popup_wa_click', { code: 'PRIMERA15' }); } catch(e){}
-  }
-  window.closeExitPopup = closeExitPopup;
-  window.trackExitConversion = trackExitConversion;
-
-  function initExitIntent() {
-    // Desktop: mouse hacia el top (mouseleave evento top edge)
-    document.addEventListener('mouseleave', function(e){
-      if (e.clientY <= 0 && e.relatedTarget == null) {
-        showExitPopup();
-      }
-    });
-    // Mobile / tablet: scroll-up rapido (intencion de cerrar tab pull-down)
-    var lastY = window.scrollY;
-    var lastT = Date.now();
-    window.addEventListener('scroll', function(){
-      var now = Date.now();
-      var dy = lastY - window.scrollY; // positivo = scroll up
-      var dt = now - lastT;
-      if (dt > 0 && dt < 500 && dy > 200) {
-        // Solo si ya hizo scroll de al menos 1500px durante la sesion (no recien aterrizar)
-        if (lastY > 1500) showExitPopup();
-      }
-      lastY = window.scrollY;
-      lastT = now;
-    }, { passive: true });
-    // Fallback en mobile: si pasa 60s sin interaccion despues de scroll
-    var hasScrolled = false;
-    window.addEventListener('scroll', function(){ hasScrolled = true; }, { passive: true, once: true });
-    setTimeout(function(){
-      if (hasScrolled && !_exitPopupShown && document.visibilityState === 'hidden') {
-        showExitPopup();
-      }
-    }, 60000);
-  }
 
   // RENDERING FUNCTIONS
   // ============================================
@@ -4576,7 +4411,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     updateBadge();
     handleRoute();
     initPromoRibbon();
-    initExitIntent();
 
     // Nav scroll effect
     const navbar = document.getElementById('navbar');
