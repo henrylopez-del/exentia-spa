@@ -578,10 +578,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .exit-popup-secondary:hover { color: var(--brown); }
 
-  /* ============ PAQUETES / PROMOCIONES ============ */
+  /* ============ PROMOCIONES Y PAQUETES (Henry mockup style) ============ */
   .promos {
-    background: linear-gradient(180deg, var(--off-white) 0%, var(--cream-soft, #f7f0db) 100%);
-    padding: 96px 0 80px;
+    background: var(--cream-soft, #f3e4c7);
+    padding: 80px 0;
   }
   .promos-header { text-align: center; max-width: 720px; margin: 0 auto 40px; }
   .promos-header .eyebrow {
@@ -599,168 +599,145 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     color: var(--text); font-size: 15px; line-height: 1.6; margin: 0;
   }
 
-  /* Banner evergreen */
-  .promo-banner {
-    display: flex; align-items: center; gap: 20px;
-    background: var(--brown);
-    color: var(--cream);
-    padding: 22px 28px;
-    border-radius: 10px;
-    margin: 0 0 40px;
-    box-shadow: 0 6px 24px rgba(92, 58, 30, 0.15);
-  }
-  .promo-banner-icon {
-    font-size: 28px; color: var(--cream);
-    flex-shrink: 0; opacity: 0.85;
-  }
-  .promo-banner-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-  .promo-banner-content strong {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px; font-weight: 400; font-style: italic;
-    color: var(--cream);
-  }
-  .promo-banner-content span {
-    font-size: 13px; opacity: 0.85; line-height: 1.5;
-  }
-  .promo-banner-content code {
-    background: var(--cream);
-    color: var(--brown);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-family: 'Lato', monospace;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-  .promo-banner .btn-sm {
-    padding: 11px 22px; font-size: 12px;
-    background: var(--cream); color: var(--brown);
-    border-color: var(--cream);
-    flex-shrink: 0;
-  }
-  .promo-banner .btn-sm:hover {
-    background: var(--off-white); border-color: var(--off-white);
-  }
-
-  /* Grid de cards */
-  .promo-grid {
+  .promos-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 8px;
   }
   .promo-card {
     background: var(--white);
-    border-radius: 14px;
+    border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 4px 28px rgba(92, 58, 30, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex; flex-direction: column;
+    box-shadow: 0 2px 24px var(--shadow);
+    display: flex;
+    flex-direction: column;
     position: relative;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .promo-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 40px rgba(92, 58, 30, 0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px var(--shadow-lg);
   }
-  .promo-card-img {
+  .promo-tag {
+    position: absolute;
+    top: 16px; left: 16px;
+    z-index: 2;
+    background: var(--olive);
+    color: var(--white);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+  .promo-tag-soft {
+    background: var(--cream);
+    color: var(--brown);
+  }
+  .promo-img {
     height: 220px;
     background-size: cover;
     background-position: center;
     position: relative;
   }
-  .promo-card-img::after {
+  .promo-img::after {
     content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 50%, rgba(92, 58, 30, 0.25) 100%);
-  }
-  .promo-badge {
     position: absolute;
-    top: 16px; right: 16px;
-    background: var(--olive);
-    color: var(--cream);
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 20px;
-    box-shadow: 0 2px 12px rgba(154, 152, 84, 0.4);
-    z-index: 2;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(92, 58, 30, 0.25));
   }
-  .promo-badge.popular { background: var(--brown); }
-  .promo-card-body {
-    padding: 24px 26px 26px;
-    display: flex; flex-direction: column;
+  .promo-body {
+    padding: 26px 24px 24px;
+    display: flex;
+    flex-direction: column;
     flex: 1;
   }
-  .promo-card-name {
+  .promo-body h3 {
     font-family: 'Playfair Display', serif;
-    font-size: 26px; font-weight: 500; font-style: italic;
+    font-size: 28px;
     color: var(--brown);
-    margin: 0 0 8px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-style: italic;
     line-height: 1.15;
   }
-  .promo-card-tagline {
-    font-size: 13px; color: var(--text-light);
-    font-style: italic;
-    line-height: 1.5;
+  .promo-desc {
+    font-size: 13.5px;
+    color: var(--text-light);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .promo-list {
+    list-style: none;
     margin: 0 0 18px;
+    padding: 14px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid rgba(154, 152, 84, 0.15);
   }
-  .promo-card-includes {
-    list-style: none; margin: 0 0 22px; padding: 0;
-    display: flex; flex-direction: column; gap: 8px;
-    border-top: 1px solid var(--cream);
-    border-bottom: 1px solid var(--cream);
-    padding: 16px 0;
+  .promo-list li {
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .promo-card-includes li {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; color: var(--text);
-    line-height: 1.4;
-  }
-  .promo-card-includes li::before {
-    content: '✓';
-    color: var(--olive);
-    font-weight: 700; font-size: 14px;
+  .promo-list li::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--olive);
     flex-shrink: 0;
   }
-  .promo-card-pricing {
-    display: flex; align-items: baseline;
-    gap: 12px; margin: 0 0 18px;
+  .promo-foot {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(154, 152, 84, 0.15);
+    gap: 12px;
   }
-  .promo-original {
-    font-size: 14px;
+  .promo-prices {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .promo-old {
+    font-size: 13px;
     color: var(--text-light);
     text-decoration: line-through;
-    text-decoration-color: rgba(140, 120, 100, 0.6);
   }
-  .promo-price {
+  .promo-new {
     font-family: 'Playfair Display', serif;
-    font-size: 32px; font-weight: 500;
-    color: var(--brown);
-    font-style: italic;
-    line-height: 1;
-  }
-  .promo-save {
-    background: rgba(154, 152, 84, 0.15);
+    font-size: 28px;
     color: var(--olive-dark);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-style: italic;
+    font-weight: 500;
   }
-  .promo-card .btn {
-    width: 100%;
-    margin-top: auto;
+  .promo-btn {
+    padding: 10px 18px;
+    font-size: 12px;
   }
-  .promos-note {
-    text-align: center;
-    margin: 36px auto 0;
-    max-width: 560px;
+  .promos-disclaimer {
+    margin-top: 28px;
     font-size: 11.5px;
     color: var(--text-light);
+    text-align: center;
+    opacity: 0.75;
+    letter-spacing: 0.3px;
     font-style: italic;
-    line-height: 1.6;
+  }
+  @media (max-width: 900px) {
+    .promos-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .promos-grid { grid-template-columns: 1fr; gap: 18px; }
+    .promos { padding: 48px 0; }
+    .promos-header h2 { font-size: 34px; }
   }
 
   /* ============ SERVICES GRID (home) ============ */
@@ -3453,31 +3430,75 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     </div>
   </section>
 
-  <!-- ========== PAQUETES & PROMOCIONES ========== -->
+  <!-- ========== PROMOCIONES Y PAQUETES (mockup placeholder · contenido final pendiente Yaz) ========== -->
   <section class="promos full-bleed" id="promos-anchor">
     <div class="container">
       <div class="promos-header">
-        <span class="eyebrow">Paquetes & rituales</span>
-        <h2>Experiencias <em>diseñadas</em> para ti</h2>
-        <p>Combina tus tratamientos favoritos en rituales pensados con cuidado. Reserva paquetes completos y obtén un ahorro significativo.</p>
+        <span class="eyebrow">Experiencias completas con beneficio</span>
+        <h2>Promociones y <em>Paquetes</em></h2>
+        <p>Combinamos tus servicios favoritos en experiencias diseñadas para un cuidado integral.</p>
       </div>
-
-      <!-- Banner Evergreen: primera visita -->
-      <div class="promo-banner">
-        <div class="promo-banner-icon">✦</div>
-        <div class="promo-banner-content">
-          <strong>¿Tu primera visita?</strong>
-          <span>Disfruta <b>15% de descuento</b> en cualquier servicio individual. Menciona el código <code>PRIMERA15</code> al reservar por WhatsApp.</span>
-        </div>
-        <a href="https://wa.me/529984803595?text=Hola%2C%20es%20mi%20primera%20visita.%20Quiero%20agendar%20con%20el%20codigo%20PRIMERA15" target="_blank" class="btn btn-outline btn-sm">Reservar</a>
+      <div class="promos-grid">
+        <article class="promo-card">
+          <div class="promo-tag">Más vendido</div>
+          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cfd7871cddf7e0694d.jpg')"></div>
+          <div class="promo-body">
+            <h3>Ritual Exentia</h3>
+            <p class="promo-desc">Masaje relajante y facial orgánico premium. La pausa que tu cuerpo y tu piel necesitan.</p>
+            <ul class="promo-list">
+              <li>Masaje Exentia · 50 min</li>
+              <li>Facial Orgánico · 50 min</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$3,100</span>
+                <span class="promo-new">$2,650</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
+          </div>
+        </article>
+        <article class="promo-card">
+          <div class="promo-tag promo-tag-soft">Recomendado</div>
+          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817b493f130b2000ccac7.jpg')"></div>
+          <div class="promo-body">
+            <h3>Look Completo</h3>
+            <p class="promo-desc">Cabello, manos y maquillaje listo. Sales del salón preparada para esa ocasión especial.</p>
+            <ul class="promo-list">
+              <li>Corte y peinado</li>
+              <li>Manicura Exentia con Gel</li>
+              <li>Maquillaje Social</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$3,240</span>
+                <span class="promo-new">$2,750</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
+          </div>
+        </article>
+        <article class="promo-card">
+          <div class="promo-tag promo-tag-soft">Mamá y mini</div>
+          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf019dc508d3d450f0.jpg')"></div>
+          <div class="promo-body">
+            <h3>Tarde de Princesas</h3>
+            <p class="promo-desc">Spa para mamá y experiencia SpaKids para la peque. Tiempo de calidad en paralelo.</p>
+            <ul class="promo-list">
+              <li>Masaje Exentia (mamá)</li>
+              <li>Spa Kids (peque)</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$3,100</span>
+                <span class="promo-new">$2,490</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
+          </div>
+        </article>
       </div>
-
-      <!-- Grid de paquetes -->
-      <div class="promo-grid" id="promo-grid">
-        <!-- Populated by JS desde PACKAGES -->
-      </div>
-
-      <p class="promos-note">Los precios y combinaciones de paquetes son una <b>propuesta inicial</b>. Tu equipo de Exentia puede ajustarlos según disponibilidad y promociones vigentes.</p>
+      <p class="promos-disclaimer">Promociones de muestra. Confirmamos disponibilidad y combinación al reservar.</p>
     </div>
   </section>
 
@@ -4172,128 +4193,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   };
 
   // ============================================
-  // PACKAGES (paquetes de servicios con descuento — Yaz ajustar)
+  // PACKAGES: sección Promociones ahora es estática (mockup Henry style)
   // ============================================
-  const TEL_EXENTIA = '529984803595';
-  const PACKAGES = window.PACKAGES = [
-    {
-      slug: 'ritual-dia-completo',
-      name: 'Ritual Día Completo',
-      tagline: 'Una pausa para reconectarte contigo misma — masaje, facial y manicura en una sola tarde.',
-      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf982fd67a35f25867.jpg',
-      includes: ['Masaje Exentia', 'Facial Orgánico', 'Manicura Exentia con Esmalte'],
-      original: 3490,
-      price: 2900,
-      badge: 'Más popular',
-      badgeClass: 'popular',
-      mode: 'cart'
-    },
-    {
-      slug: 'sol-luna-pareja',
-      name: 'Sol & Luna',
-      tagline: 'Ritual diseñado para dos. Masaje y facial sincronizados para celebrar lo que los une.',
-      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cfd5a667daf6574559.jpg',
-      includes: ['2 × Masaje Exentia (en pareja)', '2 × Facial Orgánico', 'Detalle de bienvenida'],
-      original: 6200,
-      price: 4990,
-      badge: 'Para parejas',
-      mode: 'whatsapp'
-    },
-    {
-      slug: 'novia-radiante',
-      name: 'Novia Radiante',
-      tagline: 'Preparación integral para tu día especial. Lucir y sentirte radiante de pies a cabeza.',
-      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cfd7871cddf7e0694d.jpg',
-      includes: ['Facial Orgánico', 'Laminado de Ceja', 'Maquillaje de Novia', 'Peinado Novia'],
-      original: 6000,
-      price: 4900,
-      badge: 'Bodas',
-      mode: 'whatsapp'
-    },
-    {
-      slug: 'mama-embarazada',
-      name: 'Mamá Embarazada',
-      tagline: 'Bienestar suave y seguro para esta etapa única. Diseñado especialmente para futuras mamás.',
-      img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/69d817cf9c84d38e9e886f5b.jpg',
-      includes: ['Masaje Prenatal', 'Facial Orgánico'],
-      original: 3100,
-      price: 2600,
-      badge: 'Prenatal',
-      mode: 'cart'
-    }
-  ];
-
-  function renderPromos() {
-    const grid = document.getElementById('promo-grid');
-    if (!grid) return;
-    grid.innerHTML = PACKAGES.map(p => {
-      const saved = p.original - p.price;
-      const savedPct = Math.round((saved / p.original) * 100);
-      return `
-        <article class="promo-card" data-pkg="${p.slug}">
-          <div class="promo-card-img" style="background-image:url('${p.img}')">
-            <span class="promo-badge ${p.badgeClass || ''}">${p.badge}</span>
-          </div>
-          <div class="promo-card-body">
-            <h3 class="promo-card-name">${p.name}</h3>
-            <p class="promo-card-tagline">${p.tagline}</p>
-            <ul class="promo-card-includes">
-              ${p.includes.map(i => `<li>${i}</li>`).join('')}
-            </ul>
-            <div class="promo-card-pricing">
-              <span class="promo-original">$${p.original.toLocaleString('es-MX')}</span>
-              <span class="promo-price">$${p.price.toLocaleString('es-MX')}</span>
-              <span class="promo-save">Ahorra $${saved.toLocaleString('es-MX')} (${savedPct}%)</span>
-            </div>
-            <button class="btn" data-pkg-cta="${p.slug}">Reservar paquete</button>
-          </div>
-        </article>
-      `;
-    }).join('');
-
-    grid.querySelectorAll('[data-pkg-cta]').forEach(btn => {
-      btn.addEventListener('click', function(){
-        reservarPaquete(this.getAttribute('data-pkg-cta'));
-      });
-    });
-  }
-
-  function reservarPaquete(slug) {
-    const pkg = PACKAGES.find(p => p.slug === slug);
-    if (!pkg) return;
-    try { if (window.exentiaTrack) window.exentiaTrack('package_click', { package_slug: slug, package_name: pkg.name }); } catch(e){}
-
-    if (pkg.mode === 'whatsapp') {
-      // Multi-persona / coordinación especial → WhatsApp con mensaje pre-llenado
-      const lines = [
-        'Hola, quiero reservar el paquete "' + pkg.name + '"',
-        '',
-        'Incluye:',
-        ...pkg.includes.map(i => '- ' + i),
-        '',
-        'Precio paquete: $' + pkg.price.toLocaleString('es-MX'),
-        '',
-        '¿Me pueden ayudar a coordinar fechas? Gracias.'
-      ];
-      const text = encodeURIComponent(lines.join('\n'));
-      window.open('https://wa.me/' + TEL_EXENTIA + '?text=' + text, '_blank');
-    } else {
-      // Modo cart: limpiar carrito, agregar servicios del paquete, abrir form modal
-      cart.length = 0;
-      pkg.includes.forEach(name => {
-        // Solo agregar si el servicio existe en SERVICES (algunos son "2 ×" etc — ignorados aquí)
-        const exists = Object.values(SERVICES).some(cat =>
-          cat.treatments.some(t => t.name === name)
-        );
-        if (exists) cart.push(name);
-      });
-      try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(e){}
-      updateBadge();
-      if (typeof openFormModal === 'function') openFormModal();
-      else if (typeof window.openFormModal === 'function') window.openFormModal();
-    }
-  }
-  window.reservarPaquete = reservarPaquete;
 
   // ============================================
   // RIBBON TOP (close + persist dismissal session)
@@ -4671,7 +4572,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   // ============================================
   document.addEventListener('DOMContentLoaded', () => {
     renderServicesGrid();
-    renderPromos();
     renderFooterServices();
     updateBadge();
     handleRoute();
