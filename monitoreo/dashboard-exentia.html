@@ -893,7 +893,8 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
       body: JSON.stringify(args)
     }).then(function(r){
       if(!r.ok) return r.text().then(function(t){ throw new Error(t); });
-      return r.json();
+      if(r.status === 204) return null;
+      return r.text().then(function(t){ return t ? JSON.parse(t) : null; });
     });
   }
 
@@ -910,7 +911,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     if(!confirm(T.confirmNoAsistio)) return;
     var booking = allBookings.filter(function(x){ return x.id === id; })[0];
     rpc('exentia_marcar_no_asistio', {p_booking_id: id}).then(function(){
-      if(booking && booking.ghl_contact_id) fireTag(booking.ghl_contact_id, 'no_asistio', 'add');
+      if(booking && booking.ghl_contact_id) fireTag(booking.ghl_contact_id, 'no asistio', 'add');
       showToast(T.toastNoAsistio, 'success');
       fetchBookings();
     }).catch(function(err){ console.error(err); showToast(T.toastError, 'error'); });
@@ -1107,6 +1108,12 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
   updateMetaDate();
   fetchBookings();
   setInterval(function(){ updateMetaDate(); fetchBookings(); }, POLL_MS);
+
+  // Fix iframe focus quirk: el primer click se come el foco si el iframe no esta enfocado.
+  // Auto-focus al cargar + cada vez que el mouse entra al dashboard.
+  try { window.focus(); } catch(e){}
+  document.addEventListener('mouseenter', function(){ try { window.focus(); } catch(e){} }, true);
+  document.getElementById('ex-dash').addEventListener('mousedown', function(){ try { window.focus(); } catch(e){} }, true);
 })();
 </script>
 "></iframe>
