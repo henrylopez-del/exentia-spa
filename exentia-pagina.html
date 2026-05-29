@@ -1425,6 +1425,105 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .faq-question { font-size: 17px; }
   }
 
+  /* ============ RESENAS GOOGLE ============ */
+  .resenas {
+    background: var(--cream);
+    padding: 72px 0;
+    position: relative;
+  }
+  .resenas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: stretch;
+    max-width: 1100px;
+    margin: 40px auto 0;
+  }
+  .resenas-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(92, 58, 30, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .resenas-google-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--cream);
+    color: var(--brown);
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 auto 24px;
+    border: 1px solid rgba(154, 152, 84, 0.25);
+  }
+  .resenas-google-badge svg { width: 18px; height: 18px; }
+  .resenas-stars {
+    font-size: 36px;
+    letter-spacing: 4px;
+    color: #f4b400;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .resenas-rating-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--brown);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .resenas-rating-text em { color: var(--olive); font-style: italic; }
+  .resenas-subtext {
+    font-size: 15px;
+    color: var(--text-light);
+    line-height: 1.6;
+    max-width: 360px;
+    margin: 0 auto 28px;
+  }
+  .resenas-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--olive);
+    color: var(--white);
+    padding: 14px 28px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background .2s, transform .2s;
+    align-self: center;
+  }
+  .resenas-cta:hover {
+    background: var(--olive-dark, #7d7c3f);
+    transform: translateY(-2px);
+  }
+  .resenas-cta svg { width: 16px; height: 16px; }
+  .resenas-map {
+    border-radius: 24px;
+    overflow: hidden;
+    min-height: 380px;
+    box-shadow: 0 8px 24px rgba(92, 58, 30, 0.08);
+  }
+  .resenas-map iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    border: 0;
+    display: block;
+  }
+  @media (max-width: 900px) {
+    .resenas-grid { grid-template-columns: 1fr; gap: 24px; }
+    .resenas-card { padding: 32px 24px; }
+    .resenas-map { min-height: 320px; }
+    .resenas-map iframe { min-height: 320px; }
+  }
+
   /* ============ FOOTER ============ */
   footer {
     background: #2a1c0f;
@@ -3526,6 +3625,36 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       </div>
       <div class="map-wrap">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7!2d-86.8696!3d21.0959093!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4c2b33912ba525%3A0xbc9f4c55274b261a!2sExentia%20Spa%20%26%20Beauty%20Sal%C3%B3n!5e0!3m2!1ses!2smx!4v1700000000000" allowfullscreen="" loading="lazy" title="Ubicación de Exentia Spa en Google Maps"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESENAS GOOGLE -->
+<section class="resenas full-bleed" id="resenas">
+  <div class="container">
+    <div class="section-title">
+      <span class="eyebrow">Lo que dicen de nosotros</span>
+      <h2>Opiniones reales en <em>Google</em></h2>
+    </div>
+    <div class="resenas-grid">
+      <div class="resenas-card">
+        <span class="resenas-google-badge">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917"/><path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917"/></svg>
+          Reseñas verificadas en Google
+        </span>
+        <div class="resenas-stars">★★★★★</div>
+        <div class="resenas-rating-text">Clientas que <em>repiten</em></div>
+        <p class="resenas-subtext">
+          Lee directamente en Google Maps lo que opinan quienes ya vivieron la experiencia Exentia. Reseñas auténticas, sin filtros.
+        </p>
+        <a href="https://maps.app.goo.gl/auchFMyXyPXtKkBJ7" target="_blank" rel="noopener noreferrer" class="resenas-cta" data-track="resenas_google_click">
+          Ver reseñas en Google Maps
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </a>
+      </div>
+      <div class="resenas-map">
+        <iframe src="https://maps.google.com/maps?q=Exentia+Spa+%26+Beauty+Salon+Av+Huayacan+Cancun&t=&z=16&ie=UTF8&iwloc=B&output=embed" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Reseñas de Exentia Spa en Google Maps"></iframe>
       </div>
     </div>
   </div>
