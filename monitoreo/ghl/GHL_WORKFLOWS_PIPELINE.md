@@ -95,7 +95,7 @@ Después de configurar:
 
 2. **Test directo via webhook (opcional):**
    ```bash
-   curl -X POST https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-tag \
+   curl -X POST https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-tag \
      -H 'Content-Type: application/json' \
      -d '{"contact_id":"CONTACT_ID","tag":"asistio","action":"add"}'
    ```

@@ -692,7 +692,7 @@ Schedule: cada 6 horas.
 ```javascript
 (function(){
   'use strict';
-  const N8N_ENDPOINT = 'https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-track';
+  const N8N_ENDPOINT = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-track';
   const COOKIE_NAME_FIRST = 'ex_first_attr';
   const COOKIE_DAYS = 30;
 

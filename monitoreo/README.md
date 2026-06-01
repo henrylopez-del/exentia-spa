@@ -26,7 +26,7 @@ monitoreo/
 
 ## Workflows n8n
 
-**Instancia:** `https://n8n-ntcue-u59578.vm.elestio.app/`
+**Instancia:** `https://n8n-ntcue-clone-u59578.vm.elestio.app/`
 
 ### Antes de importar
 1. En n8n → Credentials → crear/verificar credencial **Postgres** apuntando al proyecto Supabase `n8n`. Usar connection string Postgres directo (port 5432, host `db.fneppfjeywhayknrgahe.supabase.co`).

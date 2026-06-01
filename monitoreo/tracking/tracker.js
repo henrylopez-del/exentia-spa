@@ -12,8 +12,8 @@
   'use strict';
 
   // === CONFIG ===
-  var TRACK_URL = 'https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-track';
-  var RESERVA_URL = 'https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-reserva';
+  var TRACK_URL = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-track';
+  var RESERVA_URL = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-reserva';
   var LANDING_VERSION = window.EX_LANDING_VERSION || 'v1-2026-04-25';
   var FIRST_UTM_DAYS = 30;
 

@@ -64,7 +64,7 @@ Browser (arqalum.com/cotizacion-*)
 - **SQL canónica:** `~/Desktop/arqalum-tracking-v1/01-supabase-schema.sql`
 
 ### 2. n8n workflow "Arqalum Click Tracker v2"
-- **URL:** `https://n8n-ntcue-u59578.vm.elestio.app/webhook/arqalum-track`
+- **URL:** `https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/arqalum-track`
 - **4 nodos:** Webhook (POST) → Normalize (JS code) → Supabase Insert (HTTP POST) → Respond 200 (text static)
 - **Key design decisions:**
   - Normalize parsea string JSON body (browser manda text/plain sin Content-Type)

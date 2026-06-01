@@ -202,7 +202,7 @@ Webhook → Normalize (detecta source)
 **Conexión desde el dashboard:**
 ```javascript
 // En dashboard-exentia.html, tras RPC exentia_registrar_pago exitoso:
-fetch('https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-pago', {
+fetch('https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-pago', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},
   body: JSON.stringify({

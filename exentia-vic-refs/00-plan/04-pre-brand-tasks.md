@@ -95,7 +95,7 @@ Construye los 5 workflows que NO dependen de Meta/Google externos:
 
 **Cómo validar (`exentia-track`):**
 ```bash
-curl -X POST https://n8n-ntcue-u59578.vm.elestio.app/webhook/exentia-track \
+curl -X POST https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-track \
   -d '{"event_type":"page_view","page_path":"/test","utm_source":"test"}'
 # Esperado: 200 con {"ok":true,"lead_ref":"XXXXXXXX"}
 ```

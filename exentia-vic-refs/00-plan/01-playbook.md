@@ -70,7 +70,7 @@ Browser (arqalum.com/cotizacion-*)
 | Supabase project | `fneppfjeywhayknrgahe` | service_role JWT hardcoded en n8n (server-side only, no expuesto) |
 | Tabla `arqalum_leads` | 22 columnas (id, created_at, lead_ref, click_type, page_path, landing_version, gclid, gbraid, wbraid, utm_*, referrer, session_id, time_on_page_ms, scroll_depth_pct, user_agent, device_type, screen_size, language, extra JSONB) | **Esta es la tabla canónica que clonamos para todo cliente nuevo** |
 | Views | `arqalum_leads_today`, `arqalum_sessions` | `arqalum_sessions` agrega por session_id con booleans `convirtio_wa/call/form` |
-| n8n webhook | `https://n8n-ntcue-u59578.vm.elestio.app/webhook/arqalum-track` | 4 nodos: Webhook → Normalize → Supabase Insert → Respond 200 static |
+| n8n webhook | `https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/arqalum-track` | 4 nodos: Webhook → Normalize → Supabase Insert → Respond 200 static |
 | Microsoft Clarity | `wcs7oe8lhe` | Gratis, ilimitado, heatmaps + session recordings + rage clicks + dead clicks |
 | Lead ref | 8-char alfanum uppercase | Se inyecta en `wa.me?text=...[Ref XXXXXXXX]` para que Gerardo lo vea sin CRM |
 

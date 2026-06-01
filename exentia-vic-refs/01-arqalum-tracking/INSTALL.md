@@ -16,15 +16,15 @@ Estimated total install time: ~12 minutes.
 
 ## Step 2 — n8n workflow (3 min)
 
-1. Open https://n8n-ntcue-u59578.vm.elestio.app
+1. Open https://n8n-ntcue-clone-u59578.vm.elestio.app
 2. Click **Workflows** → **Import from File**
 3. Select `02-n8n-workflow.json`
 4. Open the imported workflow "Arqalum Click Tracker"
 5. Click **Active** toggle (top right) to enable it
-6. Copy the production webhook URL — should be `https://n8n-ntcue-u59578.vm.elestio.app/webhook/arqalum-track`
+6. Copy the production webhook URL — should be `https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/arqalum-track`
 7. Test in terminal:
    ```bash
-   curl -X POST https://n8n-ntcue-u59578.vm.elestio.app/webhook/arqalum-track \
+   curl -X POST https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/arqalum-track \
      -H "Content-Type: application/json" \
      -d '{"click_type":"test","session_id":"test-sid-123","page_path":"/test"}'
    ```

@@ -7,7 +7,7 @@
 (function(){
   'use strict';
 
-  var TRACK_URL = 'https://n8n-ntcue-u59578.vm.elestio.app/webhook/arqalum-track';
+  var TRACK_URL = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/arqalum-track';
   var LANDING_VERSION = 'v1-2026-04-16';
   var PAGE_PATH = window.location.pathname;
 
