@@ -1877,6 +1877,39 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     font-weight: 700;
     white-space: nowrap;
   }
+  .sv2-dur-chips {
+    display: inline-flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .sv2-dur-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: var(--white);
+    border: 1.5px solid rgba(154,152,84,0.35);
+    border-radius: 100px;
+    font: 600 11px 'Lato', sans-serif;
+    letter-spacing: 0.5px;
+    color: var(--olive-dark, #7d7c3f);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+  }
+  .sv2-dur-chip:hover {
+    border-color: var(--olive);
+    background: var(--cream);
+    transform: translateY(-1px);
+  }
+  .sv2-dur-chip.active {
+    background: var(--olive);
+    border-color: var(--olive);
+    color: var(--white);
+    box-shadow: 0 3px 10px rgba(154,152,84,0.3);
+  }
+  .sv2-row.has-dur-chips .sv2-row-pill { display: none; }
   .sv2-row-price {
     font-family: 'Playfair Display', serif;
     font-style: italic;
@@ -4283,15 +4316,13 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       supportsParejas: true,
       treatments: [
-        { name: 'Masaje Exentia', desc: 'Nuestra técnica signature que combina relajación profunda y renovación corporal.', duration: '50 min', price: '$1,550', priceCouple: '$2,914' },
-        { name: 'Masaje Exentia Plus Personalizado', desc: 'Versión extendida personalizada según las zonas de mayor tensión.', duration: '80 min', price: '$2,140', priceCouple: '$3,760' },
-        { name: 'Masaje Tejido Profundo', desc: 'Trabajo intenso en capas musculares para liberar tensión acumulada.', duration: '50 min', price: '$1,550', priceCouple: '$2,914' },
-        { name: 'Masaje Terapéutico', desc: 'Tratamiento orientado a dolor muscular específico y postura.', duration: '50 min', price: '$1,550', priceCouple: '$2,914' },
-        { name: 'Masaje Terapéutico Ice Calm', desc: 'Terapia fría con bambúes helados para desinflamar y refrescar.', duration: '50 min', price: '$2,450', priceCouple: '$4,606' },
-        { name: 'Masaje Terapéutico con Ventosas', desc: 'Ventosas que liberan adherencias musculares y mejoran circulación.', duration: '80 min', price: '$2,450', priceCouple: '$3,760' },
-        { name: 'Masaje Terapéutico con Piedras Calientes', desc: 'Piedras volcánicas que derriten el estrés y reactivan la circulación.', duration: '80 min', price: '$2,450', priceCouple: '$3,760' },
-        { name: 'Masaje Terapéutico Integral', desc: 'Combinación de técnicas para un trabajo de cuerpo completo profundo.', duration: '80 min', price: '$2,450', priceCouple: '$4,606' },
-        { name: 'Masaje Terapéutico Plus', desc: 'Sesión extendida con énfasis terapéutico personalizado.', duration: '80 min', price: '$2,450', priceCouple: '$4,606' },
+        { name: 'Masaje Exentia', desc: 'Nuestra técnica signature que combina relajación profunda y renovación corporal. La versión 80 min añade trabajo personalizado en zonas de tensión.', durations: [{min: 50, price: '$1,550', priceCouple: '$2,914'}, {min: 80, price: '$2,140', priceCouple: '$3,760'}] },
+        { name: 'Masaje Tejido Profundo', desc: 'Trabajo intenso en capas musculares para liberar tensión acumulada.', durations: [{min: 50, price: '$1,550', priceCouple: '$2,914'}] },
+        { name: 'Masaje Terapéutico', desc: 'Tratamiento orientado a dolor muscular específico y postura. La versión 80 min incluye énfasis terapéutico extendido.', durations: [{min: 50, price: '$1,550', priceCouple: '$2,914'}, {min: 80, price: '$2,450', priceCouple: '$4,606'}] },
+        { name: 'Masaje Terapéutico Ice Calm', desc: 'Terapia fría con bambúes helados para desinflamar y refrescar.', durations: [{min: 50, price: '$2,450', priceCouple: '$4,606'}] },
+        { name: 'Masaje Terapéutico con Ventosas', desc: 'Ventosas que liberan adherencias musculares y mejoran circulación.', durations: [{min: 80, price: '$2,450', priceCouple: '$3,760'}] },
+        { name: 'Masaje Terapéutico con Piedras Calientes', desc: 'Piedras volcánicas que derriten el estrés y reactivan la circulación.', durations: [{min: 80, price: '$2,450', priceCouple: '$3,760'}] },
+        { name: 'Masaje Terapéutico Integral', desc: 'Combinación de técnicas para un trabajo de cuerpo completo profundo.', durations: [{min: 80, price: '$2,450', priceCouple: '$4,606'}] },
         { name: 'Drenaje Linfático', desc: 'Estimula el sistema linfático para reducir inflamación y desintoxicar.', duration: '50 min', price: '$1,690', priceCouple: '$2,914' },
         { name: 'Masaje Reductivo Manual', desc: 'Manipulación profunda para moldear y activar tejido adiposo.', duration: '50 min', price: '$750', priceCouple: '$1,350' },
         { name: 'Envoltura Corporal Desintoxicante', desc: 'Envoltura con ingredientes naturales que purifica y nutre la piel.', duration: '50 min', price: '$750', priceCouple: '$2,350' },
@@ -5575,20 +5606,52 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         + '</div>';
     }
 
-    // Lista de treatments
+    // Lista de treatments (con soporte para multiples duraciones)
     var listHtml = '<div class="sv2-list">';
-    active.treatments.forEach(function(t){
-      var isOn = cart.includes(t.name);
-      var hasCouple = !!t.priceCouple;
+    active.treatments.forEach(function(t, idx){
+      // Normaliza: si tiene durations array usa eso, sino crea uno desde duration/price legacy
+      var durs = t.durations;
+      if (!durs) {
+        durs = [{
+          min: parseInt((t.duration||'0').replace(/\D/g,''),10) || null,
+          price: t.price,
+          priceCouple: t.priceCouple
+        }];
+      }
+      // Cual duracion esta seleccionada por defecto (la primera)
+      var selectedDurIdx = (typeof t._selDur === 'number') ? t._selDur : 0;
+      var dur = durs[selectedDurIdx] || durs[0];
+      var hasMultipleDurs = durs.length > 1;
+      var hasCouple = !!dur.priceCouple;
       var disabled = (svMode === 'parejas' && active.supportsParejas && !hasCouple);
-      var shownPrice = (svMode === 'parejas' && hasCouple) ? t.priceCouple : t.price;
-      listHtml += '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + '" data-svc="' + t.name + '">'
+      var shownPrice = (svMode === 'parejas' && hasCouple) ? dur.priceCouple : dur.price;
+      var cartKey = hasMultipleDurs ? (t.name + ' · ' + dur.min + ' min') : t.name;
+      // Comprueba si CUALQUIER variante de este tratamiento esta en el cart
+      var isOn = hasMultipleDurs
+        ? cart.some(function(c){ return c === t.name || c.indexOf(t.name + ' · ') === 0; })
+        : cart.includes(t.name);
+
+      var durChipsHtml = '';
+      if (hasMultipleDurs) {
+        durChipsHtml = '<div class="sv2-dur-chips">';
+        durs.forEach(function(d, di){
+          var isSel = di === selectedDurIdx;
+          durChipsHtml += '<button type="button" class="sv2-dur-chip' + (isSel?' active':'') + '" data-dur-idx="' + di + '" data-row="' + idx + '">' + d.min + ' min</button>';
+        });
+        durChipsHtml += '</div>';
+      }
+
+      var pillHtml = hasMultipleDurs ? '' :
+        '<div class="sv2-row-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ' + dur.min + ' min</div>';
+
+      listHtml += '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + (hasMultipleDurs?' has-dur-chips':'') + '" data-svc="' + t.name + '" data-row-idx="' + idx + '">'
         + '<div class="sv2-row-info">'
         + '<div class="sv2-row-name">' + t.name + '</div>'
         + (t.desc ? '<div class="sv2-row-desc">' + t.desc + '</div>' : '')
+        + durChipsHtml
         + (disabled ? '<span class="sv2-row-tag">Solo individual</span>' : '')
         + '</div>'
-        + '<div class="sv2-row-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ' + t.duration + '</div>'
+        + pillHtml
         + '<div class="sv2-row-price">' + shownPrice + '</div>'
         + '<button type="button" class="sv2-row-add" aria-label="Agregar">'
         + (isOn ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>')
@@ -5618,16 +5681,69 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       };
     });
 
+    // Wire chips de duracion (sin agregar al cart, solo cambia precio)
+    container.querySelectorAll('.sv2-dur-chip').forEach(function(chip){
+      chip.onclick = function(e){
+        e.stopPropagation();
+        var rowIdx = parseInt(this.getAttribute('data-row'), 10);
+        var durIdx = parseInt(this.getAttribute('data-dur-idx'), 10);
+        var t = active.treatments[rowIdx];
+        if (!t) return;
+        t._selDur = durIdx;
+        var rowEl = container.querySelector('[data-row-idx="' + rowIdx + '"]');
+        if (!rowEl) return;
+        // Update chip active state
+        rowEl.querySelectorAll('.sv2-dur-chip').forEach(function(c){ c.classList.remove('active'); });
+        this.classList.add('active');
+        // Update price
+        var durs = t.durations || [{price: t.price, priceCouple: t.priceCouple}];
+        var sel = durs[durIdx];
+        var price = (svMode === 'parejas' && sel.priceCouple) ? sel.priceCouple : sel.price;
+        var priceEl = rowEl.querySelector('.sv2-row-price');
+        if (priceEl) priceEl.textContent = price;
+        // Si el row ya estaba seleccionado, actualizar el cart entry (reemplazar duracion)
+        var hasMultiple = durs.length > 1;
+        if (hasMultiple && rowEl.classList.contains('on')) {
+          // Remover cualquier entry de este servicio
+          for (var i = cart.length - 1; i >= 0; i--) {
+            if (cart[i] === t.name || cart[i].indexOf(t.name + ' · ') === 0) cart.splice(i, 1);
+          }
+          // Re-agregar con la duracion nueva
+          var newKey = t.name + ' · ' + sel.min + ' min';
+          cart.push(newKey);
+          updateSvBottom();
+          if (typeof renderCartBadge === 'function') renderCartBadge();
+        }
+      };
+    });
+
     // Wire rows (selección de servicio)
     container.querySelectorAll('.sv2-row').forEach(function(el){
-      el.onclick = function(){
+      el.onclick = function(ev){
         if (this.classList.contains('disabled')) return;
-        toggleTreat(this, this.getAttribute('data-svc'));
-        // Sin re-render completo: solo refrescar la fila + tabs counts
-        var name = this.getAttribute('data-svc');
-        var isOnNow = cart.includes(name);
-        this.classList.toggle('on', isOnNow);
+        // Ignorar clicks en los chips de duracion (manejados aparte)
+        if (ev.target && ev.target.closest('.sv2-dur-chip')) return;
+        var rowIdx = parseInt(this.getAttribute('data-row-idx'), 10);
+        var t = active.treatments[rowIdx];
+        var durs = (t && t.durations) || [{price: t && t.price}];
+        var selIdx = (typeof t._selDur === 'number') ? t._selDur : 0;
+        var sel = durs[selIdx];
+        var hasMultiple = durs.length > 1;
+        var cartKey = hasMultiple ? (t.name + ' · ' + sel.min + ' min') : t.name;
+        // Check if any variant is in cart
+        var existingIdx = cart.findIndex(function(c){
+          return c === t.name || c.indexOf(t.name + ' · ') === 0;
+        });
+        if (existingIdx >= 0) {
+          cart.splice(existingIdx, 1); // Remove
+          this.classList.remove('on');
+        } else {
+          cart.push(cartKey);
+          this.classList.add('on');
+        }
+        if (typeof renderCartBadge === 'function') renderCartBadge();
         var btn = this.querySelector('.sv2-row-add');
+        var isOnNow = this.classList.contains('on');
         if (btn) {
           btn.innerHTML = isOnNow
             ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
@@ -5639,7 +5755,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           Object.values(SERVICES).forEach(function(s){
             var tabEl = tabsEl.querySelector('[data-tab="' + s.slug + '"]');
             if (!tabEl) return;
-            var count = cart.filter(c => s.treatments.some(t => t.name === c)).length;
+            var count = cart.filter(function(c){
+              return s.treatments.some(function(t){ return c === t.name || c.indexOf(t.name + ' · ') === 0; });
+            }).length;
             var dot = tabEl.querySelector('.sv2-tab-dot');
             if (count > 0) {
               if (dot) dot.textContent = count;
