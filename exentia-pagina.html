@@ -1686,40 +1686,56 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .sv2-tab.active .sv2-tab-dot { background: var(--cream); color: var(--brown); }
 
+  /* Hero estilo editorial: imagen circular + texto al lado */
   .sv2-hero {
     position: relative;
-    border-radius: 16px;
+    margin-bottom: 24px;
+    padding: 6px 0 14px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 28px;
+    align-items: center;
+    border-bottom: 1px solid rgba(154,152,84,0.18);
+  }
+  .sv2-hero-img-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
     overflow: hidden;
-    margin-bottom: 18px;
-    background: var(--cream);
-    box-shadow: 0 8px 24px rgba(92,58,30,0.12);
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 14px 40px rgba(92,58,30,0.18);
+    flex-shrink: 0;
+  }
+  .sv2-hero-img-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid var(--olive);
+    opacity: 0.35;
+    pointer-events: none;
   }
   .sv2-hero-img {
     display: block;
     width: 100%;
-    height: auto;
-    max-height: 260px;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
     object-position: center;
   }
   .sv2-hero-overlay {
-    position: relative;
-    z-index: 1;
-    padding: 12px 22px 14px;
     color: var(--brown);
-    width: 100%;
-    background: var(--off-white);
-    border-top: 1px solid rgba(154,152,84,0.15);
+    padding: 0;
+    background: transparent;
+    border: none;
   }
   .sv2-hero-overlay .sv2-hero-eyebrow { color: var(--olive-dark, #7d7c3f); opacity: 1; }
   .sv2-hero-overlay .sv2-hero-title { color: var(--brown); }
   .sv2-hero-overlay .sv2-hero-title em { color: var(--olive); }
   .sv2-hero-overlay .sv2-hero-desc { color: var(--text-light); opacity: 1; }
   @media (max-width: 768px) {
-    .sv2-hero-img { max-height: 180px; }
-    .sv2-hero-overlay { padding: 10px 16px 12px; }
+    .sv2-hero { grid-template-columns: 1fr; gap: 14px; text-align: center; padding-top: 8px; }
+    .sv2-hero-img-wrap { width: 140px; height: 140px; margin: 0 auto; }
+    .sv2-hero-overlay { padding: 0; }
   }
   .sv2-hero-eyebrow {
     font-size: 10px;
@@ -5533,9 +5549,11 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     });
     tabsHtml += '</div>';
 
-    // Hero de la categoria activa - imagen completa no estirada
+    // Hero estilo editorial: imagen circular + texto al lado
     var heroHtml = '<div class="sv2-hero">'
+      + '<div class="sv2-hero-img-wrap">'
       + '<img class="sv2-hero-img" src="' + active.heroImage + '" alt="' + active.name + '" loading="lazy">'
+      + '</div>'
       + '<div class="sv2-hero-overlay">'
       + '<div class="sv2-hero-eyebrow">CATEGORÍA · ' + active.treatments.length + ' SERVICIOS</div>'
       + '<h3 class="sv2-hero-title">' + active.name + ' <em>' + (active.heroTitle || '') + '</em></h3>'
