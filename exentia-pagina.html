@@ -1692,8 +1692,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     overflow: hidden;
     margin-bottom: 18px;
     background-size: cover;
-    background-position: center;
-    min-height: 140px;
+    background-position: center 40%;
+    aspect-ratio: 21/7;
+    min-height: 180px;
+    max-height: 240px;
     display: flex;
     align-items: flex-end;
     box-shadow: 0 12px 36px rgba(92,58,30,0.18);
@@ -1701,7 +1703,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .sv2-hero-overlay {
     position: relative;
     z-index: 1;
-    padding: 18px 24px;
+    padding: 20px 26px;
     color: var(--white);
     width: 100%;
   }
@@ -1709,7 +1711,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(20,12,5,0.85) 0%, rgba(20,12,5,0.35) 60%, transparent 100%);
+    background: linear-gradient(to top, rgba(20,12,5,0.85) 0%, rgba(20,12,5,0.5) 35%, rgba(20,12,5,0.15) 65%, rgba(20,12,5,0) 100%),
+                linear-gradient(to right, rgba(20,12,5,0.55) 0%, rgba(20,12,5,0.15) 50%, rgba(20,12,5,0) 100%);
+  }
+  @media (max-width: 768px) {
+    .sv2-hero { aspect-ratio: 16/8; min-height: 140px; }
+    .sv2-hero-overlay { padding: 16px 18px; }
   }
   .sv2-hero-eyebrow {
     font-size: 10px;
@@ -4044,21 +4051,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         <div class="stepper-label">Listo</div>
       </div>
     </div>
-    <div class="modal-header">
-      <div class="ornament" aria-hidden="true">
-        <svg width="56" height="14" viewBox="0 0 56 14" fill="none">
-          <path d="M0 7 L20 7" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
-          <path d="M22 7 Q26 4 28 7 Q30 10 28 7 M24 7 Q22 5 20 6 M30 7 Q32 5 34 6" stroke="currentColor" stroke-width="0.8" fill="none"/>
-          <circle cx="28" cy="7" r="1.6" fill="currentColor"/>
-          <path d="M36 7 L56 7" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
-        </svg>
-      </div>
-      <span class="logo">exentia</span>
-      <span class="sub">SPA & BEAUTY SALON</span>
-      <h2>¿Qué te <em>consentimos</em> hoy?</h2>
-      <p>Toca una categoría para abrirla y elige los servicios que quieras. Puedes elegir varios.</p>
-    </div>
-    <div class="modal-body modal-body-scroll">
+    <div class="modal-body modal-body-scroll" style="padding-top: 8px;">
       <div id="select-content"></div>
       <div class="select-helper-empty" id="select-helper-empty">
         <span class="select-helper-icon" aria-hidden="true">
