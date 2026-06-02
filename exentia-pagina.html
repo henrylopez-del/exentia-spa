@@ -1072,6 +1072,75 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     max-width: 1100px;
     margin: 0 auto;
   }
+  /* Modality toggle Individual/Parejas */
+  .modality-toggle {
+    display: inline-flex;
+    background: var(--white);
+    border: 1.5px solid rgba(154, 152, 84, 0.25);
+    border-radius: 100px;
+    padding: 5px;
+    margin: 0 auto 12px;
+    gap: 4px;
+    box-shadow: 0 8px 24px rgba(92, 58, 30, 0.06);
+  }
+  .modality-toggle-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 32px; }
+  .modality-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    text-transform: uppercase;
+  }
+  .modality-btn:hover { color: var(--brown); }
+  .modality-btn.active {
+    background: var(--olive);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(154, 152, 84, 0.3);
+  }
+  .modality-icon { font-size: 16px; line-height: 1; }
+  .modality-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-light);
+    margin: -8px auto 28px;
+    max-width: 520px;
+    font-style: italic;
+    opacity: 0.85;
+  }
+  .treatment-card.only-individual {
+    opacity: 0.65;
+  }
+  .treatment-card[data-has-couple='0'].in-pareja-mode {
+    opacity: 0.45;
+    pointer-events: none;
+    filter: grayscale(0.35);
+  }
+  .treatment-only-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--olive);
+    background: var(--cream);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  /* Display flex helper for modality + hint inside the section */
+  .detail-treatments .modality-toggle { display: inline-flex; margin: 0 auto; }
+  .detail-treatments .container > .modality-toggle { display: flex; justify-content: center; margin: 0 auto 8px; }
+
   .treatment-card {
     background: var(--white);
     border-radius: 6px;
@@ -3929,22 +3998,24 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Piedras volcánicas calientes',
         'Ambiente íntimo y privado'
       ],
+      supportsParejas: true,
       treatments: [
-        { name: 'Masaje Exentia', desc: 'Nuestra técnica signature que combina relajación profunda y renovación corporal.', duration: '50 min', price: '$1,550' },
-        { name: 'Masaje Exentia Plus Personalizado', desc: 'Versión extendida personalizada según las zonas de mayor tensión.', duration: '80 min', price: '$2,140' },
-        { name: 'Masaje Tejido Profundo', desc: 'Trabajo intenso en capas musculares para liberar tensión acumulada.', duration: '50 min', price: '$1,550' },
-        { name: 'Masaje Terapéutico', desc: 'Tratamiento orientado a dolor muscular específico y postura.', duration: '50 min', price: '$1,550' },
-        { name: 'Masaje Terapéutico Ice Calm', desc: 'Terapia fría con bambúes helados para desinflamar y refrescar.', duration: '50 min', price: '$2,450' },
-        { name: 'Masaje Terapéutico con Ventosas', desc: 'Ventosas que liberan adherencias musculares y mejoran circulación.', duration: '80 min', price: '$2,450' },
-        { name: 'Masaje Terapéutico con Piedras Calientes', desc: 'Piedras volcánicas que derriten el estrés y reactivan la circulación.', duration: '80 min', price: '$2,450' },
-        { name: 'Masaje Terapéutico Integral', desc: 'Combinación de técnicas para un trabajo de cuerpo completo profundo.', duration: '80 min', price: '$2,450' },
-        { name: 'Masaje Terapéutico Plus', desc: 'Sesión extendida con énfasis terapéutico personalizado.', duration: '80 min', price: '$2,450' },
-        { name: 'Drenaje Linfático', desc: 'Estimula el sistema linfático para reducir inflamación y desintoxicar.', duration: '50 min', price: '$1,690' },
-        { name: 'Masaje Reductivo Manual', desc: 'Manipulación profunda para moldear y activar tejido adiposo.', duration: '50 min', price: '$750' },
-        { name: 'Envoltura Corporal Desintoxicante', desc: 'Envoltura con ingredientes naturales que purifica y nutre la piel.', duration: '50 min', price: '$750' },
+        { name: 'Masaje Exentia', desc: 'Nuestra técnica signature que combina relajación profunda y renovación corporal.', duration: '50 min', price: '$1,550', priceCouple: '$2,914' },
+        { name: 'Masaje Exentia Plus Personalizado', desc: 'Versión extendida personalizada según las zonas de mayor tensión.', duration: '80 min', price: '$2,140', priceCouple: '$3,760' },
+        { name: 'Masaje Tejido Profundo', desc: 'Trabajo intenso en capas musculares para liberar tensión acumulada.', duration: '50 min', price: '$1,550', priceCouple: '$2,914' },
+        { name: 'Masaje Terapéutico', desc: 'Tratamiento orientado a dolor muscular específico y postura.', duration: '50 min', price: '$1,550', priceCouple: '$2,914' },
+        { name: 'Masaje Terapéutico Ice Calm', desc: 'Terapia fría con bambúes helados para desinflamar y refrescar.', duration: '50 min', price: '$2,450', priceCouple: '$4,606' },
+        { name: 'Masaje Terapéutico con Ventosas', desc: 'Ventosas que liberan adherencias musculares y mejoran circulación.', duration: '80 min', price: '$2,450', priceCouple: '$3,760' },
+        { name: 'Masaje Terapéutico con Piedras Calientes', desc: 'Piedras volcánicas que derriten el estrés y reactivan la circulación.', duration: '80 min', price: '$2,450', priceCouple: '$3,760' },
+        { name: 'Masaje Terapéutico Integral', desc: 'Combinación de técnicas para un trabajo de cuerpo completo profundo.', duration: '80 min', price: '$2,450', priceCouple: '$4,606' },
+        { name: 'Masaje Terapéutico Plus', desc: 'Sesión extendida con énfasis terapéutico personalizado.', duration: '80 min', price: '$2,450', priceCouple: '$4,606' },
+        { name: 'Drenaje Linfático', desc: 'Estimula el sistema linfático para reducir inflamación y desintoxicar.', duration: '50 min', price: '$1,690', priceCouple: '$2,914' },
+        { name: 'Masaje Reductivo Manual', desc: 'Manipulación profunda para moldear y activar tejido adiposo.', duration: '50 min', price: '$750', priceCouple: '$1,350' },
+        { name: 'Envoltura Corporal Desintoxicante', desc: 'Envoltura con ingredientes naturales que purifica y nutre la piel.', duration: '50 min', price: '$750', priceCouple: '$2,350' },
         { name: 'Masaje Prenatal', desc: 'Alivio suave y seguro diseñado especialmente para futuras mamás.', duration: '50 min', price: '$1,550' },
         { name: 'Masaje de Espalda', desc: 'Sesión focalizada en hombros, cervicales y zona lumbar.', duration: '30 min', price: '$790' },
-        { name: 'Shiatsu en Silla Japonesa', desc: 'Presión en puntos energéticos para liberar tensión sin desvestirse.', duration: '50 min', price: '$990' }
+        { name: 'Shiatsu en Silla Japonesa', desc: 'Presión en puntos energéticos para liberar tensión sin desvestirse.', duration: '50 min', price: '$990' },
+        { name: 'Turbante Ice Calm', desc: 'Complemento facial con turbante helado para relajar la cabeza.', duration: '50 min', price: '$750' }
       ]
     },
     faciales: {
@@ -3998,10 +4069,18 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Espacio moderno y premium'
       ],
       treatments: [
-        { name: 'Manicura Exentia con Esmalte', desc: 'Manicura completa con cuticle térmico y esmalte de alta duración.', duration: '30 min', price: '$390' },
-        { name: 'Manicura Exentia con Gel', desc: 'Manicura premium con gel semipermanente y acabado impecable.', duration: '45 min', price: '$590' },
-        { name: 'Uñas Acrílicas Tip No.3 con Gel', desc: 'Acrílicas con gel marca premium para un acabado natural y resistente.', duration: '90 min', price: '$650' },
-        { name: 'Gel Semipermanente', desc: 'Color vibrante y duradero con acabado brillante hasta 3 semanas.', duration: '30 min', price: '$290' }
+        { name: 'Manicura Exentia con Esmalte', desc: 'Manicura completa en cío térmico y esmalte regular.', duration: '30 min', price: '$390' },
+        { name: 'Manicura Exentia con Gel', desc: 'Manicura premium con gel semipermanente, brillo y duración.', duration: '45 min', price: '$590' },
+        { name: 'Manicura Exentia Rusa', desc: 'Técnica rusa con cutícula limpia, precisión y acabado natural.', duration: '50 min', price: '$370' },
+        { name: 'Manicura Exentia Caballero', desc: 'Manicura clásica para caballero con limado, hidratación y pulido.', duration: '30 min', price: '$350' },
+        { name: 'Uñas Acrílicas Tip No.3', desc: 'Construcción con acrílico premium y forma personalizada.', duration: '90 min', price: '$550' },
+        { name: 'Uñas Acrílicas Tip No.3 c/ Gel', desc: 'Acrílicas con gel para mayor brillo y durabilidad.', duration: '90 min', price: '$650' },
+        { name: 'Uñas Esculturales Cover Natural', desc: 'Esculturales con cover natural sin tip, look elegante.', duration: '90 min', price: '$620' },
+        { name: 'Uñas Esculturales con Gel', desc: 'Esculturales premium con gel de construcción.', duration: '100 min', price: '$695' },
+        { name: 'Gel Semipermanente', desc: 'Color vibrante y duradero con acabado brillante hasta 3 semanas.', duration: '30 min', price: '$290' },
+        { name: 'Base Rubber', desc: 'Base rubber que protege y fortalece la uña natural.', duration: '30 min', price: '$210' },
+        { name: 'Esmaltado Regular', desc: 'Esmalte clásico de alta gama.', duration: '15 min', price: '$180' },
+        { name: 'Esmaltado Francés', desc: 'El clásico look francés con líneas perfectas.', duration: '20 min', price: '$195' }
       ]
     },
     pedicura: {
@@ -4029,7 +4108,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       treatments: [
         { name: 'Pedicura Exentia con Esmalte', desc: 'Pedicura spa con hidromasaje relajante y esmalte profesional.', duration: '45 min', price: '$580' },
-        { name: 'Pedicura Exentia con Gel', desc: 'Pedicura completa con hidromasaje y gel de larga duración.', duration: '60 min', price: '$690' }
+        { name: 'Pedicura Exentia con Gel', desc: 'Pedicura completa con hidromasaje y gel de larga duración.', duration: '60 min', price: '$690' },
+        { name: 'Pedicura Exentia Caballero', desc: 'Pedicura caballero con hidromasaje, limado y pulido natural.', duration: '50 min', price: '$490' },
+        { name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500' },
+        { name: 'Corte de Uñas Pies', desc: 'Servicio express de corte y limado.', duration: '15 min', price: '$150' }
       ]
     },
     cabello: {
@@ -4057,11 +4139,22 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       treatments: [
         { name: 'Corte Cabello Dama', desc: 'Corte personalizado con mascarilla hidratante y estilizado incluido.', duration: '45 min', price: '$650' },
+        { name: 'Corte Cabello Corto Dama', desc: 'Corte corto con mascarilla y estilizado.', duration: '40 min', price: '$500' },
+        { name: 'Corte Cabello Dama c/ Ampolleta', desc: 'Corte con ampolleta nutritiva, mascarilla y estilizado.', duration: '60 min', price: '$750' },
         { name: 'Corte Cabello Hombre', desc: 'Corte moderno con mascarilla e hilo hidratante incluido.', duration: '30 min', price: '$350' },
-        { name: 'Diseño de Color Personalizado', desc: 'Mechas, balayage o baby lights con matiz, despunte y estilizado.', duration: '120 min', price: 'Desde $2,500' },
-        { name: 'Nanoplastia', desc: 'Reestructuración profunda anti-frizz para un cabello sedoso y manejable.', duration: '120 min', price: 'Desde $2,300' },
+        { name: 'Shampoo y Secado', desc: 'Lavado profesional con mascarilla nutritiva y secado con estilo.', duration: '30 min', price: 'Desde $600' },
+        { name: 'Planchado Express', desc: 'Plancha rápida para un look impecable.', duration: '30 min', price: 'Desde $500' },
+        { name: 'Peinado Cabello Corto', desc: 'Brushing, moldeado o planchado en cabello corto.', duration: '40 min', price: '$850' },
+        { name: 'Peinado Cabello Mediano', desc: 'Brushing, moldeado o planchado en cabello mediano.', duration: '50 min', price: '$1,000' },
         { name: 'Peinado Novia', desc: 'Peinado elegante y duradero diseñado para tu día especial.', duration: '90 min', price: '$1,700' },
-        { name: 'Shampoo y Secado', desc: 'Lavado profesional con mascarilla nutritiva y secado con estilo.', duration: '30 min', price: 'Desde $600' }
+        { name: 'Diseño de Color Personalizado', desc: 'Mechas, balayage o baby lights con matiz, despunte y estilizado.', duration: '120 min', price: 'Desde $2,500' },
+        { name: 'Tinte Global', desc: 'Tinte completo con mascarilla hidratante y estilizado.', duration: '120 min', price: 'Desde $1,700' },
+        { name: 'Retoque de Raíz', desc: 'Retoque de raíz con técnica profesional.', duration: '90 min', price: 'Desde $1,300' },
+        { name: 'Baño de Color', desc: 'Color gloss o toner para revitalizar el tono.', duration: '60 min', price: 'Desde $1,000' },
+        { name: 'Nanoplastia', desc: 'Reestructuración profunda anti-frizz para un cabello sedoso y manejable.', duration: '120 min', price: 'Desde $2,300' },
+        { name: 'Keratina', desc: 'Brillo, nutrición y suavidad duradera.', duration: '120 min', price: 'Desde $2,300' },
+        { name: 'Botox Capilar', desc: 'Hidratación profunda y rejuvenecimiento del cabello.', duration: '120 min', price: 'Desde $2,300' },
+        { name: 'Extensiones de Cabello Brasileño', desc: 'Método brasileño con extensiones premium.', duration: '180 min', price: 'Desde $2,800' }
       ]
     },
     maquillaje: {
@@ -4088,8 +4181,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Adaptado a tu estilo'
       ],
       treatments: [
-        { name: 'Maquillaje Social', desc: 'Peinado y maquillaje profesional para eventos y ocasiones especiales.', duration: '60 min', price: '$2,000' },
-        { name: 'Maquillaje de Novia', desc: 'Peinado y maquillaje de noche, elegante y duradero para tu día especial.', duration: '90 min', price: '$2,300' }
+        { name: 'Maquillaje Profesional', desc: 'Maquillaje profesional con productos de larga duración.', duration: '60 min', price: '$1,200' },
+        { name: 'Peinado y Maquillaje Social', desc: 'Combinación perfecta para eventos sociales.', duration: '90 min', price: '$2,000' },
+        { name: 'Maquillaje de Ojos', desc: 'Solo ojos con técnicas profesionales según el evento.', duration: '40 min', price: '$800' },
+        { name: 'Peinado y Maquillaje de Noche', desc: 'Look completo elegante y duradero para tu noche especial.', duration: '90 min', price: '$2,300' }
       ]
     },
     depilacion: {
@@ -4116,9 +4211,22 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Resultados hasta 4 semanas'
       ],
       treatments: [
-        { name: 'Depilación Facial Completa', desc: 'Epilación con cera tibia en todas las zonas del rostro.', duration: '30 min', price: '$465' },
+        { name: 'Facial Completo', desc: 'Epilación de cera tibia en todas las zonas del rostro.', duration: '30 min', price: '$465' },
+        { name: 'Cejas', desc: 'Depilación de cejas con cera.', duration: '15 min', price: '$140' },
+        { name: 'Diseño de Cejas', desc: 'Depilación con diseño y forma personalizada.', duration: '20 min', price: '$230' },
+        { name: 'Bozo (Upper lip)', desc: 'Cera tibia precisa en zona superior labial.', duration: '10 min', price: '$140' },
+        { name: 'Axilas', desc: 'Axilas con cera hipoalergénica.', duration: '15 min', price: '$175' },
         { name: 'Brasileño', desc: 'Depilación completa de zona íntima con cera hipoalergénica.', duration: '30 min', price: '$600' },
-        { name: 'Piernas', desc: 'Piernas completas con cera tibia para una piel suave y tersa.', duration: '45 min', price: '$510' }
+        { name: 'Resaque Bikini', desc: 'Línea de bikini regular.', duration: '20 min', price: '$290' },
+        { name: 'Resaque Bikini Profundo', desc: 'Bikini línea profunda.', duration: '25 min', price: '$340' },
+        { name: 'Piernas Completas', desc: 'Piernas completas con cera tibia.', duration: '45 min', price: '$510' },
+        { name: '1/2 Piernas', desc: 'Media pierna con cera.', duration: '30 min', price: '$385' },
+        { name: 'Brazos', desc: 'Brazos completos con cera tibia.', duration: '30 min', price: '$405' },
+        { name: '1/2 Brazos', desc: 'Medio brazo con cera.', duration: '20 min', price: '$335' },
+        { name: 'Espalda', desc: 'Espalda completa con cera profesional.', duration: '40 min', price: '$445' },
+        { name: 'Abdomen', desc: 'Abdomen con cera tibia.', duration: '25 min', price: '$310' },
+        { name: 'Glúteos', desc: 'Glúteos con cera hipoalergénica.', duration: '30 min', price: '$425' },
+        { name: 'Cuerpo Completo', desc: 'Depilación corporal integral. Requiere anticipo.', duration: '180 min', price: '$2,050' }
       ]
     },
     spakids: {
@@ -4145,7 +4253,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Experiencia memorable'
       ],
       treatments: [
-        { name: 'Spa Kids', desc: 'Experiencia completa de spa diseñada para los más pequeños de la casa.', duration: '60 min', price: '$1,550' }
+        { name: 'Spa Kids', desc: 'Experiencia completa de spa diseñada para los más pequeños de la casa.', duration: '60 min', price: '$1,550' },
+        { name: 'Manicura Infantil', desc: 'Manicura para peques con esmalte regular suave.', duration: '20 min', price: '$140' },
+        { name: 'Mini Facial', desc: 'Facial suave para piel infantil con productos hipoalergénicos.', duration: '30 min', price: '$750' }
       ]
     },
     lash: {
@@ -4173,7 +4283,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       treatments: [
         { name: 'Laminado de Ceja', desc: 'Laminado con diseño y depilación para cejas perfectamente definidas.', duration: '30 min', price: '$450' },
-        { name: 'Lash Lifting', desc: 'Rizado y levantamiento de pestañas naturales para una mirada abierta e intensa.', duration: '45 min', price: 'Consultar' }
+        { name: 'Combo Cejas', desc: 'Laminado + henna + depilación: cejas más densas y dirigidas.', duration: '45 min', price: '$650' },
+        { name: 'Lash Lifting', desc: 'Rizado y levantamiento de pestañas naturales para una mirada abierta e intensa.', duration: '45 min', price: '$650' }
       ]
     }
   };
@@ -4358,16 +4469,30 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             <h2>Elige tu <em>tratamiento</em></h2>
             <p>Cada tratamiento está diseñado para ofrecerte una experiencia única. Selecciona el que más se ajuste a tus necesidades.</p>
           </div>
+          ${service.supportsParejas ? `
+          <div class="modality-toggle" id="modality-toggle" data-mode="individual" role="tablist" aria-label="Modalidad de servicio">
+            <button class="modality-btn active" data-mode="individual" role="tab" aria-selected="true">
+              <span class="modality-icon">👤</span>
+              <span class="modality-label">Individual</span>
+            </button>
+            <button class="modality-btn" data-mode="parejas" role="tab" aria-selected="false">
+              <span class="modality-icon">👥</span>
+              <span class="modality-label">Parejas</span>
+            </button>
+          </div>
+          <p class="modality-hint">Las parejas comparten cabina y experiencia simultánea. Algunos servicios solo están disponibles individualmente.</p>
+          ` : ''}
           <div class="treatments-list">
             ${service.treatments.map((t, i) => `
-              <div class="treatment-card">
+              <div class="treatment-card${t.priceCouple ? '' : (service.supportsParejas ? ' only-individual' : '')}" data-has-couple="${t.priceCouple ? '1' : '0'}">
                 <div class="treatment-num">${String(i + 1).padStart(2, '0')}</div>
                 <div class="treatment-info">
                   <h3>${t.name}</h3>
                   <p>${t.desc}</p>
+                  ${service.supportsParejas && !t.priceCouple ? '<span class="treatment-only-tag">Solo individual</span>' : ''}
                 </div>
                 <div class="treatment-duration">${t.duration}</div>
-                <div class="treatment-price">${t.price}</div>
+                <div class="treatment-price" data-price-ind="${t.price}" data-price-cpl="${t.priceCouple || t.price}">${t.price}</div>
                 <button class="treatment-book" data-add-svc="${t.name}">Reservar</button>
               </div>
             `).join('')}
@@ -4400,6 +4525,31 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
     const view = document.getElementById('service-detail-view');
     view.innerHTML = html;
+
+    // Wire modality toggle (Individual / Parejas)
+    var modToggle = view.querySelector('#modality-toggle');
+    if (modToggle) {
+      modToggle.querySelectorAll('.modality-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var mode = btn.getAttribute('data-mode');
+          modToggle.setAttribute('data-mode', mode);
+          modToggle.querySelectorAll('.modality-btn').forEach(function(b){
+            var isActive = b.getAttribute('data-mode') === mode;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          });
+          view.querySelectorAll('.treatment-card').forEach(function(card){
+            var priceEl = card.querySelector('.treatment-price');
+            if (!priceEl) return;
+            var ind = priceEl.getAttribute('data-price-ind');
+            var cpl = priceEl.getAttribute('data-price-cpl');
+            priceEl.textContent = mode === 'parejas' ? cpl : ind;
+            if (mode === 'parejas') card.classList.add('in-pareja-mode');
+            else card.classList.remove('in-pareja-mode');
+          });
+        });
+      });
+    }
 
     // Wire up event listeners for dynamic content
     view.querySelectorAll('[data-service]').forEach(el => {
