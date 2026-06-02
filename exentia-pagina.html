@@ -1686,23 +1686,24 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .sv2-tab.active .sv2-tab-dot { background: var(--cream); color: var(--brown); }
 
-  /* Hero estilo editorial: imagen circular + texto al lado */
+  /* Hero estilo split: imagen grande izquierda + panel texto derecha */
   .sv2-hero {
     position: relative;
-    margin-bottom: 20px;
-    padding: 4px 0 16px;
+    margin-bottom: 22px;
     display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 28px;
-    align-items: center;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 32px rgba(92,58,30,0.12);
+    background: var(--white);
+    min-height: 240px;
   }
   .sv2-hero-img-wrap {
     position: relative;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
     overflow: hidden;
-    flex-shrink: 0;
+    background: var(--cream);
+    min-height: 240px;
   }
   .sv2-hero-img {
     display: block;
@@ -1713,18 +1714,30 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .sv2-hero-overlay {
     color: var(--brown);
-    padding: 0;
-    background: transparent;
+    padding: 28px 32px;
+    background: var(--off-white);
     border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+  }
+  .sv2-hero-overlay::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 1.5px;
+    background: var(--olive);
+    margin-bottom: 4px;
   }
   .sv2-hero-overlay .sv2-hero-eyebrow { color: var(--olive-dark, #7d7c3f); opacity: 1; }
   .sv2-hero-overlay .sv2-hero-title { color: var(--brown); }
   .sv2-hero-overlay .sv2-hero-title em { color: var(--olive); }
   .sv2-hero-overlay .sv2-hero-desc { color: var(--text-light); opacity: 1; }
   @media (max-width: 768px) {
-    .sv2-hero { grid-template-columns: 1fr; gap: 14px; text-align: center; padding-top: 8px; }
-    .sv2-hero-img-wrap { width: 140px; height: 140px; margin: 0 auto; }
-    .sv2-hero-overlay { padding: 0; }
+    .sv2-hero { grid-template-columns: 1fr; min-height: auto; }
+    .sv2-hero-img-wrap { min-height: 180px; height: 180px; }
+    .sv2-hero-overlay { padding: 18px 22px 22px; }
   }
   .sv2-hero-eyebrow {
     font-size: 10px;
