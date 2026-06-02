@@ -1118,6 +1118,38 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     font-style: italic;
     opacity: 0.85;
   }
+  .treatment-dur-chips {
+    display: inline-flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .treatment-dur-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 16px;
+    background: var(--white);
+    border: 1.5px solid rgba(154,152,84,0.35);
+    border-radius: 100px;
+    font: 600 12px 'Lato', sans-serif;
+    letter-spacing: 0.5px;
+    color: var(--olive-dark, #7d7c3f);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+  }
+  .treatment-dur-chip:hover {
+    border-color: var(--olive);
+    background: var(--cream);
+    transform: translateY(-1px);
+  }
+  .treatment-dur-chip.active {
+    background: var(--olive);
+    border-color: var(--olive);
+    color: var(--white);
+    box-shadow: 0 3px 10px rgba(154,152,84,0.3);
+  }
+  .treatment-card.has-dur-chips .treatment-duration { display: none; }
   .treatment-card.only-individual {
     opacity: 0.65;
   }
@@ -4799,19 +4831,32 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           <p class="modality-hint">Las parejas comparten cabina y experiencia simultánea. Algunos servicios solo están disponibles individualmente.</p>
           ` : ''}
           <div class="treatments-list">
-            ${service.treatments.map((t, i) => `
-              <div class="treatment-card${t.priceCouple ? '' : (service.supportsParejas ? ' only-individual' : '')}" data-has-couple="${t.priceCouple ? '1' : '0'}">
+            ${service.treatments.map((t, i) => {
+              // Soporte para nuevo formato durations[] y legacy duration/price
+              const durs = t.durations || [{min: parseInt((t.duration||'0').replace(/\\D/g,''),10), price: t.price, priceCouple: t.priceCouple}];
+              const firstDur = durs[0];
+              const priceInd = firstDur.price;
+              const priceCpl = firstDur.priceCouple || firstDur.price;
+              const hasCouple = !!firstDur.priceCouple;
+              const durLabel = firstDur.min ? firstDur.min + ' min' : (t.duration || '');
+              const isOnlyInd = service.supportsParejas && !hasCouple;
+              const multiDurChips = durs.length > 1
+                ? '<div class="treatment-dur-chips">' + durs.map((d, di) => `<button class="treatment-dur-chip${di===0?' active':''}" data-dur="${di}" data-price-ind="${d.price}" data-price-cpl="${d.priceCouple || d.price}">${d.min} min</button>`).join('') + '</div>'
+                : '';
+              return `
+              <div class="treatment-card${isOnlyInd ? ' only-individual' : ''}${durs.length>1 ? ' has-dur-chips':''}" data-has-couple="${hasCouple ? '1' : '0'}">
                 <div class="treatment-num">${String(i + 1).padStart(2, '0')}</div>
                 <div class="treatment-info">
                   <h3>${t.name}</h3>
                   <p>${t.desc}</p>
-                  ${service.supportsParejas && !t.priceCouple ? '<span class="treatment-only-tag">Solo individual</span>' : ''}
+                  ${multiDurChips}
+                  ${isOnlyInd ? '<span class="treatment-only-tag">Solo individual</span>' : ''}
                 </div>
-                <div class="treatment-duration">${t.duration}</div>
-                <div class="treatment-price" data-price-ind="${t.price}" data-price-cpl="${t.priceCouple || t.price}">${t.price}</div>
+                ${durs.length > 1 ? '' : `<div class="treatment-duration">${durLabel}</div>`}
+                <div class="treatment-price" data-price-ind="${priceInd}" data-price-cpl="${priceCpl}">${priceInd}</div>
                 <button class="treatment-book" data-add-svc="${t.name}">Reservar</button>
-              </div>
-            `).join('')}
+              </div>`;
+            }).join('')}
           </div>
         </div>
       </section>
@@ -4857,8 +4902,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           view.querySelectorAll('.treatment-card').forEach(function(card){
             var priceEl = card.querySelector('.treatment-price');
             if (!priceEl) return;
-            var ind = priceEl.getAttribute('data-price-ind');
-            var cpl = priceEl.getAttribute('data-price-cpl');
+            // Si la card tiene chips de duracion, usar la chip activa; sino usar attrs del price
+            var activeChip = card.querySelector('.treatment-dur-chip.active');
+            var ind = activeChip ? activeChip.getAttribute('data-price-ind') : priceEl.getAttribute('data-price-ind');
+            var cpl = activeChip ? activeChip.getAttribute('data-price-cpl') : priceEl.getAttribute('data-price-cpl');
             priceEl.textContent = mode === 'parejas' ? cpl : ind;
             if (mode === 'parejas') card.classList.add('in-pareja-mode');
             else card.classList.remove('in-pareja-mode');
@@ -4866,6 +4913,24 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         });
       });
     }
+    // Wire chips de duracion en detail view
+    view.querySelectorAll('.treatment-dur-chip').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        var card = chip.closest('.treatment-card');
+        if (!card) return;
+        card.querySelectorAll('.treatment-dur-chip').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+        var priceEl = card.querySelector('.treatment-price');
+        if (!priceEl) return;
+        var mode = (modToggle && modToggle.getAttribute('data-mode')) || 'individual';
+        var ind = chip.getAttribute('data-price-ind');
+        var cpl = chip.getAttribute('data-price-cpl');
+        priceEl.textContent = mode === 'parejas' ? cpl : ind;
+        // Update data-price-ind / data-price-cpl en el priceEl para que el modality toggle subsecuente use el correcto
+        priceEl.setAttribute('data-price-ind', ind);
+        priceEl.setAttribute('data-price-cpl', cpl);
+      });
+    });
 
     // Wire up event listeners for dynamic content
     view.querySelectorAll('[data-service]').forEach(el => {
