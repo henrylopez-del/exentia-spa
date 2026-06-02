@@ -1691,30 +1691,28 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     border-radius: 16px;
     overflow: hidden;
     margin-bottom: 18px;
-    background-size: cover;
-    background-position: center;
-    height: 300px;
+    background: var(--cream) center/contain no-repeat;
+    height: 280px;
     display: flex;
     align-items: flex-end;
-    box-shadow: 0 12px 36px rgba(92,58,30,0.18);
+    box-shadow: 0 8px 24px rgba(92,58,30,0.12);
   }
   .sv2-hero-overlay {
     position: relative;
     z-index: 1;
-    padding: 20px 26px;
-    color: var(--white);
+    padding: 16px 24px;
+    color: var(--brown);
     width: 100%;
+    background: linear-gradient(to top, rgba(253, 251, 244, 0.96) 0%, rgba(253, 251, 244, 0.85) 70%, rgba(253, 251, 244, 0) 100%);
+    backdrop-filter: blur(2px);
   }
-  .sv2-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(20,12,5,0.85) 0%, rgba(20,12,5,0.5) 35%, rgba(20,12,5,0.15) 65%, rgba(20,12,5,0) 100%),
-                linear-gradient(to right, rgba(20,12,5,0.55) 0%, rgba(20,12,5,0.15) 50%, rgba(20,12,5,0) 100%);
-  }
+  .sv2-hero-overlay .sv2-hero-eyebrow { color: var(--olive-dark, #7d7c3f); opacity: 1; }
+  .sv2-hero-overlay .sv2-hero-title { color: var(--brown); }
+  .sv2-hero-overlay .sv2-hero-title em { color: var(--olive); }
+  .sv2-hero-overlay .sv2-hero-desc { color: var(--text-light); opacity: 1; }
   @media (max-width: 768px) {
-    .sv2-hero { height: 220px; }
-    .sv2-hero-overlay { padding: 16px 18px; }
+    .sv2-hero { height: 200px; }
+    .sv2-hero-overlay { padding: 12px 16px; }
   }
   .sv2-hero-eyebrow {
     font-size: 10px;
@@ -4031,7 +4029,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
 <!-- POPUP: SELECTOR DE SERVICIOS -->
 <div class="modal-overlay" id="modal-select">
-  <div class="modal-box modal-box-flex" style="max-width:1200px;">
+  <div class="modal-box modal-box-flex" style="max-width:1040px;">
     <div class="modal-close" onclick="closeModal('modal-select')" aria-label="Cerrar">&#10005;</div>
     <div class="stepper" aria-label="Paso 1 de 3">
       <div class="stepper-item active">
