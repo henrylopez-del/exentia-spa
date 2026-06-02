@@ -1631,6 +1631,271 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     margin-bottom: 40px;
   }
 
+  /* ============ MODAL SELECT V2 — Hero + lista (Variant 03) ============ */
+  .sv2-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 18px;
+    scrollbar-width: thin;
+  }
+  .sv2-tabs::-webkit-scrollbar { height: 4px; }
+  .sv2-tabs::-webkit-scrollbar-thumb { background: rgba(154,152,84,0.35); border-radius: 4px; }
+  .sv2-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--white);
+    border: 1.5px solid transparent;
+    border-radius: 100px;
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(92,58,30,0.06);
+  }
+  .sv2-tab:hover { color: var(--brown); transform: translateY(-1px); }
+  .sv2-tab.active {
+    background: var(--brown);
+    color: var(--cream);
+    border-color: var(--brown);
+  }
+  .sv2-tab.has-selected:not(.active) {
+    border-color: var(--olive);
+    color: var(--olive-dark, #7d7c3f);
+  }
+  .sv2-tab-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: var(--olive);
+    color: var(--white);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+  .sv2-tab.active .sv2-tab-dot { background: var(--cream); color: var(--brown); }
+
+  .sv2-hero {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    background-size: cover;
+    background-position: center;
+    min-height: 200px;
+    display: flex;
+    align-items: flex-end;
+    box-shadow: 0 12px 36px rgba(92,58,30,0.18);
+  }
+  .sv2-hero-overlay {
+    position: relative;
+    z-index: 1;
+    padding: 28px 32px;
+    color: var(--white);
+    width: 100%;
+  }
+  .sv2-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(20,12,5,0.85) 0%, rgba(20,12,5,0.35) 60%, transparent 100%);
+  }
+  .sv2-hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--cream);
+    opacity: 0.9;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .sv2-hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 500;
+    color: var(--white);
+    margin: 0 0 8px;
+    line-height: 1.1;
+  }
+  .sv2-hero-title em {
+    font-style: italic;
+    color: var(--cream);
+    font-weight: 400;
+  }
+  .sv2-hero-desc {
+    font-size: 13px;
+    color: var(--cream);
+    opacity: 0.92;
+    max-width: 520px;
+    line-height: 1.5;
+  }
+
+  .sv2-modality {
+    display: inline-flex;
+    background: var(--white);
+    border: 1.5px solid rgba(154,152,84,0.25);
+    border-radius: 100px;
+    padding: 4px;
+    gap: 4px;
+    margin: 0 auto 18px;
+    box-shadow: 0 6px 20px rgba(92,58,30,0.06);
+  }
+  .sv2-mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 22px;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font: 600 12px 'Lato', sans-serif;
+    letter-spacing: 0.8px;
+    border-radius: 100px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sv2-mode-btn:hover { color: var(--brown); }
+  .sv2-mode-btn.active {
+    background: var(--olive);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(154,152,84,0.3);
+  }
+  .sv2-mode-btn svg { width: 16px; height: 16px; }
+
+  .sv2-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sv2-row {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 18px;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sv2-row:hover {
+    border-color: rgba(154,152,84,0.4);
+    transform: translateX(3px);
+    box-shadow: 0 6px 18px rgba(92,58,30,0.08);
+  }
+  .sv2-row.on {
+    background: rgba(181,176,98,0.08);
+    border-color: var(--olive);
+  }
+  .sv2-row.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.35);
+  }
+  .sv2-row.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: transparent;
+  }
+  .sv2-row-info { min-width: 0; }
+  .sv2-row-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brown);
+    line-height: 1.25;
+  }
+  .sv2-row-desc {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 4px;
+    line-height: 1.45;
+    max-width: 540px;
+  }
+  .sv2-row-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--olive);
+    background: var(--cream);
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-weight: 700;
+  }
+  .sv2-row-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: var(--olive-dark, #7d7c3f);
+    background: var(--cream);
+    padding: 7px 14px;
+    border-radius: 100px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .sv2-row-price {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--olive);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .sv2-row-add {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--olive);
+    background: var(--white);
+    color: var(--olive);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+  }
+  .sv2-row.on .sv2-row-add {
+    background: var(--olive);
+    color: var(--white);
+  }
+  .sv2-row-add:hover {
+    transform: scale(1.08);
+  }
+
+  @media (max-width: 768px) {
+    .sv2-hero { min-height: 150px; }
+    .sv2-hero-overlay { padding: 20px 22px; }
+    .sv2-row {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      gap: 8px 12px;
+      padding: 14px 16px;
+    }
+    .sv2-row-info { grid-column: 1; grid-row: 1; }
+    .sv2-row-price { grid-column: 2; grid-row: 1; text-align: right; }
+    .sv2-row-pill { grid-column: 1; grid-row: 2; justify-self: start; }
+    .sv2-row-add { grid-column: 2; grid-row: 2; justify-self: end; }
+  }
+  /* ============ FIN SELECT V2 ============ */
+
   /* Category list */
   .sv-list {
     display: grid;
@@ -5250,57 +5515,151 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     spakids: '<svg viewBox="0 0 24 24"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>'
   };
 
+  // Estado: categoria activa + modo individual/pareja
+  var svActiveCat = 'masajes';
+  var svMode = 'individual';
+
   function renderSelectView() {
     const container = document.getElementById('select-content');
     if (!container) return;
 
-    // Render each category card + its treatments panel together
+    var cats = Object.values(SERVICES);
+    var active = SERVICES[svActiveCat] || cats[0];
+    if (!active) return;
+    svActiveCat = active.slug;
+
+    // Tabs row
+    var tabsHtml = '<div class="sv2-tabs" role="tablist">';
+    cats.forEach(function(s){
+      var count = cart.filter(c => s.treatments.some(t => t.name === c)).length;
+      var isActive = s.slug === svActiveCat;
+      tabsHtml += '<button type="button" class="sv2-tab' + (isActive?' active':'') + (count>0?' has-selected':'') + '" data-tab="' + s.slug + '" role="tab" aria-selected="' + isActive + '">'
+        + '<span class="sv2-tab-name">' + s.name + '</span>'
+        + (count > 0 ? '<span class="sv2-tab-dot">' + count + '</span>' : '')
+        + '</button>';
+    });
+    tabsHtml += '</div>';
+
+    // Hero de la categoria activa
+    var heroHtml = '<div class="sv2-hero" style="background-image:url(\'' + active.heroImage + '\')">'
+      + '<div class="sv2-hero-overlay">'
+      + '<div class="sv2-hero-eyebrow">CATEGORÍA · ' + active.treatments.length + ' SERVICIOS</div>'
+      + '<h3 class="sv2-hero-title">' + active.name + ' <em>' + (active.heroTitle || '') + '</em></h3>'
+      + (active.shortDesc ? '<p class="sv2-hero-desc">' + active.shortDesc + '</p>' : '')
+      + '</div></div>';
+
+    // Toggle modalidad (solo si la categoria lo soporta)
+    var modalityHtml = '';
+    if (active.supportsParejas) {
+      modalityHtml = '<div class="sv2-modality">'
+        + '<button type="button" class="sv2-mode-btn' + (svMode==='individual'?' active':'') + '" data-mode="individual">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>'
+        + '<span>Individual</span></button>'
+        + '<button type="button" class="sv2-mode-btn' + (svMode==='parejas'?' active':'') + '" data-mode="parejas">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.8"/><path d="M2 21c0-3.7 3.1-6.5 7-6.5s7 2.8 7 6.5"/><path d="M14.5 14.2c.7-.3 1.5-.5 2.5-.5 3.5 0 5 2.5 5 5"/></svg>'
+        + '<span>Parejas</span></button>'
+        + '</div>';
+    }
+
+    // Lista de treatments
+    var listHtml = '<div class="sv2-list">';
+    active.treatments.forEach(function(t){
+      var isOn = cart.includes(t.name);
+      var hasCouple = !!t.priceCouple;
+      var disabled = (svMode === 'parejas' && active.supportsParejas && !hasCouple);
+      var shownPrice = (svMode === 'parejas' && hasCouple) ? t.priceCouple : t.price;
+      listHtml += '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + '" data-svc="' + t.name + '">'
+        + '<div class="sv2-row-info">'
+        + '<div class="sv2-row-name">' + t.name + '</div>'
+        + (t.desc ? '<div class="sv2-row-desc">' + t.desc + '</div>' : '')
+        + (disabled ? '<span class="sv2-row-tag">Solo individual</span>' : '')
+        + '</div>'
+        + '<div class="sv2-row-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ' + t.duration + '</div>'
+        + '<div class="sv2-row-price">' + shownPrice + '</div>'
+        + '<button type="button" class="sv2-row-add" aria-label="Agregar">'
+        + (isOn ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>')
+        + '</button>'
+        + '</div>';
+    });
+    listHtml += '</div>';
+
+    container.innerHTML = tabsHtml + heroHtml + modalityHtml + listHtml;
+    updateSvBottom();
+
+    // Wire tabs
+    container.querySelectorAll('.sv2-tab').forEach(function(el){
+      el.onclick = function(){
+        svActiveCat = this.getAttribute('data-tab');
+        // Reset mode si la nueva categoria no soporta parejas
+        if (!(SERVICES[svActiveCat] && SERVICES[svActiveCat].supportsParejas)) svMode = 'individual';
+        renderSelectView();
+      };
+    });
+
+    // Wire modality toggle
+    container.querySelectorAll('.sv2-mode-btn').forEach(function(el){
+      el.onclick = function(){
+        svMode = this.getAttribute('data-mode');
+        renderSelectView();
+      };
+    });
+
+    // Wire rows (selección de servicio)
+    container.querySelectorAll('.sv2-row').forEach(function(el){
+      el.onclick = function(){
+        if (this.classList.contains('disabled')) return;
+        toggleTreat(this, this.getAttribute('data-svc'));
+        // Sin re-render completo: solo refrescar la fila + tabs counts
+        var name = this.getAttribute('data-svc');
+        var isOnNow = cart.includes(name);
+        this.classList.toggle('on', isOnNow);
+        var btn = this.querySelector('.sv2-row-add');
+        if (btn) {
+          btn.innerHTML = isOnNow
+            ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
+            : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+        }
+        // Refresh tab counts
+        var tabsEl = container.querySelector('.sv2-tabs');
+        if (tabsEl) {
+          Object.values(SERVICES).forEach(function(s){
+            var tabEl = tabsEl.querySelector('[data-tab="' + s.slug + '"]');
+            if (!tabEl) return;
+            var count = cart.filter(c => s.treatments.some(t => t.name === c)).length;
+            var dot = tabEl.querySelector('.sv2-tab-dot');
+            if (count > 0) {
+              if (dot) dot.textContent = count;
+              else tabEl.insertAdjacentHTML('beforeend', '<span class="sv2-tab-dot">' + count + '</span>');
+              tabEl.classList.add('has-selected');
+            } else {
+              if (dot) dot.remove();
+              tabEl.classList.remove('has-selected');
+            }
+          });
+        }
+        updateSvBottom();
+      };
+    });
+    return; // Termina aqui — el código viejo abajo solo aplica si no usamos sv2
+  }
+
+  function renderSelectView_LEGACY_UNUSED() {
+    const container = document.getElementById('select-content');
+    if (!container) return;
     let html = '<div class="sv-list">';
     Object.values(SERVICES).forEach(s => {
       const hasSelected = cart.some(c => s.treatments.some(t => t.name === c));
       const selectedCount = cart.filter(c => s.treatments.some(t => t.name === c)).length;
-
-      // Category card
       const showDesc = ['masajes', 'faciales', 'spakids'].includes(s.slug);
-      html += `
-        <div class="sv-group" data-cat="${s.slug}">
-          <div class="sv-cat ${hasSelected ? 'has-selected' : ''}">
-            <div class="sv-cat-img" style="background-image:url('${s.heroImage}')"></div>
-            <div class="sv-cat-body">
-              <div class="sv-cat-name">${s.name}</div>
-              <div class="sv-cat-count">${s.treatments.length} opciones${selectedCount > 0 ? ' · <strong>' + selectedCount + ' elegido' + (selectedCount > 1 ? 's' : '') + '</strong>' : ''}</div>
-            </div>
-            <span class="arrow">&#9660;</span>
-          </div>
-          <div class="sv-treatments" id="sv-t-${s.slug}">`;
-      // Intro de contexto solo para categorias con explicacion relevante
-      const showIntro = ['masajes', 'faciales', 'spakids'].includes(s.slug);
-      if (showIntro && s.shortDesc) {
-        html += `<div class="sv-intro">${s.shortDesc}</div>`;
-      }
+      html += `<div class="sv-group" data-cat="${s.slug}"><div class="sv-cat ${hasSelected ? 'has-selected' : ''}"><div class="sv-cat-img" style="background-image:url('${s.heroImage}')"></div><div class="sv-cat-body"><div class="sv-cat-name">${s.name}</div><div class="sv-cat-count">${s.treatments.length} opciones</div></div></div><div class="sv-treatments">`;
       s.treatments.forEach(t => {
         const isOn = cart.includes(t.name);
-        html += `
-            <div class="sv-treat ${isOn ? 'on' : ''}" data-svc="${t.name}">
-              <div class="ck">&#10003;</div>
-              <div class="info">
-                <div class="name">${t.name}</div>
-                ${showDesc && t.desc ? `<div class="desc">${t.desc}</div>` : ''}
-                <div class="dur">${t.duration}</div>
-              </div>
-              <div class="price">${t.price}</div>
-            </div>`;
+        html += `<div class="sv-treat ${isOn ? 'on' : ''}" data-svc="${t.name}"><div class="info"><div class="name">${t.name}</div></div><div class="price">${t.price}</div></div>`;
       });
       html += '</div></div>';
     });
-    html += '</div>';
     container.innerHTML = html;
-
-    // (treats are now inline within each group)
-
     updateSvBottom();
-
-    // DIRECT onclick assignment (most reliable)
     container.querySelectorAll('.sv-cat').forEach(function(el) {
       el.onclick = function() {
         var group = this.closest('.sv-group');
@@ -5311,7 +5670,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       el.onclick = function(e) {
         e.stopPropagation();
         toggleTreat(this, this.dataset.svc);
-        // Close accordion after selection
         var group = this.closest('.sv-group');
         if (group) {
           var cat = group.querySelector('.sv-cat');
