@@ -1942,6 +1942,39 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     box-shadow: 0 3px 10px rgba(154,152,84,0.3);
   }
   .sv2-row.has-dur-chips .sv2-row-pill { display: none; }
+  .sv2-row.has-var-chips .sv2-row-pill { display: none; }
+  .sv2-var-chips {
+    display: inline-flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .sv2-var-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: var(--white);
+    border: 1.5px solid rgba(154,152,84,0.35);
+    border-radius: 100px;
+    font: 600 11px 'Lato', sans-serif;
+    letter-spacing: 0.5px;
+    color: var(--olive-dark, #7d7c3f);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+  }
+  .sv2-var-chip:hover {
+    border-color: var(--olive);
+    background: var(--cream);
+    transform: translateY(-1px);
+  }
+  .sv2-var-chip.active {
+    background: var(--olive);
+    border-color: var(--olive);
+    color: var(--white);
+    box-shadow: 0 3px 10px rgba(154,152,84,0.3);
+  }
   .sv2-row-price {
     font-family: 'Playfair Display', serif;
     font-style: italic;
@@ -4417,18 +4450,61 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Espacio moderno y premium'
       ],
       treatments: [
+        // === MANICURA ===
         { name: 'Manicura Exentia con Esmalte', desc: 'Manicura completa en cío térmico y esmalte regular.', duration: '30 min', price: '$390' },
         { name: 'Manicura Exentia con Gel', desc: 'Manicura premium con gel semipermanente, brillo y duración.', duration: '45 min', price: '$590' },
         { name: 'Manicura Exentia Rusa', desc: 'Técnica rusa con cutícula limpia, precisión y acabado natural.', duration: '50 min', price: '$370' },
         { name: 'Manicura Exentia Caballero', desc: 'Manicura clásica para caballero con limado, hidratación y pulido.', duration: '30 min', price: '$350' },
-        { name: 'Uñas Acrílicas Tip No.3', desc: 'Construcción con acrílico premium y forma personalizada.', duration: '90 min', price: '$550' },
-        { name: 'Uñas Acrílicas Tip No.3 c/ Gel', desc: 'Acrílicas con gel para mayor brillo y durabilidad.', duration: '90 min', price: '$650' },
+        { name: 'Corte de Uñas', desc: 'Servicio express de corte y limado.', duration: '15 min', variants: [{type: 'Manos', price: '$120'}, {type: 'Pies', price: '$150'}] },
+        // === COLOR ===
+        { name: 'Esmaltado Regular', desc: 'Esmalte clásico de alta gama.', duration: '15 min', price: '$180' },
+        { name: 'Esmaltado Regular Infantil', desc: 'Esmaltado regular para los más pequeños con productos suaves.', duration: '15 min', price: '$140' },
+        { name: 'Esmaltado Francés', desc: 'El clásico look francés con líneas perfectas.', duration: '20 min', price: '$195' },
+        { name: 'Gel Semipermanente', desc: 'Color vibrante y duradero con acabado brillante hasta 3 semanas.', duration: '30 min', price: '$290' },
+        // === ACRILICO / POLYGEL ===
+        { name: 'Uñas Acrílicas Tip No.3', desc: 'Construcción con acrílico premium y forma personalizada (Cover Natural).', duration: '90 min', price: '$550' },
+        { name: 'Uñas Acrílicas Tip No.3 c/ Gel', desc: 'Acrílicas con gel para mayor brillo y durabilidad (incluye marca premium).', duration: '90 min', price: '$650' },
+        { name: 'Extra Largo', desc: 'Add-on: largo extra para tus uñas acrílicas.', duration: '+15 min', price: '$120' },
+        { name: 'Retoque de Acrílico solo Cover', desc: 'Mantenimiento de acrílico con cover natural.', duration: '60 min', price: '$540' },
+        { name: 'Retoque de Acrílico con Gel', desc: 'Mantenimiento de acrílico con gel.', duration: '70 min', price: '$580' },
+        { name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500' },
+        { name: 'Acripié por Uña', desc: 'Acrílico en una sola uña del pie.', duration: '15 min', price: '$100' },
+        { name: 'Parche de Acrílico', desc: 'Reparación puntual de uña acrílica rota.', duration: '15 min', price: '$60' },
+        { name: 'Reposición de Uña + Gel', desc: 'Reposición de uña con gel cuando se ha caído.', duration: '20 min', price: '$80' },
+        { name: 'Cambio de Forma o Largo', desc: 'Modifica la forma o largo de tus acrílicas.', duration: '20 min', price: '$70' },
+        // === ESCULTURALES ===
         { name: 'Uñas Esculturales Cover Natural', desc: 'Esculturales con cover natural sin tip, look elegante.', duration: '90 min', price: '$620' },
         { name: 'Uñas Esculturales con Gel', desc: 'Esculturales premium con gel de construcción.', duration: '100 min', price: '$695' },
-        { name: 'Gel Semipermanente', desc: 'Color vibrante y duradero con acabado brillante hasta 3 semanas.', duration: '30 min', price: '$290' },
+        // === RUBBER ===
         { name: 'Base Rubber', desc: 'Base rubber que protege y fortalece la uña natural.', duration: '30 min', price: '$210' },
-        { name: 'Esmaltado Regular', desc: 'Esmalte clásico de alta gama.', duration: '15 min', price: '$180' },
-        { name: 'Esmaltado Francés', desc: 'El clásico look francés con líneas perfectas.', duration: '20 min', price: '$195' }
+        { name: 'Nivelación de Rubber Color', desc: 'Nivelación con rubber de color.', duration: '45 min', price: '$410' },
+        { name: 'Nivelación de Rubber', desc: 'Nivelación con rubber transparente.', duration: '45 min', price: '$370' },
+        { name: 'Retoque de Rubber', desc: 'Mantenimiento del rubber.', duration: '45 min', price: '$330' },
+        { name: 'Retoque de Rubber Híbrido', desc: 'Mantenimiento del rubber híbrido.', duration: '50 min', price: '$390' },
+        // === RETIRO ===
+        { name: 'Retiro de Gel Semi', desc: 'Remoción de gel semipermanente.', duration: '20 min', price: '$70' },
+        { name: 'Retiro de Gel con Diseño 3D', desc: 'Remoción de gel con diseño 3D.', duration: '20 min', price: '$70' },
+        { name: 'Retiro Rubber/Gel', desc: 'Remoción combinada de rubber y gel.', duration: '25 min', price: '$90' },
+        { name: 'Retiro Rubber/Gel Solo', desc: 'Solo remoción sin nuevo servicio.', duration: '30 min', price: '$120' },
+        { name: 'Retiro Gel de Construcción', desc: 'Remoción de gel de construcción interno.', duration: '35 min', price: '$140' },
+        { name: 'Retiro Acrílico/Poly Interno', desc: 'Remoción profunda de acrílico o polygel.', duration: '40 min', price: '$160' },
+        // === TRATAMIENTOS UÑAS ===
+        { name: 'Tratamiento de Calcio', desc: 'Tratamiento fortalecedor con calcio para uñas débiles.', duration: '15 min', price: '$110' },
+        { name: 'Parafina', desc: 'Tratamiento hidratante con parafina caliente.', duration: '20 min', variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$150'}] },
+        { name: 'Mascarilla de Temporada', desc: 'Mascarilla hidratante y nutritiva por temporada.', duration: '20 min', variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$130'}] },
+        // === ARTE EN UÑAS (niveles segun complejidad) ===
+        { name: 'Arte en Uñas Nivel 1', desc: 'Instalación de piedras y stickers, francés o abstracto.', duration: '15 min', price: '$15' },
+        { name: 'Arte en Uñas Nivel 2', desc: 'Diseños a mano alzada, líneas, curvas, efectos aurora y baby boomer, marmoleado.', duration: '20 min', price: '$30' },
+        { name: 'Arte en Uñas Nivel 3', desc: 'Diseños en carey, mano alzada y blooming.', duration: '25 min', price: '$40' },
+        { name: 'Arte en Uñas Nivel 4', desc: 'Diseños con relieve en gel de construcción, efectos metálicos.', duration: '30 min', price: '$60' },
+        { name: 'Arte en Uñas Nivel 5', desc: 'Diseños con gel sólido, 3D y encapsulados en acrílico o rubber.', duration: '40 min', price: '$80' },
+        // === EFECTOS ===
+        { name: 'Efecto Matte', desc: 'Acabado mate elegante.', duration: '10 min', price: '$100' },
+        { name: 'Efecto Cat Eye', desc: 'Efecto ojo de gato con pigmento magnético.', duration: '15 min', price: '$130' },
+        { name: 'Efecto Glaseado', desc: 'Acabado glaseado tipo donut nail.', duration: '15 min', price: '$130' },
+        { name: 'Efecto Aurora', desc: 'Efecto aurora boreal con polvo iridiscente.', duration: '15 min', price: '$140' },
+        { name: 'Efecto Espejo / Chrome', desc: 'Acabado espejo metálico.', duration: '15 min', price: '$140' },
+        { name: 'Baby Boomer en Acrílico', desc: 'Difuminado degradado clásico en acrílico.', duration: '20 min', price: '$150' }
       ]
     },
     pedicura: {
@@ -4574,7 +4650,18 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         { name: 'Espalda', desc: 'Espalda completa con cera profesional.', duration: '40 min', price: '$445' },
         { name: 'Abdomen', desc: 'Abdomen con cera tibia.', duration: '25 min', price: '$310' },
         { name: 'Glúteos', desc: 'Glúteos con cera hipoalergénica.', duration: '30 min', price: '$425' },
-        { name: 'Cuerpo Completo', desc: 'Depilación corporal integral. Requiere anticipo.', duration: '180 min', price: '$2,050' }
+        { name: 'Cuerpo Completo', desc: 'Depilación corporal integral. Requiere anticipo.', duration: '180 min', price: '$2,050' },
+        { name: 'Frente', desc: 'Depilación de frente con cera tibia.', duration: '10 min', price: '$140' },
+        { name: 'Sien', desc: 'Depilación de sienes con cera precisa.', duration: '10 min', price: '$140' },
+        { name: 'Nariz', desc: 'Depilación de nariz con cera tibia.', duration: '10 min', price: '$135' },
+        { name: 'Pómulos', desc: 'Depilación de pómulos con cera.', duration: '10 min', price: '$140' },
+        { name: 'Patillas', desc: 'Depilación de patillas con cera tibia.', duration: '10 min', price: '$140' },
+        { name: 'Barba', desc: 'Depilación de barba con cera profesional.', duration: '15 min', price: '$140' },
+        { name: 'Nuca', desc: 'Depilación de nuca con cera tibia.', duration: '15 min', price: '$155' },
+        { name: 'Línea Interglútea', desc: 'Depilación íntima con cera hipoalergénica.', duration: '15 min', price: '$155' },
+        { name: 'Espalda Baja', desc: 'Depilación de espalda baja con cera.', duration: '20 min', price: '$200' },
+        { name: 'Pecho', desc: 'Depilación de pecho con cera profesional.', duration: '25 min', price: '$270' },
+        { name: 'Línea Abdomen', desc: 'Depilación de línea de abdomen con cera tibia.', duration: '15 min', price: '$210' }
       ]
     },
     spakids: {
@@ -4631,8 +4718,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       treatments: [
         { name: 'Laminado de Ceja', desc: 'Laminado con diseño y depilación para cejas perfectamente definidas.', duration: '30 min', price: '$450' },
-        { name: 'Combo Cejas', desc: 'Laminado + henna + depilación: cejas más densas y dirigidas.', duration: '45 min', price: '$650' },
-        { name: 'Lash Lifting', desc: 'Rizado y levantamiento de pestañas naturales para una mirada abierta e intensa.', duration: '45 min', price: '$650' }
+        { name: 'Combo Cejas', desc: 'Laminado + henna + depilación: cejas más densas y dirigidas.', duration: '45 min', price: '$650' }
       ]
     }
   };
@@ -5708,14 +5794,32 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         durChipsHtml += '</div>';
       }
 
-      var pillHtml = hasMultipleDurs ? '' :
+      // Soporte para variants (Manos/Pies)
+      var hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
+      var selectedVarIdx = (typeof t._selVar === 'number') ? t._selVar : 0;
+      var varChipsHtml = '';
+      if (hasVariants) {
+        var selVar = t.variants[selectedVarIdx] || t.variants[0];
+        shownPrice = selVar.price;
+        cartKey = t.name + ' · ' + selVar.type;
+        isOn = cart.some(function(c){ return c.indexOf(t.name + ' · ') === 0; });
+        varChipsHtml = '<div class="sv2-var-chips">';
+        t.variants.forEach(function(v, vi){
+          var isSelV = vi === selectedVarIdx;
+          varChipsHtml += '<button type="button" class="sv2-var-chip' + (isSelV?' active':'') + '" data-var-idx="' + vi + '" data-row="' + idx + '">' + v.type + '</button>';
+        });
+        varChipsHtml += '</div>';
+      }
+
+      var pillHtml = (hasMultipleDurs || hasVariants) ? '' :
         '<div class="sv2-row-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ' + dur.min + ' min</div>';
 
-      listHtml += '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + (hasMultipleDurs?' has-dur-chips':'') + '" data-svc="' + t.name + '" data-row-idx="' + idx + '">'
+      listHtml += '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + (hasMultipleDurs?' has-dur-chips':'') + (hasVariants?' has-var-chips':'') + '" data-svc="' + t.name + '" data-row-idx="' + idx + '">'
         + '<div class="sv2-row-info">'
         + '<div class="sv2-row-name">' + t.name + '</div>'
         + (t.desc ? '<div class="sv2-row-desc">' + t.desc + '</div>' : '')
         + durChipsHtml
+        + varChipsHtml
         + (disabled ? '<span class="sv2-row-tag">Solo individual</span>' : '')
         + '</div>'
         + pillHtml
@@ -5784,19 +5888,54 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       };
     });
 
+    // Wire chips de variant (Manos/Pies)
+    container.querySelectorAll('.sv2-var-chip').forEach(function(chip){
+      chip.onclick = function(e){
+        e.stopPropagation();
+        var rowIdx = parseInt(this.getAttribute('data-row'), 10);
+        var varIdx = parseInt(this.getAttribute('data-var-idx'), 10);
+        var t = active.treatments[rowIdx];
+        if (!t || !t.variants) return;
+        t._selVar = varIdx;
+        var rowEl = container.querySelector('[data-row-idx="' + rowIdx + '"]');
+        if (!rowEl) return;
+        rowEl.querySelectorAll('.sv2-var-chip').forEach(function(c){ c.classList.remove('active'); });
+        this.classList.add('active');
+        var sel = t.variants[varIdx];
+        var priceEl = rowEl.querySelector('.sv2-row-price');
+        if (priceEl) priceEl.textContent = sel.price;
+        if (rowEl.classList.contains('on')) {
+          for (var i = cart.length - 1; i >= 0; i--) {
+            if (cart[i].indexOf(t.name + ' · ') === 0) cart.splice(i, 1);
+          }
+          cart.push(t.name + ' · ' + sel.type);
+          updateSvBottom();
+          if (typeof renderCartBadge === 'function') renderCartBadge();
+        }
+      };
+    });
+
     // Wire rows (selección de servicio)
     container.querySelectorAll('.sv2-row').forEach(function(el){
       el.onclick = function(ev){
         if (this.classList.contains('disabled')) return;
-        // Ignorar clicks en los chips de duracion (manejados aparte)
+        // Ignorar clicks en los chips de duracion/variant (manejados aparte)
         if (ev.target && ev.target.closest('.sv2-dur-chip')) return;
+        if (ev.target && ev.target.closest('.sv2-var-chip')) return;
         var rowIdx = parseInt(this.getAttribute('data-row-idx'), 10);
         var t = active.treatments[rowIdx];
+        var hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
         var durs = (t && t.durations) || [{price: t && t.price}];
         var selIdx = (typeof t._selDur === 'number') ? t._selDur : 0;
         var sel = durs[selIdx];
         var hasMultiple = durs.length > 1;
-        var cartKey = hasMultiple ? (t.name + ' · ' + sel.min + ' min') : t.name;
+        var cartKey;
+        if (hasVariants) {
+          var vIdx = (typeof t._selVar === 'number') ? t._selVar : 0;
+          cartKey = t.name + ' · ' + t.variants[vIdx].type;
+        } else {
+          cartKey = hasMultiple ? (t.name + ' · ' + sel.min + ' min') : t.name;
+        }
         // Check if any variant is in cart
         var existingIdx = cart.findIndex(function(c){
           return c === t.name || c.indexOf(t.name + ' · ') === 0;
