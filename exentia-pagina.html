@@ -1975,6 +1975,250 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     color: var(--white);
     box-shadow: 0 3px 10px rgba(154,152,84,0.3);
   }
+
+  /* ========= ADD-ONS DRAWER (sub-modal sobre el modal principal) ========= */
+  .ax-overlay {
+    position: fixed; inset: 0;
+    background: rgba(74,53,32,0.55);
+    z-index: 100000;
+    display: none;
+    align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .ax-overlay.show { display: flex; }
+  .ax-drawer {
+    background: var(--white);
+    border-radius: 22px 22px 0 0;
+    width: 100%;
+    max-width: 560px;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 18px 22px 22px;
+    box-shadow: 0 -10px 40px rgba(130,96,64,0.25);
+    animation: axSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes axSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @media (min-width: 720px) {
+    .ax-overlay { align-items: center; }
+    .ax-drawer { border-radius: 22px; max-height: 86vh; }
+    @keyframes axSlideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  }
+  .ax-grab { width: 40px; height: 4px; border-radius: 2px; background: rgba(176,169,111,0.4); margin: 0 auto 14px; }
+  @media (min-width: 720px) { .ax-grab { display: none; } }
+  .ax-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .ax-head-info { flex: 1; min-width: 0; }
+  .ax-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 500; color: var(--brown); margin-bottom: 2px; line-height: 1.2; }
+  .ax-base { font: 600 12px 'Lato', sans-serif; color: var(--olive-dark); }
+  .ax-close {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1.5px solid var(--olive);
+    background: var(--white); color: var(--olive-dark);
+    cursor: pointer; font-size: 18px; flex-shrink: 0;
+    display: grid; place-items: center;
+  }
+  .ax-close:hover { background: var(--olive); color: var(--white); }
+
+  .ax-section { margin-top: 16px; }
+  .ax-label {
+    font: 700 10px 'Lato', sans-serif;
+    letter-spacing: 1.2px;
+    color: var(--olive-dark);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ax-badge {
+    background: rgba(176,169,111,0.2);
+    color: var(--olive-dark);
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    text-transform: none;
+    font-weight: 600;
+  }
+  .ax-info-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--cream);
+    color: var(--brown);
+    font: 700 12px 'Lato', sans-serif;
+    margin-left: 4px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .ax-info-btn:hover { background: var(--olive-soft); color: var(--white); transform: scale(1.1); }
+  .ax-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ax-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 7px 13px;
+    background: var(--white);
+    border: 1.5px solid rgba(176,169,111,0.35);
+    border-radius: 100px;
+    font: 600 11px 'Lato', sans-serif;
+    color: var(--olive-dark);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .ax-chip:hover { border-color: var(--olive); background: var(--cream-soft); transform: translateY(-1px); }
+  .ax-chip.active { background: var(--olive); border-color: var(--olive); color: var(--white); box-shadow: 0 3px 10px rgba(176,169,111,0.3); }
+  .ax-chip .plus { font-size: 9px; opacity: 0.7; margin-left: 3px; }
+  .ax-chip.active .plus { opacity: 0.9; }
+  .ax-chip.bool::before {
+    content: ''; width: 13px; height: 13px;
+    border: 1.5px solid currentColor; border-radius: 3px;
+    background: transparent;
+    display: inline-block;
+    margin-right: 2px;
+  }
+  .ax-chip.bool.active::before {
+    background: #fff; border-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%23B0A96F' stroke-width='4'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-size: 10px; background-position: center; background-repeat: no-repeat;
+  }
+  .ax-auto-desc {
+    margin-top: 8px;
+    padding: 9px 12px;
+    background: rgba(176,169,111,0.08);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.45;
+    display: flex; gap: 6px; align-items: flex-start;
+  }
+  .ax-auto-desc::before {
+    content: 'ⓘ'; color: var(--olive); font-size: 14px; line-height: 1; margin-top: 1px; flex-shrink: 0;
+  }
+  .ax-auto-desc:empty { display: none; }
+
+  .ax-total {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--cream-soft);
+    border-radius: 12px;
+  }
+  .ax-total-lbl {
+    font: 700 11px 'Lato', sans-serif;
+    letter-spacing: 1.2px;
+    color: var(--olive-dark);
+    text-transform: uppercase;
+  }
+  .ax-total-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--brown);
+  }
+  .ax-cta {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: var(--brown);
+    color: var(--white);
+    font: 700 13px 'Lato', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.2s;
+  }
+  .ax-cta:hover { background: #6a4d34; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(130,96,64,0.25); }
+
+  /* Modal explainer (ⓘ tocado) — segundo nivel */
+  .ax-explain {
+    position: fixed; inset: 0;
+    background: rgba(74,53,32,0.55);
+    z-index: 100001;
+    display: none;
+    align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .ax-explain.show { display: flex; }
+  .ax-explain-card {
+    background: var(--white);
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 500px;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 22px 20px 24px;
+    animation: axSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (min-width: 720px) {
+    .ax-explain { align-items: center; }
+    .ax-explain-card { border-radius: 20px; }
+  }
+  .ax-explain-card h5 {
+    font: 500 20px 'Playfair Display', serif;
+    color: var(--brown);
+    margin-bottom: 4px;
+  }
+  .ax-explain-sub {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 16px;
+  }
+  .ax-level-item {
+    padding: 12px 0;
+    border-bottom: 1px dashed rgba(176,169,111,0.3);
+  }
+  .ax-level-item:last-child { border-bottom: none; }
+  .ax-level-name {
+    font: 700 13px 'Lato', sans-serif;
+    color: var(--olive-dark);
+    margin-bottom: 3px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .ax-level-price {
+    font-family: 'Playfair Display', serif;
+    color: var(--brown);
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .ax-level-desc {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .ax-explain-close {
+    display: block; margin: 14px auto 0;
+    background: var(--olive); color: var(--white);
+    border: none; padding: 10px 28px; border-radius: 100px;
+    font: 700 11px 'Lato', sans-serif;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  /* Subtítulos para separar Base/Express dentro de la lista de Uñas */
+  .sv2-list-divider {
+    margin: 14px 6px 8px;
+    font: 700 10px 'Lato', sans-serif;
+    letter-spacing: 1.5px;
+    color: var(--olive-dark);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sv2-list-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(176,169,111,0.3);
+  }
+  /* Badge "Personalizable" en filas con add-ons */
+  .sv2-row-customizable {
+    display: inline-flex; align-items: center; gap: 3px;
+    font: 600 9px 'Lato', sans-serif;
+    color: var(--olive-dark);
+    background: rgba(176,169,111,0.12);
+    padding: 2px 7px;
+    border-radius: 8px;
+    margin-left: 6px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
   .sv2-row-price {
     font-family: 'Playfair Display', serif;
     font-style: italic;
@@ -4353,6 +4597,73 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
 <script>
   // ============================================
+  // NAIL ADD-ONS — complementos compartidos por Manicura y Pedicura
+  // ============================================
+  const NAIL_ADDONS = {
+    arte: {
+      key: 'arte',
+      label: 'Arte en uñas',
+      badge: 'Opcional',
+      type: 'single',
+      explainTitle: 'Arte en uñas',
+      explainSub: '5 niveles según complejidad del diseño · todos a mano alzada',
+      options: [
+        { id: 'none', name: 'Sin arte', price: 0, desc: 'No agregar arte a tu servicio.' },
+        { id: 'n1', name: 'Nivel 1', short: 'N1', price: 15, desc: 'Piedras, stickers, francés o diseños abstractos simples.' },
+        { id: 'n2', name: 'Nivel 2', short: 'N2', price: 30, desc: 'Líneas, curvas, efectos aurora y baby boomer, marmoleado.' },
+        { id: 'n3', name: 'Nivel 3', short: 'N3', price: 40, desc: 'Diseños tipo carey, mano alzada, técnica blooming.' },
+        { id: 'n4', name: 'Nivel 4', short: 'N4', price: 60, desc: 'Relieve en gel de construcción, efectos metálicos.' },
+        { id: 'n5', name: 'Nivel 5', short: 'N5', price: 80, desc: 'Gel sólido, 3D, encapsulados en acrílico o rubber.' }
+      ],
+      appliesTo: '*'
+    },
+    efecto: {
+      key: 'efecto',
+      label: 'Efecto',
+      badge: 'Opcional',
+      type: 'single',
+      explainTitle: 'Efectos especiales',
+      explainSub: 'Acabados decorativos · elige uno',
+      options: [
+        { id: 'none', name: 'Sin efecto', price: 0, desc: 'Acabado regular del esmalte o gel.' },
+        { id: 'matte', name: 'Matte', price: 100, desc: 'Acabado mate elegante, sin brillo.' },
+        { id: 'cateye', name: 'Cat Eye', price: 130, desc: 'Efecto óptico tipo ojo de gato con reflejo metálico móvil.' },
+        { id: 'glaseado', name: 'Glaseado', price: 130, desc: 'Acabado tipo donut nail, sutil y luminoso.' },
+        { id: 'aurora', name: 'Aurora', price: 140, desc: 'Efecto aurora boreal con polvo iridiscente.' },
+        { id: 'espejo', name: 'Espejo / Chrome', price: 140, desc: 'Acabado espejo metálico de alto reflejo.' },
+        { id: 'babyboomer', name: 'Baby Boomer', price: 150, desc: 'Difuminado degradado clásico en acrílico.' }
+      ],
+      appliesTo: '*'
+    },
+    extralargo: {
+      key: 'extralargo',
+      label: 'Extra Largo',
+      type: 'bool',
+      price: 120,
+      desc: 'Largo extra para uñas acrílicas o esculturales.',
+      appliesTo: ['acri-cover', 'acri-gel', 'escu-natural', 'escu-gel']
+    },
+    retiro: {
+      key: 'retiro',
+      label: 'Retiro previo',
+      badge: 'Si traes uñas',
+      type: 'single',
+      explainTitle: 'Retiro previo',
+      explainSub: 'Si traes esmalte, gel o acrílico de antes, agrégalo aquí.',
+      options: [
+        { id: 'none', name: 'Ninguno', price: 0, desc: 'No traes esmalte ni gel anterior.' },
+        { id: 'gelsemi', name: 'Gel Semi', price: 70, desc: 'Remoción de gel semipermanente.' },
+        { id: 'gel3d', name: 'Gel 3D', price: 70, desc: 'Remoción de gel con diseño 3D.' },
+        { id: 'rubbergel', name: 'Rubber/Gel', price: 90, desc: 'Remoción combinada de rubber y gel.' },
+        { id: 'rubbersolo', name: 'Rubber/Gel Solo', price: 120, desc: 'Solo remoción sin nuevo servicio.' },
+        { id: 'construccion', name: 'Construcción', price: 140, desc: 'Remoción de gel de construcción interno.' },
+        { id: 'acrilico', name: 'Acrílico/Poly', price: 160, desc: 'Remoción profunda de acrílico o polygel.' }
+      ],
+      appliesTo: '*'
+    }
+  };
+
+  // ============================================
   // SERVICES DATA
   // ============================================
   const SERVICES = window.SERVICES = {
@@ -4450,62 +4761,39 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Espacio moderno y premium'
       ],
       treatments: [
-        // === MANICURA ===
-        { name: 'Manicura Exentia con Esmalte', desc: 'Manicura completa en cío térmico y esmalte regular.', duration: '30 min', price: '$390' },
-        { name: 'Manicura Exentia con Gel', desc: 'Manicura premium con gel semipermanente, brillo y duración.', duration: '45 min', price: '$590' },
-        { name: 'Manicura Exentia Rusa', desc: 'Técnica rusa con cutícula limpia, precisión y acabado natural.', duration: '50 min', price: '$370' },
-        { name: 'Manicura Exentia Caballero', desc: 'Manicura clásica para caballero con limado, hidratación y pulido.', duration: '30 min', price: '$350' },
-        { name: 'Corte de Uñas', desc: 'Servicio express de corte y limado.', duration: '15 min', variants: [{type: 'Manos', price: '$120'}, {type: 'Pies', price: '$150'}] },
-        // === COLOR ===
-        { name: 'Esmaltado Regular', desc: 'Esmalte clásico de alta gama.', duration: '15 min', price: '$180' },
-        { name: 'Esmaltado Regular Infantil', desc: 'Esmaltado regular para los más pequeños con productos suaves.', duration: '15 min', price: '$140' },
-        { name: 'Esmaltado Francés', desc: 'El clásico look francés con líneas perfectas.', duration: '20 min', price: '$195' },
-        { name: 'Gel Semipermanente', desc: 'Color vibrante y duradero con acabado brillante hasta 3 semanas.', duration: '30 min', price: '$290' },
-        // === ACRILICO / POLYGEL ===
-        { name: 'Uñas Acrílicas Tip No.3', desc: 'Construcción con acrílico premium y forma personalizada (Cover Natural).', duration: '90 min', price: '$550' },
-        { name: 'Uñas Acrílicas Tip No.3 c/ Gel', desc: 'Acrílicas con gel para mayor brillo y durabilidad (incluye marca premium).', duration: '90 min', price: '$650' },
-        { name: 'Extra Largo', desc: 'Add-on: largo extra para tus uñas acrílicas.', duration: '+15 min', price: '$120' },
-        { name: 'Retoque de Acrílico solo Cover', desc: 'Mantenimiento de acrílico con cover natural.', duration: '60 min', price: '$540' },
-        { name: 'Retoque de Acrílico con Gel', desc: 'Mantenimiento de acrílico con gel.', duration: '70 min', price: '$580' },
-        { name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500' },
-        { name: 'Acripié por Uña', desc: 'Acrílico en una sola uña del pie.', duration: '15 min', price: '$100' },
-        { name: 'Parche de Acrílico', desc: 'Reparación puntual de uña acrílica rota.', duration: '15 min', price: '$60' },
-        { name: 'Reposición de Uña + Gel', desc: 'Reposición de uña con gel cuando se ha caído.', duration: '20 min', price: '$80' },
-        { name: 'Cambio de Forma o Largo', desc: 'Modifica la forma o largo de tus acrílicas.', duration: '20 min', price: '$70' },
-        // === ESCULTURALES ===
-        { name: 'Uñas Esculturales Cover Natural', desc: 'Esculturales con cover natural sin tip, look elegante.', duration: '90 min', price: '$620' },
-        { name: 'Uñas Esculturales con Gel', desc: 'Esculturales premium con gel de construcción.', duration: '100 min', price: '$695' },
-        // === RUBBER ===
-        { name: 'Base Rubber', desc: 'Base rubber que protege y fortalece la uña natural.', duration: '30 min', price: '$210' },
-        { name: 'Nivelación de Rubber Color', desc: 'Nivelación con rubber de color.', duration: '45 min', price: '$410' },
-        { name: 'Nivelación de Rubber', desc: 'Nivelación con rubber transparente.', duration: '45 min', price: '$370' },
-        { name: 'Retoque de Rubber', desc: 'Mantenimiento del rubber.', duration: '45 min', price: '$330' },
-        { name: 'Retoque de Rubber Híbrido', desc: 'Mantenimiento del rubber híbrido.', duration: '50 min', price: '$390' },
-        // === RETIRO ===
-        { name: 'Retiro de Gel Semi', desc: 'Remoción de gel semipermanente.', duration: '20 min', price: '$70' },
-        { name: 'Retiro de Gel con Diseño 3D', desc: 'Remoción de gel con diseño 3D.', duration: '20 min', price: '$70' },
-        { name: 'Retiro Rubber/Gel', desc: 'Remoción combinada de rubber y gel.', duration: '25 min', price: '$90' },
-        { name: 'Retiro Rubber/Gel Solo', desc: 'Solo remoción sin nuevo servicio.', duration: '30 min', price: '$120' },
-        { name: 'Retiro Gel de Construcción', desc: 'Remoción de gel de construcción interno.', duration: '35 min', price: '$140' },
-        { name: 'Retiro Acrílico/Poly Interno', desc: 'Remoción profunda de acrílico o polygel.', duration: '40 min', price: '$160' },
-        // === TRATAMIENTOS UÑAS ===
-        { name: 'Tratamiento de Calcio', desc: 'Tratamiento fortalecedor con calcio para uñas débiles.', duration: '15 min', price: '$110' },
-        { name: 'Parafina', desc: 'Tratamiento hidratante con parafina caliente.', duration: '20 min', variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$150'}] },
-        { name: 'Mascarilla de Temporada', desc: 'Mascarilla hidratante y nutritiva por temporada.', duration: '20 min', variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$130'}] },
-        // === ARTE EN UÑAS (niveles segun complejidad) ===
-        { name: 'Arte en Uñas Nivel 1', desc: 'Instalación de piedras y stickers, francés o abstracto.', duration: '15 min', price: '$15' },
-        { name: 'Arte en Uñas Nivel 2', desc: 'Diseños a mano alzada, líneas, curvas, efectos aurora y baby boomer, marmoleado.', duration: '20 min', price: '$30' },
-        { name: 'Arte en Uñas Nivel 3', desc: 'Diseños en carey, mano alzada y blooming.', duration: '25 min', price: '$40' },
-        { name: 'Arte en Uñas Nivel 4', desc: 'Diseños con relieve en gel de construcción, efectos metálicos.', duration: '30 min', price: '$60' },
-        { name: 'Arte en Uñas Nivel 5', desc: 'Diseños con gel sólido, 3D y encapsulados en acrílico o rubber.', duration: '40 min', price: '$80' },
-        // === EFECTOS ===
-        { name: 'Efecto Matte', desc: 'Acabado mate elegante.', duration: '10 min', price: '$100' },
-        { name: 'Efecto Cat Eye', desc: 'Efecto ojo de gato con pigmento magnético.', duration: '15 min', price: '$130' },
-        { name: 'Efecto Glaseado', desc: 'Acabado glaseado tipo donut nail.', duration: '15 min', price: '$130' },
-        { name: 'Efecto Aurora', desc: 'Efecto aurora boreal con polvo iridiscente.', duration: '15 min', price: '$140' },
-        { name: 'Efecto Espejo / Chrome', desc: 'Acabado espejo metálico.', duration: '15 min', price: '$140' },
-        { name: 'Baby Boomer en Acrílico', desc: 'Difuminado degradado clásico en acrílico.', duration: '20 min', price: '$150' }
-      ]
+        // === BASE (con add-ons opcionales: Arte, Efecto, Retiro, Extra Largo) ===
+        { _id: 'mani-esmalte', name: 'Manicura Exentia con Esmalte', desc: 'Manicura completa en spa térmico con esmalte regular.', duration: '30 min', price: '$390', hasAddons: true },
+        { _id: 'mani-gel', name: 'Manicura Exentia con Gel', desc: 'Manicura premium en spa térmico con gel semipermanente.', duration: '45 min', price: '$590', hasAddons: true },
+        { _id: 'mani-rusa', name: 'Manicura Exentia Rusa', desc: 'Técnica rusa con cutícula limpia, precisión y acabado natural.', duration: '50 min', price: '$370', hasAddons: true },
+        { _id: 'mani-caballero', name: 'Manicura Exentia Caballero', desc: 'Manicura clásica para caballero con limado, hidratación y pulido.', duration: '30 min', price: '$350', hasAddons: true },
+        { _id: 'gel-semi', name: 'Gel Semipermanente', desc: 'Color vibrante y duradero, acabado brillante hasta 3 semanas.', duration: '30 min', price: '$290', hasAddons: true },
+        { _id: 'acri-cover', name: 'Uñas Acrílicas Cover Natural', desc: 'Construcción acrílica premium tip No.3 con cover natural.', duration: '90 min', price: '$550', hasAddons: true },
+        { _id: 'acri-gel', name: 'Uñas Acrílicas con Gel', desc: 'Acrílicas tip No.3 con gel para mayor brillo y durabilidad (incluye marca premium).', duration: '90 min', price: '$650', hasAddons: true },
+        { _id: 'escu-natural', name: 'Uñas Esculturales Natural', desc: 'Esculturales sin tip con cover natural, look elegante.', duration: '90 min', price: '$620', hasAddons: true },
+        { _id: 'escu-gel', name: 'Uñas Esculturales con Gel', desc: 'Esculturales premium con gel de construcción.', duration: '100 min', price: '$695', hasAddons: true },
+        { _id: 'ret-acri-cover', name: 'Retoque de Acrílico solo Cover', desc: 'Mantenimiento mensual de acrílico con cover natural.', duration: '60 min', price: '$540', hasAddons: true },
+        { _id: 'ret-acri-gel', name: 'Retoque de Acrílico con Gel', desc: 'Mantenimiento mensual de acrílico con gel.', duration: '70 min', price: '$580', hasAddons: true },
+        { _id: 'acripie', name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500', hasAddons: true },
+        { _id: 'rubber-base', name: 'Base Rubber', desc: 'Base rubber que protege y fortalece la uña natural.', duration: '30 min', price: '$210', hasAddons: true },
+        { _id: 'rubber-niv', name: 'Nivelación de Rubber', desc: 'Nivelación con rubber transparente.', duration: '45 min', price: '$370', hasAddons: true },
+        { _id: 'rubber-niv-color', name: 'Nivelación de Rubber Color', desc: 'Nivelación con rubber de color.', duration: '45 min', price: '$410', hasAddons: true },
+        { _id: 'ret-rubber', name: 'Retoque de Rubber', desc: 'Mantenimiento del rubber.', duration: '45 min', price: '$330', hasAddons: true },
+        { _id: 'ret-rubber-hib', name: 'Retoque Rubber Híbrido', desc: 'Mantenimiento del rubber híbrido.', duration: '50 min', price: '$390', hasAddons: true },
+
+        // === EXPRESS (sin add-ons) ===
+        { _id: 'corte-unas', name: 'Corte de Uñas', desc: 'Servicio express de corte y limado.', duration: '15 min', isExpress: true, variants: [{type: 'Manos', price: '$120'}, {type: 'Pies', price: '$150'}] },
+        { _id: 'esm-regular', name: 'Esmaltado Regular', desc: 'Solo esmalte clásico (sin manicura completa).', duration: '15 min', price: '$180', isExpress: true },
+        { _id: 'esm-frances', name: 'Esmaltado Francés', desc: 'Solo el clásico look francés con líneas perfectas.', duration: '20 min', price: '$195', isExpress: true },
+        { _id: 'esm-infantil', name: 'Esmaltado Regular Infantil', desc: 'Esmaltado regular para los más pequeños con productos suaves.', duration: '15 min', price: '$140', isExpress: true },
+        { _id: 'calcio', name: 'Tratamiento de Calcio', desc: 'Tratamiento fortalecedor con calcio para uñas débiles.', duration: '15 min', price: '$110', isExpress: true },
+        { _id: 'parafina', name: 'Parafina', desc: 'Tratamiento hidratante con parafina caliente.', duration: '20 min', isExpress: true, variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$150'}] },
+        { _id: 'mascarilla', name: 'Mascarilla de Temporada', desc: 'Mascarilla hidratante y nutritiva por temporada.', duration: '20 min', isExpress: true, variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$130'}] },
+        { _id: 'parche', name: 'Parche de Acrílico', desc: 'Reparación puntual de uña acrílica rota.', duration: '15 min', price: '$60', isExpress: true },
+        { _id: 'reposicion', name: 'Reposición de Uña + Gel', desc: 'Reposición de una uña con gel cuando se ha caído.', duration: '20 min', price: '$80', isExpress: true },
+        { _id: 'cambio', name: 'Cambio de Forma o Largo', desc: 'Modifica la forma o el largo de tus acrílicas.', duration: '20 min', price: '$70', isExpress: true },
+        { _id: 'acripie-una', name: 'Acripié por Uña', desc: 'Acrílico en una sola uña del pie.', duration: '15 min', price: '$100', isExpress: true }
+      ],
+      addons: NAIL_ADDONS
     },
     pedicura: {
       slug: 'pedicura',
@@ -4531,12 +4819,13 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Productos profesionales premium'
       ],
       treatments: [
-        { name: 'Pedicura Exentia con Esmalte', desc: 'Pedicura spa con hidromasaje relajante y esmalte profesional.', duration: '45 min', price: '$580' },
-        { name: 'Pedicura Exentia con Gel', desc: 'Pedicura completa con hidromasaje y gel de larga duración.', duration: '60 min', price: '$690' },
-        { name: 'Pedicura Exentia Caballero', desc: 'Pedicura caballero con hidromasaje, limado y pulido natural.', duration: '50 min', price: '$490' },
-        { name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500' },
-        { name: 'Corte de Uñas Pies', desc: 'Servicio express de corte y limado.', duration: '15 min', price: '$150' }
-      ]
+        { _id: 'pedi-esmalte', name: 'Pedicura Exentia con Esmalte', desc: 'Pedicura spa con hidromasaje relajante y esmalte profesional.', duration: '45 min', price: '$580', hasAddons: true },
+        { _id: 'pedi-gel', name: 'Pedicura Exentia con Gel', desc: 'Pedicura completa con hidromasaje y gel de larga duración.', duration: '60 min', price: '$690', hasAddons: true },
+        { _id: 'pedi-caballero', name: 'Pedicura Exentia Caballero', desc: 'Pedicura caballero con hidromasaje, limado y pulido natural.', duration: '50 min', price: '$490', hasAddons: true },
+        { _id: 'pedi-acripie', name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500', hasAddons: true },
+        { _id: 'corte-pies', name: 'Corte de Uñas Pies', desc: 'Servicio express de corte y limado.', duration: '15 min', price: '$150', isExpress: true }
+      ],
+      addons: NAIL_ADDONS
     },
     cabello: {
       slug: 'cabello',
@@ -5714,6 +6003,237 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   var svActiveCat = 'masajes';
   var svMode = 'individual';
 
+  // ============================================
+  // ADD-ONS DRAWER (sub-modal sobre el modal principal)
+  // ============================================
+  function parsePrice(p) {
+    if (typeof p === 'number') return p;
+    if (!p) return 0;
+    return parseInt(String(p).replace(/[^\d]/g, ''), 10) || 0;
+  }
+  function fmtPrice(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+  function applicableAddons(svc, categoryAddons) {
+    if (!categoryAddons || !svc) return [];
+    var out = [];
+    Object.keys(categoryAddons).forEach(function(k){
+      var a = categoryAddons[k];
+      if (a.appliesTo === '*' || (Array.isArray(a.appliesTo) && a.appliesTo.indexOf(svc._id) !== -1)) {
+        out.push(a);
+      }
+    });
+    return out;
+  }
+
+  // Estado del drawer (se rehace cada apertura)
+  var axState = null;
+
+  function openAddonsDrawer(svc, category) {
+    if (!svc || !category) return;
+    var addons = applicableAddons(svc, category.addons);
+    if (!addons.length) {
+      // No hay addons aplicables → fallback a comportamiento normal (toggle cart)
+      toggleSimpleCart(svc.name); return;
+    }
+    axState = {
+      svc: svc,
+      category: category,
+      addons: addons,
+      selections: {} // key → { id, price, name, desc } o { active: true } para bool
+    };
+    // Init selecciones (default: option[0] / bool false)
+    addons.forEach(function(a){
+      if (a.type === 'bool') {
+        axState.selections[a.key] = { active: false };
+      } else {
+        axState.selections[a.key] = Object.assign({}, a.options[0]); // sin = none
+      }
+    });
+    renderAddonsDrawer();
+    document.getElementById('ax-overlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAddonsDrawer() {
+    document.getElementById('ax-overlay').classList.remove('show');
+    document.body.style.overflow = '';
+    axState = null;
+  }
+
+  function totalAddons() {
+    if (!axState) return 0;
+    var base = parsePrice(axState.svc.price);
+    Object.keys(axState.selections).forEach(function(k){
+      var s = axState.selections[k];
+      if (s.active === true) {
+        var a = axState.addons.find(function(x){ return x.key === k; });
+        if (a) base += a.price || 0;
+      } else if (s.price) {
+        base += s.price;
+      }
+    });
+    return base;
+  }
+
+  function buildAddonsCartKey() {
+    if (!axState) return '';
+    var parts = [axState.svc.name];
+    axState.addons.forEach(function(a){
+      var s = axState.selections[a.key];
+      if (a.type === 'bool' && s.active) parts.push(a.label);
+      else if (a.type !== 'bool' && s.id && s.id !== 'none') {
+        parts.push(a.label + ' ' + (s.short || s.name));
+      }
+    });
+    return parts.join(' · ');
+  }
+
+  function renderAddonsDrawer() {
+    if (!axState) return;
+    var svc = axState.svc;
+    var html = '';
+    html += '<div class="ax-grab"></div>';
+    html += '<div class="ax-head">';
+    html += '  <div class="ax-head-info">';
+    html += '    <div class="ax-name">' + svc.name + '</div>';
+    html += '    <div class="ax-base">Base ' + svc.price + ' · ' + (svc.duration || '') + '</div>';
+    html += '  </div>';
+    html += '  <button class="ax-close" type="button" onclick="closeAddonsDrawer()">×</button>';
+    html += '</div>';
+
+    axState.addons.forEach(function(a){
+      html += '<div class="ax-section">';
+      html += '  <div class="ax-label">' + a.label;
+      if (a.badge) html += ' <span class="ax-badge">' + a.badge + '</span>';
+      if (a.type !== 'bool') html += ' <button type="button" class="ax-info-btn" data-info="' + a.key + '" aria-label="Más info">ⓘ</button>';
+      html += '  </div>';
+      html += '  <div class="ax-chips">';
+      if (a.type === 'bool') {
+        var on = axState.selections[a.key].active;
+        html += '<button type="button" class="ax-chip bool' + (on?' active':'') + '" data-bool="' + a.key + '">' + a.label + '<span class="plus">+$' + a.price + '</span></button>';
+      } else {
+        var selId = axState.selections[a.key].id;
+        a.options.forEach(function(opt){
+          var act = opt.id === selId;
+          var priceLbl = opt.price > 0 ? '<span class="plus">+$' + opt.price + '</span>' : '';
+          html += '<button type="button" class="ax-chip' + (act?' active':'') + '" data-group="' + a.key + '" data-opt="' + opt.id + '">' + (opt.short || opt.name) + priceLbl + '</button>';
+        });
+      }
+      html += '  </div>';
+      // Auto-desc del seleccionado (no para bool)
+      if (a.type !== 'bool') {
+        var curr = axState.selections[a.key];
+        var descTxt = curr && curr.id !== 'none' ? (curr.desc || '') : '';
+        html += '  <div class="ax-auto-desc">' + descTxt + '</div>';
+      } else if (axState.selections[a.key].active && a.desc) {
+        html += '  <div class="ax-auto-desc">' + a.desc + '</div>';
+      }
+      html += '</div>';
+    });
+
+    html += '<div class="ax-total"><span class="ax-total-lbl">Total</span><span class="ax-total-val">' + fmtPrice(totalAddons()) + '</span></div>';
+    html += '<button class="ax-cta" type="button" onclick="confirmAddons()">Agregar al carrito</button>';
+
+    document.getElementById('ax-drawer-content').innerHTML = html;
+    wireAddonsChips();
+  }
+
+  function wireAddonsChips() {
+    var drawer = document.getElementById('ax-drawer-content');
+    drawer.querySelectorAll('.ax-chip[data-group]').forEach(function(chip){
+      chip.onclick = function(){
+        var grp = this.getAttribute('data-group');
+        var optId = this.getAttribute('data-opt');
+        var addon = axState.addons.find(function(x){ return x.key === grp; });
+        var opt = addon.options.find(function(o){ return o.id === optId; });
+        axState.selections[grp] = Object.assign({}, opt);
+        renderAddonsDrawer();
+      };
+    });
+    drawer.querySelectorAll('.ax-chip[data-bool]').forEach(function(chip){
+      chip.onclick = function(){
+        var grp = this.getAttribute('data-bool');
+        axState.selections[grp].active = !axState.selections[grp].active;
+        renderAddonsDrawer();
+      };
+    });
+    drawer.querySelectorAll('.ax-info-btn').forEach(function(btn){
+      btn.onclick = function(){ openAddonsExplain(this.getAttribute('data-info')); };
+    });
+  }
+
+  function openAddonsExplain(groupKey) {
+    if (!axState) return;
+    var a = axState.addons.find(function(x){ return x.key === groupKey; });
+    if (!a || a.type === 'bool') return;
+    var html = '<div class="ax-explain-card">';
+    html += '<h5>' + (a.explainTitle || a.label) + '</h5>';
+    if (a.explainSub) html += '<div class="ax-explain-sub">' + a.explainSub + '</div>';
+    a.options.forEach(function(opt){
+      if (opt.id === 'none') return; // skip "Ninguno"
+      html += '<div class="ax-level-item">';
+      html += '  <div class="ax-level-name">' + opt.name + '<span class="ax-level-price">+$' + opt.price + '</span></div>';
+      html += '  <div class="ax-level-desc">' + (opt.desc || '') + '</div>';
+      html += '</div>';
+    });
+    html += '<button class="ax-explain-close" type="button" onclick="closeAddonsExplain()">Cerrar</button>';
+    html += '</div>';
+    var el = document.getElementById('ax-explain');
+    el.innerHTML = html;
+    el.classList.add('show');
+  }
+  function closeAddonsExplain() {
+    var el = document.getElementById('ax-explain');
+    el.classList.remove('show');
+    el.innerHTML = '';
+  }
+
+  function confirmAddons() {
+    if (!axState) return;
+    var key = buildAddonsCartKey();
+    // Remover entradas previas del mismo servicio base
+    for (var i = (window.cart || cart).length - 1; i >= 0; i--) {
+      var c = cart[i];
+      if (c === axState.svc.name || c.indexOf(axState.svc.name + ' · ') === 0) cart.splice(i, 1);
+    }
+    cart.push(key);
+    if (typeof renderCartBadge === 'function') renderCartBadge();
+    if (typeof updateSvBottom === 'function') updateSvBottom();
+    closeAddonsDrawer();
+    // Re-render lista para reflejar selección
+    if (typeof renderSelectView === 'function') renderSelectView();
+  }
+
+  function toggleSimpleCart(name) {
+    var idx = cart.indexOf(name);
+    if (idx === -1) cart.push(name); else cart.splice(idx, 1);
+    if (typeof renderCartBadge === 'function') renderCartBadge();
+    if (typeof updateSvBottom === 'function') updateSvBottom();
+    if (typeof renderSelectView === 'function') renderSelectView();
+  }
+
+  // Expone funciones globales para onclick inline
+  window.closeAddonsDrawer = closeAddonsDrawer;
+  window.confirmAddons = confirmAddons;
+  window.closeAddonsExplain = closeAddonsExplain;
+  window.openAddonsDrawer = openAddonsDrawer;
+
+  // Inyecta los contenedores del drawer + explain modal al cargar
+  document.addEventListener('DOMContentLoaded', function(){
+    if (document.getElementById('ax-overlay')) return;
+    var ov = document.createElement('div');
+    ov.id = 'ax-overlay'; ov.className = 'ax-overlay';
+    ov.innerHTML = '<div class="ax-drawer" id="ax-drawer-content"></div>';
+    ov.addEventListener('click', function(e){ if (e.target === ov) closeAddonsDrawer(); });
+    document.body.appendChild(ov);
+
+    var ex = document.createElement('div');
+    ex.id = 'ax-explain'; ex.className = 'ax-explain';
+    ex.addEventListener('click', function(e){ if (e.target === ex) closeAddonsExplain(); });
+    document.body.appendChild(ex);
+  });
+
   function renderSelectView() {
     const container = document.getElementById('select-content');
     if (!container) return;
@@ -5760,8 +6280,22 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     }
 
     // Lista de treatments (con soporte para multiples duraciones)
+    // Si la categoría tiene servicios mixtos Base + Express, inserta divisor automáticamente
+    var hasBaseAndExpress = active.treatments.some(function(t){ return t.hasAddons; }) && active.treatments.some(function(t){ return t.isExpress; });
+    var insertedDividerBase = false, insertedDividerExpress = false;
     var listHtml = '<div class="sv2-list">';
     active.treatments.forEach(function(t, idx){
+      // Inserta divisores cuando hay sección mixta
+      if (hasBaseAndExpress) {
+        if (t.hasAddons && !insertedDividerBase) {
+          listHtml += '<div class="sv2-list-divider">Servicios principales · personalizables</div>';
+          insertedDividerBase = true;
+        }
+        if (t.isExpress && !insertedDividerExpress) {
+          listHtml += '<div class="sv2-list-divider">Servicios express</div>';
+          insertedDividerExpress = true;
+        }
+      }
       // Normaliza: si tiene durations array usa eso, sino crea uno desde duration/price legacy
       var durs = t.durations;
       if (!durs) {
@@ -5814,10 +6348,21 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       var pillHtml = (hasMultipleDurs || hasVariants) ? '' :
         '<div class="sv2-row-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ' + dur.min + ' min</div>';
 
+      // Si el servicio tiene addons y está en el carrito, muestra qué eligió debajo del nombre
+      var cartEntry = cart.find(function(c){ return c === t.name || c.indexOf(t.name + ' · ') === 0; });
+      var addonSummary = '';
+      if (t.hasAddons && cartEntry && cartEntry.indexOf(' · ') !== -1) {
+        var extras = cartEntry.split(' · ').slice(1).join(' · ');
+        addonSummary = '<div class="sv2-row-desc" style="color:var(--olive-dark);font-weight:600;margin-top:2px">+ ' + extras + '</div>';
+      }
+
+      var customBadge = (t.hasAddons && active.addons) ? '<span class="sv2-row-customizable">Personalizable</span>' : '';
+
       listHtml += '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + (hasMultipleDurs?' has-dur-chips':'') + (hasVariants?' has-var-chips':'') + '" data-svc="' + t.name + '" data-row-idx="' + idx + '">'
         + '<div class="sv2-row-info">'
-        + '<div class="sv2-row-name">' + t.name + '</div>'
+        + '<div class="sv2-row-name">' + t.name + customBadge + '</div>'
         + (t.desc ? '<div class="sv2-row-desc">' + t.desc + '</div>' : '')
+        + addonSummary
         + durChipsHtml
         + varChipsHtml
         + (disabled ? '<span class="sv2-row-tag">Solo individual</span>' : '')
@@ -5924,6 +6469,23 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         if (ev.target && ev.target.closest('.sv2-var-chip')) return;
         var rowIdx = parseInt(this.getAttribute('data-row-idx'), 10);
         var t = active.treatments[rowIdx];
+
+        // Si el servicio tiene add-ons → abrir drawer (a menos que ya esté en el carrito → quitar)
+        if (t && t.hasAddons && active.addons) {
+          var alreadyIdx = cart.findIndex(function(c){
+            return c === t.name || c.indexOf(t.name + ' · ') === 0;
+          });
+          if (alreadyIdx >= 0) {
+            cart.splice(alreadyIdx, 1);
+            this.classList.remove('on');
+            if (typeof renderCartBadge === 'function') renderCartBadge();
+            renderSelectView();
+          } else {
+            openAddonsDrawer(t, active);
+          }
+          return;
+        }
+
         var hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
         var durs = (t && t.durations) || [{price: t && t.price}];
         var selIdx = (typeof t._selDur === 'number') ? t._selDur : 0;
