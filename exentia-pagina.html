@@ -1263,6 +1263,19 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     vertical-align: middle;
   }
   /* Treatment var-chip (Manos/Pies) reusa estilo de dur-chip — sin override */
+  /* Línea de add-ons agregados (solo aparece tras confirmar selección) */
+  .treatment-addons-summary {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: rgba(176,169,111,0.10);
+    border-left: 3px solid var(--olive);
+    border-radius: 4px;
+    font: 600 12px 'Lato', sans-serif;
+    color: var(--olive-dark);
+    line-height: 1.4;
+    display: inline-block;
+    max-width: 100%;
+  }
   .treatment-card.only-individual {
     opacity: 0.65;
   }
@@ -7323,24 +7336,16 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       var entry = cart.find(function(c){ return c === svcName || c.indexOf(svcName + ' · ') === 0; });
       var inCart = !!entry;
       // Buscar info del servicio para decidir texto del botón
-      var hasAddons = false, hasVariants = false;
+      var hasAddons = false;
       if (window.SERVICES) {
         for (var k in window.SERVICES) {
           var t = window.SERVICES[k].treatments && window.SERVICES[k].treatments.find(function(x){ return x.name === svcName; });
-          if (t) {
-            hasAddons = !!(t.hasAddons && window.SERVICES[k].addons);
-            hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
-            break;
-          }
+          if (t) { hasAddons = !!(t.hasAddons && window.SERVICES[k].addons); break; }
         }
       }
+      // Botón: SIEMPRE compacto (Agregado / Personalizar / Reservar)
       if (inCart) {
-        // Mostrar lo que eligió si hay add-ons o variant
-        var extras = '';
-        if (entry.indexOf(' · ') !== -1) {
-          extras = ' · ' + entry.split(' · ').slice(1).join(', ');
-        }
-        btn.textContent = 'Agregado' + extras;
+        btn.textContent = 'Agregado';
         btn.style.background = 'var(--cream)';
         btn.style.color = 'var(--brown)';
         btn.style.borderColor = 'var(--cream)';
@@ -7350,8 +7355,29 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         btn.style.color = '';
         btn.style.borderColor = '';
       }
+      // Render de "extras" elegidos como línea separada debajo del nombre del servicio
+      var card = btn.closest('.treatment-card');
+      if (card) {
+        var existingExtras = card.querySelector('.treatment-addons-summary');
+        if (inCart && entry.indexOf(' · ') !== -1) {
+          var extrasTxt = entry.split(' · ').slice(1).join(' · ');
+          if (existingExtras) {
+            existingExtras.textContent = '+ ' + extrasTxt;
+          } else {
+            var infoBlock = card.querySelector('.treatment-info');
+            if (infoBlock) {
+              var span = document.createElement('div');
+              span.className = 'treatment-addons-summary';
+              span.textContent = '+ ' + extrasTxt;
+              infoBlock.appendChild(span);
+            }
+          }
+        } else if (existingExtras) {
+          existingExtras.remove();
+        }
+      }
     });
-    // También persistir
+    // Persistir
     try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(_){}
   }
 
