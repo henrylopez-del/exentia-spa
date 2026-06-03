@@ -6340,8 +6340,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       gestureHandling: 'greedy',
       clickableIcons: false
     });
-    // Click en el mapa → fija/mueve el pin
+    // Click en el mapa → fija/mueve el pin (resetea flags para que reverse-geocode actualice)
     _gMap.addListener('click', function(e){
+      _manuallyTouched = { calle: false, num_ext: false, zona: false };
       setPinGoogle(e.latLng.lat(), e.latLng.lng(), true);
     });
     _gSession = newSessionToken();
@@ -6361,6 +6362,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         animation: google.maps.Animation.DROP
       });
       _gMarker.addListener('dragend', function(e){
+        // El drag del pin también es señal explícita de "actualiza los campos"
+        _manuallyTouched = { calle: false, num_ext: false, zona: false };
         setPinGoogle(e.latLng.lat(), e.latLng.lng(), true);
       });
     }
@@ -6372,6 +6375,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     if (doReverse) reverseGeocodeGoogle(lat, lng);
   }
 
+  // Marca qué campos fueron tocados manualmente por el usuario (no sobreescribir)
+  var _manuallyTouched = { calle: false, num_ext: false, zona: false };
+
   function reverseGeocodeGoogle(lat, lng) {
     if (typeof google === 'undefined' || !google.maps.Geocoder) return;
     var geocoder = new google.maps.Geocoder();
@@ -6382,23 +6388,32 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       top.address_components.forEach(function(c){
         c.types.forEach(function(t){ parts[t] = c.short_name; });
       });
-      // Calle
+      // Calle — sobrescribir SI el usuario no lo ha tocado manualmente
       var calleEl = document.getElementById('cf-calle');
-      if (calleEl && !calleEl.value && parts.route) {
+      if (calleEl && !_manuallyTouched.calle && parts.route) {
         calleEl.value = parts.route; citaPlace.calle = parts.route;
       }
       // Núm ext
       var extEl = document.getElementById('cf-num-ext');
-      if (extEl && !extEl.value && parts.street_number) {
-        extEl.value = parts.street_number; citaPlace.num_ext = parts.street_number;
+      if (extEl && !_manuallyTouched.num_ext) {
+        if (parts.street_number) {
+          extEl.value = parts.street_number; citaPlace.num_ext = parts.street_number;
+        } else {
+          // Si la nueva ubicación no tiene número, limpiar (no dejar el viejo)
+          extEl.value = ''; citaPlace.num_ext = '';
+        }
       }
       // Colonia
       var zonaEl = document.getElementById('cf-zona');
       var zonaVal = parts.sublocality_level_1 || parts.sublocality || parts.neighborhood || '';
-      if (zonaEl && !zonaEl.value && zonaVal) {
-        zonaEl.value = zonaVal; citaPlace.zona = zonaVal;
+      if (zonaEl && !_manuallyTouched.zona) {
+        if (zonaVal) {
+          zonaEl.value = zonaVal; citaPlace.zona = zonaVal;
+        } else {
+          zonaEl.value = ''; citaPlace.zona = '';
+        }
       }
-      // Summary
+      // Summary siempre se actualiza
       var sumBox = document.getElementById('cf-address-summary');
       if (sumBox && top.formatted_address) {
         sumBox.querySelector('.cf-address-summary-text').textContent = top.formatted_address;
@@ -6439,6 +6454,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         locBtn.classList.add('loading');
         locBtn.querySelector('span').textContent = 'Obteniendo…';
         navigator.geolocation.getCurrentPosition(function(pos){
+          // Resetear flags: el usuario explícitamente quiere su ubicación
+          _manuallyTouched = { calle: false, num_ext: false, zona: false };
           setPinGoogle(pos.coords.latitude, pos.coords.longitude, true);
           locBtn.classList.remove('loading');
           locBtn.querySelector('span').textContent = 'Mi ubicación';
@@ -6502,16 +6519,27 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       });
     }
 
-    // Sincronizar campos manuales con citaPlace
-    ['cf-calle','cf-num-ext','cf-num-int','cf-zona','cf-referencias'].forEach(function(id){
+    // Sincronizar campos manuales con citaPlace + marcar como tocados
+    [
+      ['cf-calle', 'calle'],
+      ['cf-num-ext', 'num_ext'],
+      ['cf-num-int', 'num_int'],
+      ['cf-zona', 'zona'],
+      ['cf-referencias', 'referencias']
+    ].forEach(function(pair){
+      var id = pair[0], key = pair[1];
       var el = document.getElementById(id);
       if (!el) return;
-      el.addEventListener('input', function(){
-        if (id === 'cf-calle') citaPlace.calle = this.value.trim();
-        if (id === 'cf-num-ext') citaPlace.num_ext = this.value.trim();
-        if (id === 'cf-num-int') citaPlace.num_int = this.value.trim();
-        if (id === 'cf-zona') citaPlace.zona = this.value.trim();
-        if (id === 'cf-referencias') citaPlace.referencias = this.value.trim();
+      // Solo `input` por teclado del usuario marca como tocado (no la asignación programática)
+      el.addEventListener('keydown', function(){
+        if (_manuallyTouched && key in _manuallyTouched) _manuallyTouched[key] = true;
+      });
+      el.addEventListener('input', function(e){
+        citaPlace[key] = this.value.trim();
+        // Si el input vino de teclado (no de set programático), marcar como tocado
+        if (e.isTrusted && _manuallyTouched && key in _manuallyTouched) {
+          _manuallyTouched[key] = true;
+        }
       });
     });
   }
@@ -6539,25 +6567,36 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         var pid = this.getAttribute('data-placeid');
         if (!pid) return;
         list.classList.remove('show');
+        // Resetear flags: el usuario eligió una sugerencia, queremos sobrescribir todo
+        _manuallyTouched = { calle: false, num_ext: false, zona: false };
         // Place Details para obtener coords
         fetch('https://places.googleapis.com/v1/places/' + pid + '?fields=location,formattedAddress,addressComponents&sessionToken=' + (_gSession || ''), {
           headers: { 'X-Goog-Api-Key': window.GMAPS_API_KEY }
         }).then(function(r){ return r.json(); }).then(function(j){
           if (j && j.location) {
             setPinGoogle(j.location.latitude, j.location.longitude, false);
-            // Llenar campos desde addressComponents
+            // Llenar campos desde addressComponents (sobrescribe siempre porque acabamos de resetear flags)
             if (j.addressComponents) {
               var parts = {};
               j.addressComponents.forEach(function(c){
                 (c.types || []).forEach(function(t){ parts[t] = c.shortText || c.longText; });
               });
               var calleEl = document.getElementById('cf-calle');
-              if (calleEl && parts.route) { calleEl.value = parts.route; citaPlace.calle = parts.route; }
+              if (calleEl) {
+                calleEl.value = parts.route || '';
+                citaPlace.calle = parts.route || '';
+              }
               var extEl = document.getElementById('cf-num-ext');
-              if (extEl && parts.street_number) { extEl.value = parts.street_number; citaPlace.num_ext = parts.street_number; }
+              if (extEl) {
+                extEl.value = parts.street_number || '';
+                citaPlace.num_ext = parts.street_number || '';
+              }
               var zonaEl = document.getElementById('cf-zona');
               var zonaVal = parts.sublocality_level_1 || parts.sublocality || parts.neighborhood || '';
-              if (zonaEl && zonaVal) { zonaEl.value = zonaVal; citaPlace.zona = zonaVal; }
+              if (zonaEl) {
+                zonaEl.value = zonaVal;
+                citaPlace.zona = zonaVal;
+              }
             }
             var sumBox = document.getElementById('cf-address-summary');
             if (sumBox && j.formattedAddress) {
@@ -6588,6 +6627,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   function resetCitaPlace() {
     citaPlace = { mode: 'sucursal', address: '', mapsUrl: '', calle:'', num_ext:'', num_int:'', zona:'', referencias:'', lat: null, lng: null };
+    _manuallyTouched = { calle: false, num_ext: false, zona: false };
     document.querySelectorAll('.cita-place-btn').forEach(function(b, i){
       b.classList.toggle('active', i === 0);
       b.setAttribute('aria-checked', i === 0 ? 'true' : 'false');
