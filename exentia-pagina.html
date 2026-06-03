@@ -62,9 +62,22 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-<!-- Leaflet (mapa interactivo, sin API key, tiles OSM) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+<!-- Google Maps JavaScript API (mapa interactivo + geocoding) -->
+<script>
+  window.GMAPS_API_KEY = 'AIzaSyCy9i4bJ0RYGEoNsqAkcrf-Ylrp7UEJxJk';
+  // Carga async — el callback initGoogleMaps se dispara cuando esté listo
+  (function(){
+    var s = document.createElement('script');
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + window.GMAPS_API_KEY + '&libraries=marker&v=weekly&language=es&region=MX&loading=async&callback=onGoogleMapsReady';
+    s.async = true;
+    s.defer = true;
+    document.head.appendChild(s);
+  })();
+  window.onGoogleMapsReady = function() {
+    window.__gmapsReady = true;
+    if (typeof window.initGoogleMapWhenVisible === 'function') window.initGoogleMapWhenVisible();
+  };
+</script>
 <style>
   :root {
     --olive: #B0A96F;
@@ -3388,18 +3401,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     width: 100%; height: 180px; border: none; display: block;
   }
 
-  /* ===== Layout 2 cols del bloque de dirección ===== */
-  .address-grid {
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 18px;
-  }
-  @media (max-width: 760px) {
-    .address-grid { grid-template-columns: 1fr; gap: 14px; }
-  }
-  .address-map-col { min-width: 0; display: flex; flex-direction: column; }
-  .address-fields-col { min-width: 0; }
-
+  /* ===== Layout V1: mapa full-width arriba + campos debajo ===== */
   .address-toolbar {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -3407,7 +3409,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     margin-bottom: 10px;
     align-items: stretch;
   }
-  .address-toolbar .cf-autocomplete-wrap { margin: 0; }
+  .address-toolbar .cf-autocomplete-wrap { margin: 0; position: relative; }
   .address-toolbar .cf-use-location-btn {
     margin: 0; padding: 0 14px;
     white-space: nowrap;
@@ -3416,9 +3418,23 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .address-toolbar { grid-template-columns: 1fr; }
     .address-toolbar .cf-use-location-btn { padding: 9px 14px; }
   }
+  .cf-autocomplete-wrap input {
+    padding-left: 38px !important;
+    border-radius: 24px;
+    background: var(--white);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .cf-search-icon {
+    position: absolute;
+    left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--olive-dark);
+    pointer-events: none;
+    z-index: 2;
+  }
 
-  /* Mapa Leaflet — grande en desktop */
-  .cf-leaflet-map {
+  /* Mapa Google — full-width arriba, V1 */
+  .cf-google-map {
     height: 380px;
     width: 100%;
     border-radius: 12px;
@@ -3426,28 +3442,39 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     border: 1.5px solid var(--olive-soft);
     box-shadow: 0 4px 14px rgba(130,96,64,0.12);
     background: var(--cream-soft);
-    z-index: 1;
   }
   @media (max-width: 760px) {
-    .cf-leaflet-map { height: 280px; }
+    .cf-google-map { height: 280px; }
   }
   .cf-map-hint {
     display: flex; align-items: center; gap: 6px;
-    margin-top: 6px;
+    margin: 6px 0 14px;
     font-size: 11px;
     color: var(--text-light);
     font-style: italic;
   }
   .cf-map-hint svg { color: var(--olive); flex-shrink: 0; }
 
-  /* Pin custom */
-  .leaflet-marker-icon-custom {
-    background: var(--olive);
-    border: 3px solid var(--white);
-    width: 22px !important; height: 22px !important;
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(130,96,64,0.4);
-    margin-left: -11px !important; margin-top: -11px !important;
+  /* Campos en grid 2-cols después del mapa (V1) */
+  .address-fields-v1 {
+    display: block;
+  }
+  .address-fields-v1 .form-row-split {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 10px;
+  }
+  @media (min-width: 720px) {
+    .address-fields-v1 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 14px;
+    }
+    .address-fields-v1 > .form-row,
+    .address-fields-v1 > .form-row-split {
+      grid-column: 1 / -1;
+    }
+    /* Calle + Colonia ocupan toda la fila; Ext+Int en split; Referencias toda la fila */
   }
 
   /* Split fields (Num Ext / Num Int) */
@@ -4949,56 +4976,55 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           </div>
         </div>
 
-        <!-- ===== Bloque "Tu dirección" (solo si elige domicilio) ===== -->
+        <!-- ===== Bloque "Tu dirección" (V1: mapa full-width arriba + campos debajo) ===== -->
         <div id="cf-address-block" class="form-address-block" style="display:none;">
-          <div class="address-grid">
-            <!-- Columna izquierda: mapa interactivo grande -->
-            <div class="address-map-col">
-              <div class="address-toolbar">
-                <div class="cf-autocomplete-wrap">
-                  <input type="text" id="cf-address-input" name="direccion" autocomplete="off" placeholder="Busca tu calle, colonia o pega link de Maps" />
-                  <div id="cf-address-suggestions" class="cf-autocomplete-list" role="listbox"></div>
-                  <div id="cf-address-loading" class="cf-autocomplete-loading">Buscando…</div>
-                </div>
-                <button type="button" id="cf-use-location" class="cf-use-location-btn">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="22" y1="12" x2="19" y2="12"/><line x1="5" y1="12" x2="2" y2="12"/></svg>
-                  <span>Mi ubicación</span>
-                </button>
+          <!-- Barra de búsqueda + Mi ubicación -->
+          <div class="address-toolbar">
+            <div class="cf-autocomplete-wrap">
+              <svg class="cf-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="cf-address-input" name="direccion" autocomplete="off" placeholder="Busca tu calle, colonia o pega link de Maps" />
+              <div id="cf-address-suggestions" class="cf-autocomplete-list" role="listbox"></div>
+              <div id="cf-address-loading" class="cf-autocomplete-loading">Buscando…</div>
+            </div>
+            <button type="button" id="cf-use-location" class="cf-use-location-btn">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="22" y1="12" x2="19" y2="12"/><line x1="5" y1="12" x2="2" y2="12"/></svg>
+              <span>Mi ubicación</span>
+            </button>
+          </div>
+          <!-- Mapa Google interactivo, full-width -->
+          <div id="cf-google-map" class="cf-google-map" aria-label="Mapa para fijar tu dirección"></div>
+          <div class="cf-map-hint">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z"/></svg>
+            <span>Toca el mapa para fijar el pin · arrástralo para ajustar</span>
+          </div>
+          <!-- Resumen de dirección detectada -->
+          <div id="cf-address-summary" class="cf-address-summary" style="display:none;">
+            <span class="cf-address-summary-label">Dirección detectada</span>
+            <span class="cf-address-summary-text"></span>
+          </div>
+          <!-- Campos detallados en grid 2 cols (calle full, ext/int split, colonia full, ref full) -->
+          <div class="address-fields-v1">
+            <div class="form-row">
+              <label class="form-label" for="cf-calle">Calle <span class="req">*</span></label>
+              <input type="text" id="cf-calle" name="calle" placeholder="Ej. Avenida Huayacán" autocomplete="address-line1" />
+            </div>
+            <div class="form-row-split">
+              <div class="form-row">
+                <label class="form-label" for="cf-num-ext">Núm. Ext. <span class="req">*</span></label>
+                <input type="text" id="cf-num-ext" name="num_ext" placeholder="123" autocomplete="off" />
               </div>
-              <div id="cf-leaflet-map" class="cf-leaflet-map" aria-label="Mapa para fijar tu dirección"></div>
-              <div class="cf-map-hint">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z"/></svg>
-                <span>Toca el mapa para fijar el pin · arrástralo para ajustar</span>
+              <div class="form-row">
+                <label class="form-label" for="cf-num-int">Núm. Int. <span class="opt">(opcional)</span></label>
+                <input type="text" id="cf-num-int" name="num_int" placeholder="A, 4B, depto 12…" autocomplete="off" />
               </div>
             </div>
-            <!-- Columna derecha: detalles de la dirección -->
-            <div class="address-fields-col">
-              <div class="form-row">
-                <label class="form-label" for="cf-calle">Calle <span class="req">*</span></label>
-                <input type="text" id="cf-calle" name="calle" placeholder="Ej. Avenida Huayacán" autocomplete="address-line1" />
-              </div>
-              <div class="form-row-split">
-                <div class="form-row">
-                  <label class="form-label" for="cf-num-ext">Núm. Ext. <span class="req">*</span></label>
-                  <input type="text" id="cf-num-ext" name="num_ext" placeholder="123" autocomplete="off" />
-                </div>
-                <div class="form-row">
-                  <label class="form-label" for="cf-num-int">Núm. Int. <span class="opt">(opcional)</span></label>
-                  <input type="text" id="cf-num-int" name="num_int" placeholder="A, 4B, depto 12…" autocomplete="off" />
-                </div>
-              </div>
-              <div class="form-row">
-                <label class="form-label" for="cf-zona">Colonia / Zona <span class="req">*</span></label>
-                <input type="text" id="cf-zona" name="zona_colonia" placeholder="Ej. SM 27, Bonampak" autocomplete="address-level3" />
-              </div>
-              <div class="form-row">
-                <label class="form-label" for="cf-referencias">Referencias <span class="opt">(opcional)</span></label>
-                <textarea id="cf-referencias" name="referencias" rows="2" placeholder="Ej. Casa color blanco, portón negro, frente al parque" autocomplete="off"></textarea>
-              </div>
-              <div id="cf-address-summary" class="cf-address-summary" style="display:none;">
-                <span class="cf-address-summary-label">Dirección detectada</span>
-                <span class="cf-address-summary-text"></span>
-              </div>
+            <div class="form-row">
+              <label class="form-label" for="cf-zona">Colonia / Zona <span class="req">*</span></label>
+              <input type="text" id="cf-zona" name="zona_colonia" placeholder="Ej. SM 27, Bonampak" autocomplete="address-level3" />
+            </div>
+            <div class="form-row">
+              <label class="form-label" for="cf-referencias">Referencias <span class="opt">(opcional)</span></label>
+              <textarea id="cf-referencias" name="referencias" rows="2" placeholder="Ej. Casa color blanco, portón negro, frente al parque" autocomplete="off"></textarea>
             </div>
           </div>
         </div>
@@ -6269,85 +6295,117 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   // El usuario llena solo lo que quiere. Email/teléfono son opcionales (al menos uno).
   // Al submit, se POSTea a n8n exentia-reserva (best-effort) y se abre modal-choice
   // con dos opciones: WhatsApp o Reservar fecha (calendario GHL nativo con autofill).
-  // ===== UBICACIÓN DE LA CITA: toggle, mapa Leaflet interactivo, geolocation, autocomplete =====
+  // ===== UBICACIÓN DE LA CITA: toggle + Google Maps interactivo + Places Autocomplete + Geocoding =====
   var citaPlace = {
     mode: 'sucursal', address: '', mapsUrl: '',
     calle: '', num_ext: '', num_int: '', zona: '', referencias: '',
     lat: null, lng: null
   };
   var _addrDebounce = null;
-  var _leafletMap = null;
-  var _leafletMarker = null;
-  var DEFAULT_COORDS = { lat: 21.1213, lng: -86.8505 }; // Cancún Plaza Hive aprox
+  var _gMap = null;
+  var _gMarker = null;
+  var _gSession = null; // Places session token (rotate per session)
+  var DEFAULT_COORDS = { lat: 21.1213, lng: -86.8505 }; // Plaza Hive Cancún
+  var PLACES_BIAS = { latitude: 21.1213, longitude: -86.8505, radius: 50000 }; // 50km alrededor de Cancún
 
-  function initLeafletMap() {
-    if (_leafletMap) { setTimeout(function(){ _leafletMap.invalidateSize(); }, 50); return; }
-    if (typeof L === 'undefined') {
-      // Leaflet aún no cargó — reintentar
-      setTimeout(initLeafletMap, 200);
-      return;
-    }
-    var el = document.getElementById('cf-leaflet-map');
-    if (!el) return;
-    _leafletMap = L.map(el, { zoomControl: true, attributionControl: true })
-      .setView([DEFAULT_COORDS.lat, DEFAULT_COORDS.lng], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap'
-    }).addTo(_leafletMap);
-
-    // Click en el mapa → coloca/mueve pin
-    _leafletMap.on('click', function(e){
-      setPin(e.latlng.lat, e.latlng.lng, true);
+  function newSessionToken() {
+    // UUID v4 simple para session tokens de Places
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c){
+      return (c ^ Math.random() * 16 >> c / 4).toString(16);
     });
-
-    // Importante: cuando el modal se abre, hay que invalidar el size para que pinte bien
-    setTimeout(function(){ if (_leafletMap) _leafletMap.invalidateSize(); }, 50);
   }
 
-  function setPin(lat, lng, doReverse) {
-    if (!_leafletMap || typeof L === 'undefined') return;
-    if (_leafletMarker) {
-      _leafletMarker.setLatLng([lat, lng]);
+  // Llamado cuando el bloque "Domicilio" se abre y Google Maps ya cargó
+  function initGoogleMapWhenVisible() {
+    if (_gMap) {
+      setTimeout(function(){ if (_gMap) google.maps.event.trigger(_gMap, 'resize'); }, 50);
+      return;
+    }
+    if (!window.__gmapsReady || typeof google === 'undefined' || !google.maps) {
+      setTimeout(initGoogleMapWhenVisible, 200);
+      return;
+    }
+    var el = document.getElementById('cf-google-map');
+    if (!el || el.offsetWidth === 0) {
+      // Aún no visible — reintentar
+      setTimeout(initGoogleMapWhenVisible, 150);
+      return;
+    }
+    _gMap = new google.maps.Map(el, {
+      center: DEFAULT_COORDS,
+      zoom: 13,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: false,
+      gestureHandling: 'greedy',
+      clickableIcons: false
+    });
+    // Click en el mapa → fija/mueve el pin
+    _gMap.addListener('click', function(e){
+      setPinGoogle(e.latLng.lat(), e.latLng.lng(), true);
+    });
+    _gSession = newSessionToken();
+  }
+  window.initGoogleMapWhenVisible = initGoogleMapWhenVisible;
+
+  function setPinGoogle(lat, lng, doReverse) {
+    if (!_gMap || typeof google === 'undefined') return;
+    var pos = { lat: lat, lng: lng };
+    if (_gMarker) {
+      _gMarker.setPosition(pos);
     } else {
-      var customIcon = L.divIcon({ className: 'leaflet-marker-icon-custom', iconSize: [22,22] });
-      _leafletMarker = L.marker([lat, lng], { icon: customIcon, draggable: true }).addTo(_leafletMap);
-      _leafletMarker.on('dragend', function(e){
-        var ll = e.target.getLatLng();
-        setPin(ll.lat, ll.lng, true);
+      _gMarker = new google.maps.Marker({
+        position: pos,
+        map: _gMap,
+        draggable: true,
+        animation: google.maps.Animation.DROP
+      });
+      _gMarker.addListener('dragend', function(e){
+        setPinGoogle(e.latLng.lat(), e.latLng.lng(), true);
       });
     }
-    _leafletMap.setView([lat, lng], Math.max(_leafletMap.getZoom(), 16));
+    _gMap.panTo(pos);
+    if (_gMap.getZoom() < 16) _gMap.setZoom(16);
     citaPlace.lat = lat.toFixed(7);
     citaPlace.lng = lng.toFixed(7);
     citaPlace.mapsUrl = 'https://www.google.com/maps?q=' + citaPlace.lat + ',' + citaPlace.lng;
-    if (doReverse) reverseGeocode(citaPlace.lat, citaPlace.lng);
+    if (doReverse) reverseGeocodeGoogle(lat, lng);
   }
 
-  function reverseGeocode(lat, lng) {
-    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json&accept-language=es&addressdetails=1', {
-      headers: { 'Accept': 'application/json' }
-    }).then(function(r){ return r.json(); }).then(function(j){
-      if (!j || !j.address) return;
-      var a = j.address;
+  function reverseGeocodeGoogle(lat, lng) {
+    if (typeof google === 'undefined' || !google.maps.Geocoder) return;
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: { lat: lat, lng: lng }, language: 'es', region: 'mx' }, function(results, status){
+      if (status !== 'OK' || !results || !results[0]) return;
+      var top = results[0];
+      var parts = {};
+      top.address_components.forEach(function(c){
+        c.types.forEach(function(t){ parts[t] = c.short_name; });
+      });
       // Calle
-      var calleField = document.getElementById('cf-calle');
-      if (calleField && !calleField.value && a.road) { calleField.value = a.road; citaPlace.calle = a.road; }
-      // Num ext
-      var numExtField = document.getElementById('cf-num-ext');
-      if (numExtField && !numExtField.value && a.house_number) { numExtField.value = a.house_number; citaPlace.num_ext = a.house_number; }
-      // Colonia / zona
-      var zonaField = document.getElementById('cf-zona');
-      var zonaVal = a.suburb || a.neighbourhood || a.city_district || a.quarter || '';
-      if (zonaField && !zonaField.value && zonaVal) { zonaField.value = zonaVal; citaPlace.zona = zonaVal; }
-      // Summary
-      var summaryBox = document.getElementById('cf-address-summary');
-      if (summaryBox && j.display_name) {
-        summaryBox.querySelector('.cf-address-summary-text').textContent = j.display_name;
-        summaryBox.style.display = 'block';
+      var calleEl = document.getElementById('cf-calle');
+      if (calleEl && !calleEl.value && parts.route) {
+        calleEl.value = parts.route; citaPlace.calle = parts.route;
       }
-      citaPlace.address = j.display_name || (lat + ', ' + lng);
-    }).catch(function(){});
+      // Núm ext
+      var extEl = document.getElementById('cf-num-ext');
+      if (extEl && !extEl.value && parts.street_number) {
+        extEl.value = parts.street_number; citaPlace.num_ext = parts.street_number;
+      }
+      // Colonia
+      var zonaEl = document.getElementById('cf-zona');
+      var zonaVal = parts.sublocality_level_1 || parts.sublocality || parts.neighborhood || '';
+      if (zonaEl && !zonaEl.value && zonaVal) {
+        zonaEl.value = zonaVal; citaPlace.zona = zonaVal;
+      }
+      // Summary
+      var sumBox = document.getElementById('cf-address-summary');
+      if (sumBox && top.formatted_address) {
+        sumBox.querySelector('.cf-address-summary-text').textContent = top.formatted_address;
+        sumBox.style.display = 'block';
+      }
+      citaPlace.address = top.formatted_address || (lat + ', ' + lng);
+    });
   }
 
   function wireCitaPlace() {
@@ -6365,7 +6423,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         var addrBlock = document.getElementById('cf-address-block');
         if (addrBlock) addrBlock.style.display = (place === 'domicilio') ? 'block' : 'none';
         if (place === 'domicilio') {
-          setTimeout(initLeafletMap, 50);
+          setTimeout(initGoogleMapWhenVisible, 50);
         }
       });
     });
@@ -6381,7 +6439,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         locBtn.classList.add('loading');
         locBtn.querySelector('span').textContent = 'Obteniendo…';
         navigator.geolocation.getCurrentPosition(function(pos){
-          setPin(pos.coords.latitude, pos.coords.longitude, true);
+          setPinGoogle(pos.coords.latitude, pos.coords.longitude, true);
           locBtn.classList.remove('loading');
           locBtn.querySelector('span').textContent = 'Mi ubicación';
         }, function(err){
@@ -6392,25 +6450,25 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       });
     }
 
-    // Autocomplete con Nominatim
+    // Autocomplete con Google Places API (New) — REST
     var addrInput = document.getElementById('cf-address-input');
     var addrList = document.getElementById('cf-address-suggestions');
     var addrLoad = document.getElementById('cf-address-loading');
     if (addrInput && addrList) {
       addrInput.addEventListener('input', function(){
         var q = this.value.trim();
-        // Pegó un link de maps con coords → fijar pin
+        // Si pegó link de Google Maps con coords → fijar pin
         var mapsMatch = q.match(/maps\.google\.com|google\.com\/maps|maps\.app\.goo\.gl/i);
         if (mapsMatch) {
           citaPlace.mapsUrl = q;
           var coordsMatch = q.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || q.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
           if (coordsMatch) {
-            setPin(parseFloat(coordsMatch[1]), parseFloat(coordsMatch[2]), true);
+            setPinGoogle(parseFloat(coordsMatch[1]), parseFloat(coordsMatch[2]), true);
           }
           addrList.classList.remove('show');
           return;
         }
-        if (q.length < 4) {
+        if (q.length < 3) {
           addrList.classList.remove('show');
           if (addrLoad) addrLoad.classList.remove('show');
           return;
@@ -6418,22 +6476,33 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         if (_addrDebounce) clearTimeout(_addrDebounce);
         if (addrLoad) addrLoad.classList.add('show');
         _addrDebounce = setTimeout(function(){
-          fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q + ' Cancún') + '&format=json&countrycodes=mx&limit=6&addressdetails=1&accept-language=es', {
-            headers: { 'Accept': 'application/json' }
-          }).then(function(r){ return r.json(); }).then(function(arr){
+          fetch('https://places.googleapis.com/v1/places:autocomplete', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Goog-Api-Key': window.GMAPS_API_KEY
+            },
+            body: JSON.stringify({
+              input: q,
+              locationBias: { circle: { center: { latitude: PLACES_BIAS.latitude, longitude: PLACES_BIAS.longitude }, radius: PLACES_BIAS.radius } },
+              includedRegionCodes: ['mx'],
+              languageCode: 'es',
+              sessionToken: _gSession
+            })
+          }).then(function(r){ return r.json(); }).then(function(j){
             if (addrLoad) addrLoad.classList.remove('show');
-            renderAddrSuggestions(arr || []);
+            renderGooglePlacesSuggestions((j && j.suggestions) || []);
           }).catch(function(){
             if (addrLoad) addrLoad.classList.remove('show');
           });
-        }, 350);
+        }, 300);
       });
       document.addEventListener('click', function(e){
         if (!addrList.contains(e.target) && e.target !== addrInput) addrList.classList.remove('show');
       });
     }
 
-    // Mantener citaPlace sincronizado con campos
+    // Sincronizar campos manuales con citaPlace
     ['cf-calle','cf-num-ext','cf-num-int','cf-zona','cf-referencias'].forEach(function(id){
       var el = document.getElementById(id);
       if (!el) return;
@@ -6447,19 +6516,19 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     });
   }
 
-  function renderAddrSuggestions(arr) {
+  function renderGooglePlacesSuggestions(suggestions) {
     var list = document.getElementById('cf-address-suggestions');
     if (!list) return;
-    if (!arr.length) {
+    if (!suggestions.length) {
       list.innerHTML = '<div class="cf-autocomplete-item" style="color:var(--text-light);cursor:default">Sin resultados — toca el mapa para fijar tu pin manualmente</div>';
       list.classList.add('show');
       return;
     }
-    list.innerHTML = arr.map(function(r){
-      var parts = (r.display_name || '').split(',');
-      var main = parts[0] || r.display_name;
-      var sub = parts.slice(1, 3).join(',').trim();
-      return '<div class="cf-autocomplete-item" data-lat="' + r.lat + '" data-lng="' + r.lon + '">'
+    list.innerHTML = suggestions.map(function(s, i){
+      var p = s.placePrediction || {};
+      var main = (p.structuredFormat && p.structuredFormat.mainText && p.structuredFormat.mainText.text) || (p.text && p.text.text) || '';
+      var sub = (p.structuredFormat && p.structuredFormat.secondaryText && p.structuredFormat.secondaryText.text) || '';
+      return '<div class="cf-autocomplete-item" data-placeid="' + (p.placeId || '') + '">'
         + '<span class="ac-main">' + main + '</span>'
         + (sub ? '<div class="ac-sub">' + sub + '</div>' : '')
         + '</div>';
@@ -6467,12 +6536,39 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     list.classList.add('show');
     list.querySelectorAll('.cf-autocomplete-item').forEach(function(item){
       item.addEventListener('click', function(){
-        var lat = parseFloat(this.getAttribute('data-lat'));
-        var lng = parseFloat(this.getAttribute('data-lng'));
-        if (!lat) return;
-        document.getElementById('cf-address-input').value = '';
+        var pid = this.getAttribute('data-placeid');
+        if (!pid) return;
         list.classList.remove('show');
-        setPin(lat, lng, true);
+        // Place Details para obtener coords
+        fetch('https://places.googleapis.com/v1/places/' + pid + '?fields=location,formattedAddress,addressComponents&sessionToken=' + (_gSession || ''), {
+          headers: { 'X-Goog-Api-Key': window.GMAPS_API_KEY }
+        }).then(function(r){ return r.json(); }).then(function(j){
+          if (j && j.location) {
+            setPinGoogle(j.location.latitude, j.location.longitude, false);
+            // Llenar campos desde addressComponents
+            if (j.addressComponents) {
+              var parts = {};
+              j.addressComponents.forEach(function(c){
+                (c.types || []).forEach(function(t){ parts[t] = c.shortText || c.longText; });
+              });
+              var calleEl = document.getElementById('cf-calle');
+              if (calleEl && parts.route) { calleEl.value = parts.route; citaPlace.calle = parts.route; }
+              var extEl = document.getElementById('cf-num-ext');
+              if (extEl && parts.street_number) { extEl.value = parts.street_number; citaPlace.num_ext = parts.street_number; }
+              var zonaEl = document.getElementById('cf-zona');
+              var zonaVal = parts.sublocality_level_1 || parts.sublocality || parts.neighborhood || '';
+              if (zonaEl && zonaVal) { zonaEl.value = zonaVal; citaPlace.zona = zonaVal; }
+            }
+            var sumBox = document.getElementById('cf-address-summary');
+            if (sumBox && j.formattedAddress) {
+              sumBox.querySelector('.cf-address-summary-text').textContent = j.formattedAddress;
+              sumBox.style.display = 'block';
+              citaPlace.address = j.formattedAddress;
+            }
+          }
+          // Rotar session token (Google recomienda 1 token por sesión)
+          _gSession = newSessionToken();
+        }).catch(function(){});
       });
     });
   }
