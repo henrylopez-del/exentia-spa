@@ -269,6 +269,72 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
 #ex-dash .hist-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; }
 #ex-dash .hist-meta .dot-sep { color: var(--text-subtle); }
 
+/* === Date filter chips (Arqalum-style: agrupados por temporalidad) === */
+#ex-dash .date-chips-wrap {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--gray-50);
+}
+#ex-dash .date-chips-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+#ex-dash .date-chips-label {
+  font: 700 10px 'Inter Tight', sans-serif;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 6px;
+}
+#ex-dash .date-chips-label::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gray-400);
+  flex-shrink: 0;
+}
+#ex-dash .date-chips-label.past::before { background: #b87355; }
+#ex-dash .date-chips-label.future::before { background: var(--success-500); }
+#ex-dash .date-chips {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+#ex-dash .chip-btn {
+  font: 600 12px 'Inter Tight', sans-serif;
+  letter-spacing: 0.2px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+#ex-dash .chip-btn:hover {
+  border-color: var(--gray-400);
+  background: var(--gray-100);
+}
+#ex-dash .chip-btn.active {
+  background: var(--gray-900);
+  color: #fff;
+  border-color: var(--gray-900);
+  box-shadow: 0 2px 6px rgba(24,24,27,0.15);
+}
+#ex-dash .date-chips[data-group=&quot;past&quot;] .chip-btn.active {
+  background: #b87355; border-color: #a05f43;
+}
+#ex-dash .date-chips[data-group=&quot;future&quot;] .chip-btn.active {
+  background: var(--success-600); border-color: var(--success-700);
+}
+@media (max-width: 700px) {
+  #ex-dash .date-chips-row { grid-template-columns: 1fr; gap: 4px; }
+  #ex-dash .date-chips-label { font-size: 9px; }
+  #ex-dash .chip-btn { font-size: 11px; padding: 5px 10px; }
+}
+
 /* === Modal Ubicación === */
 #ex-dash .ubi-card { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding: 12px 14px; background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--r-md); }
 #ex-dash .ubi-row { display: grid; grid-template-columns: 100px 1fr; gap: 8px; align-items: baseline; }
@@ -396,12 +462,43 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
           <svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;8&quot;/><path d=&quot;M21 21l-4.35-4.35&quot;/></svg>
           <input type=&quot;text&quot; class=&quot;search-input&quot; id=&quot;search-input&quot; placeholder=&quot;Buscar&quot;>
         </div>
-        <select class=&quot;select&quot; id=&quot;date-filter&quot;></select>
         <div class=&quot;toolbar-spacer&quot;></div>
         <button type=&quot;button&quot; class=&quot;csv-btn&quot; id=&quot;csv-btn&quot;>
           <svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><path d=&quot;M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4&quot;/><polyline points=&quot;7 10 12 15 17 10&quot;/><line x1=&quot;12&quot; y1=&quot;15&quot; x2=&quot;12&quot; y2=&quot;3&quot;/></svg>
           <span id=&quot;t-csv-btn&quot;></span>
         </button>
+      </div>
+      <div class=&quot;date-chips-wrap&quot; id=&quot;date-chips-wrap&quot;>
+        <div class=&quot;date-chips-row&quot;>
+          <span class=&quot;date-chips-label&quot; id=&quot;t-chips-todas&quot;></span>
+          <div class=&quot;date-chips&quot; data-group=&quot;all&quot;>
+            <button type=&quot;button&quot; class=&quot;chip-btn active&quot; data-filter=&quot;all&quot; id=&quot;t-chip-all&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;today&quot; id=&quot;t-chip-today&quot;></button>
+          </div>
+        </div>
+        <div class=&quot;date-chips-row&quot;>
+          <span class=&quot;date-chips-label past&quot; id=&quot;t-chips-pasadas&quot;></span>
+          <div class=&quot;date-chips&quot; data-group=&quot;past&quot;>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;yesterday&quot; id=&quot;t-chip-yesterday&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;past_week&quot; id=&quot;t-chip-past-week&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;past_month&quot; id=&quot;t-chip-past-month&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;30d&quot; id=&quot;t-chip-30d&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;90d&quot; id=&quot;t-chip-90d&quot;></button>
+          </div>
+        </div>
+        <div class=&quot;date-chips-row&quot;>
+          <span class=&quot;date-chips-label future&quot; id=&quot;t-chips-proximas&quot;></span>
+          <div class=&quot;date-chips&quot; data-group=&quot;future&quot;>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;tomorrow&quot; id=&quot;t-chip-tomorrow&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;week&quot; id=&quot;t-chip-week&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;next_week&quot; id=&quot;t-chip-next-week&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;month&quot; id=&quot;t-chip-month&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;next_month&quot; id=&quot;t-chip-next-month&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;next_7d&quot; id=&quot;t-chip-next7&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;next_30d&quot; id=&quot;t-chip-next30&quot;></button>
+            <button type=&quot;button&quot; class=&quot;chip-btn&quot; data-filter=&quot;next_90d&quot; id=&quot;t-chip-next90&quot;></button>
+          </div>
+        </div>
       </div>
       <div class=&quot;table-wrap&quot;>
         <table>
@@ -603,9 +700,13 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     csvBtn: 'Descargar CSV',
     dfAll: 'Todo el tiempo', dfToday: 'Hoy', dfYesterday: 'Ayer', dfTomorrow: 'Mañana',
     dfWeek: 'Esta semana', dfMonth: 'Este mes',
-    df30d: 'Últimos 30 días', df90d: 'Últimos 90 días',
-    dfNext7: 'Próximos 7 días', dfNext30: 'Próximos 30 días', dfNext90: 'Próximos 90 días',
+    df30d: 'Últimos 30d', df90d: 'Últimos 90d',
+    dfPastWeek: 'Semana pasada', dfPastMonth: 'Mes pasado',
+    dfNext7: 'Próximos 7d', dfNext30: 'Próximos 30d', dfNext90: 'Próximos 90d',
     dfNextWeek: 'Próxima semana', dfNextMonth: 'Próximo mes',
+    chipsTodas: 'Todas',
+    chipsPasadas: 'Pasadas',
+    chipsProximas: 'Próximas',
     modalPagoTitle: 'Registrar pago',
     pagoCliLabel: 'Cliente:', pagoSvcLabel: 'Servicios:', pagoCodLabel: 'Código:',
     pagoMontoLabel: 'Monto (MXN)', pagoMetodoLabel: 'Método de pago', pagoNotasLabel: 'Notas (opcional)',
@@ -689,24 +790,36 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     });
   });
 
-  var dfOpts = [
-    {k:'all', l:T.dfAll},
-    {k:'today', l:T.dfToday},
-    {k:'tomorrow', l:T.dfTomorrow},
-    {k:'yesterday', l:T.dfYesterday},
-    {k:'week', l:T.dfWeek},
-    {k:'next_week', l:T.dfNextWeek},
-    {k:'month', l:T.dfMonth},
-    {k:'next_month', l:T.dfNextMonth},
-    {k:'next_7d', l:T.dfNext7},
-    {k:'next_30d', l:T.dfNext30},
-    {k:'next_90d', l:T.dfNext90},
-    {k:'30d', l:T.df30d},
-    {k:'90d', l:T.df90d}
-  ];
-  var dfSel = $('date-filter');
-  dfOpts.forEach(function(o){ var op = document.createElement('option'); op.value = o.k; op.textContent = o.l; dfSel.appendChild(op); });
-  dfSel.value = 'all';
+  // Filtros de fecha agrupados en chips por temporalidad (Arqalum-style)
+  $('t-chips-todas').textContent = T.chipsTodas;
+  $('t-chips-pasadas').textContent = T.chipsPasadas;
+  $('t-chips-proximas').textContent = T.chipsProximas;
+  $('t-chip-all').textContent = T.dfAll;
+  $('t-chip-today').textContent = T.dfToday;
+  $('t-chip-yesterday').textContent = T.dfYesterday;
+  $('t-chip-past-week').textContent = T.dfPastWeek;
+  $('t-chip-past-month').textContent = T.dfPastMonth;
+  $('t-chip-30d').textContent = T.df30d;
+  $('t-chip-90d').textContent = T.df90d;
+  $('t-chip-tomorrow').textContent = T.dfTomorrow;
+  $('t-chip-week').textContent = T.dfWeek;
+  $('t-chip-next-week').textContent = T.dfNextWeek;
+  $('t-chip-month').textContent = T.dfMonth;
+  $('t-chip-next-month').textContent = T.dfNextMonth;
+  $('t-chip-next7').textContent = T.dfNext7;
+  $('t-chip-next30').textContent = T.dfNext30;
+  $('t-chip-next90').textContent = T.dfNext90;
+  // Wire chip clicks
+  document.querySelectorAll('#date-chips-wrap .chip-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var k = btn.getAttribute('data-filter');
+      if (!k) return;
+      dateFilterKey = k;
+      document.querySelectorAll('#date-chips-wrap .chip-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderTable(allBookings);
+    });
+  });
 
   var cols = [T.thName, T.thServices, T.thDate, T.thTime, T.thStatus, T.thActions];
   $('table-header').innerHTML = cols.map(function(c){ return '<th>' + c + '</th>'; }).join('');
@@ -823,6 +936,17 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
       var s = new Date(d); s.setDate(d.getDate() - dow2 + (dow2 === 0 ? -6 : 1) + 7);
       var e = new Date(s); e.setDate(s.getDate() + 6);
       return {from: ymd(s), to: ymd(e), useCreated: false};
+    }
+    if(key === 'past_week'){
+      var dowP = d.getDay();
+      var sP = new Date(d); sP.setDate(d.getDate() - dowP + (dowP === 0 ? -6 : 1) - 7);
+      var eP = new Date(sP); eP.setDate(sP.getDate() + 6);
+      return {from: ymd(sP), to: ymd(eP), useCreated: false};
+    }
+    if(key === 'past_month'){
+      var smP = new Date(d.getFullYear(), d.getMonth()-1, 1);
+      var emP = new Date(d.getFullYear(), d.getMonth(), 0);
+      return {from: ymd(smP), to: ymd(emP), useCreated: false};
     }
     if(key === 'month'){
       var sm = new Date(d.getFullYear(), d.getMonth(), 1);
@@ -1316,7 +1440,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
       renderTable(allBookings);
     }, 180);
   });
-  dfSel.addEventListener('change', function(){ dateFilterKey = dfSel.value; renderTable(allBookings); });
+  // (handler antiguo de dfSel reemplazado por wire de chips arriba)
 
   function escapeCSV(val){
     if(val === null || val === undefined) return '';
