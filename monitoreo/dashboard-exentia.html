@@ -491,7 +491,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
         <span class=&quot;periodo-label&quot; id=&quot;t-periodo-label&quot;></span>
         <div class=&quot;dir-toggle&quot; role=&quot;tablist&quot;>
           <button type=&quot;button&quot; class=&quot;dir-btn&quot; data-dir=&quot;past&quot; id=&quot;t-dir-past&quot;></button>
-          <button type=&quot;button&quot; class=&quot;dir-btn active&quot; data-dir=&quot;future&quot; id=&quot;t-dir-future&quot;></button>
+          <button type=&quot;button&quot; class=&quot;dir-btn&quot; data-dir=&quot;future&quot; id=&quot;t-dir-future&quot;></button>
         </div>
         <div class=&quot;chips-sep&quot;></div>
         <div class=&quot;date-chips&quot; id=&quot;date-chips&quot;>
@@ -805,24 +805,27 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
   $('t-chip-month').textContent = T.chipMonth;
   $('t-chip-all').textContent = T.chipAll;
 
-  var dateDirection = 'future'; // 'past' o 'future'
+  var dateDirection = 'none'; // 'past', 'future', o 'none' (estado inicial: literal todas)
   var datePeriod = 'all'; // 'today', '7d', '14d', '30d', 'month', 'all'
 
   function recomputeDateFilterKey() {
-    // Map (direction, period) → key existente que entiende dateRangeForFilter
-    if (datePeriod === 'all') { dateFilterKey = 'all'; return; }
-    if (datePeriod === 'today') { dateFilterKey = 'today'; return; }
-    if (dateDirection === 'future') {
-      if (datePeriod === '7d') dateFilterKey = 'next_7d';
-      else if (datePeriod === '14d') dateFilterKey = 'next_14d';
-      else if (datePeriod === '30d') dateFilterKey = 'next_30d';
-      else if (datePeriod === 'month') dateFilterKey = 'month';
-    } else {
-      if (datePeriod === '7d') dateFilterKey = 'past_7d';
-      else if (datePeriod === '14d') dateFilterKey = 'past_14d';
-      else if (datePeriod === '30d') dateFilterKey = '30d';
-      else if (datePeriod === 'month') dateFilterKey = 'past_month';
+    // 1) Hoy: ignora dirección
+    if (datePeriod === 'today') { dateFilterKey = 'today'; updateDateRangeDisplay(); return; }
+    // 2) Todas SIN dirección = literal todas (sin filtro)
+    if (datePeriod === 'all' && dateDirection === 'none') {
+      dateFilterKey = 'all'; updateDateRangeDisplay(); return;
     }
+    // 3) Todas + dirección = todas pasadas o todas próximas
+    if (datePeriod === 'all') {
+      dateFilterKey = dateDirection === 'past' ? 'past_all' : 'future_all';
+      updateDateRangeDisplay(); return;
+    }
+    // 4) Período específico + dirección
+    var prefix = dateDirection === 'past' ? 'past' : 'next';
+    if (datePeriod === '7d') dateFilterKey = prefix + '_7d';
+    else if (datePeriod === '14d') dateFilterKey = prefix + '_14d';
+    else if (datePeriod === '30d') dateFilterKey = prefix === 'next' ? 'next_30d' : 'past_30d';
+    else if (datePeriod === 'month') dateFilterKey = prefix === 'next' ? 'month' : 'past_month';
     updateDateRangeDisplay();
   }
 
@@ -840,7 +843,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     else el.textContent = fmt(r.from) + ' → ' + fmt(r.to);
   }
 
-  // Wire dirección
+  // Wire dirección — al clickear, reactiva (saca dirección de 'none' si estaba)
   document.querySelectorAll('#date-chips-wrap .dir-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       dateDirection = btn.getAttribute('data-dir');
@@ -850,12 +853,23 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
       renderTable(allBookings);
     });
   });
-  // Wire período
+  // Wire período — clickear 'Todas' desactiva la dirección (literal todas)
   document.querySelectorAll('#date-chips-wrap .chip-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       datePeriod = btn.getAttribute('data-period');
       document.querySelectorAll('#date-chips-wrap .chip-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
+      // Si elige Todas, desactiva direccion (queda como literal todas)
+      // Si elige cualquier otro período y no había dirección, default a future
+      if (datePeriod === 'all') {
+        dateDirection = 'none';
+        document.querySelectorAll('#date-chips-wrap .dir-btn').forEach(function(b){ b.classList.remove('active'); });
+      } else if (dateDirection === 'none') {
+        dateDirection = 'future';
+        document.querySelectorAll('#date-chips-wrap .dir-btn').forEach(function(b){
+          if (b.getAttribute('data-dir') === 'future') b.classList.add('active');
+        });
+      }
       recomputeDateFilterKey();
       renderTable(allBookings);
     });
@@ -1004,10 +1018,17 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
       var e3 = new Date(d); e3.setDate(d.getDate() + fwd);
       return {from: ymd(s3), to: ymd(e3), useCreated: false};
     }
-    if(key === 'past_7d' || key === 'past_14d'){
-      var bk = key === 'past_7d' ? 7 : 14;
+    if(key === 'past_7d' || key === 'past_14d' || key === 'past_30d'){
+      var bk = key === 'past_7d' ? 7 : (key === 'past_14d' ? 14 : 30);
       var sB = new Date(d); sB.setDate(d.getDate() - bk);
       return {from: ymd(sB), to: ymd(d), useCreated: false};
+    }
+    if(key === 'past_all'){
+      var yest = new Date(d); yest.setDate(d.getDate() - 1);
+      return {from: '2000-01-01', to: ymd(yest), useCreated: false};
+    }
+    if(key === 'future_all'){
+      return {from: today, to: '2099-12-31', useCreated: false};
     }
     if(key === '30d' || key === '90d'){
       var days = key === '30d' ? 30 : 90;
