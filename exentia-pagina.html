@@ -2224,6 +2224,83 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     cursor: pointer;
   }
 
+  /* === GROUP CARDS (tipo catálogo PDF, Opción 3) === */
+  .sv2-group {
+    background: var(--white);
+    border: 1px solid rgba(176,169,111,0.22);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .sv2-group-head {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--cream-soft) 0%, var(--white) 100%);
+    border-bottom: 1px solid rgba(176,169,111,0.18);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sv2-group-title {
+    font: 500 16px 'Playfair Display', serif;
+    color: var(--brown);
+    font-style: italic;
+  }
+  .sv2-group-count {
+    font: 600 9px 'Lato', sans-serif;
+    color: var(--olive-dark);
+    background: rgba(176,169,111,0.18);
+    padding: 3px 9px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+  .sv2-group-body {
+    padding: 10px 12px;
+  }
+  .sv2-group-body .sv2-row {
+    background: var(--off-white);
+    border: 1px solid transparent;
+    margin-bottom: 6px;
+  }
+  .sv2-group-body .sv2-row:last-child { margin-bottom: 0; }
+  .sv2-group-body .sv2-row.on {
+    background: var(--cream-soft);
+    border-color: var(--olive);
+  }
+  /* Detail view treatment card-groups */
+  .treatment-group {
+    background: var(--white);
+    border: 1px solid rgba(176,169,111,0.22);
+    border-radius: 16px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px var(--shadow);
+  }
+  .treatment-group-head {
+    padding: 14px 20px;
+    background: linear-gradient(135deg, var(--cream-soft) 0%, var(--white) 100%);
+    border-bottom: 1px solid rgba(176,169,111,0.18);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .treatment-group-title {
+    font: 500 20px 'Playfair Display', serif;
+    color: var(--brown);
+    font-style: italic;
+  }
+  .treatment-group-count {
+    font: 600 10px 'Lato', sans-serif;
+    color: var(--olive-dark);
+    background: rgba(176,169,111,0.18);
+    padding: 4px 11px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+  .treatment-group-body { padding: 14px 18px; }
+  .treatment-group-body .treatment-card { margin-bottom: 10px; box-shadow: none; border: 1px solid rgba(176,169,111,0.12); }
+  .treatment-group-body .treatment-card:last-child { margin-bottom: 0; }
+
   /* Subtítulos para separar Base/Express dentro de la lista de Uñas */
   .sv2-list-divider {
     margin: 14px 6px 8px;
@@ -4694,6 +4771,55 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   };
 
   // ============================================
+  // SUB-SECCIONES tipo catálogo PDF — mapeo _id → sección
+  // ============================================
+  const NAIL_GROUP_MAP = {
+    // Manicura
+    'mani-esmalte': 'Manicura', 'mani-gel': 'Manicura',
+    'mani-rusa': 'Manicura', 'mani-caballero': 'Manicura',
+    // Color
+    'gel-semi': 'Color', 'esm-regular': 'Color',
+    'esm-frances': 'Color', 'esm-infantil': 'Color',
+    // Acrílico / PolyGel
+    'acri-cover': 'Acrílico / PolyGel', 'acri-gel': 'Acrílico / PolyGel',
+    'ret-acri-cover': 'Acrílico / PolyGel', 'ret-acri-gel': 'Acrílico / PolyGel',
+    'acripie': 'Acrílico / PolyGel', 'acripie-una': 'Acrílico / PolyGel',
+    'parche': 'Acrílico / PolyGel', 'reposicion': 'Acrílico / PolyGel',
+    'cambio': 'Acrílico / PolyGel',
+    // Esculturales
+    'escu-natural': 'Esculturales', 'escu-gel': 'Esculturales',
+    // Rubber
+    'rubber-base': 'Rubber', 'rubber-niv': 'Rubber', 'rubber-niv-color': 'Rubber',
+    'ret-rubber': 'Rubber', 'ret-rubber-hib': 'Rubber',
+    // Tratamientos
+    'calcio': 'Tratamientos', 'parafina': 'Tratamientos', 'mascarilla': 'Tratamientos',
+    // Express
+    'corte-unas': 'Express',
+    // === Pedicura ===
+    'pedi-esmalte': 'Pedicura', 'pedi-gel': 'Pedicura', 'pedi-caballero': 'Pedicura',
+    'pedi-acripie': 'Acrílico / PolyGel',
+    'corte-pies': 'Express'
+  };
+  const GROUP_ORDER_MANICURA = ['Manicura', 'Color', 'Acrílico / PolyGel', 'Esculturales', 'Rubber', 'Tratamientos', 'Express'];
+  const GROUP_ORDER_PEDICURA = ['Pedicura', 'Acrílico / PolyGel', 'Express'];
+
+  function groupTreatmentsByPDF(category) {
+    var order;
+    if (category.slug === 'manicura') order = GROUP_ORDER_MANICURA;
+    else if (category.slug === 'pedicura') order = GROUP_ORDER_PEDICURA;
+    else return null; // sin agrupación
+    var buckets = {};
+    category.treatments.forEach(function(t, idx){
+      var g = NAIL_GROUP_MAP[t._id] || 'Otros';
+      if (!buckets[g]) buckets[g] = [];
+      buckets[g].push({ t: t, idx: idx });
+    });
+    return order.map(function(name){ return { name: name, items: buckets[name] || [] }; })
+                .filter(function(g){ return g.items.length > 0; });
+  }
+  window.groupTreatmentsByPDF = groupTreatmentsByPDF;
+
+  // ============================================
   // SERVICES DATA
   // ============================================
   const SERVICES = window.SERVICES = {
@@ -5237,28 +5363,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           ` : ''}
           <div class="treatments-list">
             ${(() => {
-              // Detecta si hay mezcla Base/Express para insertar divisores
-              const hasBase = service.treatments.some(t => t.hasAddons);
-              const hasExpress = service.treatments.some(t => t.isExpress);
-              const mixed = hasBase && hasExpress;
-              let outHtml = '';
-              let insBase = false, insExp = false;
-              let visualIdx = 0;
-              service.treatments.forEach((t, i) => {
-                // Divisores cuando hay sección mixta
-                if (mixed) {
-                  if (t.hasAddons && !insBase) {
-                    outHtml += '<div class="treatment-section-divider">Servicios principales · personalizables</div>';
-                    insBase = true; visualIdx = 0;
-                  }
-                  if (t.isExpress && !insExp) {
-                    outHtml += '<div class="treatment-section-divider">Servicios express</div>';
-                    insExp = true; visualIdx = 0;
-                  }
-                }
-                visualIdx++;
-
-                // Soporte durations[] legacy
+              // Render de un treatment-card individual
+              function renderTreatmentCard(t, visualIdx) {
                 const durs = t.durations || [{min: parseInt((t.duration||'0').replace(/\D/g,''),10), price: t.price, priceCouple: t.priceCouple}];
                 const firstDur = durs[0];
                 const hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
@@ -5271,33 +5377,47 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
                 const multiDurChips = durs.length > 1
                   ? '<div class="treatment-dur-chips">' + durs.map((d, di) => `<button class="treatment-dur-chip${di===0?' active':''}" data-dur="${di}" data-price-ind="${d.price}" data-price-cpl="${d.priceCouple || d.price}">${d.min} min</button>`).join('') + '</div>'
                   : '';
-
                 const variantChips = hasVariants
                   ? '<div class="treatment-dur-chips">' + t.variants.map((v, vi) => `<button class="treatment-dur-chip treatment-var-chip${vi===0?' active':''}" data-var="${vi}" data-price-ind="${v.price}" data-price-cpl="${v.price}">${v.type}</button>`).join('') + '</div>'
                   : '';
-
                 const customBadge = (t.hasAddons && service.addons)
                   ? '<span class="treatment-customizable-badge">Personalizable</span>'
                   : '';
-
                 const hasChips = durs.length > 1 || hasVariants;
-
-                outHtml += `
+                return `
                 <div class="treatment-card${isOnlyInd ? ' only-individual' : ''}${hasChips ? ' has-dur-chips':''}" data-has-couple="${hasCouple ? '1' : '0'}">
                   <div class="treatment-num">${String(visualIdx).padStart(2, '0')}</div>
                   <div class="treatment-info">
                     <h3>${t.name}${customBadge}</h3>
                     <p>${t.desc}</p>
-                    ${multiDurChips}
-                    ${variantChips}
+                    ${multiDurChips}${variantChips}
                     ${isOnlyInd ? '<span class="treatment-only-tag">Solo individual</span>' : ''}
                   </div>
                   ${hasChips ? '' : `<div class="treatment-duration">${durLabel}</div>`}
                   <div class="treatment-price" data-price-ind="${priceInd}" data-price-cpl="${priceCpl}">${priceInd}</div>
                   <button class="treatment-book" data-add-svc="${t.name}" data-category="${service.slug}">${t.hasAddons && service.addons ? 'Personalizar' : 'Reservar'}</button>
                 </div>`;
-              });
-              return outHtml;
+              }
+
+              // Si hay agrupación PDF, renderiza grupos como cards independientes
+              const groups = (typeof window.groupTreatmentsByPDF === 'function') ? window.groupTreatmentsByPDF(service) : null;
+              if (groups) {
+                return groups.map(g => {
+                  let visualIdx = 0;
+                  const rowsHtml = g.items.map(it => { visualIdx++; return renderTreatmentCard(it.t, visualIdx); }).join('');
+                  return `<div class="treatment-group">
+                    <div class="treatment-group-head">
+                      <div class="treatment-group-title">${g.name}</div>
+                      <div class="treatment-group-count">${g.items.length} ${g.items.length === 1 ? 'servicio' : 'servicios'}</div>
+                    </div>
+                    <div class="treatment-group-body">${rowsHtml}</div>
+                  </div>`;
+                }).join('');
+              }
+
+              // Fallback: render lineal
+              let visualIdx = 0;
+              return service.treatments.map(t => { visualIdx++; return renderTreatmentCard(t, visualIdx); }).join('');
             })()}
           </div>
         </div>
@@ -6426,24 +6546,11 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         + '</div>';
     }
 
-    // Lista de treatments (con soporte para multiples duraciones)
-    // Si la categoría tiene servicios mixtos Base + Express, inserta divisor automáticamente
-    var hasBaseAndExpress = active.treatments.some(function(t){ return t.hasAddons; }) && active.treatments.some(function(t){ return t.isExpress; });
-    var insertedDividerBase = false, insertedDividerExpress = false;
-    var listHtml = '<div class="sv2-list">';
-    active.treatments.forEach(function(t, idx){
-      // Inserta divisores cuando hay sección mixta
-      if (hasBaseAndExpress) {
-        if (t.hasAddons && !insertedDividerBase) {
-          listHtml += '<div class="sv2-list-divider">Servicios principales · personalizables</div>';
-          insertedDividerBase = true;
-        }
-        if (t.isExpress && !insertedDividerExpress) {
-          listHtml += '<div class="sv2-list-divider">Servicios express</div>';
-          insertedDividerExpress = true;
-        }
-      }
-      // Normaliza: si tiene durations array usa eso, sino crea uno desde duration/price legacy
+    // Lista de treatments — Si la categoría tiene agrupación PDF (uñas), agrupa en card-groups;
+    // si no, renderiza linealmente.
+    var groups = groupTreatmentsByPDF(active);
+
+    function renderRow(t, idx) {
       var durs = t.durations;
       if (!durs) {
         durs = [{
@@ -6452,15 +6559,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           priceCouple: t.priceCouple
         }];
       }
-      // Cual duracion esta seleccionada por defecto (la primera)
       var selectedDurIdx = (typeof t._selDur === 'number') ? t._selDur : 0;
       var dur = durs[selectedDurIdx] || durs[0];
       var hasMultipleDurs = durs.length > 1;
       var hasCouple = !!dur.priceCouple;
       var disabled = (svMode === 'parejas' && active.supportsParejas && !hasCouple);
       var shownPrice = (svMode === 'parejas' && hasCouple) ? dur.priceCouple : dur.price;
-      var cartKey = hasMultipleDurs ? (t.name + ' · ' + dur.min + ' min') : t.name;
-      // Comprueba si CUALQUIER variante de este tratamiento esta en el cart
       var isOn = hasMultipleDurs
         ? cart.some(function(c){ return c === t.name || c.indexOf(t.name + ' · ') === 0; })
         : cart.includes(t.name);
@@ -6475,14 +6579,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         durChipsHtml += '</div>';
       }
 
-      // Soporte para variants (Manos/Pies)
       var hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
       var selectedVarIdx = (typeof t._selVar === 'number') ? t._selVar : 0;
       var varChipsHtml = '';
       if (hasVariants) {
         var selVar = t.variants[selectedVarIdx] || t.variants[0];
         shownPrice = selVar.price;
-        cartKey = t.name + ' · ' + selVar.type;
         isOn = cart.some(function(c){ return c.indexOf(t.name + ' · ') === 0; });
         varChipsHtml = '<div class="sv2-var-chips">';
         t.variants.forEach(function(v, vi){
@@ -6493,19 +6595,17 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       }
 
       var pillHtml = (hasMultipleDurs || hasVariants) ? '' :
-        '<div class="sv2-row-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ' + dur.min + ' min</div>';
+        '<div class="sv2-row-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ' + (dur.min || '') + ' min</div>';
 
-      // Si el servicio tiene addons y está en el carrito, muestra qué eligió debajo del nombre
       var cartEntry = cart.find(function(c){ return c === t.name || c.indexOf(t.name + ' · ') === 0; });
       var addonSummary = '';
       if (t.hasAddons && cartEntry && cartEntry.indexOf(' · ') !== -1) {
         var extras = cartEntry.split(' · ').slice(1).join(' · ');
         addonSummary = '<div class="sv2-row-desc" style="color:var(--olive-dark);font-weight:600;margin-top:2px">+ ' + extras + '</div>';
       }
-
       var customBadge = (t.hasAddons && active.addons) ? '<span class="sv2-row-customizable">Personalizable</span>' : '';
 
-      listHtml += '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + (hasMultipleDurs?' has-dur-chips':'') + (hasVariants?' has-var-chips':'') + '" data-svc="' + t.name + '" data-row-idx="' + idx + '">'
+      return '<div class="sv2-row' + (isOn?' on':'') + (disabled?' disabled':'') + (hasMultipleDurs?' has-dur-chips':'') + (hasVariants?' has-var-chips':'') + '" data-svc="' + t.name + '" data-row-idx="' + idx + '">'
         + '<div class="sv2-row-info">'
         + '<div class="sv2-row-name">' + t.name + customBadge + '</div>'
         + (t.desc ? '<div class="sv2-row-desc">' + t.desc + '</div>' : '')
@@ -6520,7 +6620,20 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         + (isOn ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>')
         + '</button>'
         + '</div>';
-    });
+    }
+
+    var listHtml = '<div class="sv2-list">';
+    if (groups) {
+      groups.forEach(function(g){
+        listHtml += '<div class="sv2-group">';
+        listHtml += '<div class="sv2-group-head"><div class="sv2-group-title">' + g.name + '</div><div class="sv2-group-count">' + g.items.length + (g.items.length === 1 ? ' servicio' : ' servicios') + '</div></div>';
+        listHtml += '<div class="sv2-group-body">';
+        g.items.forEach(function(it){ listHtml += renderRow(it.t, it.idx); });
+        listHtml += '</div></div>';
+      });
+    } else {
+      active.treatments.forEach(function(t, idx){ listHtml += renderRow(t, idx); });
+    }
     listHtml += '</div>';
 
     container.innerHTML = tabsHtml + heroHtml + modalityHtml + listHtml;
