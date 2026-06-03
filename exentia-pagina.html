@@ -1150,6 +1150,36 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     box-shadow: 0 3px 10px rgba(154,152,84,0.3);
   }
   .treatment-card.has-dur-chips .treatment-duration { display: none; }
+  /* Divisor entre secciones (Base / Express) en vista detalle */
+  .treatment-section-divider {
+    grid-column: 1 / -1;
+    margin: 30px 0 8px;
+    font: 700 11px 'Lato', sans-serif;
+    letter-spacing: 1.5px;
+    color: var(--olive-dark);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .treatment-section-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(176,169,111,0.3);
+  }
+  .treatment-section-divider:first-child { margin-top: 0; }
+  /* Badge "Personalizable" en el título del card */
+  .treatment-customizable-badge {
+    display: inline-flex;
+    align-items: center;
+    font: 600 9px 'Lato', sans-serif;
+    color: var(--olive-dark);
+    background: rgba(176,169,111,0.12);
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+  /* Treatment var-chip (Manos/Pies) reusa estilo de dur-chip — sin override */
   .treatment-card.only-individual {
     opacity: 0.65;
   }
@@ -5206,32 +5236,69 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           <p class="modality-hint">Las parejas comparten cabina y experiencia simultánea. Algunos servicios solo están disponibles individualmente.</p>
           ` : ''}
           <div class="treatments-list">
-            ${service.treatments.map((t, i) => {
-              // Soporte para nuevo formato durations[] y legacy duration/price
-              const durs = t.durations || [{min: parseInt((t.duration||'0').replace(/\\D/g,''),10), price: t.price, priceCouple: t.priceCouple}];
-              const firstDur = durs[0];
-              const priceInd = firstDur.price;
-              const priceCpl = firstDur.priceCouple || firstDur.price;
-              const hasCouple = !!firstDur.priceCouple;
-              const durLabel = firstDur.min ? firstDur.min + ' min' : (t.duration || '');
-              const isOnlyInd = service.supportsParejas && !hasCouple;
-              const multiDurChips = durs.length > 1
-                ? '<div class="treatment-dur-chips">' + durs.map((d, di) => `<button class="treatment-dur-chip${di===0?' active':''}" data-dur="${di}" data-price-ind="${d.price}" data-price-cpl="${d.priceCouple || d.price}">${d.min} min</button>`).join('') + '</div>'
-                : '';
-              return `
-              <div class="treatment-card${isOnlyInd ? ' only-individual' : ''}${durs.length>1 ? ' has-dur-chips':''}" data-has-couple="${hasCouple ? '1' : '0'}">
-                <div class="treatment-num">${String(i + 1).padStart(2, '0')}</div>
-                <div class="treatment-info">
-                  <h3>${t.name}</h3>
-                  <p>${t.desc}</p>
-                  ${multiDurChips}
-                  ${isOnlyInd ? '<span class="treatment-only-tag">Solo individual</span>' : ''}
-                </div>
-                ${durs.length > 1 ? '' : `<div class="treatment-duration">${durLabel}</div>`}
-                <div class="treatment-price" data-price-ind="${priceInd}" data-price-cpl="${priceCpl}">${priceInd}</div>
-                <button class="treatment-book" data-add-svc="${t.name}">Reservar</button>
-              </div>`;
-            }).join('')}
+            ${(() => {
+              // Detecta si hay mezcla Base/Express para insertar divisores
+              const hasBase = service.treatments.some(t => t.hasAddons);
+              const hasExpress = service.treatments.some(t => t.isExpress);
+              const mixed = hasBase && hasExpress;
+              let outHtml = '';
+              let insBase = false, insExp = false;
+              let visualIdx = 0;
+              service.treatments.forEach((t, i) => {
+                // Divisores cuando hay sección mixta
+                if (mixed) {
+                  if (t.hasAddons && !insBase) {
+                    outHtml += '<div class="treatment-section-divider">Servicios principales · personalizables</div>';
+                    insBase = true; visualIdx = 0;
+                  }
+                  if (t.isExpress && !insExp) {
+                    outHtml += '<div class="treatment-section-divider">Servicios express</div>';
+                    insExp = true; visualIdx = 0;
+                  }
+                }
+                visualIdx++;
+
+                // Soporte durations[] legacy
+                const durs = t.durations || [{min: parseInt((t.duration||'0').replace(/\D/g,''),10), price: t.price, priceCouple: t.priceCouple}];
+                const firstDur = durs[0];
+                const hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
+                const priceInd = hasVariants ? t.variants[0].price : firstDur.price;
+                const priceCpl = firstDur.priceCouple || priceInd;
+                const hasCouple = !!firstDur.priceCouple;
+                const durLabel = firstDur.min ? firstDur.min + ' min' : (t.duration || '');
+                const isOnlyInd = service.supportsParejas && !hasCouple;
+
+                const multiDurChips = durs.length > 1
+                  ? '<div class="treatment-dur-chips">' + durs.map((d, di) => `<button class="treatment-dur-chip${di===0?' active':''}" data-dur="${di}" data-price-ind="${d.price}" data-price-cpl="${d.priceCouple || d.price}">${d.min} min</button>`).join('') + '</div>'
+                  : '';
+
+                const variantChips = hasVariants
+                  ? '<div class="treatment-dur-chips">' + t.variants.map((v, vi) => `<button class="treatment-dur-chip treatment-var-chip${vi===0?' active':''}" data-var="${vi}" data-price-ind="${v.price}" data-price-cpl="${v.price}">${v.type}</button>`).join('') + '</div>'
+                  : '';
+
+                const customBadge = (t.hasAddons && service.addons)
+                  ? '<span class="treatment-customizable-badge">Personalizable</span>'
+                  : '';
+
+                const hasChips = durs.length > 1 || hasVariants;
+
+                outHtml += `
+                <div class="treatment-card${isOnlyInd ? ' only-individual' : ''}${hasChips ? ' has-dur-chips':''}" data-has-couple="${hasCouple ? '1' : '0'}">
+                  <div class="treatment-num">${String(visualIdx).padStart(2, '0')}</div>
+                  <div class="treatment-info">
+                    <h3>${t.name}${customBadge}</h3>
+                    <p>${t.desc}</p>
+                    ${multiDurChips}
+                    ${variantChips}
+                    ${isOnlyInd ? '<span class="treatment-only-tag">Solo individual</span>' : ''}
+                  </div>
+                  ${hasChips ? '' : `<div class="treatment-duration">${durLabel}</div>`}
+                  <div class="treatment-price" data-price-ind="${priceInd}" data-price-cpl="${priceCpl}">${priceInd}</div>
+                  <button class="treatment-book" data-add-svc="${t.name}" data-category="${service.slug}">${t.hasAddons && service.addons ? 'Personalizar' : 'Reservar'}</button>
+                </div>`;
+              });
+              return outHtml;
+            })()}
           </div>
         </div>
       </section>
@@ -5456,30 +5523,110 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       });
     });
 
-    // Delegate click on "Reservar" buttons (dynamic content)
+    // Delegate click on "Reservar/Personalizar" buttons (dynamic content)
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-add-svc]');
       if (!btn) return;
       e.preventDefault();
       e.stopPropagation();
 
-      const svc = btn.dataset.addSvc;
-      const idx = cart.indexOf(svc);
-      if (idx === -1) {
-        cart.push(svc);
+      const svcName = btn.dataset.addSvc;
+      const catSlug = btn.dataset.category;
+
+      // Buscar el servicio en SERVICES y verificar si tiene addons
+      let foundSvc = null, foundCat = null;
+      if (catSlug && window.SERVICES && window.SERVICES[catSlug]) {
+        foundCat = window.SERVICES[catSlug];
+        foundSvc = foundCat.treatments.find(t => t.name === svcName);
+      }
+      if (!foundSvc && window.SERVICES) {
+        for (const k in window.SERVICES) {
+          const c = window.SERVICES[k];
+          const f = c.treatments && c.treatments.find(t => t.name === svcName);
+          if (f) { foundSvc = f; foundCat = c; break; }
+        }
+      }
+
+      // Detecta si ya hay una entrada compuesta en el carrito (servicio + add-ons)
+      const existingIdx = cart.findIndex(c => c === svcName || c.indexOf(svcName + ' · ') === 0);
+
+      // Caso 1: servicio con add-ons → si no está, abre drawer; si está, lo quita
+      if (foundSvc && foundSvc.hasAddons && foundCat && foundCat.addons && typeof window.openAddonsDrawer === 'function') {
+        if (existingIdx >= 0) {
+          cart.splice(existingIdx, 1);
+          btn.textContent = 'Personalizar';
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.style.borderColor = '';
+        } else {
+          window.openAddonsDrawer(foundSvc, foundCat);
+          return; // El drawer se encarga del cart
+        }
+        localStorage.setItem('exentia_cart', JSON.stringify(cart));
+        if (typeof updateBadge === 'function') updateBadge();
+        return;
+      }
+
+      // Caso 2: servicio con variants (Manos/Pies) — usar chip activa
+      if (foundSvc && Array.isArray(foundSvc.variants) && foundSvc.variants.length > 0) {
+        const card = btn.closest('.treatment-card');
+        const activeVar = card && card.querySelector('.treatment-var-chip.active');
+        const varIdx = activeVar ? parseInt(activeVar.getAttribute('data-var'), 10) : 0;
+        const variant = foundSvc.variants[varIdx];
+        const composedKey = svcName + ' · ' + variant.type;
+        const compIdx = cart.findIndex(c => c.indexOf(svcName + ' · ') === 0);
+        if (compIdx >= 0) {
+          cart.splice(compIdx, 1);
+          btn.textContent = 'Reservar';
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.style.borderColor = '';
+        } else {
+          cart.push(composedKey);
+          btn.textContent = 'Agregado';
+          btn.style.background = 'var(--cream)';
+          btn.style.color = 'var(--brown)';
+          btn.style.borderColor = 'var(--cream)';
+        }
+        localStorage.setItem('exentia_cart', JSON.stringify(cart));
+        if (typeof updateBadge === 'function') updateBadge();
+        return;
+      }
+
+      // Caso 3: toggle simple
+      if (existingIdx === -1) {
+        cart.push(svcName);
         btn.textContent = 'Agregado';
         btn.style.background = 'var(--cream)';
         btn.style.color = 'var(--brown)';
         btn.style.borderColor = 'var(--cream)';
       } else {
-        cart.splice(idx, 1);
-        btn.textContent = 'Reservar';
+        cart.splice(existingIdx, 1);
+        btn.textContent = (foundSvc && foundSvc.hasAddons) ? 'Personalizar' : 'Reservar';
         btn.style.background = '';
         btn.style.color = '';
         btn.style.borderColor = '';
       }
       localStorage.setItem('exentia_cart', JSON.stringify(cart));
-      updateBadge();
+      if (typeof updateBadge === 'function') updateBadge();
+    });
+
+    // Wire var-chips (Manos/Pies) en treatment-cards de la vista detalle
+    document.addEventListener('click', (e) => {
+      const chip = e.target.closest('.treatment-var-chip');
+      if (!chip) return;
+      e.stopPropagation();
+      const card = chip.closest('.treatment-card');
+      if (!card) return;
+      card.querySelectorAll('.treatment-var-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const priceEl = card.querySelector('.treatment-price');
+      if (priceEl) {
+        const newPrice = chip.getAttribute('data-price-ind');
+        priceEl.textContent = newPrice;
+        priceEl.setAttribute('data-price-ind', newPrice);
+        priceEl.setAttribute('data-price-cpl', chip.getAttribute('data-price-cpl'));
+      }
     });
   });
 
