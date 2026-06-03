@@ -14,18 +14,24 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [-160, -80],
+      "position": [
+        -160,
+        -80
+      ],
       "webhookId": "exentia-reserva"
     },
     {
       "parameters": {
-        "jsCode": "// Normalize form submit, gen booking_code, build wa.me link\nlet body = $input.item.json.body || $input.item.json;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch(e) { body = {}; } }\nbody = body || {};\n\nfunction genCode() {\n  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\n  let r = 'EX-';\n  for (let i = 0; i < 8; i++) r += chars[Math.floor(Math.random()*chars.length)];\n  return r;\n}\n\nconst booking_code = genCode();\nconst telYaz = '529984803595';\n\nlet servicios = body.servicios;\nif (typeof servicios === 'string') servicios = [{ slug: servicios }];\nif (!Array.isArray(servicios)) servicios = [];\n\nconst servicioSlug = servicios[0]?.slug || 'masaje';\nconst pref = (body.preferencia_sexo || 'I').toUpperCase();\nconst prefTexto = pref === 'H' ? 'Hombre' : pref === 'M' ? 'Mujer' : 'Indistinto';\nconst zona = body.zona_colonia || 'Cancun';\nconst waText = ('Hola, quiero reservar ' + servicioSlug + ' en zona ' + zona + '. Preferencia: ' + prefTexto + '. Folio ' + booking_code + '.')\n  .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');\nconst wa_link = 'https://wa.me/' + telYaz + '?text=' + encodeURIComponent(waText);\n\n// Servicios como string comma-separated para GHL custom field\nconst serviciosStr = servicios.map(s => s.slug || s).filter(Boolean).join(',');\n\nconst telNormalized = (() => {\n  const raw = body.cliente_telefono;\n  if (!raw) return null;\n  const d = String(raw).replace(/\\D/g,'');\n  if (!d) return null;\n  // MX 10-digit: prefix 52\n  if (d.length === 10) return '52' + d;\n  // MX 12-digit con prefix 52: aceptar\n  if (d.length === 12 && d.startsWith('52')) return d;\n  // MX 11-digit con 1 al inicio (común en formato +52 1 ...): quitar el 1 después del 52\n  if (d.length === 13 && d.startsWith('521')) return '52' + d.slice(3);\n  // Otros (US, etc): aceptar tal cual pero solo dígitos\n  return d;\n})();\n\nconst nombre = (body.cliente_nombre || '').trim();\nconst parts = nombre.split(' ');\nconst firstName = parts[0] || '';\nconst lastName = parts.slice(1).join(' ') || '';\n\nreturn { json: {\n  booking_code,\n  wa_link,\n  serviciosStr,\n  firstName,\n  lastName,\n  phone: telNormalized,\n  email: body.cliente_email || null,\n  lead_ref: body.lead_ref || null,\n  // For Postgres insert (will be completed with ghl_contact_id after upsert)\n  rawPayload: {\n    booking_code,\n    lead_ref: body.lead_ref || null,\n    cliente_nombre: body.cliente_nombre || null,\n    cliente_telefono: telNormalized,\n    cliente_email: body.cliente_email || null,\n    servicios: servicios,\n    preferencia_sexo: pref,\n    zona_municipio: 'Cancun',\n    zona_colonia: body.zona_colonia || null,\n    direccion_libre: body.direccion_libre || null,\n    direccion_maps_url: body.direccion_maps_url || null,\n    notas_cliente: body.notas_cliente || null,\n    modo_asignacion: 'whatsapp_group',\n    estado: 'reservo'\n  }\n} };"
+        "jsCode": "// Normalize form submit, gen booking_code, build wa.me link\nlet body = $input.item.json.body || $input.item.json;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch(e) { body = {}; } }\nbody = body || {};\n\nfunction genCode() {\n  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\n  let r = 'EX-';\n  for (let i = 0; i < 8; i++) r += chars[Math.floor(Math.random()*chars.length)];\n  return r;\n}\n\nconst booking_code = genCode();\nconst telYaz = '529984803595';\n\nlet servicios = body.servicios;\nif (typeof servicios === 'string') servicios = [{ slug: servicios }];\nif (!Array.isArray(servicios)) servicios = [];\n\nconst servicioSlug = servicios[0]?.slug || 'masaje';\nconst pref = (body.preferencia_sexo || 'I').toUpperCase();\nconst prefTexto = pref === 'H' ? 'Hombre' : pref === 'M' ? 'Mujer' : 'Indistinto';\nconst zona = body.zona_colonia || 'Cancun';\nconst waText = ('Hola, quiero reservar ' + servicioSlug + ' en zona ' + zona + '. Preferencia: ' + prefTexto + '. Folio ' + booking_code + '.')\n  .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');\nconst wa_link = 'https://wa.me/' + telYaz + '?text=' + encodeURIComponent(waText);\n\n// Servicios como string comma-separated para GHL custom field\nconst serviciosStr = servicios.map(s => s.slug || s).filter(Boolean).join(',');\n\nconst telNormalized = (() => {\n  const raw = body.cliente_telefono;\n  if (!raw) return null;\n  const d = String(raw).replace(/\\D/g,'');\n  if (!d) return null;\n  // MX 10-digit: prefix 52\n  if (d.length === 10) return '52' + d;\n  // MX 12-digit con prefix 52: aceptar\n  if (d.length === 12 && d.startsWith('52')) return d;\n  // MX 11-digit con 1 al inicio (común en formato +52 1 ...): quitar el 1 después del 52\n  if (d.length === 13 && d.startsWith('521')) return '52' + d.slice(3);\n  // Otros (US, etc): aceptar tal cual pero solo dígitos\n  return d;\n})();\n\nconst nombre = (body.cliente_nombre || '').trim();\nconst parts = nombre.split(' ');\nconst firstName = parts[0] || '';\nconst lastName = parts.slice(1).join(' ') || '';\n\nreturn { json: {\n  booking_code,\n  wa_link,\n  serviciosStr,\n  firstName,\n  lastName,\n  phone: telNormalized,\n  email: body.cliente_email || null,\n  lead_ref: body.lead_ref || null,\n  tipo_cita: body.tipo_cita || 'sucursal',\n  direccion_maps_url: body.direccion_maps_url || null,\n  zona_colonia: body.zona_colonia || null,\n  // For Postgres insert (will be completed with ghl_contact_id after upsert)\n  rawPayload: {\n    booking_code,\n    lead_ref: body.lead_ref || null,\n    cliente_nombre: body.cliente_nombre || null,\n    cliente_telefono: telNormalized,\n    cliente_email: body.cliente_email || null,\n    servicios: servicios,\n    preferencia_sexo: pref,\n    zona_municipio: 'Cancun',\n    zona_colonia: body.zona_colonia || null,\n    direccion_libre: body.direccion || body.direccion_libre || null,\n    direccion_maps_url: body.direccion_maps_url || null,\n    latitud: body.lat ? parseFloat(body.lat) : null,\n    longitud: body.lng ? parseFloat(body.lng) : null,\n    notas_cliente: (body.tipo_cita === 'domicilio' ? '[CITA A DOMICILIO] ' : '') + (body.notas_cliente || ''),\n    modo_asignacion: body.tipo_cita === 'domicilio' ? 'domicilio' : 'whatsapp_group',\n    estado: 'reservo'\n  }\n} };"
       },
       "id": "5ba4a3c0-f510-4b66-8aaf-caa9efadfce7",
       "name": "Normalize",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [64, -80]
+      "position": [
+        64,
+        -80
+      ]
     },
     {
       "parameters": {
@@ -44,7 +50,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ locationId: '0hGSRrhxkdywVQxCsNOi', firstName: $('Normalize').item.json.firstName, lastName: $('Normalize').item.json.lastName, email: $('Normalize').item.json.email, phone: $('Normalize').item.json.phone, customFields: [ { id: 'ETSBOfoZqy1ng2RFBPzm', field_value: $('Normalize').item.json.serviciosStr }, $('Normalize').item.json.lead_ref ? { id: 'JgsK2j4h1p6Gf7pw0WDS', field_value: $('Normalize').item.json.lead_ref } : null ].filter(Boolean) }) }}",
+        "jsonBody": "={{ JSON.stringify({ locationId: '0hGSRrhxkdywVQxCsNOi', firstName: $('Normalize').item.json.firstName, lastName: $('Normalize').item.json.lastName, email: $('Normalize').item.json.email, phone: $('Normalize').item.json.phone, customFields: [ { id: 'ETSBOfoZqy1ng2RFBPzm', field_value: $('Normalize').item.json.serviciosStr }, $('Normalize').item.json.lead_ref ? { id: 'JgsK2j4h1p6Gf7pw0WDS', field_value: $('Normalize').item.json.lead_ref } : null, $('Normalize').item.json.zona_colonia ? { id: 'vVUbV7gxxxTpfefQyCLG', field_value: $('Normalize').item.json.zona_colonia } : null, $('Normalize').item.json.direccion_maps_url ? { id: 'vdduFA9OmAPkD23SVxZY', field_value: $('Normalize').item.json.direccion_maps_url } : null ].filter(Boolean) }) }}",
         "options": {
           "response": {
             "response": {
@@ -57,7 +63,10 @@
       "name": "Upsert Contact GHL",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [288, -80],
+      "position": [
+        288,
+        -80
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "PBgp7jLU2uAJz3t8",
@@ -75,12 +84,15 @@
       "name": "Merge GHL ID",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [508, -80]
+      "position": [
+        508,
+        -80
+      ]
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "INSERT INTO exentia.bookings (booking_code, lead_ref, ghl_contact_id,\ncliente_nombre, cliente_telefono, cliente_email,\nservicios, preferencia_sexo,\nzona_municipio, zona_colonia,\ndireccion_libre, direccion_maps_url, notas_cliente,\nmodo_asignacion, estado)\nSELECT booking_code, lead_ref, ghl_contact_id,\ncliente_nombre, cliente_telefono, cliente_email,\nservicios, preferencia_sexo,\nzona_municipio, zona_colonia,\ndireccion_libre, direccion_maps_url, notas_cliente,\nmodo_asignacion, estado\nFROM jsonb_populate_record(NULL::exentia.bookings, $1::jsonb)\nRETURNING id, booking_code, ghl_contact_id;",
+        "query": "INSERT INTO exentia.bookings (booking_code, lead_ref, ghl_contact_id,\ncliente_nombre, cliente_telefono, cliente_email,\nservicios, preferencia_sexo,\nzona_municipio, zona_colonia,\ndireccion_libre, direccion_maps_url, latitud, longitud, notas_cliente,\nmodo_asignacion, estado)\nSELECT booking_code, lead_ref, ghl_contact_id,\ncliente_nombre, cliente_telefono, cliente_email,\nservicios, preferencia_sexo,\nzona_municipio, zona_colonia,\ndireccion_libre, direccion_maps_url, latitud, longitud, notas_cliente,\nmodo_asignacion, estado\nFROM jsonb_populate_record(NULL::exentia.bookings, $1::jsonb)\nRETURNING id, booking_code, ghl_contact_id;",
         "options": {
           "queryReplacement": "={{ JSON.stringify($json.payload) }}"
         }
@@ -89,7 +101,10 @@
       "name": "Postgres",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
-      "position": [728, -80],
+      "position": [
+        728,
+        -80
+      ],
       "credentials": {
         "postgres": {
           "id": "fR7LZX8uV0iHS9oP",
@@ -105,7 +120,10 @@
       "name": "Build Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [948, -80]
+      "position": [
+        948,
+        -80
+      ]
     },
     {
       "parameters": {
@@ -130,27 +148,78 @@
       "name": "Respond 200",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1168, -80]
+      "position": [
+        1168,
+        -80
+      ]
     }
   ],
   "connections": {
     "Webhook": {
-      "main": [[{"node": "Normalize", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Normalize": {
-      "main": [[{"node": "Upsert Contact GHL", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Upsert Contact GHL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Upsert Contact GHL": {
-      "main": [[{"node": "Merge GHL ID", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Merge GHL ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Merge GHL ID": {
-      "main": [[{"node": "Postgres", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Postgres": {
-      "main": [[{"node": "Build Response", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Build Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Build Response": {
-      "main": [[{"node": "Respond 200", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Respond 200",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {

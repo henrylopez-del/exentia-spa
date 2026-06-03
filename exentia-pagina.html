@@ -3237,6 +3237,153 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   /* ============ CUSTOM FORM (modal-form) ============ */
   .exentia-form .form-row { margin-bottom: 14px; }
+
+  /* ===== UBICACIÓN DE LA CITA (sucursal/domicilio toggle) ===== */
+  .cita-place-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .cita-place-btn {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    background: var(--off-white);
+    border: 1.5px solid rgba(176,169,111,0.22);
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+  }
+  .cita-place-btn:hover {
+    border-color: var(--olive-soft);
+    background: var(--cream-soft);
+  }
+  .cita-place-btn.active {
+    border-color: var(--olive);
+    background: linear-gradient(180deg, var(--cream-soft) 0%, var(--white) 100%);
+    box-shadow: 0 3px 12px rgba(176,169,111,0.18);
+  }
+  .cita-place-btn svg { color: var(--olive-dark); flex-shrink: 0; margin-top: 2px; }
+  .cita-place-btn.active svg { color: var(--olive); }
+  .cita-place-info { flex: 1; min-width: 0; }
+  .cita-place-title {
+    font: 700 12px 'Lato', sans-serif;
+    color: var(--brown);
+    margin-bottom: 2px;
+  }
+  .cita-place-sub {
+    font: 400 11px 'Lato', sans-serif;
+    color: var(--text-light);
+    line-height: 1.35;
+  }
+  @media (max-width: 480px) {
+    .cita-place-toggle { grid-template-columns: 1fr; }
+  }
+
+  /* Bloque de dirección (solo en modo "domicilio") */
+  .form-address-block {
+    background: rgba(176,169,111,0.05);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    border: 1px dashed rgba(176,169,111,0.25);
+    animation: addressFadeIn 0.3s ease;
+  }
+  @keyframes addressFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .cf-use-location-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--white);
+    color: var(--olive-dark);
+    border: 1.5px solid var(--olive);
+    padding: 7px 12px;
+    border-radius: 100px;
+    font: 600 11px 'Lato', sans-serif;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .cf-use-location-btn:hover {
+    background: var(--olive);
+    color: var(--white);
+    transform: translateY(-1px);
+  }
+  .cf-use-location-btn.loading {
+    opacity: 0.6; pointer-events: none;
+  }
+
+  .cf-autocomplete-wrap {
+    position: relative;
+  }
+  .cf-autocomplete-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: var(--white);
+    border: 1.5px solid var(--olive-soft);
+    border-radius: 10px;
+    max-height: 240px;
+    overflow-y: auto;
+    box-shadow: 0 12px 32px rgba(130,96,64,0.18);
+    z-index: 50;
+    display: none;
+  }
+  .cf-autocomplete-list.show { display: block; }
+  .cf-autocomplete-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(176,169,111,0.12);
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .cf-autocomplete-item:last-child { border-bottom: none; }
+  .cf-autocomplete-item:hover,
+  .cf-autocomplete-item.highlight {
+    background: var(--cream-soft);
+    color: var(--brown);
+  }
+  .cf-autocomplete-item .ac-main {
+    font-weight: 600;
+    color: var(--brown);
+    display: block;
+  }
+  .cf-autocomplete-item .ac-sub {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 1px;
+  }
+  .cf-autocomplete-loading {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--olive-dark);
+    font-style: italic;
+    display: none;
+  }
+  .cf-autocomplete-loading.show { display: block; }
+  .cf-address-hint {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  .cf-map-preview {
+    margin-top: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid var(--olive-soft);
+    box-shadow: 0 4px 14px rgba(130,96,64,0.12);
+  }
+  .cf-map-preview iframe {
+    width: 100%; height: 180px; border: none; display: block;
+  }
   .exentia-form .form-label {
     display: block; font-size: 11px; letter-spacing: 1.2px;
     text-transform: uppercase; color: var(--brown);
@@ -4677,6 +4824,51 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           <input type="tel" id="cf-phone" name="phone" placeholder="998 123 4567" autocomplete="tel">
         </div>
 
+        <!-- ===== UBICACIÓN DE LA CITA (sucursal vs domicilio) ===== -->
+        <div class="form-row">
+          <label class="form-label">¿Dónde quieres tu cita?</label>
+          <div class="cita-place-toggle" role="radiogroup" aria-label="Ubicación de la cita">
+            <button type="button" class="cita-place-btn active" data-place="sucursal" role="radio" aria-checked="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
+              <div class="cita-place-info">
+                <div class="cita-place-title">Sucursal Exentia</div>
+                <div class="cita-place-sub">Plaza Hive · Av. Huayacán, Cancún</div>
+              </div>
+            </button>
+            <button type="button" class="cita-place-btn" data-place="domicilio" role="radio" aria-checked="false">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z"/></svg>
+              <div class="cita-place-info">
+                <div class="cita-place-title">A domicilio</div>
+                <div class="cita-place-sub">Te visitamos en tu casa o evento</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== Bloque "Tu dirección" (solo si elige domicilio) ===== -->
+        <div id="cf-address-block" class="form-address-block" style="display:none;">
+          <div class="form-row">
+            <label class="form-label" for="cf-address-input">Tu dirección <span class="req">*</span></label>
+            <button type="button" id="cf-use-location" class="cf-use-location-btn">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="22" y1="12" x2="19" y2="12"/><line x1="5" y1="12" x2="2" y2="12"/></svg>
+              <span>Usar mi ubicación actual</span>
+            </button>
+            <div class="cf-autocomplete-wrap">
+              <input type="text" id="cf-address-input" name="direccion" autocomplete="off" placeholder="Escribe tu calle, colonia o pega link de Maps" />
+              <div id="cf-address-suggestions" class="cf-autocomplete-list" role="listbox"></div>
+              <div id="cf-address-loading" class="cf-autocomplete-loading">Buscando…</div>
+            </div>
+            <div class="cf-address-hint">Tip: empieza a escribir tu calle o pega un link de Google Maps</div>
+          </div>
+          <div class="form-row">
+            <label class="form-label" for="cf-zona">Zona / Colonia <span class="opt">(opcional)</span></label>
+            <input type="text" id="cf-zona" name="zona_colonia" placeholder="Ej. SM 27, Av. Bonampak" autocomplete="off" />
+          </div>
+          <div id="cf-map-preview" class="cf-map-preview" style="display:none;">
+            <iframe id="cf-map-iframe" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+          </div>
+        </div>
+
         <div id="cf-services-chip" class="form-chip"></div>
         <div id="cf-edit-data" style="display:none; text-align:center; margin: -8px 0 8px; font-size: 12px;">
           <a href="#" onclick="window._formUserData={}; document.getElementById('cf-firstname').value=''; document.getElementById('cf-lastname').value=''; var p=document.getElementById('cf-phone'); if(p) p.value=''; var e=document.getElementById('cf-email'); if(e) e.value=''; this.parentElement.style.display='none'; return false;" style="color: var(--brown-light); text-decoration: underline;">¿Datos incorrectos? Editar</a>
@@ -5943,6 +6135,191 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   // El usuario llena solo lo que quiere. Email/teléfono son opcionales (al menos uno).
   // Al submit, se POSTea a n8n exentia-reserva (best-effort) y se abre modal-choice
   // con dos opciones: WhatsApp o Reservar fecha (calendario GHL nativo con autofill).
+  // ===== UBICACIÓN DE LA CITA: toggle, geolocation, autocomplete Nominatim =====
+  var citaPlace = { mode: 'sucursal', address: '', mapsUrl: '', zona: '', lat: null, lng: null };
+  var _addrDebounce = null;
+
+  function wireCitaPlace() {
+    var btns = document.querySelectorAll('.cita-place-btn');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        var place = this.getAttribute('data-place');
+        btns.forEach(function(x){
+          x.classList.remove('active');
+          x.setAttribute('aria-checked', 'false');
+        });
+        this.classList.add('active');
+        this.setAttribute('aria-checked', 'true');
+        citaPlace.mode = place;
+        var addrBlock = document.getElementById('cf-address-block');
+        if (addrBlock) addrBlock.style.display = (place === 'domicilio') ? 'block' : 'none';
+      });
+    });
+
+    // Botón "Usar mi ubicación actual"
+    var locBtn = document.getElementById('cf-use-location');
+    if (locBtn) {
+      locBtn.addEventListener('click', function(){
+        if (!navigator.geolocation) {
+          alert('Tu navegador no soporta geolocalización. Escribe la dirección manualmente.');
+          return;
+        }
+        locBtn.classList.add('loading');
+        locBtn.querySelector('span').textContent = 'Obteniendo ubicación…';
+        navigator.geolocation.getCurrentPosition(function(pos){
+          var lat = pos.coords.latitude.toFixed(6);
+          var lng = pos.coords.longitude.toFixed(6);
+          citaPlace.lat = lat;
+          citaPlace.lng = lng;
+          citaPlace.mapsUrl = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+          // Reverse geocode con Nominatim
+          fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json&accept-language=es', {
+            headers: { 'Accept': 'application/json' }
+          }).then(function(r){ return r.json(); }).then(function(j){
+            var addr = j && j.display_name ? j.display_name : (lat + ', ' + lng);
+            document.getElementById('cf-address-input').value = addr;
+            citaPlace.address = addr;
+            // Autocompleta zona si OSM la devuelve
+            if (j && j.address) {
+              var zona = j.address.suburb || j.address.neighbourhood || j.address.city_district || '';
+              if (zona) {
+                var z = document.getElementById('cf-zona');
+                if (z && !z.value) { z.value = zona; citaPlace.zona = zona; }
+              }
+            }
+            showMapPreview(lat, lng);
+          }).catch(function(){
+            document.getElementById('cf-address-input').value = lat + ', ' + lng;
+            citaPlace.address = lat + ', ' + lng;
+            showMapPreview(lat, lng);
+          }).finally(function(){
+            locBtn.classList.remove('loading');
+            locBtn.querySelector('span').textContent = 'Usar mi ubicación actual';
+          });
+        }, function(err){
+          locBtn.classList.remove('loading');
+          locBtn.querySelector('span').textContent = 'Usar mi ubicación actual';
+          alert('No pudimos obtener tu ubicación: ' + (err.message || 'permiso denegado'));
+        }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+      });
+    }
+
+    // Autocomplete con Nominatim al escribir
+    var addrInput = document.getElementById('cf-address-input');
+    var addrList = document.getElementById('cf-address-suggestions');
+    var addrLoad = document.getElementById('cf-address-loading');
+    if (addrInput && addrList) {
+      addrInput.addEventListener('input', function(){
+        var q = this.value.trim();
+        citaPlace.address = q;
+        // Si pega un link de maps, extraemos coords si están
+        var mapsMatch = q.match(/maps\.google\.com|google\.com\/maps|maps\.app\.goo\.gl/i);
+        if (mapsMatch) {
+          citaPlace.mapsUrl = q;
+          var coordsMatch = q.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) || q.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+          if (coordsMatch) {
+            citaPlace.lat = coordsMatch[1];
+            citaPlace.lng = coordsMatch[2];
+            showMapPreview(coordsMatch[1], coordsMatch[2]);
+          }
+          addrList.classList.remove('show');
+          return;
+        }
+        if (q.length < 4) {
+          addrList.classList.remove('show');
+          if (addrLoad) addrLoad.classList.remove('show');
+          return;
+        }
+        if (_addrDebounce) clearTimeout(_addrDebounce);
+        if (addrLoad) addrLoad.classList.add('show');
+        _addrDebounce = setTimeout(function(){
+          fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q + ' Cancún') + '&format=json&countrycodes=mx&limit=6&addressdetails=1&accept-language=es', {
+            headers: { 'Accept': 'application/json' }
+          }).then(function(r){ return r.json(); }).then(function(arr){
+            if (addrLoad) addrLoad.classList.remove('show');
+            renderAddrSuggestions(arr || []);
+          }).catch(function(){
+            if (addrLoad) addrLoad.classList.remove('show');
+          });
+        }, 350);
+      });
+      // Cerrar lista al click fuera
+      document.addEventListener('click', function(e){
+        if (!addrList.contains(e.target) && e.target !== addrInput) addrList.classList.remove('show');
+      });
+    }
+
+    var zonaInput = document.getElementById('cf-zona');
+    if (zonaInput) {
+      zonaInput.addEventListener('input', function(){ citaPlace.zona = this.value.trim(); });
+    }
+  }
+
+  function renderAddrSuggestions(arr) {
+    var list = document.getElementById('cf-address-suggestions');
+    if (!list) return;
+    if (!arr.length) {
+      list.innerHTML = '<div class="cf-autocomplete-item" style="color:var(--text-light);cursor:default">Sin resultados — sigue escribiendo o pega un link de Maps</div>';
+      list.classList.add('show');
+      return;
+    }
+    list.innerHTML = arr.map(function(r, i){
+      var parts = (r.display_name || '').split(',');
+      var main = parts[0] || r.display_name;
+      var sub = parts.slice(1, 3).join(',').trim();
+      return '<div class="cf-autocomplete-item" data-idx="' + i + '" data-lat="' + r.lat + '" data-lng="' + r.lon + '" data-full="' + (r.display_name || '').replace(/"/g, '&quot;') + '">'
+        + '<span class="ac-main">' + main + '</span>'
+        + (sub ? '<div class="ac-sub">' + sub + '</div>' : '')
+        + '</div>';
+    }).join('');
+    list.classList.add('show');
+    list.querySelectorAll('.cf-autocomplete-item').forEach(function(item){
+      item.addEventListener('click', function(){
+        var full = this.getAttribute('data-full');
+        var lat = this.getAttribute('data-lat');
+        var lng = this.getAttribute('data-lng');
+        if (!lat) return;
+        document.getElementById('cf-address-input').value = full;
+        citaPlace.address = full;
+        citaPlace.lat = lat;
+        citaPlace.lng = lng;
+        citaPlace.mapsUrl = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+        list.classList.remove('show');
+        showMapPreview(lat, lng);
+      });
+    });
+  }
+
+  function showMapPreview(lat, lng) {
+    var box = document.getElementById('cf-map-preview');
+    var iframe = document.getElementById('cf-map-iframe');
+    if (!box || !iframe || !lat || !lng) return;
+    iframe.src = 'https://www.google.com/maps?q=' + lat + ',' + lng + '&z=16&output=embed';
+    box.style.display = 'block';
+  }
+
+  function resetCitaPlace() {
+    citaPlace = { mode: 'sucursal', address: '', mapsUrl: '', zona: '', lat: null, lng: null };
+    document.querySelectorAll('.cita-place-btn').forEach(function(b, i){
+      b.classList.toggle('active', i === 0);
+      b.setAttribute('aria-checked', i === 0 ? 'true' : 'false');
+    });
+    var addrBlock = document.getElementById('cf-address-block');
+    if (addrBlock) addrBlock.style.display = 'none';
+    var addrInput = document.getElementById('cf-address-input');
+    if (addrInput) addrInput.value = '';
+    var zonaInput = document.getElementById('cf-zona');
+    if (zonaInput) zonaInput.value = '';
+    var mapBox = document.getElementById('cf-map-preview');
+    if (mapBox) mapBox.style.display = 'none';
+  }
+
+  // Wire on DOM ready
+  if (document.readyState !== 'loading') wireCitaPlace();
+  else document.addEventListener('DOMContentLoaded', wireCitaPlace);
+
+  window.citaPlace = citaPlace;
+
   function openFormModal(mode) {
     mode = mode === 'calendar' ? 'calendar' : 'default';
     var modal = document.getElementById('modal-form');
@@ -6093,6 +6470,19 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         }
       }
     }
+    // Validación: si es a domicilio, requiere dirección
+    if (citaPlace.mode === 'domicilio') {
+      var addrVal = (document.getElementById('cf-address-input') || {}).value || '';
+      addrVal = addrVal.trim();
+      if (!addrVal) {
+        err.textContent = 'Necesitamos tu dirección para el servicio a domicilio.';
+        err.style.display = 'block';
+        try { document.getElementById('cf-address-input').focus(); } catch(_){}
+        return false;
+      }
+      citaPlace.address = addrVal;
+    }
+
     err.style.display = 'none';
 
     // Normalizar phone a E.164 (solo dígitos, prefijo MX 52 si falta).
@@ -6135,7 +6525,14 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             servicios: (cart || []).map(function(s){ return { slug: s }; }),
             notas: '',
             lead_ref: leadRef,
-            mode: isCalendar ? 'calendar' : 'whatsapp'
+            mode: isCalendar ? 'calendar' : 'whatsapp',
+            // ===== Ubicación de la cita (sucursal vs domicilio) =====
+            tipo_cita: citaPlace.mode,
+            direccion: citaPlace.address || '',
+            direccion_maps_url: citaPlace.mapsUrl || '',
+            zona_colonia: citaPlace.zona || '',
+            lat: citaPlace.lat || '',
+            lng: citaPlace.lng || ''
           })
         }).then(function(r){ return r.json(); }).then(function(j){
           if (j && j.booking_code) window._bookingCode = j.booking_code;
