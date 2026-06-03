@@ -185,27 +185,47 @@ de uñas elegido, se cobra al pagar".
 
 
 ────────────────────────────────────────────────────────
-4) PROMOCIONES (de mensaje anterior — sin respuesta aún)
+4) PROMOCIONES
 ────────────────────────────────────────────────────────
 
-4.1 Promo Diva Spa
-    - PDF mockup: 2 servicios ($2,650) Masaje + Facial
-    - Word: 4 servicios ($2,890) Manicura + Pedicura + Masaje + Limpieza
+ESTADO ACTUAL EN LA PÁGINA WEB (2026-06-03):
+  - Diva Spa: PUBLICADA con info confirmada del documento de Yaz
+    (Masaje Exentia 50 min + Facial Orgánico 50 min,
+    antes $3,100 ahora $2,650).
+  - 2 más 1: cambiada a placeholder "Próximamente" con CTA a WhatsApp.
+    No se muestran precios inventados ni servicios falsos.
+  - Promo Papá: cambiada a placeholder "Promo del mes — Próximamente"
+    con CTA a WhatsApp.
+
+LO QUE NECESITAMOS DE YAZ PARA COMPLETAR:
+
+4.1 Promo Diva Spa — CONFIRMAR cuál versión
+    - El documento Word menciona 4 servicios ($2,890): Manicura +
+      Pedicura + Masaje + Limpieza Facial.
+    - El PDF mockup solo muestra 2 servicios ($2,650).
+    - Actualmente publicada la versión PDF (2 servicios).
     - ¿Cuál es la correcta?
 
-4.2 Promo "2 más 1"
-    - Solo aparece en PDF mockup. ¿Está vigente?
-    - Necesitamos: servicios incluidos, precio normal, precio promo,
-      vigencia y condiciones.
+4.2 Promo "2 más 1" — ¿VIGENTE?
+    - Solo aparece en PDF mockup, sin detalles.
+    - Si está vigente: ¿qué servicios incluye? Precio normal,
+      precio promo, vigencia y condiciones.
 
-4.3 Promo Papá
-    - Solo aparece en PDF mockup. ¿Está vigente?
-    - El mockup muestra imagen de hombre en barbería pero el texto
-      dice "Spa para mamá + Spa Kids para peque". Confirmar.
+4.3 Promo Papá — ¿VIGENTE?
+    - Solo aparece en PDF mockup. Texto e imagen se contradicen
+      (imagen muestra barbería, texto dice "mamá + kids").
+    - ¿Existe esta promo? Si sí: descripción real, servicios,
+      precios, condiciones y vigencia.
 
-4.4 Promo 3+1
+4.4 Promo 3+1 — ¿VIGENTE?
     - Mencionada en Word: "Elige 3 servicios y el de menor valor va
-      gratis". ¿Sigue vigente? ¿La agregamos a la página?
+      gratis". ¿Sigue vigente? ¿La agregamos como 4ta card?
+
+4.5 ¿Otras promociones activas?
+    - ¿Hay promos por temporada (San Valentín, Día de la Madre,
+      Buen Fin, Navidad)?
+    - ¿Promo de cumpleaños del cliente?
+    - ¿Promo de "Trae a una amiga"?
 
 
 ────────────────────────────────────────────────────────

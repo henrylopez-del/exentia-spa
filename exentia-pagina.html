@@ -524,6 +524,73 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     transform: translateY(-6px);
     box-shadow: 0 24px 48px var(--shadow-lg);
   }
+  /* === Placeholder "Próximamente" para promos sin info confirmada === */
+  .promo-card.coming-soon {
+    background: linear-gradient(180deg, var(--cream-soft) 0%, var(--white) 100%);
+    border: 1px dashed rgba(176,169,111,0.45);
+    box-shadow: 0 2px 14px rgba(130,96,64,0.06);
+  }
+  .promo-card.coming-soon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(130,96,64,0.1);
+  }
+  .promo-card.coming-soon .promo-img {
+    background-color: rgba(176,169,111,0.12);
+    background-blend-mode: luminosity;
+    filter: grayscale(0.35) brightness(1.05);
+    opacity: 0.85;
+  }
+  .promo-card.coming-soon .promo-img::after {
+    background: linear-gradient(180deg, rgba(242,218,178,0.0) 0%, rgba(242,218,178,0.45) 100%);
+  }
+  .promo-card.coming-soon .promo-soon-tag {
+    position: absolute;
+    top: 16px; left: 16px;
+    background: var(--brown);
+    color: var(--cream);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font: 700 10px 'Lato', sans-serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(130,96,64,0.25);
+  }
+  .promo-card.coming-soon .promo-body { padding-top: 22px; }
+  .promo-card.coming-soon h3 { color: var(--brown); opacity: 0.9; }
+  .promo-card.coming-soon .promo-soon-msg {
+    font: 400 13px 'Lato', sans-serif;
+    color: var(--text-light);
+    line-height: 1.55;
+    margin: 8px 0 18px;
+    padding: 14px 16px;
+    background: rgba(176,169,111,0.08);
+    border-left: 3px solid var(--olive);
+    border-radius: 6px;
+  }
+  .promo-card.coming-soon .promo-soon-msg b { color: var(--brown); font-weight: 700; }
+  .promo-card.coming-soon .promo-soon-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    color: var(--olive-dark);
+    border: 1.5px solid var(--olive);
+    padding: 11px 18px;
+    border-radius: 100px;
+    font: 700 11px 'Lato', sans-serif;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .promo-card.coming-soon .promo-soon-cta:hover {
+    background: var(--olive);
+    color: var(--white);
+    transform: translateY(-1px);
+  }
+  .promo-card.coming-soon .promo-soon-cta svg { width: 14px; height: 14px; }
   .promo-tag {
     position: absolute;
     top: 16px; left: 16px;
@@ -4173,45 +4240,32 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             </div>
           </div>
         </article>
-        <article class="promo-card">
+        <article class="promo-card coming-soon">
+          <span class="promo-soon-tag">Próximamente</span>
           <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/2f85d6c7-2bf4-4180-a930-4d9d6c27ded9.webp')"></div>
           <div class="promo-body">
             <h3>2 más 1</h3>
-            <p class="promo-desc">Cabello, manos y maquillaje listo. Sales del salón preparada para esa ocasión especial.</p>
-            <ul class="promo-list">
-              <li>Corte y peinado</li>
-              <li>Manicura Exentia con Gel</li>
-              <li>Maquillaje Social</li>
-            </ul>
-            <div class="promo-foot">
-              <div class="promo-prices">
-                <span class="promo-old">$3,240</span>
-                <span class="promo-new">$2,750</span>
-              </div>
-              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
-            </div>
+            <p class="promo-soon-msg">Estamos terminando los <b>detalles</b> de esta promoción con el equipo. Si te interesa, escríbenos y te compartimos los servicios incluidos y el precio en cuanto estén confirmados.</p>
+            <a href="https://wa.me/529984803595?text=Hola%2C%20me%20interesa%20conocer%20m%C3%A1s%20de%20la%20promo%20%222%20m%C3%A1s%201%22%20de%20Exentia." target="_blank" rel="noopener noreferrer" class="promo-soon-cta">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg>
+              Pregúntanos por WhatsApp
+            </a>
           </div>
         </article>
-        <article class="promo-card">
+        <article class="promo-card coming-soon">
+          <span class="promo-soon-tag">Próximamente</span>
           <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/4fb8f090-157f-4e19-a426-d3c72510b10f.webp')"></div>
           <div class="promo-body">
-            <h3>Promo Papá</h3>
-            <p class="promo-desc">Spa para mamá y experiencia SpaKids para la peque. Tiempo de calidad en paralelo.</p>
-            <ul class="promo-list">
-              <li>Masaje Exentia (mamá)</li>
-              <li>Spa Kids (peque)</li>
-            </ul>
-            <div class="promo-foot">
-              <div class="promo-prices">
-                <span class="promo-old">$3,100</span>
-                <span class="promo-new">$2,490</span>
-              </div>
-              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
-            </div>
+            <h3>Promo del mes</h3>
+            <p class="promo-soon-msg">Tenemos una <b>promo especial</b> en preparación. Si te interesa, escríbenos por WhatsApp y te avisamos en cuanto esté lista con todos los detalles y precio.</p>
+            <a href="https://wa.me/529984803595?text=Hola%2C%20me%20interesa%20la%20promo%20del%20mes%20de%20Exentia." target="_blank" rel="noopener noreferrer" class="promo-soon-cta">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg>
+              Pregúntanos por WhatsApp
+            </a>
           </div>
         </article>
       </div>
-      <p class="promos-disclaimer">Promociones de muestra. Confirmamos disponibilidad y combinación al reservar.</p>
+      <p class="promos-disclaimer">Los precios mostrados son finales con descuento. Otras promociones están en confirmación con el equipo.</p>
     </div>
   </section>
 
