@@ -4990,8 +4990,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           <input type="tel" id="cf-phone" name="phone" placeholder="998 123 4567" autocomplete="tel">
         </div>
 
-        <!-- ===== UBICACIÓN DE LA CITA (sucursal vs domicilio) ===== -->
-        <div class="form-row">
+        <!-- ===== UBICACIÓN DE LA CITA (sucursal vs domicilio) — solo en modo default, no en calendar ===== -->
+        <div class="form-row only-default">
           <label class="form-label">¿Dónde quieres tu cita?</label>
           <div class="cita-place-toggle" role="radiogroup" aria-label="Ubicación de la cita">
             <button type="button" class="cita-place-btn active" data-place="sucursal" role="radio" aria-checked="true">
@@ -5011,8 +5011,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           </div>
         </div>
 
-        <!-- ===== Bloque "Tu dirección" (V1: mapa full-width arriba + campos debajo) ===== -->
-        <div id="cf-address-block" class="form-address-block" style="display:none;">
+        <!-- ===== Bloque "Tu dirección" (V1: mapa full-width arriba + campos debajo) — solo en modo default ===== -->
+        <div id="cf-address-block" class="form-address-block only-default" style="display:none;">
           <!-- Barra de búsqueda + Mi ubicación -->
           <div class="address-toolbar">
             <div class="cf-autocomplete-wrap">
@@ -5075,7 +5075,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         </div>
         <div id="cf-error" class="form-error" style="display:none;"></div>
         <button type="submit" class="btn" id="cf-submit" style="width:100%; justify-content:center;">
-          <span class="only-default">Continuar a WhatsApp</span>
+          <span class="only-default">Continuar</span>
           <span class="only-calendar">Ir al calendario</span>
         </button>
         <p class="form-fineprint">No compartimos tus datos con nadie.</p>
@@ -7314,6 +7314,47 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     el.innerHTML = '';
   }
 
+  // Refresca el estado visual de TODOS los botones [data-add-svc] en la página
+  // (treatment-book de la vista detalle de servicios). Usado tras add/remove de cart.
+  function refreshAddSvcButtons() {
+    document.querySelectorAll('[data-add-svc]').forEach(function(btn){
+      var svcName = btn.dataset.addSvc;
+      if (!svcName) return;
+      var entry = cart.find(function(c){ return c === svcName || c.indexOf(svcName + ' · ') === 0; });
+      var inCart = !!entry;
+      // Buscar info del servicio para decidir texto del botón
+      var hasAddons = false, hasVariants = false;
+      if (window.SERVICES) {
+        for (var k in window.SERVICES) {
+          var t = window.SERVICES[k].treatments && window.SERVICES[k].treatments.find(function(x){ return x.name === svcName; });
+          if (t) {
+            hasAddons = !!(t.hasAddons && window.SERVICES[k].addons);
+            hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
+            break;
+          }
+        }
+      }
+      if (inCart) {
+        // Mostrar lo que eligió si hay add-ons o variant
+        var extras = '';
+        if (entry.indexOf(' · ') !== -1) {
+          extras = ' · ' + entry.split(' · ').slice(1).join(', ');
+        }
+        btn.textContent = 'Agregado' + extras;
+        btn.style.background = 'var(--cream)';
+        btn.style.color = 'var(--brown)';
+        btn.style.borderColor = 'var(--cream)';
+      } else {
+        btn.textContent = hasAddons ? 'Personalizar' : 'Reservar';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }
+    });
+    // También persistir
+    try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(_){}
+  }
+
   function confirmAddons() {
     if (!axState) return;
     var key = buildAddonsCartKey();
@@ -7325,9 +7366,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     cart.push(key);
     if (typeof renderCartBadge === 'function') renderCartBadge();
     if (typeof updateSvBottom === 'function') updateSvBottom();
+    if (typeof updateBadge === 'function') updateBadge();
     closeAddonsDrawer();
-    // Re-render lista para reflejar selección
+    // Re-render lista del popup para reflejar selección
     if (typeof renderSelectView === 'function') renderSelectView();
+    // Y actualizar botones de la vista detalle también
+    refreshAddSvcButtons();
   }
 
   function toggleSimpleCart(name) {
@@ -7335,8 +7379,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     if (idx === -1) cart.push(name); else cart.splice(idx, 1);
     if (typeof renderCartBadge === 'function') renderCartBadge();
     if (typeof updateSvBottom === 'function') updateSvBottom();
+    if (typeof updateBadge === 'function') updateBadge();
     if (typeof renderSelectView === 'function') renderSelectView();
+    refreshAddSvcButtons();
   }
+
+  window.refreshAddSvcButtons = refreshAddSvcButtons;
 
   // Expone funciones globales para onclick inline
   window.closeAddonsDrawer = closeAddonsDrawer;
