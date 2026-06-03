@@ -1,3 +1,4 @@
+<meta charset="UTF-8">
 <style>
 #exentia-dash-iframe {
   position: fixed !important;
@@ -267,6 +268,31 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
 #ex-dash .hist-metodo.otro { background: var(--gray-100); color: var(--gray-600); }
 #ex-dash .hist-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap; }
 #ex-dash .hist-meta .dot-sep { color: var(--text-subtle); }
+
+/* === Modal Ubicación === */
+#ex-dash .ubi-card { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; padding: 12px 14px; background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--r-md); }
+#ex-dash .ubi-row { display: grid; grid-template-columns: 100px 1fr; gap: 8px; align-items: baseline; }
+#ex-dash .ubi-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+#ex-dash .ubi-value { font-size: 13px; color: var(--text); font-weight: 500; }
+#ex-dash .ubi-addr-card { display: flex; gap: 12px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 14px; }
+#ex-dash .ubi-addr-icon { flex-shrink: 0; width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border); border-radius: 50%; display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+#ex-dash .ubi-addr-info { flex: 1; min-width: 0; }
+#ex-dash .ubi-addr-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+#ex-dash .ubi-addr-text { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; word-break: break-word; margin-bottom: 4px; }
+#ex-dash .ubi-addr-extras { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+#ex-dash .ubi-no-domicilio { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: var(--r-md); color: var(--blue-700); margin-bottom: 14px; }
+#ex-dash .ubi-no-domicilio b { display: block; font-size: 14px; margin-bottom: 2px; }
+#ex-dash .ubi-no-domicilio span { font-size: 12px; }
+#ex-dash .ubi-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+#ex-dash .ubi-action-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; font-size: 12px; font-weight: 600; text-decoration: none; }
+#ex-dash .ubi-preview { background: #f7f7f5; border: 1px dashed var(--border); border-radius: var(--r-md); padding: 12px; }
+#ex-dash .ubi-preview-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+#ex-dash .ubi-preview-text { font-family: 'SF Mono', Menlo, monospace; font-size: 11.5px; line-height: 1.5; color: var(--text); white-space: pre-wrap; word-break: break-word; margin: 0; }
+
+/* Boton Ubicacion en la fila de la tabla */
+#ex-dash .btn.btn-map { background: #fff; color: #826040; border-color: #d4d0ab; padding-left: 8px; padding-right: 8px; }
+#ex-dash .btn.btn-map:hover { background: #faf0dc; border-color: #b5b062; }
+#ex-dash .btn.btn-map svg { vertical-align: middle; }
 #ex-dash .hist-notas { font-size: 12px; color: var(--text-muted); margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
 
 @media (max-width: 1024px) {
@@ -460,6 +486,76 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     </div>
   </div>
 
+  <!-- MODAL: UBICACIÓN DEL CLIENTE (cita a domicilio) -->
+  <div class=&quot;modal-overlay&quot; id=&quot;modal-ubicacion&quot;>
+    <div class=&quot;modal&quot;>
+      <div class=&quot;modal-head&quot;>
+        <h3 id=&quot;t-modal-ubi-title&quot;></h3>
+        <button class=&quot;modal-close&quot; data-close=&quot;modal-ubicacion&quot; type=&quot;button&quot;>
+          <svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><line x1=&quot;18&quot; y1=&quot;6&quot; x2=&quot;6&quot; y2=&quot;18&quot;/><line x1=&quot;6&quot; y1=&quot;6&quot; x2=&quot;18&quot; y2=&quot;18&quot;/></svg>
+        </button>
+      </div>
+      <div class=&quot;modal-body&quot;>
+        <div class=&quot;ubi-card&quot;>
+          <div class=&quot;ubi-row&quot;>
+            <div class=&quot;ubi-label&quot; id=&quot;t-ubi-cli-label&quot;></div>
+            <div class=&quot;ubi-value&quot; id=&quot;ubi-cli-nombre&quot;></div>
+          </div>
+          <div class=&quot;ubi-row&quot;>
+            <div class=&quot;ubi-label&quot; id=&quot;t-ubi-tel-label&quot;></div>
+            <div class=&quot;ubi-value&quot; id=&quot;ubi-cli-tel&quot;></div>
+          </div>
+          <div class=&quot;ubi-row&quot;>
+            <div class=&quot;ubi-label&quot; id=&quot;t-ubi-fecha-label&quot;></div>
+            <div class=&quot;ubi-value&quot; id=&quot;ubi-fecha&quot;></div>
+          </div>
+          <div class=&quot;ubi-row&quot;>
+            <div class=&quot;ubi-label&quot; id=&quot;t-ubi-svc-label&quot;></div>
+            <div class=&quot;ubi-value&quot; id=&quot;ubi-servicios&quot;></div>
+          </div>
+        </div>
+        <div class=&quot;ubi-addr-card&quot;>
+          <div class=&quot;ubi-addr-icon&quot;>
+            <svg viewBox=&quot;0 0 24 24&quot; width=&quot;20&quot; height=&quot;20&quot; fill=&quot;#EA4335&quot; stroke=&quot;#EA4335&quot;><path d=&quot;M12 2C8 2 5 5 5 9c0 5.5 7 13 7 13s7-7.5 7-13c0-4-3-7-7-7z&quot;/><circle cx=&quot;12&quot; cy=&quot;9&quot; r=&quot;2.5&quot; fill=&quot;#fff&quot;/></svg>
+          </div>
+          <div class=&quot;ubi-addr-info&quot;>
+            <div class=&quot;ubi-addr-label&quot; id=&quot;t-ubi-addr-label&quot;></div>
+            <div class=&quot;ubi-addr-text&quot; id=&quot;ubi-addr-text&quot;></div>
+            <div class=&quot;ubi-addr-extras&quot; id=&quot;ubi-addr-extras&quot;></div>
+          </div>
+        </div>
+        <div class=&quot;ubi-no-domicilio&quot; id=&quot;ubi-no-domicilio&quot; style=&quot;display:none&quot;>
+          <svg viewBox=&quot;0 0 24 24&quot; width=&quot;28&quot; height=&quot;28&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;1.5&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><path d=&quot;M3 21h18&quot;/><path d=&quot;M5 21V7l7-4 7 4v14&quot;/><path d=&quot;M9 21v-6h6v6&quot;/></svg>
+          <div>
+            <b id=&quot;t-ubi-sucursal-title&quot;></b>
+            <span id=&quot;t-ubi-sucursal-sub&quot;></span>
+          </div>
+        </div>
+        <div class=&quot;ubi-actions&quot;>
+          <a id=&quot;ubi-maps-link&quot; href=&quot;#&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;btn btn-blue ubi-action-btn&quot;>
+            <svg viewBox=&quot;0 0 24 24&quot; width=&quot;14&quot; height=&quot;14&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><path d=&quot;M18 8a6 6 0 0 0-12 0c0 7 6 13 6 13s6-6 6-13z&quot;/><circle cx=&quot;12&quot; cy=&quot;8&quot; r=&quot;2&quot;/></svg>
+            <span id=&quot;t-ubi-btn-maps&quot;></span>
+          </a>
+          <button type=&quot;button&quot; class=&quot;btn btn-primary ubi-action-btn&quot; id=&quot;ubi-copy-btn&quot;>
+            <svg viewBox=&quot;0 0 24 24&quot; width=&quot;14&quot; height=&quot;14&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><rect x=&quot;9&quot; y=&quot;9&quot; width=&quot;13&quot; height=&quot;13&quot; rx=&quot;2&quot;/><path d=&quot;M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1&quot;/></svg>
+            <span id=&quot;t-ubi-btn-copy&quot;></span>
+          </button>
+          <a id=&quot;ubi-whatsapp-link&quot; href=&quot;#&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; class=&quot;btn btn-success ubi-action-btn&quot;>
+            <svg viewBox=&quot;0 0 24 24&quot; width=&quot;14&quot; height=&quot;14&quot; fill=&quot;currentColor&quot;><path d=&quot;M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2zm5.5 14.3c-.2.6-1.2 1.2-1.7 1.2s-1.2 0-2-.3a8.4 8.4 0 0 1-3.6-2.7c-1-1.2-1.7-2.6-2-3-.2-.5-.6-1.7.2-2.5.3-.3.6-.4.8-.4l.7.1c.2 0 .4-.1.5.4l.7 1.7c0 .1.1.3 0 .4l-.4.6c-.1.2-.3.3-.1.5l1.1 1.8c.7 1 1.7 1.5 2 1.6.1.1.3.1.4 0l.7-.8c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.5.3.1.2.1.7-.1 1.4z&quot;/></svg>
+            <span id=&quot;t-ubi-btn-whatsapp&quot;></span>
+          </a>
+        </div>
+        <div class=&quot;ubi-preview&quot;>
+          <div class=&quot;ubi-preview-label&quot; id=&quot;t-ubi-preview-label&quot;></div>
+          <pre class=&quot;ubi-preview-text&quot; id=&quot;ubi-preview-text&quot;></pre>
+        </div>
+      </div>
+      <div class=&quot;modal-foot&quot;>
+        <button type=&quot;button&quot; class=&quot;btn btn-secondary&quot; data-close=&quot;modal-ubicacion&quot;><span id=&quot;t-btn-cerrar-ubi&quot;></span></button>
+      </div>
+    </div>
+  </div>
+
   <div class=&quot;toast-container&quot; id=&quot;toast-container&quot;></div>
 </div>
 
@@ -487,7 +583,15 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     thName: 'Nombre', thServices: 'Servicios', thDate: 'Fecha', thTime: 'Hora', thStatus: 'Estado', thActions: 'Acciones',
     emptyToday: 'No hay citas programadas para hoy',
     noDate: 'Sin fecha',
-    btnAsistio: 'Asistió', btnNoAsistio: 'No vino', btnPago: 'Pagó', btnHistorial: 'Historial',
+    btnAsistio: 'Asistió', btnNoAsistio: 'No vino', btnPago: 'Pagó', btnHistorial: 'Historial', btnUbicacion: 'Ubicación',
+    modalUbiTitle: 'Ubicación del cliente',
+    ubiCliLabel: 'Cliente:', ubiTelLabel: 'Teléfono:', ubiFechaLabel: 'Cita:', ubiSvcLabel: 'Servicios:',
+    ubiAddrLabel: 'Dirección',
+    ubiBtnMaps: 'Abrir en Maps', ubiBtnCopy: 'Copiar para WhatsApp', ubiBtnWhatsapp: 'Enviar por WhatsApp',
+    ubiPreviewLabel: 'Orden de trabajo (para el equipo)',
+    ubiSucursalTitle: 'Cita en sucursal',
+    ubiSucursalSub: 'Este cliente eligió ir a Plaza Hive · Av. Huayacán, Cancún.',
+    toastCopied: 'Texto copiado al portapapeles', toastCopyError: 'No se pudo copiar — copia manualmente del cuadro de abajo',
     badgeReservo: 'Reservó', badgeConfirmado: 'Confirmado', badgeAsistio: 'Asistió', badgePagado: 'Pagado',
     badgeCancelado: 'Cancelado', badgeVencido: 'Vencido', badgeHoy: 'Hoy', badgeNoAsistio: 'No vino',
     estadoLabels: { reservo:'Reservó', asistio:'Asistió', pagado:'Pagado', no_asistio:'No vino' },
@@ -550,6 +654,20 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
   $('t-hist-total-label').textContent = T.histTotalLabel;
   $('t-hist-count-label').textContent = T.histCountLabel;
   $('t-btn-cerrar').textContent = T.btnCerrar;
+  // Modal Ubicación labels
+  $('t-modal-ubi-title').textContent = T.modalUbiTitle;
+  $('t-ubi-cli-label').textContent = T.ubiCliLabel;
+  $('t-ubi-tel-label').textContent = T.ubiTelLabel;
+  $('t-ubi-fecha-label').textContent = T.ubiFechaLabel;
+  $('t-ubi-svc-label').textContent = T.ubiSvcLabel;
+  $('t-ubi-addr-label').textContent = T.ubiAddrLabel;
+  $('t-ubi-btn-maps').textContent = T.ubiBtnMaps;
+  $('t-ubi-btn-copy').textContent = T.ubiBtnCopy;
+  $('t-ubi-btn-whatsapp').textContent = T.ubiBtnWhatsapp;
+  $('t-ubi-preview-label').textContent = T.ubiPreviewLabel;
+  $('t-ubi-sucursal-title').textContent = T.ubiSucursalTitle;
+  $('t-ubi-sucursal-sub').textContent = T.ubiSucursalSub;
+  $('t-btn-cerrar-ubi').textContent = T.btnCerrar;
 
   var metodos = [
     {k:'tarjeta', l:T.metodoTarjeta, emoji:'💳'},
@@ -672,6 +790,10 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     if(status === 'asistio' || status === 'pagado'){
       html += '<button class=' + Q + 'btn btn-blue' + Q + ' data-action=' + Q + 'pago' + Q + ' data-id=' + Q + b.id + Q + '>' + T.btnPago + '</button> ';
     }
+    // Botón Ubicación — siempre disponible para ver dirección + Maps (aunque sea sucursal)
+    html += '<button class=' + Q + 'btn btn-map' + Q + ' data-action=' + Q + 'ubicacion' + Q + ' data-id=' + Q + b.id + Q + ' title=' + Q + T.btnUbicacion + Q + '>';
+    html += '<svg viewBox=' + Q + '0 0 24 24' + Q + ' width=' + Q + '12' + Q + ' height=' + Q + '12' + Q + ' fill=' + Q + 'none' + Q + ' stroke=' + Q + 'currentColor' + Q + ' stroke-width=' + Q + '2' + Q + ' stroke-linecap=' + Q + 'round' + Q + ' stroke-linejoin=' + Q + 'round' + Q + '><path d=' + Q + 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z' + Q + '/><circle cx=' + Q + '12' + Q + ' cy=' + Q + '10' + Q + ' r=' + Q + '3' + Q + '/></svg>';
+    html += ' ' + T.btnUbicacion + '</button> ';
     if((b.num_pagos && b.num_pagos > 0) || status === 'pagado'){
       html += '<button class=' + Q + 'btn btn-history' + Q + ' data-action=' + Q + 'historial' + Q + ' data-id=' + Q + b.id + Q + '>';
       html += '<svg viewBox=' + Q + '0 0 24 24' + Q + ' fill=' + Q + 'none' + Q + ' stroke=' + Q + 'currentColor' + Q + ' stroke-width=' + Q + '2' + Q + '><circle cx=' + Q + '12' + Q + ' cy=' + Q + '12' + Q + ' r=' + Q + '10' + Q + '/><polyline points=' + Q + '12 6 12 12 16 14' + Q + '/></svg>';
@@ -870,6 +992,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     else if(action === 'no_asistio') window._exMarcarNoAsistio(id);
     else if(action === 'pago') window._exAbrirModalPago(id);
     else if(action === 'historial') window._exAbrirHistorial(id);
+    else if(action === 'ubicacion') window._exAbrirUbicacion(id);
   });
 
   function openModal(id){ var el = $(id); if(el) el.classList.add('open'); }
@@ -1025,6 +1148,138 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
     })
     .catch(function(err){ console.error(err); $('hist-list').innerHTML = '<div class=' + Q + 'hist-empty' + Q + '>' + T.toastError + '</div>'; });
   };
+
+  // ===== UBICACIÓN: muestra dirección, link de Maps, copia texto WhatsApp =====
+  function buildAddressLine(b) {
+    // Si hay direccion_libre, úsala; sino arma desde campos individuales o usa zona
+    if (b.direccion_libre && b.direccion_libre.trim()) return b.direccion_libre.trim();
+    var parts = [];
+    if (b.zona_colonia) parts.push(b.zona_colonia);
+    return parts.join(', ') || '—';
+  }
+
+  function isCitaDomicilio(b) {
+    if (b.modalidad === 'domicilio') return true;
+    if (b.direccion_maps_url && b.direccion_maps_url.trim()) return true;
+    if (b.direccion_libre && b.direccion_libre.trim()) return true;
+    return false;
+  }
+
+  function buildWhatsAppText(b, addr, mapsUrl) {
+    // Orden de trabajo para el equipo / terapeuta — formato interno, no para el cliente
+    var lines = [];
+    var modalidad = isCitaDomicilio(b) ? 'A DOMICILIO' : 'EN SUCURSAL';
+    lines.push('🎫 ' + (b.booking_code || 'SIN-FOLIO') + ' · ' + modalidad);
+    lines.push('👤 ' + (b.cliente_nombre || '—'));
+    if (b.cliente_telefono) {
+      // Formato +52 998 000 0099
+      var tel = String(b.cliente_telefono).replace(/\D/g,'');
+      if (tel.startsWith('52') && tel.length >= 12) {
+        tel = '+52 ' + tel.slice(2,5) + ' ' + tel.slice(5,8) + ' ' + tel.slice(8);
+      } else {
+        tel = '+' + tel;
+      }
+      lines.push('📱 ' + tel);
+    }
+    var fecha = b.fecha_agendada
+      ? new Date(b.fecha_agendada + 'T12:00:00').toLocaleDateString('es-MX', { timeZone: TZ, weekday:'short', day:'numeric', month:'short' })
+      : '';
+    var hora = b.hora_agendada ? formatTimeDisplay(b.hora_agendada) : '';
+    if (fecha) lines.push('📅 ' + fecha + (hora ? ' · ' + hora : ''));
+    var svcs = parseServices(b.servicios);
+    if (svcs && svcs !== '—') lines.push('💆 ' + svcs);
+    lines.push('');
+    if (isCitaDomicilio(b)) {
+      lines.push('📍 ' + (addr || '—'));
+      if (mapsUrl) lines.push('🗺️ ' + mapsUrl);
+      if (b.notas_cliente && b.notas_cliente.indexOf('Ref:') !== -1) {
+        var ref = b.notas_cliente.split('Ref:')[1] || '';
+        if (ref.trim()) lines.push('📝 Ref: ' + ref.replace(/\.$/,'').trim());
+      }
+    } else {
+      lines.push('📍 Plaza Hive · Av. Huayacán, Cancún');
+    }
+    return lines.join('\n');
+  }
+
+  window._exAbrirUbicacion = function(id){
+    var b = allBookings.filter(function(x){ return x.id === id; })[0];
+    if(!b){ showToast(T.toastError, 'error'); return; }
+    var addr = buildAddressLine(b);
+    var mapsUrl = b.direccion_maps_url || (b.latitud && b.longitud ? 'https://www.google.com/maps?q=' + b.latitud + ',' + b.longitud : '');
+    var isDomicilio = isCitaDomicilio(b);
+
+    // Cliente
+    $('ubi-cli-nombre').textContent = b.cliente_nombre || '—';
+    $('ubi-cli-tel').textContent = b.cliente_telefono || '—';
+    var fechaTxt = b.fecha_agendada ? new Date(b.fecha_agendada + 'T12:00:00').toLocaleDateString('es-MX', { timeZone: TZ, weekday:'long', day:'numeric', month:'long', year:'numeric' }) : '—';
+    var hora = b.hora_agendada ? formatTimeDisplay(b.hora_agendada) : '';
+    $('ubi-fecha').textContent = fechaTxt + (hora ? ' · ' + hora : '');
+    $('ubi-servicios').textContent = parseServices(b.servicios) || '—';
+
+    // Dirección o aviso de sucursal
+    if (isDomicilio && addr && addr !== '—') {
+      $('ubi-addr-text').textContent = addr;
+      var extras = '';
+      if (b.zona_colonia && addr.indexOf(b.zona_colonia) === -1) extras += b.zona_colonia;
+      if (b.notas_cliente && b.notas_cliente.indexOf('Ref:') !== -1) {
+        var ref = b.notas_cliente.split('Ref:')[1] || '';
+        if (ref.trim()) extras += (extras ? ' · ' : '') + 'Ref: ' + ref.replace(/\.$/,'').trim();
+      }
+      $('ubi-addr-extras').textContent = extras;
+      $('ubi-addr-extras').style.display = extras ? 'block' : 'none';
+      document.querySelector('.ubi-addr-card').style.display = 'flex';
+      $('ubi-no-domicilio').style.display = 'none';
+      var mapsHref = mapsUrl || ('https://maps.google.com/?q=' + encodeURIComponent(addr));
+      $('ubi-maps-link').href = mapsHref;
+      $('ubi-maps-link').style.display = 'inline-flex';
+    } else {
+      document.querySelector('.ubi-addr-card').style.display = 'none';
+      $('ubi-no-domicilio').style.display = 'flex';
+      $('ubi-maps-link').href = 'https://maps.google.com/?q=Exentia+Spa+Plaza+Hive+Cancun';
+      $('ubi-maps-link').style.display = 'inline-flex';
+    }
+
+    // Texto WhatsApp
+    var waText = buildWhatsAppText(b, addr, mapsUrl);
+    $('ubi-preview-text').textContent = waText;
+
+    // Botón WhatsApp se oculta — el mensaje es orden interna del equipo,
+    // se copia y se pega manualmente en el grupo de Whatsapp del staff
+    $('ubi-whatsapp-link').style.display = 'none';
+
+    // Botón copiar
+    $('ubi-copy-btn').onclick = function(){
+      var text = $('ubi-preview-text').textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function(){
+          showToast(T.toastCopied, 'success');
+        }).catch(function(){
+          fallbackCopy(text);
+        });
+      } else {
+        fallbackCopy(text);
+      }
+    };
+
+    openModal('modal-ubicacion');
+  };
+
+  function fallbackCopy(text){
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast(T.toastCopied, 'success');
+    } catch (e) {
+      showToast(T.toastCopyError, 'error');
+    }
+  }
 
   function showToast(msg, type){
     var tc = $('toast-container');
