@@ -110,18 +110,147 @@
   <div class="exf-steps">
     <div class="exf-step active" data-s="1"></div>
     <div class="exf-step" data-s="2"></div>
+    <div class="exf-step" data-s="3"></div>
+    <div class="exf-step" data-s="4"></div>
   </div>
 
   <div class="exf-err" id="exf-err"></div>
 
-  <!-- PASO 1: SERVICIOS + PREGUNTAS -->
+  <!-- PASO 1: DONDE? -->
   <div class="exf-section active" id="exf-s1">
+    <div class="exf-title">¿Donde deseas tu servicio?</div>
+    <div class="exf-desc">Selecciona si prefieres en nuestra sucursal o a domicilio</div>
+
+    <div class="exf-row full" style="margin-top: 24px;">
+      <div style="display: flex; gap: 16px;">
+        <label style="flex: 1; cursor: pointer; display: flex; align-items: center; padding: 16px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;" id="exf-loc-spa-label">
+          <input type="radio" name="exf-ubicacion" value="sucursal" id="exf-loc-spa" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;">
+          <span style="font-weight: 500; color: #3d2d1a;">En sucursal</span>
+        </label>
+        <label style="flex: 1; cursor: pointer; display: flex; align-items: center; padding: 16px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;" id="exf-loc-home-label">
+          <input type="radio" name="exf-ubicacion" value="domicilio" id="exf-loc-home" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;">
+          <span style="font-weight: 500; color: #3d2d1a;">A domicilio</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="exf-btns" style="margin-top: 32px;">
+      <button type="button" class="exf-btn exf-btn-p" onclick="exfGo(2)" id="exf-btn-paso1">Continuar</button>
+    </div>
+  </div>
+
+  <!-- PASO 2: CUANTAS PERSONAS? -->
+  <div class="exf-section" id="exf-s2">
+    <div class="exf-title">¿Cuantas personas?</div>
+    <div class="exf-desc">Selecciona la cantidad de personas que recibiran el servicio</div>
+
+    <div class="exf-row full" style="margin-top: 24px;">
+      <div style="display: flex; gap: 16px; flex-direction: column;">
+        <label style="cursor: pointer; display: flex; align-items: center; padding: 14px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;" id="exf-personas-1-label">
+          <input type="radio" name="exf-personas" value="1" id="exf-personas-1" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;">
+          <span style="font-weight: 500; color: #3d2d1a;">1 persona (Individual)</span>
+        </label>
+        <label style="cursor: pointer; display: flex; align-items: center; padding: 14px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;" id="exf-personas-2-label">
+          <input type="radio" name="exf-personas" value="2" id="exf-personas-2" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;">
+          <span style="font-weight: 500; color: #3d2d1a;">2 personas (Pareja)</span>
+        </label>
+        <label style="cursor: pointer; display: flex; align-items: center; padding: 14px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;" id="exf-personas-3-label">
+          <input type="radio" name="exf-personas" value="3+" id="exf-personas-3" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;">
+          <span style="font-weight: 500; color: #3d2d1a;">3 o mas personas (Grupo)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="exf-btns" style="margin-top: 32px;">
+      <button type="button" class="exf-btn exf-btn-s" onclick="exfGo(1)">Regresar</button>
+      <button type="button" class="exf-btn exf-btn-p" onclick="exfGo(3)" id="exf-btn-paso2">Continuar</button>
+    </div>
+  </div>
+
+  <!-- PASO 3: MODALIDAD (Si 2+ personas y domicilio) + FECHA/HORA + ZONA -->
+  <div class="exf-section" id="exf-s3">
+    <div class="exf-title">Detalles de tu cita</div>
+    <div class="exf-desc">Selecciona fecha, hora y zona de entrega</div>
+
+    <!-- Modalidad (condicional) -->
+    <div class="exf-cond show" id="exf-c-modalidad">
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 12px; font-weight: 500; color: #3d2d1a; margin-bottom: 10px;">¿Como prefieres recibir el servicio?</label>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label style="cursor: pointer; display: flex; align-items: flex-start; padding: 12px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;">
+            <input type="radio" name="exf-modalidad" value="simultaneo" id="exf-modalidad-sim" style="margin-right: 8px; margin-top: 2px; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-weight: 500; color: #3d2d1a;">Al mismo tiempo</span>
+          </label>
+          <label style="cursor: pointer; display: flex; align-items: flex-start; padding: 12px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;">
+            <input type="radio" name="exf-modalidad" value="turnos" id="exf-modalidad-tur" style="margin-right: 8px; margin-top: 2px; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-weight: 500; color: #3d2d1a;">Por turnos</span>
+          </label>
+          <label style="cursor: pointer; display: flex; align-items: flex-start; padding: 12px; border: 1.5px solid #e8dfc0; border-radius: 6px; background: #fff; transition: all 0.3s;">
+            <input type="radio" name="exf-modalidad" value="economica" id="exf-modalidad-eco" style="margin-right: 8px; margin-top: 2px; width: 18px; height: 18px; cursor: pointer;">
+            <span style="font-weight: 500; color: #3d2d1a;">Opcion mas economica</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fecha y Hora -->
+    <div class="exf-row">
+      <div class="exf-f">
+        <label>Fecha de la cita <span class="rq">*</span></label>
+        <input type="date" id="exf-fecha" />
+      </div>
+      <div class="exf-f">
+        <label>Hora de la cita <span class="rq">*</span></label>
+        <input type="time" id="exf-hora" />
+      </div>
+    </div>
+
+    <!-- Zona (condicional si domicilio) -->
+    <div class="exf-cond" id="exf-c-zona">
+      <div class="exf-row full"><div class="exf-f">
+        <label>Zona de domicilio <span class="rq">*</span></label>
+        <select id="exf-zona">
+          <option value="">Selecciona tu zona...</option>
+          <option value="1">Zona 1 - Centro (Verde) - $250 por terapeuta</option>
+          <option value="2">Zona 2 - Zona Hotelera 0-12.5km (Amarilla) - $350 por terapeuta</option>
+          <option value="3">Zona 3 - Zona Hotelera 12.5-22km (Rojo) - $400 por terapeuta</option>
+        </select>
+      </div></div>
+    </div>
+
+    <!-- Estimado de traslado -->
+    <div class="exf-cond" id="exf-c-traslado" style="margin-top: 16px;">
+      <div class="exf-chips">
+        <div class="label">Estimado de traslado</div>
+        <div style="font-size: 13px; color: #3d2d1a; padding: 8px 0;">
+          <span id="exf-traslado-text">Selecciona zona para ver estimado</span>
+          <p style="font-size: 11px; color: #8a7a66; margin-top: 6px;">Este es un estimado y sera confirmado por WhatsApp</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="exf-btns" style="margin-top: 32px;">
+      <button type="button" class="exf-btn exf-btn-s" onclick="exfGo(2)">Regresar</button>
+      <button type="button" class="exf-btn exf-btn-p" onclick="exfGo(4)" id="exf-btn-paso3">Continuar</button>
+    </div>
+  </div>
+
+  <!-- PASO 4 (anterior PASO 1): SERVICIOS + PREGUNTAS -->
+  <div class="exf-section" id="exf-s4">
     <div class="exf-title">Tu experiencia</div>
     <div class="exf-desc">Confirma tus servicios y responde unas preguntas rapidas</div>
 
     <div class="exf-chips">
       <div class="label">Servicios seleccionados</div>
       <div class="items" id="exf-chips"></div>
+    </div>
+
+    <!-- Complementos -->
+    <div style="margin-bottom: 20px; padding: 16px; background: #f3e4c7; border-radius: 6px;">
+      <div style="font-size: 12px; font-weight: 500; color: #9a9854; margin-bottom: 10px;">AGREGAR COMPLEMENTOS (OPCIONAL)</div>
+      <div id="exf-complementos-list" style="display: flex; flex-direction: column; gap: 8px;">
+        <!-- Populated by JS -->
+      </div>
     </div>
 
     <!-- Condicional: Masaje -->
@@ -164,12 +293,13 @@
     </div></div>
 
     <div class="exf-btns">
-      <button type="button" class="exf-btn exf-btn-p" onclick="exfGo(2)">Continuar</button>
+      <button type="button" class="exf-btn exf-btn-s" onclick="exfGo(3)">Regresar</button>
+      <button type="button" class="exf-btn exf-btn-p" onclick="exfGo(5)">Continuar</button>
     </div>
   </div>
 
-  <!-- PASO 2: DATOS PERSONALES -->
-  <div class="exf-section" id="exf-s2">
+  <!-- PASO 5: DATOS PERSONALES -->
+  <div class="exf-section" id="exf-s5">
     <div class="exf-title">Tus datos</div>
     <div class="exf-desc">Para confirmar tu reservacion</div>
 
@@ -188,7 +318,7 @@
     </div>
 
     <div class="exf-btns">
-      <button type="button" class="exf-btn exf-btn-s" onclick="exfGo(1)">Regresar</button>
+      <button type="button" class="exf-btn exf-btn-s" onclick="exfGo(4)">Regresar</button>
       <button type="button" class="exf-btn exf-btn-p" onclick="exfDoSubmit()" id="exf-sub">Reservar Cita</button>
     </div>
   </div>
@@ -204,19 +334,43 @@
 
 <script>
 (function() {
-  // ===== READ CART FROM LOCALSTORAGE =====
-  // Read services from URL params (sent by the page)
-  var cart = [];
+  // ===== STATE =====
+  var state = {
+    cart: [],
+    complementos: [],
+    ubicacion: null,
+    num_personas: null,
+    modalidad_atencion: null,
+    fecha_cita: null,
+    hora_cita: null,
+    zona: null
+  };
+
+  // ===== READ CART FROM URL PARAMS =====
   var params = new URLSearchParams(window.location.search);
   var urlSvc = params.get('servicios');
   if (urlSvc) {
-    cart = decodeURIComponent(urlSvc).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    state.cart = decodeURIComponent(urlSvc).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
   }
-  // Fallback: single service
   var single = params.get('servicio');
-  if (single && cart.length === 0) {
-    cart = [decodeURIComponent(single)];
+  if (single && state.cart.length === 0) {
+    state.cart = [decodeURIComponent(single)];
   }
+
+  // ===== COMPLEMENTOS DATABASE =====
+  var complementosDb = [
+    {id: 'reflexologia-15', nombre: 'Reflexologia 15 min', duracion: 15, precio: 250, domicilio: true},
+    {id: 'reflexologia-30', nombre: 'Reflexologia 30 min', duracion: 30, precio: 450, domicilio: true},
+    {id: 'craneofacial-15', nombre: 'Craneofacial 15 min', duracion: 15, precio: 250, domicilio: true},
+    {id: 'craneofacial-30', nombre: 'Craneofacial 30 min', duracion: 30, precio: 450, domicilio: true},
+    {id: 'drenaje-30', nombre: 'Drenaje Linfatico 30 min', duracion: 30, precio: 650, domicilio: true},
+    {id: 'head-massage-30', nombre: 'Head Massage 30 min', duracion: 30, precio: 550, domicilio: true},
+    {id: 'masaje-extra-15', nombre: 'Masaje Tiempo Extra 15 min', duracion: 15, precio: 250, domicilio: true},
+    {id: 'masaje-extra-30', nombre: 'Masaje Tiempo Extra 30 min', duracion: 30, precio: 450, domicilio: true},
+    {id: 'facial-express-30', nombre: 'Facial Express 30 min', duracion: 30, precio: 650, domicilio: true},
+    {id: 'mascarilla-facial-15', nombre: 'Aplicacion Mascarilla Facial 15 min', duracion: 15, precio: 350, domicilio: true},
+    {id: 'depilacion-facial-30', nombre: 'Depilacion Facial Completo 30 min', duracion: 30, precio: 465, domicilio: true}
+  ];
 
   // ===== DETECT CATEGORIES =====
   function getCats(items) {
@@ -226,6 +380,7 @@
       if (lower.includes('masaje') || lower.includes('piedras') || lower.includes('aromaterapia') || lower.includes('descontracturante')) cats.add('masaje');
       if (lower.includes('facial') || lower.includes('limpieza facial') || lower.includes('antiedad') || lower.includes('desintoxicante') || lower.includes('hidratante')) cats.add('facial');
       if (lower.includes('spa kids') || lower.includes('spakids') || lower.includes('mini')) cats.add('spakids');
+      if (lower.includes('pareja')) cats.add('pareja');
     });
     return cats;
   }
@@ -233,10 +388,10 @@
   // ===== RENDER CHIPS =====
   function renderChips() {
     var html = '';
-    if (cart.length === 0) {
+    if (state.cart.length === 0) {
       html = '<span class="empty">Selecciona servicios desde la pagina principal</span>';
     } else {
-      cart.forEach(function(s) { html += '<span class="chip">' + s + '</span>'; });
+      state.cart.forEach(function(s) { html += '<span class="chip">' + s + '</span>'; });
     }
     var c1 = document.getElementById('exf-chips');
     var c2 = document.getElementById('exf-chips2');
@@ -244,9 +399,39 @@
     if (c2) c2.innerHTML = html;
   }
 
+  // ===== RENDER COMPLEMENTOS =====
+  function renderComplementos() {
+    var list = document.getElementById('exf-complementos-list');
+    if (!list) return;
+    var html = '';
+    complementosDb.forEach(function(comp) {
+      var checked = state.complementos.some(function(c) { return c.id === comp.id; }) ? 'checked' : '';
+      html += '<label style="cursor: pointer; display: flex; align-items: center; padding: 8px; border: 1px solid #e8dfc0; border-radius: 4px; background: #fff;">' +
+        '<input type="checkbox" class="exf-complemento-check" value="' + comp.id + '" data-nombre="' + comp.nombre + '" data-precio="' + comp.precio + '" ' + checked + ' style="margin-right: 8px; cursor: pointer;">' +
+        '<span style="font-size: 12px; color: #3d2d1a;">' + comp.nombre + ' ($' + comp.precio + ')</span>' +
+        '</label>';
+    });
+    list.innerHTML = html || '<span class="empty" style="font-size: 12px; color: #8a7a66;">No hay complementos disponibles</span>';
+
+    // Attach listeners
+    document.querySelectorAll('.exf-complemento-check').forEach(function(cb) {
+      cb.addEventListener('change', function() {
+        var compId = this.value;
+        if (this.checked) {
+          var comp = complementosDb.find(function(c) { return c.id === compId; });
+          if (comp && !state.complementos.some(function(c) { return c.id === comp.id; })) {
+            state.complementos.push({id: comp.id, nombre: comp.nombre, precio: comp.precio});
+          }
+        } else {
+          state.complementos = state.complementos.filter(function(c) { return c.id !== compId; });
+        }
+      });
+    });
+  }
+
   // ===== SHOW CONDITIONAL QUESTIONS =====
   function showConditionals() {
-    var cats = getCats(cart);
+    var cats = getCats(state.cart);
     var cm = document.getElementById('exf-c-masaje');
     var cf = document.getElementById('exf-c-facial');
     var cs = document.getElementById('exf-c-spakids');
@@ -255,17 +440,107 @@
     if (cs) cs.className = 'exf-cond' + (cats.has('spakids') ? ' show' : '');
   }
 
+  // ===== UPDATE STEP INDICATORS =====
+  function updateSteps(step) {
+    document.querySelectorAll('.exf-step').forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.s) <= step); });
+  }
+
+  // ===== SHOW/HIDE CONDITIONAL SECTIONS =====
+  function updateCondititionals() {
+    var modalidad = document.getElementById('exf-c-modalidad');
+    var zona = document.getElementById('exf-c-zona');
+    var traslado = document.getElementById('exf-c-traslado');
+
+    if (modalidad) {
+      modalidad.className = 'exf-cond' + (state.ubicacion === 'domicilio' && state.num_personas && state.num_personas !== '1' ? ' show' : '');
+    }
+    if (zona) {
+      zona.className = 'exf-cond' + (state.ubicacion === 'domicilio' ? ' show' : '');
+    }
+    if (traslado) {
+      traslado.className = 'exf-cond' + (state.ubicacion === 'domicilio' && state.zona ? ' show' : '');
+    }
+  }
+
+  // ===== UPDATE TRASLADO ESTIMATE =====
+  function updateTrasladoEstimate() {
+    var text = document.getElementById('exf-traslado-text');
+    if (!text || state.ubicacion !== 'domicilio' || !state.zona || !state.num_personas) return;
+
+    var tarifas = {1: 250, 2: 350, 3: 400};
+    var tarifa = tarifas[state.zona] || 0;
+    var numTerapeutas = state.num_personas === '1' ? 1 : (state.num_personas === '2' ? (state.modalidad_atencion === 'simultaneo' ? 2 : 1) : 1);
+    var total = tarifa * numTerapeutas;
+    text.textContent = 'Estimado de traslado: $' + total + ' (' + numTerapeutas + ' terapeuta' + (numTerapeutas > 1 ? 's' : '') + ' x $' + tarifa + ')';
+  }
+
   // Init
   renderChips();
+  renderComplementos();
   showConditionals();
+
+  // ===== EVENT LISTENERS =====
+  document.getElementById('exf-loc-spa').addEventListener('change', function() { if (this.checked) { state.ubicacion = 'sucursal'; updateCondititionals(); } });
+  document.getElementById('exf-loc-home').addEventListener('change', function() { if (this.checked) { state.ubicacion = 'domicilio'; updateCondititionals(); } });
+
+  document.getElementById('exf-personas-1').addEventListener('change', function() { if (this.checked) { state.num_personas = '1'; updateCondititionals(); } });
+  document.getElementById('exf-personas-2').addEventListener('change', function() { if (this.checked) { state.num_personas = '2'; updateCondititionals(); } });
+  document.getElementById('exf-personas-3').addEventListener('change', function() { if (this.checked) { state.num_personas = '3+'; updateCondititionals(); } });
+
+  document.getElementById('exf-modalidad-sim').addEventListener('change', function() { if (this.checked) { state.modalidad_atencion = 'simultaneo'; updateTrasladoEstimate(); } });
+  document.getElementById('exf-modalidad-tur').addEventListener('change', function() { if (this.checked) { state.modalidad_atencion = 'turnos'; updateTrasladoEstimate(); } });
+  document.getElementById('exf-modalidad-eco').addEventListener('change', function() { if (this.checked) { state.modalidad_atencion = 'economica'; updateTrasladoEstimate(); } });
+
+  document.getElementById('exf-fecha').addEventListener('change', function() { state.fecha_cita = this.value; });
+  document.getElementById('exf-hora').addEventListener('change', function() { state.hora_cita = this.value; });
+
+  document.getElementById('exf-zona').addEventListener('change', function() { state.zona = this.value; updateTrasladoEstimate(); });
 
   // ===== NAVIGATION =====
   window.exfGo = function(step) {
-    document.getElementById('exf-err').classList.remove('show');
-    document.querySelectorAll('.exf-step').forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.s) <= step); });
+    var err = document.getElementById('exf-err');
+    err.classList.remove('show');
+
+    // Validations
+    if (step === 2 && !state.ubicacion) {
+      err.textContent = 'Selecciona donde deseas tu servicio';
+      err.classList.add('show');
+      return;
+    }
+    if (step === 3 && !state.num_personas) {
+      err.textContent = 'Selecciona cantidad de personas';
+      err.classList.add('show');
+      return;
+    }
+    if (step === 4 && (!state.fecha_cita || !state.hora_cita)) {
+      err.textContent = 'Completa fecha y hora de la cita';
+      err.classList.add('show');
+      return;
+    }
+    if (step === 4 && state.ubicacion === 'domicilio' && !state.zona) {
+      err.textContent = 'Selecciona zona de domicilio';
+      err.classList.add('show');
+      return;
+    }
+
+    // Validacion anticipacion 2h para domicilio
+    if (step === 4 && state.ubicacion === 'domicilio' && state.fecha_cita && state.hora_cita) {
+      var citaTime = new Date(state.fecha_cita + 'T' + state.hora_cita);
+      var ahora = new Date();
+      var diffMs = citaTime - ahora;
+      var diffH = diffMs / (1000 * 60 * 60);
+      if (diffH < 2) {
+        err.textContent = 'A domicilio requiere minimo 2 horas de anticipacion';
+        err.classList.add('show');
+        return;
+      }
+    }
+
+    updateSteps(step);
     document.querySelectorAll('.exf-section').forEach(function(s) { s.classList.remove('active'); });
     document.getElementById('exf-s' + step).classList.add('active');
     renderChips();
+    renderComplementos();
     document.getElementById('exf-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
@@ -287,26 +562,51 @@
     btn.textContent = 'Enviando...';
     btn.disabled = true;
 
+    // Build payload for n8n
+    var payload = {
+      cliente_nombre: nom,
+      cliente_apellido: ape,
+      cliente_telefono: tel,
+      cliente_email: ema,
+      servicios_principales: state.cart,
+      complementos: state.complementos,
+      tipo_cita: state.ubicacion,
+      num_personas: state.num_personas,
+      modalidad_atencion: state.modalidad_atencion || null,
+      fecha_cita: state.fecha_cita,
+      hora_cita: state.hora_cita,
+      zona: state.zona,
+      piel: document.getElementById('exf-piel').value,
+      alergias: document.getElementById('exf-alergias').value,
+      presion: document.getElementById('exf-presion').value,
+      primera_vez: document.getElementById('exf-primera').value,
+      notas: document.getElementById('exf-notas').value
+    };
+
     // Set GHL hidden fields
     _set('first_name', nom);
     _set('last_name', ape);
     _set('phone', tel);
     _set('email', ema);
-    _set('YdXMTdkEDSLVcstpRAtX', cart.join(', '));
+    _set('YdXMTdkEDSLVcstpRAtX', state.cart.join(', '));
     _set('26FKQCpTI60jSUZVRv1L', document.getElementById('exf-piel').value);
     _set('kfjWinFpLclgA3e65394', document.getElementById('exf-alergias').value);
     _set('3X1Q3hARpiBH6UZK6xeV', document.getElementById('exf-presion').value);
     _set('kjHgysIwIcyvzdOScV1C', document.getElementById('exf-primera').value);
     _set('67CrR2g1U7HC5vwmGmKT', document.getElementById('exf-notas').value);
+    _set('tipo_cita', state.ubicacion);
+    _set('num_personas', state.num_personas);
+    _set('modalidad_atencion', state.modalidad_atencion);
+    _set('fecha_cita', state.fecha_cita);
+    _set('hora_cita', state.hora_cita);
+    _set('zona', state.zona);
+    _set('complementos_json', JSON.stringify(state.complementos));
 
     // FIRST: notify parent to open calendar (before GHL destroys our code)
     if (window.parent && window.parent !== window) {
       window.parent.postMessage({
         type: 'exentia-form-submitted',
-        firstName: document.getElementById('exf-nom').value.trim(),
-        lastName: document.getElementById('exf-ape').value.trim(),
-        phone: document.getElementById('exf-tel').value.trim(),
-        email: document.getElementById('exf-ema').value.trim()
+        payload: payload
       }, '*');
     }
 
@@ -319,7 +619,7 @@
 
   // ===== GHL FIELD SETTER (React-compatible) =====
   function _set(name, value) {
-    if (!value && value !== 0) return;
+    if (value === null || value === undefined || value === '') return;
     var el = document.getElementsByName(name)[0] || document.getElementById(name);
     if (!el) return;
     var proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
