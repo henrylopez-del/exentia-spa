@@ -5074,6 +5074,13 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             <span>Tip: toca el mapa para mover el pin · arrástralo si necesitas ajustar · usa "Mi ubicación" si estás en tu casa</span>
           </div>
+          <!-- Leyenda de zonas de cobertura a domicilio -->
+          <div class="cf-zone-legend" style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:6px;font-size:11.5px;color:#5c5c4a;">
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#3fa34d;opacity:.55;border:1px solid #2e8b40;"></span>Zona 1 · Centro / Puerto Cancún · $250</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#d9a300;opacity:.55;border:1px solid #b8920a;"></span>Zona 2 · Z. Hotelera / Huayacán · $350</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#d9534f;opacity:.55;border:1px solid #b5362a;"></span>Zona 3 · Z. Hotelera lejana / Aeropuerto · $400</span>
+            <span style="opacity:.8;">Fuera de estas zonas: solo servicio en el spa.</span>
+          </div>
           <!-- Resumen estilo Google Place card -->
           <div id="cf-address-summary" class="cf-address-summary" style="display:none;">
             <div class="cf-place-pin">
@@ -5084,6 +5091,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
               <div class="cf-address-summary-text"></div>
             </div>
           </div>
+          <!-- Estado de cobertura a domicilio por zona (se llena al fijar el pin) -->
+          <div id="cf-zone-feedback" style="display:none; margin-top:8px;"></div>
           <!-- Campos detallados en grid 2 cols (calle full, ext/int split, colonia full, ref full) -->
           <div class="address-fields-v1">
             <div class="form-row">
@@ -6462,6 +6471,121 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   var DEFAULT_COORDS = { lat: 21.1213, lng: -86.8505 }; // Plaza Hive Cancún
   var PLACES_BIAS = { latitude: 21.1213, longitude: -86.8505, radius: 50000 }; // 50km alrededor de Cancún
 
+  // ============================================
+  // COBERTURA A DOMICILIO POR ZONAS (Exentia At Home)
+  // Origen: Exentia Spa (Plaza Hive, Av. Huayacán) — place real de Google
+  // Zonas (traslado por terapeuta): Z1 Centro/Puerto Cancún $250 · Z2 0–12.5km $350 · Z3 12.5–22km $400
+  // ============================================
+  var SPA_ORIGIN = { lat: 21.0959093, lng: -86.8696 };
+  var _zonePolys = [];
+  var _spaMarker = null;
+
+  function haversineKm(a, b) {
+    var R = 6371;
+    var dLat = (b.lat - a.lat) * Math.PI / 180;
+    var dLng = (b.lng - a.lng) * Math.PI / 180;
+    var la1 = a.lat * Math.PI / 180, la2 = b.lat * Math.PI / 180;
+    var h = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(la1) * Math.cos(la2) * Math.sin(dLng/2) * Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  }
+
+  // --- Polígonos de zona (rings [lat,lng]) — geografía real de Cancún ---
+  // COBERTURA = todo Cancún urbano + Zona Hotelera. Z2 = cobertura menos Z1 y Z3.
+  var Z_COVERAGE = [[21.215,-86.915],[21.215,-86.770],[21.140,-86.722],[20.995,-86.775],[20.995,-86.915]];
+  // Zona 1: Centro / Downtown / Puerto Cancún (mainland norte)
+  var Z1_POLYS = [
+    [[21.215,-86.915],[21.215,-86.770],[21.150,-86.745],[21.140,-86.815],[21.113,-86.838],[21.113,-86.915]]
+  ];
+  // Zona 3: Zona Hotelera lejana (km 12.5–22) + área del aeropuerto
+  var Z3_POLYS = [
+    [[21.062,-86.808],[21.062,-86.735],[21.010,-86.755],[20.998,-86.785],[21.030,-86.800]], // ZH sur (Punta Nizuc)
+    [[21.065,-86.915],[21.065,-86.838],[20.995,-86.838],[20.995,-86.915]]                    // aeropuerto
+  ];
+
+  // Ray casting point-in-polygon (sin dependencias)
+  function pointInRing(lat, lng, ring) {
+    var inside = false;
+    for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      var yi = ring[i][0], xi = ring[i][1], yj = ring[j][0], xj = ring[j][1];
+      var hit = ((yi > lat) !== (yj > lat)) && (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+      if (hit) inside = !inside;
+    }
+    return inside;
+  }
+  function pointInPolys(lat, lng, polys) {
+    for (var k = 0; k < polys.length; k++) { if (pointInRing(lat, lng, polys[k])) return true; }
+    return false;
+  }
+
+  function classifyZone(lat, lng, colonia) {
+    var d = haversineKm(SPA_ORIGIN, { lat: lat, lng: lng });
+    if (!pointInPolys(lat, lng, [Z_COVERAGE])) return { ok: false, dist: d };
+    if (pointInPolys(lat, lng, Z1_POLYS)) return { ok: true, dist: d, zona: 1, costo: 250, nombre: 'Zona 1 · Centro / Puerto Cancún', color: '#3fa34d' };
+    if (pointInPolys(lat, lng, Z3_POLYS)) return { ok: true, dist: d, zona: 3, costo: 400, nombre: 'Zona 3 · Zona Hotelera lejana / Aeropuerto', color: '#d9534f' };
+    return { ok: true, dist: d, zona: 2, costo: 350, nombre: 'Zona 2 · Zona Hotelera / Huayacán', color: '#d9a300' };
+  }
+
+  function drawCoverageZones() {
+    if (!_gMap || typeof google === 'undefined') return;
+    _zonePolys.forEach(function(p){ p.setMap(null); });
+    _zonePolys = [];
+    function ring2path(r){ return r.map(function(p){ return { lat: p[0], lng: p[1] }; }); }
+    function addPolys(rings, stroke, fill, z){
+      rings.forEach(function(r){
+        _zonePolys.push(new google.maps.Polygon({
+          map: _gMap, paths: ring2path(r), zIndex: z,
+          strokeColor: stroke, strokeOpacity: 0.8, strokeWeight: 1.5,
+          fillColor: fill, fillOpacity: 0.16, clickable: false
+        }));
+      });
+    }
+    // Z2 base (amarillo) = toda la cobertura; Z1 (verde) y Z3 (rojo) encima
+    addPolys([Z_COVERAGE], '#b8920a', '#d9a300', 1);
+    addPolys(Z1_POLYS, '#2e8b40', '#3fa34d', 2);
+    addPolys(Z3_POLYS, '#b5362a', '#d9534f', 2);
+    // Marcador del spa
+    if (_spaMarker) _spaMarker.setMap(null);
+    _spaMarker = new google.maps.Marker({
+      position: SPA_ORIGIN, map: _gMap, zIndex: 5,
+      icon: { path: google.maps.SymbolPath.CIRCLE, scale: 6, fillColor: '#5c3a1e', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2 },
+      title: 'Exentia Spa'
+    });
+    // Encuadrar a la cobertura
+    try {
+      var b = new google.maps.LatLngBounds();
+      Z_COVERAGE.forEach(function(p){ b.extend({ lat: p[0], lng: p[1] }); });
+      _gMap.fitBounds(b);
+    } catch(e){}
+  }
+
+  function updateZoneFeedback(lat, lng, colonia) {
+    var box = document.getElementById('cf-zone-feedback');
+    if (!box) return;
+    var z = classifyZone(lat, lng, colonia);
+    citaPlace.distKm = Math.round(z.dist * 10) / 10;
+    if (!z.ok) {
+      citaPlace.cobertura = false;
+      citaPlace.zonaNum = null;
+      citaPlace.costoTraslado = null;
+      box.style.display = 'block';
+      box.innerHTML = '<div style="display:flex;gap:8px;align-items:flex-start;background:#fdecea;border:1px solid #d9534f;border-radius:10px;padding:10px 12px;">'
+        + '<span style="font-size:15px;line-height:1.2;">⚠️</span>'
+        + '<div style="font-size:12.5px;color:#a3271f;line-height:1.45;"><b>Fuera de cobertura a domicilio</b> (a ' + citaPlace.distKm + ' km del spa).<br>Esta dirección está fuera de nuestra área de Exentia At Home. Puedes agendar tu servicio en el spa.</div>'
+        + '</div>';
+      return;
+    }
+    citaPlace.cobertura = true;
+    citaPlace.zonaNum = z.zona;
+    citaPlace.costoTraslado = z.costo;
+    box.style.display = 'block';
+    box.innerHTML = '<div style="display:flex;gap:8px;align-items:flex-start;background:#f4f6ec;border:1px solid ' + z.color + ';border-radius:10px;padding:10px 12px;">'
+      + '<span style="width:12px;height:12px;border-radius:50%;background:' + z.color + ';margin-top:3px;flex:0 0 auto;"></span>'
+      + '<div style="font-size:12.5px;color:#3d3d2e;line-height:1.45;"><b>' + z.nombre + '</b><br>Traslado <b>$' + z.costo + '</b> por terapeuta · el total depende del número de terapeutas.</div>'
+      + '</div>';
+  }
+  window.updateZoneFeedback = updateZoneFeedback;
+
   function newSessionToken() {
     // UUID v4 simple para session tokens de Places
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function(c){
@@ -6486,14 +6610,16 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       return;
     }
     _gMap = new google.maps.Map(el, {
-      center: DEFAULT_COORDS,
-      zoom: 13,
+      center: SPA_ORIGIN,
+      zoom: 11,
       mapTypeControl: false,
       streetViewControl: false,
       fullscreenControl: false,
       gestureHandling: 'greedy',
       clickableIcons: false
     });
+    // Dibujar el área de cobertura a domicilio (zonas por colores)
+    drawCoverageZones();
     // Click en el mapa → fija/mueve el pin (resetea flags para que reverse-geocode actualice)
     _gMap.addListener('click', function(e){
       _manuallyTouched = { calle: false, num_ext: false, zona: false };
@@ -6526,6 +6652,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     citaPlace.lat = lat.toFixed(7);
     citaPlace.lng = lng.toFixed(7);
     citaPlace.mapsUrl = 'https://www.google.com/maps?q=' + citaPlace.lat + ',' + citaPlace.lng;
+    updateZoneFeedback(lat, lng, citaPlace.zona);
     if (doReverse) reverseGeocodeGoogle(lat, lng);
   }
 
@@ -6567,6 +6694,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           zonaEl.value = ''; citaPlace.zona = '';
         }
       }
+      // Refinar zona de cobertura ahora que conocemos la colonia (carve-out Centro)
+      updateZoneFeedback(lat, lng, zonaVal || citaPlace.zona);
       // Summary siempre se actualiza
       var sumBox = document.getElementById('cf-address-summary');
       if (sumBox && top.formatted_address) {
@@ -6992,6 +7121,13 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         try { zonaEl.focus(); } catch(_){}
         return false;
       }
+      // Bloquear si el pin está fuera del área de cobertura a domicilio
+      if (citaPlace.cobertura === false) {
+        err.textContent = 'Esa dirección está fuera de nuestra área de servicio a domicilio. Ajusta el pin dentro de la zona de cobertura o agenda en el spa.';
+        err.style.display = 'block';
+        try { document.getElementById('cf-google-map').scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(_){}
+        return false;
+      }
       citaPlace.calle = calleVal;
       citaPlace.num_ext = numExtVal;
       citaPlace.zona = zonaVal;
@@ -7053,7 +7189,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             num_int: citaPlace.num_int || '',
             referencias: citaPlace.referencias || '',
             lat: citaPlace.lat || '',
-            lng: citaPlace.lng || ''
+            lng: citaPlace.lng || '',
+            zona_cobertura: citaPlace.zonaNum || '',
+            costo_traslado: citaPlace.costoTraslado || '',
+            distancia_km: citaPlace.distKm || ''
           })
         }).then(function(r){ return r.json(); }).then(function(j){
           if (j && j.booking_code) window._bookingCode = j.booking_code;
