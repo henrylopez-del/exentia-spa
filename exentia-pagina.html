@@ -522,7 +522,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   .promos-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     margin-top: 8px;
   }
@@ -719,6 +719,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     letter-spacing: 0.3px;
     font-style: italic;
   }
+  @media (max-width: 1200px) {
+    .promos-grid { grid-template-columns: repeat(3, 1fr); }
+  }
   @media (max-width: 900px) {
     .promos-grid { grid-template-columns: repeat(2, 1fr); }
   }
@@ -780,12 +783,29 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     stroke-width: 1.5;
     fill: none;
   }
-  .service-info { padding: 32px 28px; }
+  .service-info { padding: 32px 28px; position: relative; }
   .service-info h3 {
     font-size: 28px;
     color: var(--brown);
     margin-bottom: 10px;
     font-weight: 500;
+  }
+  .service-home-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .service-home-badge.available {
+    background: rgba(176, 169, 111, 0.15);
+    color: var(--olive-dark);
+  }
+  .service-home-badge.unavailable {
+    background: rgba(210, 180, 140, 0.2);
+    color: var(--brown);
   }
   .service-info p {
     font-size: 13px;
@@ -4576,15 +4596,15 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         <h2>Promociones y <em>Paquetes</em></h2>
         <p>Combinamos tus servicios favoritos en experiencias diseñadas para un cuidado integral.</p>
       </div>
-      <div class="promos-grid">
+      <div class="promos-grid" style="grid-template-columns: repeat(4, 1fr); gap: 24px;">
         <article class="promo-card">
           <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/48ecafe1-ab17-4408-923e-998d85e61e58.webp')"></div>
           <div class="promo-body">
             <h3>Diva Spa</h3>
             <p class="promo-desc">Masaje relajante y facial orgánico premium. La pausa que tu cuerpo y tu piel necesitan.</p>
             <ul class="promo-list">
-              <li>Masaje Exentia · 50 min</li>
-              <li>Facial Orgánico · 50 min</li>
+              <li>Masaje Exentia · 60 min</li>
+              <li>Facial Orgánico · 60 min</li>
             </ul>
             <div class="promo-foot">
               <div class="promo-prices">
@@ -4595,28 +4615,59 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             </div>
           </div>
         </article>
-        <article class="promo-card coming-soon">
-          <span class="promo-soon-tag">Próximamente</span>
+        <article class="promo-card">
           <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/2f85d6c7-2bf4-4180-a930-4d9d6c27ded9.webp')"></div>
           <div class="promo-body">
-            <h3>2 más 1</h3>
-            <p class="promo-soon-msg">Estamos terminando los <b>detalles</b> de esta promoción con el equipo. Si te interesa, escríbenos y te compartimos los servicios incluidos y el precio en cuanto estén confirmados.</p>
-            <a href="https://wa.me/529984803595?text=Hola%2C%20me%20interesa%20conocer%20m%C3%A1s%20de%20la%20promo%20%222%20m%C3%A1s%201%22%20de%20Exentia." target="_blank" rel="noopener noreferrer" class="promo-soon-cta">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg>
-              Pregúntanos por WhatsApp
-            </a>
+            <h3>Ritual Exentia 60 min</h3>
+            <p class="promo-desc">Masaje Exentia y facial orgánico premium para una experiencia integral de bienestar.</p>
+            <ul class="promo-list">
+              <li>Masaje Exentia · 60 min</li>
+              <li>Facial Orgánico · 60 min</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$2,840</span>
+                <span class="promo-new">$2,180</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
           </div>
         </article>
-        <article class="promo-card coming-soon">
-          <span class="promo-soon-tag">Próximamente</span>
+        <article class="promo-card">
           <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/4fb8f090-157f-4e19-a426-d3c72510b10f.webp')"></div>
           <div class="promo-body">
-            <h3>Promo del mes</h3>
-            <p class="promo-soon-msg">Tenemos una <b>promo especial</b> en preparación. Si te interesa, escríbenos por WhatsApp y te avisamos en cuanto esté lista con todos los detalles y precio.</p>
-            <a href="https://wa.me/529984803595?text=Hola%2C%20me%20interesa%20la%20promo%20del%20mes%20de%20Exentia." target="_blank" rel="noopener noreferrer" class="promo-soon-cta">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg>
-              Pregúntanos por WhatsApp
-            </a>
+            <h3>Ritual Exentia 90 min</h3>
+            <p class="promo-desc">Masaje profundo de 90 minutos combinado con facial orgánico para máxima renovación.</p>
+            <ul class="promo-list">
+              <li>Masaje Exentia · 90 min</li>
+              <li>Facial Orgánico · 60 min</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$3,290</span>
+                <span class="promo-new">$2,580</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
+          </div>
+        </article>
+        <article class="promo-card">
+          <div class="promo-img" style="background-image:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/48ecafe1-ab17-4408-923e-998d85e61e58.webp')"></div>
+          <div class="promo-body">
+            <h3>Ritual Caballero</h3>
+            <p class="promo-desc">Masaje relajante, corte de cabello y servicio de barbería para el caballero Exentia.</p>
+            <ul class="promo-list">
+              <li>Masaje Terapéutico · 60 min</li>
+              <li>Corte Cabello Hombre · 45 min</li>
+              <li>Servicio de barbería</li>
+            </ul>
+            <div class="promo-foot">
+              <div class="promo-prices">
+                <span class="promo-old">$2,100</span>
+                <span class="promo-new">$1,785</span>
+              </div>
+              <button class="btn btn-cream promo-btn" onclick="smartAgendar()">Reservar</button>
+            </div>
           </div>
         </article>
       </div>
@@ -5035,7 +5086,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         <!-- ===== UBICACIÓN DE LA CITA (sucursal vs domicilio) — solo en modo default, no en calendar ===== -->
         <div class="form-row only-default">
           <label class="form-label">¿Dónde quieres tu cita?</label>
-          <div class="cita-place-toggle" role="radiogroup" aria-label="Ubicación de la cita">
+          <div class="cita-place-toggle" id="cita-place-toggle" role="radiogroup" aria-label="Ubicación de la cita">
             <button type="button" class="cita-place-btn active" data-place="sucursal" role="radio" aria-checked="true">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
               <div class="cita-place-info">
@@ -5403,25 +5454,23 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       supportsParejas: true,
       treatments: [
-        { name: 'Masaje Exentia', desc: 'Nuestra técnica signature que combina relajación profunda y renovación corporal.', durations: [{min: 50, price: '$1,550', priceCouple: '$3,100'}, {min: 80, price: '$2,000', priceCouple: '$4,000'}] },
-        { name: 'Masaje Exentia Plus Personalizado', desc: 'Versión premium con técnica personalizada según las zonas de mayor tensión.', durations: [{min: 80, price: '$2,140', priceCouple: '$4,280'}] },
-        { name: 'Masaje Tejido Profundo', desc: 'Trabajo intenso en capas musculares para liberar tensión acumulada.', durations: [{min: 50, price: '$1,550', priceCouple: '$3,100'}, {min: 80, price: '$2,000', priceCouple: '$4,000'}] },
-        { name: 'Masaje Terapéutico', desc: 'Tratamiento orientado a dolor muscular específico y postura.', durations: [{min: 50, price: '$1,550', priceCouple: '$3,100'}, {min: 80, price: '$2,000', priceCouple: '$4,000'}] },
-        { name: 'Masaje Terapéutico Ice Calm', desc: 'Terapia fría con bambúes helados para desinflamar y refrescar.', durations: [{min: 50, price: '$2,450'}] },
-        { name: 'Masaje Terapéutico con Ventosas', desc: 'Ventosas que liberan adherencias musculares y mejoran circulación.', durations: [{min: 80, price: '$2,450', priceCouple: '$4,900'}] },
-        { name: 'Masaje Terapéutico con Piedras Calientes', desc: 'Piedras volcánicas que derriten el estrés y reactivan la circulación.', durations: [{min: 80, price: '$2,450', priceCouple: '$4,900'}] },
-        { name: 'Masaje Terapéutico Integral', desc: 'Combinación de técnicas para un trabajo de cuerpo completo profundo.', durations: [{min: 80, price: '$2,450'}] },
-        { name: 'Masaje Terapéutico Plus', desc: 'Sesión terapéutica extendida con técnica especializada.', durations: [{min: 80, price: '$2,450'}] },
-        { name: 'Drenaje Linfático', desc: 'Estimula el sistema linfático para reducir inflamación y desintoxicar.', durations: [{min: 50, price: '$1,690', priceCouple: '$3,380'}, {min: 80, price: '$2,350', priceCouple: '$4,700'}] },
-        { name: 'Masaje Reductivo Manual', desc: 'Manipulación profunda para moldear y activar tejido adiposo.', durations: [{min: 50, price: '$1,550', priceCouple: '$3,100'}] },
-        { name: 'Envoltura Corporal Desintoxicante', desc: 'Envoltura con ingredientes naturales que purifica y nutre la piel.', durations: [{min: 75, price: '$1,350', priceCouple: '$2,250'}] },
-        { name: 'Masaje Prenatal', desc: 'Alivio suave y seguro diseñado especialmente para futuras mamás.', durations: [{min: 50, price: '$1,550'}, {min: 80, price: '$1,840'}] },
-        { name: 'Masaje de Espalda', desc: 'Sesión focalizada en hombros, cervicales y zona lumbar.', durations: [{min: 30, price: '$790'}] },
-        { name: 'Shiatsu en Silla Japonesa', desc: 'Presión en puntos energéticos para liberar tensión sin desvestirse.', durations: [{min: 50, price: '$990'}] },
-        { name: 'Reflexología Podal', desc: 'Estimulación de puntos reflejos en los pies para equilibrar todo el cuerpo.', durations: [{min: 60, price: '$750'}, {min: 90, price: '$1,350'}] },
-        { name: 'Reflexología Craneal', desc: 'Presión suave en puntos de la cabeza para liberar estrés y tensión mental.', durations: [{min: 60, price: '$750'}] },
-        { name: 'Reflexología Plus', desc: 'Sesión extendida de reflexología para una relajación más profunda.', durations: [{min: 60, price: '$1,550'}] },
-        { name: 'Turbante Ice Calm', desc: 'Complemento facial con turbante helado para relajar la cabeza.', durations: [{min: 50, price: '$750'}] }
+        { name: 'Masaje Exentia', desc: 'Nuestra técnica signature que combina relajación profunda y renovación corporal.', homeAvailable: true, durations: [{min: 60, price: '$1,550', priceCouple: '$3,100'}, {min: 90, price: '$2,000', priceCouple: '$4,000'}] },
+        { name: 'Masaje Exentia Plus Personalizado', desc: 'Versión premium con técnica personalizada según las zonas de mayor tensión.', homeAvailable: true, durations: [{min: 80, price: '$2,140', priceCouple: '$4,280'}] },
+        { name: 'Masaje Tejido Profundo', desc: 'Trabajo intenso en capas musculares para liberar tensión acumulada.', homeAvailable: true, durations: [{min: 60, price: '$1,550', priceCouple: '$3,100'}, {min: 90, price: '$2,000', priceCouple: '$4,000'}] },
+        { name: 'Masaje Terapéutico', desc: 'Tratamiento orientado a dolor muscular específico y postura.', homeAvailable: true, durations: [{min: 60, price: '$1,550', priceCouple: '$3,100'}, {min: 90, price: '$2,000', priceCouple: '$4,000'}] },
+        { name: 'Masaje Terapéutico con Ventosas', desc: 'Ventosas que liberan adherencias musculares y mejoran circulación.', homeAvailable: true, durations: [{min: 80, price: '$2,450', priceCouple: '$4,900'}] },
+        { name: 'Masaje Terapéutico con Piedras Calientes', desc: 'Piedras volcánicas que derriten el estrés y reactivan la circulación.', homeAvailable: true, durations: [{min: 80, price: '$2,450', priceCouple: '$4,900'}] },
+        { name: 'Masaje Terapéutico Integral', desc: 'Combinación de técnicas para un trabajo de cuerpo completo profundo.', homeAvailable: true, durations: [{min: 80, price: '$2,450'}] },
+        { name: 'Masaje Terapéutico Plus', desc: 'Sesión terapéutica extendida con técnica especializada.', homeAvailable: true, durations: [{min: 80, price: '$2,450'}] },
+        { name: 'Drenaje Linfático', desc: 'Estimula el sistema linfático para reducir inflamación y desintoxicar.', homeAvailable: true, durations: [{min: 60, price: '$1,690', priceCouple: '$3,380'}, {min: 90, price: '$2,350', priceCouple: '$4,700'}] },
+        { name: 'Masaje Reductivo Manual', desc: 'Manipulación profunda para moldear y activar tejido adiposo.', homeAvailable: true, durations: [{min: 50, price: '$1,550', priceCouple: '$3,100'}] },
+        { name: 'Envoltura Corporal Desintoxicante', desc: 'Envoltura con ingredientes naturales que purifica y nutre la piel.', homeAvailable: true, durations: [{min: 75, price: '$1,350', priceCouple: '$2,250'}] },
+        { name: 'Masaje Prenatal', desc: 'Alivio suave y seguro diseñado especialmente para futuras mamás.', homeAvailable: true, durations: [{min: 60, price: '$1,550'}, {min: 90, price: '$1,840'}] },
+        { name: 'Masaje de Espalda', desc: 'Sesión focalizada en hombros, cervicales y zona lumbar.', homeAvailable: true, durations: [{min: 30, price: '$790'}] },
+        { name: 'Shiatsu en Silla Japonesa', desc: 'Presión en puntos energéticos para liberar tensión sin desvestirse.', homeAvailable: false, durations: [{min: 50, price: '$990'}] },
+        { name: 'Reflexología Podal', desc: 'Estimulación de puntos reflejos en los pies para equilibrar todo el cuerpo.', homeAvailable: false, durations: [{min: 60, price: '$750'}, {min: 90, price: '$1,350'}] },
+        { name: 'Reflexología Craneal', desc: 'Presión suave en puntos de la cabeza para liberar estrés y tensión mental.', homeAvailable: false, durations: [{min: 60, price: '$750'}] },
+        { name: 'Reflexología Plus', desc: 'Sesión extendida de reflexología para una relajación más profunda.', homeAvailable: true, durations: [{min: 60, price: '$1,550'}] },
       ]
     },
     faciales: {
@@ -5449,7 +5498,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       supportsParejas: true,
       treatments: [
-        { name: 'Facial Orgánico', desc: 'Limpieza, hidratación y nutrición profunda con productos orgánicos premium.', duration: '50 min', price: '$1,290', priceCouple: '$2,580' }
+        { name: 'Facial Orgánico', desc: 'Limpieza, hidratación y nutrición profunda con productos orgánicos premium.', homeAvailable: true, duration: '50 min', price: '$1,290', priceCouple: '$2,580' }
       ]
     },
     manicura: {
@@ -5477,37 +5526,36 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       treatments: [
         // === BASE (con add-ons opcionales: Arte, Efecto, Retiro, Extra Largo) ===
-        { _id: 'mani-esmalte', name: 'Manicura Exentia con Esmalte', desc: 'Manicura completa en spa térmico con esmalte regular.', duration: '30 min', price: '$390', hasAddons: true },
-        { _id: 'mani-gel', name: 'Manicura Exentia con Gel', desc: 'Manicura premium en spa térmico con gel semipermanente.', duration: '45 min', price: '$590', hasAddons: true },
-        { _id: 'mani-rusa', name: 'Manicura Exentia Rusa con Esmalte', desc: 'Técnica rusa con cutícula limpia, precisión y acabado natural con esmalte regular.', duration: '50 min', price: '$370', hasAddons: true },
-        { _id: 'mani-rusa-gel', name: 'Manicura Exentia Rusa con Gel', desc: 'Técnica rusa premium con cutícula limpia y acabado en gel semipermanente.', duration: '60 min', price: '$570', hasAddons: true },
-        { _id: 'mani-caballero', name: 'Manicura Exentia Caballero', desc: 'Manicura clásica para caballero con limado, hidratación y pulido.', duration: '30 min', price: '$350', hasAddons: true },
-        { _id: 'gel-semi', name: 'Gel Semipermanente', desc: 'Color vibrante y duradero, acabado brillante hasta 3 semanas.', duration: '30 min', price: '$290', hasAddons: true },
-        { _id: 'acri-cover', name: 'Uñas Acrílicas Cover Natural', desc: 'Construcción acrílica premium tip No.3 con cover natural.', duration: '90 min', price: '$550', hasAddons: true },
-        { _id: 'acri-gel', name: 'Uñas Acrílicas con Gel', desc: 'Acrílicas tip No.3 con gel para mayor brillo y durabilidad (incluye marca premium).', duration: '90 min', price: '$650', hasAddons: true },
-        { _id: 'escu-natural', name: 'Uñas Esculturales Natural', desc: 'Esculturales sin tip con cover natural, look elegante.', duration: '90 min', price: '$620', hasAddons: true },
-        { _id: 'escu-gel', name: 'Uñas Esculturales con Gel', desc: 'Esculturales premium con gel de construcción.', duration: '100 min', price: '$695', hasAddons: true },
-        { _id: 'ret-acri-cover', name: 'Retoque de Acrílico solo Cover', desc: 'Mantenimiento mensual de acrílico con cover natural.', duration: '60 min', price: '$540', hasAddons: true },
-        { _id: 'ret-acri-gel', name: 'Retoque de Acrílico con Gel', desc: 'Mantenimiento mensual de acrílico con gel.', duration: '70 min', price: '$580', hasAddons: true },
-        { _id: 'acripie', name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500', hasAddons: true },
-        { _id: 'rubber-base', name: 'Base Rubber', desc: 'Base rubber que protege y fortalece la uña natural.', duration: '30 min', price: '$210', hasAddons: true },
-        { _id: 'rubber-niv', name: 'Nivelación de Rubber', desc: 'Nivelación con rubber transparente.', duration: '45 min', price: '$370', hasAddons: true },
-        { _id: 'rubber-niv-color', name: 'Nivelación de Rubber Color', desc: 'Nivelación con rubber de color.', duration: '45 min', price: '$410', hasAddons: true },
-        { _id: 'ret-rubber', name: 'Retoque de Rubber', desc: 'Mantenimiento del rubber.', duration: '45 min', price: '$330', hasAddons: true },
-        { _id: 'ret-rubber-hib', name: 'Retoque Rubber Híbrido', desc: 'Mantenimiento del rubber híbrido.', duration: '50 min', price: '$390', hasAddons: true },
+        { _id: 'mani-esmalte', name: 'Manicura Exentia con Esmalte', desc: 'Manicura completa en spa térmico con esmalte regular.', homeAvailable: false, duration: '30 min', price: '$390', hasAddons: true },
+        { _id: 'mani-gel', name: 'Manicura Exentia con Gel', desc: 'Manicura premium en spa térmico con gel semipermanente.', homeAvailable: false, duration: '45 min', price: '$590', hasAddons: true },
+        { _id: 'mani-rusa', name: 'Manicura Exentia Rusa con Esmalte', desc: 'Técnica rusa con cutícula limpia, precisión y acabado natural con esmalte regular.', homeAvailable: false, duration: '50 min', price: '$370', hasAddons: true },
+        { _id: 'mani-rusa-gel', name: 'Manicura Exentia Rusa con Gel', desc: 'Técnica rusa premium con cutícula limpia y acabado en gel semipermanente.', homeAvailable: false, duration: '60 min', price: '$570', hasAddons: true },
+        { _id: 'mani-caballero', name: 'Manicura Exentia Caballero', desc: 'Manicura clásica para caballero con limado, hidratación y pulido.', homeAvailable: false, duration: '30 min', price: '$350', hasAddons: true },
+        { _id: 'gel-semi', name: 'Gel Semipermanente', desc: 'Color vibrante y duradero, acabado brillante hasta 3 semanas.', homeAvailable: false, duration: '30 min', price: '$290', hasAddons: true },
+        { _id: 'acri-cover', name: 'Uñas Acrílicas Cover Natural', desc: 'Construcción acrílica premium tip No.3 con cover natural.', homeAvailable: false, duration: '90 min', price: '$550', hasAddons: true },
+        { _id: 'acri-gel', name: 'Uñas Acrílicas con Gel', desc: 'Acrílicas tip No.3 con gel para mayor brillo y durabilidad (incluye marca premium).', homeAvailable: false, duration: '90 min', price: '$650', hasAddons: true },
+        { _id: 'escu-natural', name: 'Uñas Esculturales Natural', desc: 'Esculturales sin tip con cover natural, look elegante.', homeAvailable: false, duration: '90 min', price: '$620', hasAddons: true },
+        { _id: 'escu-gel', name: 'Uñas Esculturales con Gel', desc: 'Esculturales premium con gel de construcción.', homeAvailable: false, duration: '100 min', price: '$695', hasAddons: true },
+        { _id: 'ret-acri-cover', name: 'Retoque de Acrílico solo Cover', desc: 'Mantenimiento mensual de acrílico con cover natural.', homeAvailable: false, duration: '60 min', price: '$540', hasAddons: true },
+        { _id: 'ret-acri-gel', name: 'Retoque de Acrílico con Gel', desc: 'Mantenimiento mensual de acrílico con gel.', homeAvailable: false, duration: '70 min', price: '$580', hasAddons: true },
+        { _id: 'acripie', name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', homeAvailable: false, duration: '90 min', price: '$500', hasAddons: true },
+        { _id: 'rubber-base', name: 'Base Rubber', desc: 'Base rubber que protege y fortalece la uña natural.', homeAvailable: false, duration: '30 min', price: '$210', hasAddons: true },
+        { _id: 'rubber-niv', name: 'Nivelación de Rubber', desc: 'Nivelación con rubber transparente.', homeAvailable: false, duration: '45 min', price: '$370', hasAddons: true },
+        { _id: 'rubber-niv-color', name: 'Nivelación de Rubber Color', desc: 'Nivelación con rubber de color.', homeAvailable: false, duration: '45 min', price: '$410', hasAddons: true },
+        { _id: 'ret-rubber', name: 'Retoque de Rubber', desc: 'Mantenimiento del rubber.', homeAvailable: false, duration: '45 min', price: '$330', hasAddons: true },
+        { _id: 'ret-rubber-hib', name: 'Retoque Rubber Híbrido', desc: 'Mantenimiento del rubber híbrido.', homeAvailable: false, duration: '50 min', price: '$390', hasAddons: true },
 
         // === EXPRESS (sin add-ons) ===
-        { _id: 'corte-unas', name: 'Corte de Uñas', desc: 'Servicio express de corte y limado.', duration: '15 min', isExpress: true, variants: [{type: 'Manos', price: '$120'}, {type: 'Pies', price: '$150'}] },
-        { _id: 'esm-regular', name: 'Esmaltado Regular', desc: 'Solo esmalte clásico (sin manicura completa).', duration: '15 min', price: '$180', isExpress: true },
-        { _id: 'esm-frances', name: 'Esmaltado Francés', desc: 'Solo el clásico look francés con líneas perfectas.', duration: '20 min', price: '$195', isExpress: true },
-        { _id: 'esm-infantil', name: 'Esmaltado Regular Infantil', desc: 'Esmaltado regular para los más pequeños con productos suaves.', duration: '15 min', price: '$140', isExpress: true },
-        { _id: 'calcio', name: 'Tratamiento de Calcio', desc: 'Tratamiento fortalecedor con calcio para uñas débiles.', duration: '15 min', price: '$110', isExpress: true },
-        { _id: 'parafina', name: 'Parafina', desc: 'Tratamiento hidratante con parafina caliente.', duration: '20 min', isExpress: true, variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$150'}] },
-        { _id: 'mascarilla', name: 'Mascarilla de Temporada', desc: 'Mascarilla hidratante y nutritiva por temporada.', duration: '20 min', isExpress: true, variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$130'}] },
-        { _id: 'parche', name: 'Parche de Acrílico', desc: 'Reparación puntual de uña acrílica rota.', duration: '15 min', price: '$60', isExpress: true },
-        { _id: 'reposicion', name: 'Reposición de Uña + Gel', desc: 'Reposición de una uña con gel cuando se ha caído.', duration: '20 min', price: '$80', isExpress: true },
-        { _id: 'cambio', name: 'Cambio de Forma o Largo', desc: 'Modifica la forma o el largo de tus acrílicas.', duration: '20 min', price: '$70', isExpress: true },
-        { _id: 'acripie-una', name: 'Acripié por Uña', desc: 'Acrílico en una sola uña del pie.', duration: '15 min', price: '$100', isExpress: true }
+        { _id: 'corte-unas', name: 'Corte de Uñas', desc: 'Servicio express de corte y limado.', homeAvailable: false, duration: '15 min', isExpress: true, variants: [{type: 'Manos', price: '$120'}, {type: 'Pies', price: '$150'}] },
+        { _id: 'esm-regular', name: 'Esmaltado Regular', desc: 'Solo esmalte clásico (sin manicura completa).', homeAvailable: false, duration: '15 min', price: '$180', isExpress: true },
+        { _id: 'esm-frances', name: 'Esmaltado Francés', desc: 'Solo el clásico look francés con líneas perfectas.', homeAvailable: false, duration: '20 min', price: '$195', isExpress: true },
+        { _id: 'esm-infantil', name: 'Esmaltado Regular Infantil', desc: 'Esmaltado regular para los más pequeños con productos suaves.', homeAvailable: false, duration: '15 min', price: '$140', isExpress: true },
+        { _id: 'calcio', name: 'Tratamiento de Calcio', desc: 'Tratamiento fortalecedor con calcio para uñas débiles.', homeAvailable: false, duration: '15 min', price: '$110', isExpress: true },
+        { _id: 'mascarilla', name: 'Mascarilla de Temporada', desc: 'Mascarilla hidratante y nutritiva por temporada.', homeAvailable: false, duration: '20 min', isExpress: true, variants: [{type: 'Manos', price: '$100'}, {type: 'Pies', price: '$130'}] },
+        { _id: 'parche', name: 'Parche de Acrílico', desc: 'Reparación puntual de uña acrílica rota.', homeAvailable: false, duration: '15 min', price: '$60', isExpress: true },
+        { _id: 'reposicion', name: 'Reposición de Uña + Gel', desc: 'Reposición de una uña con gel cuando se ha caído.', homeAvailable: false, duration: '20 min', price: '$80', isExpress: true },
+        { _id: 'cambio', name: 'Cambio de Forma o Largo', desc: 'Modifica la forma o el largo de tus acrílicas.', homeAvailable: false, duration: '20 min', price: '$70', isExpress: true },
+        { _id: 'acripie-una', name: 'Acripié por Uña', desc: 'Acrílico en una sola uña del pie.', homeAvailable: false, duration: '15 min', price: '$100', isExpress: true }
       ],
       addons: NAIL_ADDONS
     },
@@ -5535,11 +5583,11 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Productos profesionales premium'
       ],
       treatments: [
-        { _id: 'pedi-esmalte', name: 'Pedicura Exentia con Esmalte', desc: 'Pedicura spa con hidromasaje relajante y esmalte profesional.', duration: '45 min', price: '$580', hasAddons: true },
-        { _id: 'pedi-gel', name: 'Pedicura Exentia con Gel', desc: 'Pedicura completa con hidromasaje y gel de larga duración.', duration: '60 min', price: '$690', hasAddons: true },
-        { _id: 'pedi-caballero', name: 'Pedicura Exentia Caballero', desc: 'Pedicura caballero con hidromasaje, limado y pulido natural.', duration: '50 min', price: '$490', hasAddons: true },
-        { _id: 'pedi-acripie', name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', duration: '90 min', price: '$500', hasAddons: true },
-        { _id: 'corte-pies', name: 'Corte de Uñas Pies', desc: 'Servicio express de corte y limado.', duration: '15 min', price: '$150', isExpress: true }
+        { _id: 'pedi-esmalte', name: 'Pedicura Exentia con Esmalte', desc: 'Pedicura spa con hidromasaje relajante y esmalte profesional.', homeAvailable: false, duration: '45 min', price: '$580', hasAddons: true },
+        { _id: 'pedi-gel', name: 'Pedicura Exentia con Gel', desc: 'Pedicura completa con hidromasaje y gel de larga duración.', homeAvailable: false, duration: '60 min', price: '$690', hasAddons: true },
+        { _id: 'pedi-caballero', name: 'Pedicura Exentia Caballero', desc: 'Pedicura caballero con hidromasaje, limado y pulido natural.', homeAvailable: false, duration: '50 min', price: '$490', hasAddons: true },
+        { _id: 'pedi-acripie', name: 'Acripié', desc: 'Construcción acrílica en pies para diseños duraderos.', homeAvailable: false, duration: '90 min', price: '$500', hasAddons: true },
+        { _id: 'corte-pies', name: 'Corte de Uñas Pies', desc: 'Servicio express de corte y limado.', homeAvailable: false, duration: '15 min', price: '$150', isExpress: true }
       ],
       addons: NAIL_ADDONS
     },
@@ -5567,23 +5615,23 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Diagnóstico capilar gratis'
       ],
       treatments: [
-        { name: 'Corte Cabello Dama', desc: 'Corte personalizado con mascarilla hidratante y estilizado incluido.', duration: '45 min', price: '$650' },
-        { name: 'Corte Cabello Corto Dama', desc: 'Corte corto con mascarilla y estilizado.', duration: '40 min', price: '$500' },
-        { name: 'Corte Cabello Dama c/ Ampolleta', desc: 'Corte con ampolleta nutritiva, mascarilla y estilizado.', duration: '60 min', price: '$750' },
-        { name: 'Corte Cabello Hombre', desc: 'Corte moderno con mascarilla e hilo hidratante incluido.', duration: '30 min', price: '$350' },
-        { name: 'Shampoo y Secado', desc: 'Lavado profesional con mascarilla nutritiva y secado con estilo.', duration: '30 min', price: 'Desde $600' },
-        { name: 'Planchado Express', desc: 'Plancha rápida para un look impecable.', duration: '30 min', price: 'Desde $500' },
-        { name: 'Peinado Cabello Corto', desc: 'Brushing, moldeado o planchado en cabello corto.', duration: '40 min', price: '$850' },
-        { name: 'Peinado Cabello Mediano', desc: 'Brushing, moldeado o planchado en cabello mediano.', duration: '50 min', price: '$1,000' },
-        { name: 'Peinado Novia', desc: 'Peinado elegante y duradero diseñado para tu día especial.', duration: '90 min', price: '$1,700' },
-        { name: 'Diseño de Color Personalizado', desc: 'Mechas, balayage o baby lights con matiz, despunte y estilizado.', duration: '120 min', price: 'Desde $2,500' },
-        { name: 'Tinte Global', desc: 'Tinte completo con mascarilla hidratante y estilizado.', duration: '120 min', price: 'Desde $1,700' },
-        { name: 'Retoque de Raíz', desc: 'Retoque de raíz con técnica profesional.', duration: '90 min', price: 'Desde $1,300' },
-        { name: 'Baño de Color', desc: 'Color gloss o toner para revitalizar el tono.', duration: '60 min', price: 'Desde $1,000' },
-        { name: 'Nanoplastia', desc: 'Reestructuración profunda anti-frizz para un cabello sedoso y manejable.', duration: '120 min', price: 'Desde $2,300' },
-        { name: 'Keratina', desc: 'Brillo, nutrición y suavidad duradera.', duration: '120 min', price: 'Desde $2,300' },
-        { name: 'Botox Capilar', desc: 'Hidratación profunda y rejuvenecimiento del cabello.', duration: '120 min', price: 'Desde $2,300' },
-        { name: 'Extensiones de Cabello Brasileño', desc: 'Método brasileño con extensiones premium.', duration: '180 min', price: 'Desde $2,800' }
+        { name: 'Corte Cabello Dama', desc: 'Corte personalizado con mascarilla hidratante y estilizado incluido.', homeAvailable: false, duration: '45 min', price: '$650' },
+        { name: 'Corte Cabello Corto Dama', desc: 'Corte corto con mascarilla y estilizado.', homeAvailable: false, duration: '40 min', price: '$500' },
+        { name: 'Corte Cabello Dama c/ Ampolleta', desc: 'Corte con ampolleta nutritiva, mascarilla y estilizado.', homeAvailable: false, duration: '60 min', price: '$750' },
+        { name: 'Corte Cabello Hombre', desc: 'Corte moderno con mascarilla e hilo hidratante incluido.', homeAvailable: false, duration: '30 min', price: '$350' },
+        { name: 'Shampoo y Secado', desc: 'Lavado profesional con mascarilla nutritiva y secado con estilo.', homeAvailable: false, duration: '30 min', price: 'Desde $600' },
+        { name: 'Planchado Express', desc: 'Plancha rápida para un look impecable.', homeAvailable: false, duration: '30 min', price: 'Desde $500' },
+        { name: 'Peinado Cabello Corto', desc: 'Brushing, moldeado o planchado en cabello corto.', homeAvailable: false, duration: '40 min', price: '$850' },
+        { name: 'Peinado Cabello Mediano', desc: 'Brushing, moldeado o planchado en cabello mediano.', homeAvailable: false, duration: '50 min', price: '$1,000' },
+        { name: 'Peinado Novia', desc: 'Peinado elegante y duradero diseñado para tu día especial.', homeAvailable: false, duration: '90 min', price: '$1,700' },
+        { name: 'Diseño de Color Personalizado', desc: 'Mechas, balayage o baby lights con matiz, despunte y estilizado.', homeAvailable: false, duration: '120 min', price: 'Desde $2,500' },
+        { name: 'Tinte Global', desc: 'Tinte completo con mascarilla hidratante y estilizado.', homeAvailable: false, duration: '120 min', price: 'Desde $1,700' },
+        { name: 'Retoque de Raíz', desc: 'Retoque de raíz con técnica profesional.', homeAvailable: false, duration: '90 min', price: 'Desde $1,300' },
+        { name: 'Baño de Color', desc: 'Color gloss o toner para revitalizar el tono.', homeAvailable: false, duration: '60 min', price: 'Desde $1,000' },
+        { name: 'Nanoplastia', desc: 'Reestructuración profunda anti-frizz para un cabello sedoso y manejable.', homeAvailable: false, duration: '120 min', price: 'Desde $2,300' },
+        { name: 'Keratina', desc: 'Brillo, nutrición y suavidad duradera.', homeAvailable: false, duration: '120 min', price: 'Desde $2,300' },
+        { name: 'Botox Capilar', desc: 'Hidratación profunda y rejuvenecimiento del cabello.', homeAvailable: false, duration: '120 min', price: 'Desde $2,300' },
+        { name: 'Extensiones de Cabello Brasileño', desc: 'Método brasileño con extensiones premium.', homeAvailable: false, duration: '180 min', price: 'Desde $2,800' }
       ]
     },
     maquillaje: {
@@ -5610,10 +5658,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Adaptado a tu estilo'
       ],
       treatments: [
-        { name: 'Maquillaje Profesional', desc: 'Maquillaje profesional con productos de larga duración.', duration: '60 min', price: '$1,200' },
-        { name: 'Peinado y Maquillaje Social', desc: 'Combinación perfecta para eventos sociales.', duration: '90 min', price: '$2,000' },
-        { name: 'Maquillaje de Ojos', desc: 'Solo ojos con técnicas profesionales según el evento.', duration: '40 min', price: '$800' },
-        { name: 'Peinado y Maquillaje de Noche', desc: 'Look completo elegante y duradero para tu noche especial.', duration: '90 min', price: '$2,300' }
+        { name: 'Maquillaje Profesional', desc: 'Maquillaje profesional con productos de larga duración.', homeAvailable: false, duration: '60 min', price: '$1,200' },
+        { name: 'Peinado y Maquillaje Social', desc: 'Combinación perfecta para eventos sociales.', homeAvailable: false, duration: '90 min', price: '$2,000' },
+        { name: 'Maquillaje de Ojos', desc: 'Solo ojos con técnicas profesionales según el evento.', homeAvailable: false, duration: '40 min', price: '$800' },
+        { name: 'Peinado y Maquillaje de Noche', desc: 'Look completo elegante y duradero para tu noche especial.', homeAvailable: false, duration: '90 min', price: '$2,300' }
       ]
     },
     depilacion: {
@@ -5640,33 +5688,33 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         'Resultados hasta 4 semanas'
       ],
       treatments: [
-        { name: 'Facial Completo', desc: 'Epilación de cera tibia en todas las zonas del rostro.', duration: '30 min', variants: [{type: 'Dama', price: '$465'}, {type: 'Caballero', price: '$698'}] },
-        { name: 'Cejas', desc: 'Depilación de cejas con cera.', duration: '15 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
-        { name: 'Perfilado de Cejas', desc: 'Depilación con diseño y forma personalizada.', duration: '20 min', variants: [{type: 'Dama', price: '$230'}, {type: 'Caballero', price: '$345'}] },
-        { name: 'Bozo (Upper lip)', desc: 'Cera tibia precisa en zona superior labial.', duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
-        { name: 'Axilas', desc: 'Axilas con cera hipoalergénica.', duration: '15 min', variants: [{type: 'Dama', price: '$175'}, {type: 'Caballero', price: '$263'}] },
-        { name: 'Brasileño', desc: 'Depilación completa de zona íntima con cera hipoalergénica.', duration: '30 min', variants: [{type: 'Dama', price: '$600'}, {type: 'Caballero', price: '$900'}] },
-        { name: 'Resaque Bikini', desc: 'Línea de bikini regular.', duration: '20 min', variants: [{type: 'Dama', price: '$290'}, {type: 'Caballero', price: '$435'}] },
-        { name: 'Resaque Bikini Profundo', desc: 'Bikini línea profunda.', duration: '25 min', variants: [{type: 'Dama', price: '$340'}, {type: 'Caballero', price: '$510'}] },
-        { name: 'Piernas Completas', desc: 'Piernas completas con cera tibia.', duration: '45 min', variants: [{type: 'Dama', price: '$510'}, {type: 'Caballero', price: '$765'}] },
-        { name: '1/2 Piernas', desc: 'Media pierna con cera.', duration: '30 min', variants: [{type: 'Dama', price: '$385'}, {type: 'Caballero', price: '$578'}] },
-        { name: 'Brazos', desc: 'Brazos completos con cera tibia.', duration: '30 min', variants: [{type: 'Dama', price: '$405'}, {type: 'Caballero', price: '$608'}] },
-        { name: '1/2 Brazos', desc: 'Medio brazo con cera.', duration: '20 min', variants: [{type: 'Dama', price: '$335'}, {type: 'Caballero', price: '$503'}] },
-        { name: 'Espalda', desc: 'Espalda completa con cera profesional.', duration: '40 min', variants: [{type: 'Dama', price: '$445'}, {type: 'Caballero', price: '$668'}] },
-        { name: 'Abdomen', desc: 'Abdomen con cera tibia.', duration: '25 min', variants: [{type: 'Dama', price: '$310'}, {type: 'Caballero', price: '$465'}] },
-        { name: 'Glúteos', desc: 'Glúteos con cera hipoalergénica.', duration: '30 min', variants: [{type: 'Dama', price: '$425'}, {type: 'Caballero', price: '$638'}] },
-        { name: 'Cuerpo Completo', desc: 'Depilación corporal integral. Requiere anticipo.', duration: '180 min', variants: [{type: 'Dama', price: '$2,050'}, {type: 'Caballero', price: '$3,075'}] },
-        { name: 'Frente', desc: 'Depilación de frente con cera tibia.', duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
-        { name: 'Sien', desc: 'Depilación de sienes con cera precisa.', duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
-        { name: 'Nariz', desc: 'Depilación de nariz con cera tibia.', duration: '10 min', variants: [{type: 'Dama', price: '$135'}, {type: 'Caballero', price: '$203'}] },
-        { name: 'Pómulos', desc: 'Depilación de pómulos con cera.', duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
-        { name: 'Patillas', desc: 'Depilación de patillas con cera tibia.', duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
-        { name: 'Barba', desc: 'Depilación de barba con cera profesional.', duration: '15 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
-        { name: 'Nuca', desc: 'Depilación de nuca con cera tibia.', duration: '15 min', variants: [{type: 'Dama', price: '$155'}, {type: 'Caballero', price: '$233'}] },
-        { name: 'Línea Interglútea', desc: 'Depilación íntima con cera hipoalergénica.', duration: '15 min', variants: [{type: 'Dama', price: '$155'}, {type: 'Caballero', price: '$233'}] },
-        { name: 'Espalda Baja', desc: 'Depilación de espalda baja con cera.', duration: '20 min', variants: [{type: 'Dama', price: '$200'}, {type: 'Caballero', price: '$300'}] },
-        { name: 'Pecho', desc: 'Depilación de pecho con cera profesional.', duration: '25 min', variants: [{type: 'Dama', price: '$270'}, {type: 'Caballero', price: '$405'}] },
-        { name: 'Línea Abdomen', desc: 'Depilación de línea de abdomen con cera tibia.', duration: '15 min', variants: [{type: 'Dama', price: '$210'}, {type: 'Caballero', price: '$315'}] }
+        { name: 'Facial Completo', desc: 'Epilación de cera tibia en todas las zonas del rostro.', homeAvailable: true, duration: '30 min', variants: [{type: 'Dama', price: '$465'}, {type: 'Caballero', price: '$698'}] },
+        { name: 'Cejas', desc: 'Depilación de cejas con cera.', homeAvailable: true, duration: '15 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
+        { name: 'Perfilado de Cejas', desc: 'Depilación con diseño y forma personalizada.', homeAvailable: true, duration: '20 min', variants: [{type: 'Dama', price: '$230'}, {type: 'Caballero', price: '$345'}] },
+        { name: 'Bozo (Upper lip)', desc: 'Cera tibia precisa en zona superior labial.', homeAvailable: true, duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
+        { name: 'Axilas', desc: 'Axilas con cera hipoalergénica.', homeAvailable: true, duration: '15 min', variants: [{type: 'Dama', price: '$175'}, {type: 'Caballero', price: '$263'}] },
+        { name: 'Brasileño', desc: 'Depilación completa de zona íntima con cera hipoalergénica.', homeAvailable: true, duration: '30 min', variants: [{type: 'Dama', price: '$600'}, {type: 'Caballero', price: '$900'}] },
+        { name: 'Resaque Bikini', desc: 'Línea de bikini regular.', homeAvailable: true, duration: '20 min', variants: [{type: 'Dama', price: '$290'}, {type: 'Caballero', price: '$435'}] },
+        { name: 'Resaque Bikini Profundo', desc: 'Bikini línea profunda.', homeAvailable: true, duration: '25 min', variants: [{type: 'Dama', price: '$340'}, {type: 'Caballero', price: '$510'}] },
+        { name: 'Piernas Completas', desc: 'Piernas completas con cera tibia.', homeAvailable: true, duration: '45 min', variants: [{type: 'Dama', price: '$510'}, {type: 'Caballero', price: '$765'}] },
+        { name: '1/2 Piernas', desc: 'Media pierna con cera.', homeAvailable: true, duration: '30 min', variants: [{type: 'Dama', price: '$385'}, {type: 'Caballero', price: '$578'}] },
+        { name: 'Brazos', desc: 'Brazos completos con cera tibia.', homeAvailable: true, duration: '30 min', variants: [{type: 'Dama', price: '$405'}, {type: 'Caballero', price: '$608'}] },
+        { name: '1/2 Brazos', desc: 'Medio brazo con cera.', homeAvailable: true, duration: '20 min', variants: [{type: 'Dama', price: '$335'}, {type: 'Caballero', price: '$503'}] },
+        { name: 'Espalda', desc: 'Espalda completa con cera profesional.', homeAvailable: true, duration: '40 min', variants: [{type: 'Dama', price: '$445'}, {type: 'Caballero', price: '$668'}] },
+        { name: 'Abdomen', desc: 'Abdomen con cera tibia.', homeAvailable: true, duration: '25 min', variants: [{type: 'Dama', price: '$310'}, {type: 'Caballero', price: '$465'}] },
+        { name: 'Glúteos', desc: 'Glúteos con cera hipoalergénica.', homeAvailable: true, duration: '30 min', variants: [{type: 'Dama', price: '$425'}, {type: 'Caballero', price: '$638'}] },
+        { name: 'Cuerpo Completo', desc: 'Depilación corporal integral. Requiere anticipo.', homeAvailable: true, duration: '180 min', variants: [{type: 'Dama', price: '$2,050'}, {type: 'Caballero', price: '$3,075'}] },
+        { name: 'Frente', desc: 'Depilación de frente con cera tibia.', homeAvailable: true, duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
+        { name: 'Sien', desc: 'Depilación de sienes con cera precisa.', homeAvailable: true, duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
+        { name: 'Nariz', desc: 'Depilación de nariz con cera tibia.', homeAvailable: true, duration: '10 min', variants: [{type: 'Dama', price: '$135'}, {type: 'Caballero', price: '$203'}] },
+        { name: 'Pómulos', desc: 'Depilación de pómulos con cera.', homeAvailable: true, duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
+        { name: 'Patillas', desc: 'Depilación de patillas con cera tibia.', homeAvailable: true, duration: '10 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
+        { name: 'Barba', desc: 'Depilación de barba con cera profesional.', homeAvailable: true, duration: '15 min', variants: [{type: 'Dama', price: '$140'}, {type: 'Caballero', price: '$210'}] },
+        { name: 'Nuca', desc: 'Depilación de nuca con cera tibia.', homeAvailable: true, duration: '15 min', variants: [{type: 'Dama', price: '$155'}, {type: 'Caballero', price: '$233'}] },
+        { name: 'Línea Interglútea', desc: 'Depilación íntima con cera hipoalergénica.', homeAvailable: true, duration: '15 min', variants: [{type: 'Dama', price: '$155'}, {type: 'Caballero', price: '$233'}] },
+        { name: 'Espalda Baja', desc: 'Depilación de espalda baja con cera.', homeAvailable: true, duration: '20 min', variants: [{type: 'Dama', price: '$200'}, {type: 'Caballero', price: '$300'}] },
+        { name: 'Pecho', desc: 'Depilación de pecho con cera profesional.', homeAvailable: true, duration: '25 min', variants: [{type: 'Dama', price: '$270'}, {type: 'Caballero', price: '$405'}] },
+        { name: 'Línea Abdomen', desc: 'Depilación de línea de abdomen con cera tibia.', homeAvailable: true, duration: '15 min', variants: [{type: 'Dama', price: '$210'}, {type: 'Caballero', price: '$315'}] }
       ]
     },
     spakids: {
@@ -5694,9 +5742,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       ],
       supportsParejas: true,
       treatments: [
-        { name: 'Spa Kids', desc: 'Experiencia completa de spa diseñada para los más pequeños de la casa.', duration: '60 min', price: '$1,290', priceCouple: '$2,580' },
-        { name: 'Spa Teens', desc: 'Experiencia de spa diseñada para adolescentes, en un ambiente relajante y seguro.', duration: '60 min', price: '$1,550', priceCouple: '$3,100' },
-        { name: 'Manicura Infantil', desc: 'Manicura para peques con esmalte regular suave.', duration: '20 min', price: '$140' },
+        { name: 'Spa Kids', desc: 'Experiencia completa de spa diseñada para los más pequeños de la casa.', homeAvailable: false, duration: '60 min', price: '$1,290', priceCouple: '$2,580' },
+        { name: 'Spa Teens', desc: 'Experiencia de spa diseñada para adolescentes, en un ambiente relajante y seguro.', homeAvailable: false, duration: '60 min', price: '$1,550', priceCouple: '$3,100' },
+        { name: 'Manicura Infantil', desc: 'Manicura para peques con esmalte regular suave.', homeAvailable: false, duration: '20 min', price: '$140' },
         { name: 'Mini Facial', desc: 'Facial suave para piel infantil con productos hipoalergénicos.', duration: '30 min', price: '$750' }
       ]
     },
@@ -5775,8 +5823,13 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   function renderServicesGrid() {
     const grid = document.getElementById('services-grid');
-    grid.innerHTML = Object.values(SERVICES).map(service => `
-      <div class="service-card" data-service="${service.slug}">
+    grid.innerHTML = Object.values(SERVICES).map(service => {
+      const hasHomeAvailable = service.treatments && service.treatments.some(t => t.homeAvailable === true);
+      const badgeHtml = hasHomeAvailable
+        ? '<div class="service-home-badge available">🏠 A domicilio</div>'
+        : '<div class="service-home-badge unavailable">Solo en sucursal</div>';
+      return `
+      <div class="service-card" data-service="${service.slug}" data-home-available="${hasHomeAvailable ? 'true' : 'false'}">
         <div class="service-img" style="background-image: url('${service.heroImage}');">
           <div class="icon">
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -5784,6 +5837,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         </div>
         <div class="service-info">
           <h3>${service.name}</h3>
+          ${badgeHtml}
           <p>${service.shortDesc}</p>
           <div class="service-cta">
             <span class="price">Ver Experiencia</span>
@@ -5791,7 +5845,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     grid.querySelectorAll('.service-card').forEach(card => {
       card.addEventListener('click', () => {
@@ -7003,10 +7058,46 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         editLink.style.display = 'none';
       }
     }
+    // Wire up place toggle listener
+    var placeToggle = document.getElementById('cita-place-toggle');
+    if (placeToggle && !placeToggle._listenerSet) {
+      placeToggle.querySelectorAll('.cita-place-btn').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          var place = this.getAttribute('data-place');
+          placeToggle.querySelectorAll('.cita-place-btn').forEach(function(b){
+            b.classList.toggle('active', b.getAttribute('data-place') === place);
+            b.setAttribute('aria-checked', b.getAttribute('data-place') === place ? 'true' : 'false');
+          });
+          // Filter service cards in the select modal if it's open
+          filterServicesByPlace(place);
+        });
+      });
+      placeToggle._listenerSet = true;
+    }
     openModal('modal-form');
     try { if (window.exentiaTrack) window.exentiaTrack('form_modal_open', { source: 'custom_form', mode: mode, servicios: (cart || []).join(',') }); } catch(e){}
   }
   window.openFormModal = openFormModal;
+
+  function filterServicesByPlace(place) {
+    var serviceCards = document.querySelectorAll('[data-service]');
+    serviceCards.forEach(function(card){
+      if (place === 'domicilio') {
+        var homeAvailable = card.getAttribute('data-home-available') === 'true';
+        card.style.opacity = homeAvailable ? '1' : '0.4';
+        card.style.pointerEvents = homeAvailable ? 'auto' : 'none';
+        if (!homeAvailable) {
+          card.title = 'Este servicio solo esta disponible en sucursal';
+        }
+      } else {
+        card.style.opacity = '1';
+        card.style.pointerEvents = 'auto';
+        card.title = '';
+      }
+    });
+  }
+  window.filterServicesByPlace = filterServicesByPlace;
 
   var _formSubmitting = false;
   window.submitCustomForm = function(e) {
