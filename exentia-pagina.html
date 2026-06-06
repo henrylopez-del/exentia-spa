@@ -5077,9 +5077,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           <!-- Leyenda de zonas de cobertura a domicilio -->
           <div class="cf-zone-legend" style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:6px;font-size:11.5px;color:#5c5c4a;">
             <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#3fa34d;opacity:.55;border:1px solid #2e8b40;"></span>Zona 1 · Centro / Puerto Cancún · $250</span>
-            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#d9a300;opacity:.55;border:1px solid #b8920a;"></span>Zona 2 · Z. Hotelera / Huayacán · $350</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#d9a300;opacity:.55;border:1px solid #b8920a;"></span>Zona 2 · Z. Hotelera (km 0–12.5) · $350</span>
             <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#d9534f;opacity:.55;border:1px solid #b5362a;"></span>Zona 3 · Z. Hotelera lejana / Aeropuerto · $400</span>
-            <span style="opacity:.8;">Fuera de estas zonas: solo servicio en el spa.</span>
+            <span style="opacity:.8;">Fuera de estas zonas en Cancún: el equipo confirma el traslado.</span>
           </div>
           <!-- Resumen estilo Google Place card -->
           <div id="cf-address-summary" class="cf-address-summary" style="display:none;">
@@ -6490,17 +6490,20 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
   }
 
-  // --- Polígonos de zona (rings [lat,lng]) — geografía real de Cancún ---
-  // COBERTURA = todo Cancún urbano + Zona Hotelera. Z2 = cobertura menos Z1 y Z3.
-  var Z_COVERAGE = [[21.215,-86.915],[21.215,-86.770],[21.140,-86.722],[20.995,-86.775],[20.995,-86.915]];
-  // Zona 1: Centro / Downtown / Puerto Cancún (mainland norte)
+  // --- Polígonos de zona (rings [lat,lng]) — extraídos del mapa oficial del documento ---
+  // Validado contra landmarks reales de Cancún (Punta Cancún, La Isla, El Rey, Nizuc, aeropuerto…).
+  // Zona 1 (verde): Centro / Downtown / Puerto Cancún (mainland norte) — $250
   var Z1_POLYS = [
-    [[21.215,-86.915],[21.215,-86.770],[21.150,-86.745],[21.140,-86.815],[21.113,-86.838],[21.113,-86.915]]
+    [[21.118,-86.860],[21.118,-86.800],[21.150,-86.792],[21.210,-86.792],[21.210,-86.862]]
   ];
-  // Zona 3: Zona Hotelera lejana (km 12.5–22) + área del aeropuerto
+  // Zona 2 (amarillo): Zona Hotelera km 0–12.5 (Punta Cancún → La Isla / Plaza Kukulcán) — $350
+  var Z2_POLYS = [
+    [[21.146,-86.737],[21.140,-86.760],[21.072,-86.784],[21.070,-86.766]]
+  ];
+  // Zona 3 (rojo): Zona Hotelera km 12.5–22 (El Rey/Westin/Punta Nizuc) + área del aeropuerto — $400
   var Z3_POLYS = [
-    [[21.062,-86.808],[21.062,-86.735],[21.010,-86.755],[20.998,-86.785],[21.030,-86.800]], // ZH sur (Punta Nizuc)
-    [[21.065,-86.915],[21.065,-86.838],[20.995,-86.838],[20.995,-86.915]]                    // aeropuerto
+    [[21.072,-86.766],[21.074,-86.784],[21.010,-86.792],[21.008,-86.778]], // ZH sur
+    [[21.070,-86.838],[21.070,-86.882],[21.025,-86.885],[21.025,-86.840]]  // aeropuerto / Lagos del Sol / Campestre
   ];
 
   // Ray casting point-in-polygon (sin dependencias)
@@ -6520,10 +6523,11 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   function classifyZone(lat, lng, colonia) {
     var d = haversineKm(SPA_ORIGIN, { lat: lat, lng: lng });
-    if (!pointInPolys(lat, lng, [Z_COVERAGE])) return { ok: false, dist: d };
     if (pointInPolys(lat, lng, Z1_POLYS)) return { ok: true, dist: d, zona: 1, costo: 250, nombre: 'Zona 1 · Centro / Puerto Cancún', color: '#3fa34d' };
+    if (pointInPolys(lat, lng, Z2_POLYS)) return { ok: true, dist: d, zona: 2, costo: 350, nombre: 'Zona 2 · Zona Hotelera (km 0–12.5)', color: '#d9a300' };
     if (pointInPolys(lat, lng, Z3_POLYS)) return { ok: true, dist: d, zona: 3, costo: 400, nombre: 'Zona 3 · Zona Hotelera lejana / Aeropuerto', color: '#d9534f' };
-    return { ok: true, dist: d, zona: 2, costo: 350, nombre: 'Zona 2 · Zona Hotelera / Huayacán', color: '#d9a300' };
+    if (d > 30) return { ok: false, dist: d };          // otra ciudad → fuera de cobertura
+    return { ok: true, dist: d, zona: null };           // en Cancún pero sin zona predefinida → por confirmar
   }
 
   function drawCoverageZones() {
@@ -6540,9 +6544,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         }));
       });
     }
-    // Z2 base (amarillo) = toda la cobertura; Z1 (verde) y Z3 (rojo) encima
-    addPolys([Z_COVERAGE], '#b8920a', '#d9a300', 1);
+    // 3 zonas con sus colores (verde Z1, amarillo Z2, rojo Z3)
     addPolys(Z1_POLYS, '#2e8b40', '#3fa34d', 2);
+    addPolys(Z2_POLYS, '#b8920a', '#d9a300', 2);
     addPolys(Z3_POLYS, '#b5362a', '#d9534f', 2);
     // Marcador del spa
     if (_spaMarker) _spaMarker.setMap(null);
@@ -6551,10 +6555,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       icon: { path: google.maps.SymbolPath.CIRCLE, scale: 6, fillColor: '#5c3a1e', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2 },
       title: 'Exentia Spa'
     });
-    // Encuadrar a la cobertura
+    // Encuadrar a todas las zonas
     try {
       var b = new google.maps.LatLngBounds();
-      Z_COVERAGE.forEach(function(p){ b.extend({ lat: p[0], lng: p[1] }); });
+      [].concat(Z1_POLYS, Z2_POLYS, Z3_POLYS).forEach(function(r){
+        r.forEach(function(p){ b.extend({ lat: p[0], lng: p[1] }); });
+      });
       _gMap.fitBounds(b);
     } catch(e){}
   }
@@ -6576,6 +6582,17 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       return;
     }
     citaPlace.cobertura = true;
+    if (z.zona === null) {
+      // Dentro de Cancún pero fuera de las 3 zonas con tarifa fija → el equipo confirma
+      citaPlace.zonaNum = null;
+      citaPlace.costoTraslado = null;
+      box.style.display = 'block';
+      box.innerHTML = '<div style="display:flex;gap:8px;align-items:flex-start;background:#fff8e6;border:1px solid #d9a300;border-radius:10px;padding:10px 12px;">'
+        + '<span style="font-size:15px;line-height:1.2;">📍</span>'
+        + '<div style="font-size:12.5px;color:#7a5b00;line-height:1.45;">Tu ubicación está fuera de las zonas con tarifa fija. <b>Sí podemos ir a domicilio</b>; el equipo te confirma el costo de traslado al agendar.</div>'
+        + '</div>';
+      return;
+    }
     citaPlace.zonaNum = z.zona;
     citaPlace.costoTraslado = z.costo;
     box.style.display = 'block';
