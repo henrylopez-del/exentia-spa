@@ -327,7 +327,8 @@
   <div class="exf-ok" id="exf-ok">
     <div class="ic">&#10003;</div>
     <h3>Cita Solicitada</h3>
-    <p>Recibiras confirmacion por WhatsApp</p>
+    <p>Confirma tu cita por WhatsApp para asegurar tu lugar</p>
+    <a id="exf-wa-confirm" href="#" target="_blank" rel="noopener" class="exf-btn exf-btn-p" style="display:inline-block;margin-top:18px;text-decoration:none;background:#25D366;border-color:#25D366;color:#fff;">Confirmar por WhatsApp</a>
     <p style="margin-top:12px;font-size:11px;color:#9a9854;">Exentia Spa &amp; Beauty Salon</p>
   </div>
 </div>
@@ -345,6 +346,9 @@
     hora_cita: null,
     zona: null
   };
+
+  // ===== ANTI-DOUBLE-SUBMIT =====
+  var submitting = false;
 
   // ===== READ CART FROM URL PARAMS =====
   var params = new URLSearchParams(window.location.search);
@@ -546,6 +550,9 @@
 
   // ===== SUBMIT =====
   window.exfDoSubmit = function() {
+    if (submitting) return;
+    submitting = true;
+
     var nom = document.getElementById('exf-nom').value.trim();
     var ape = document.getElementById('exf-ape').value.trim();
     var tel = document.getElementById('exf-tel').value.trim();
@@ -555,6 +562,7 @@
       var err = document.getElementById('exf-err');
       err.textContent = 'Completa nombre, telefono y email';
       err.classList.add('show');
+      submitting = false;
       return;
     }
 
@@ -594,13 +602,31 @@
     _set('3X1Q3hARpiBH6UZK6xeV', document.getElementById('exf-presion').value);
     _set('kjHgysIwIcyvzdOScV1C', document.getElementById('exf-primera').value);
     _set('67CrR2g1U7HC5vwmGmKT', document.getElementById('exf-notas').value);
-    _set('tipo_cita', state.ubicacion);
-    _set('num_personas', state.num_personas);
-    _set('modalidad_atencion', state.modalidad_atencion);
-    _set('fecha_cita', state.fecha_cita);
-    _set('hora_cita', state.hora_cita);
-    _set('zona', state.zona);
-    _set('complementos_json', JSON.stringify(state.complementos));
+    _set('SownqsR6UXIPinvwGeWS', state.ubicacion);            // exentia_tipo_cita
+    _set('Cnq6WXWs8vlRhZLhRPqf', state.num_personas);        // exentia_num_personas
+    _set('sjfRy6egZ9pkf0hlFmUu', state.modalidad_atencion);  // exentia_modalidad_atencion
+    // _set('fecha_cita', state.fecha_cita);  // va por appointment, no como CF
+    // _set('hora_cita', state.hora_cita);    // va por appointment, no como CF
+    _set('vVUbV7gxxxTpfefQyCLG', state.zona);                // exentia_zona
+    _set('ud8NMeQGEFCBfQJ8q8sz', (state.complementos || []).map(function(c){return c.nombre||c;}).join(', ')); // exentia_complementos
+
+    // ===== Confirmacion del cliente por WhatsApp (boton -> negocio) =====
+    var BIZ_WA = '529984803595';
+    var servNom = (state.cart || []).join(', ');
+    var lineas = [
+      'Hola Exentia, confirmo mi cita',
+      'Nombre: ' + nom + ' ' + ape,
+      servNom ? ('Servicio: ' + servNom + (state.modalidad_atencion ? ' (' + state.modalidad_atencion + ')' : '')) : null,
+      state.num_personas ? ('Personas: ' + state.num_personas) : null,
+      (state.fecha_cita || state.hora_cita) ? ('Fecha: ' + (state.fecha_cita || '') + ' ' + (state.hora_cita || '')).trim() : null,
+      (state.ubicacion === 'domicilio' && state.zona) ? ('Zona: ' + state.zona) : null
+    ].filter(Boolean);
+    var waBtn = document.getElementById('exf-wa-confirm');
+    if (waBtn) waBtn.href = 'https://wa.me/' + BIZ_WA + '?text=' + encodeURIComponent(lineas.join('\n'));
+    // Mostrar pantalla de exito con el boton
+    ['exf-s1','exf-s2','exf-s3','exf-s4'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+    var dots=document.querySelector('.exf-steps'); if(dots) dots.style.display='none';
+    document.getElementById('exf-ok').classList.add('show');
 
     // FIRST: notify parent to open calendar (before GHL destroys our code)
     if (window.parent && window.parent !== window) {
