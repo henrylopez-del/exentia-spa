@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Prepara tu experiencia · Exentia Spa</title>
+<meta name="theme-color" content="#9a9854">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --olive:#9a9854;
+    --olive-light:#b5b062;
+    --olive-dark:#7d7c3f;
+    --olive-soft:#eaeacd;
+    --cream:#f3e4c7;
+    --cream-soft:#e8dfc0;
+    --brown:#5c3a1e;
+    --brown-soft:#7a5c40;
+    --off-white:#fdfbf4;
+    --gray-soft:#9a8d75;
+    --amber-bg:#fff7ec;
+    --amber-border:#e0a556;
+    --amber-text:#7a4d16;
+    --success-bg:#eaf3d9;
+    --success-border:#8ba852;
+    --white:#ffffff;
+    --shadow-sm:0 1px 2px rgba(92,58,30,0.06);
+    --shadow-md:0 4px 12px rgba(92,58,30,0.08);
+    --shadow-lg:0 8px 24px rgba(92,58,30,0.10);
+    --radius:12px;
+    --radius-sm:8px;
+    --radius-lg:16px;
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { min-height:100%; }
+
+  body {
+    font-family:'Inter', system-ui, -apple-system, sans-serif;
+    color:var(--brown);
+    background:var(--off-white);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .app {
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    padding:20px 20px 32px;
+  }
+
+  /* Header brand */
+  .brand {
+    text-align:center;
+    padding:12px 0 20px;
+  }
+  .brand-name {
+    font-family:'Cormorant Garamond', serif;
+    font-size:32px;
+    font-weight:500;
+    letter-spacing:2px;
+    color:var(--olive-dark);
+    line-height:1;
+  }
+  .brand-sub {
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:4px;
+    color:var(--brown-soft);
+    text-transform:uppercase;
+    margin-top:4px;
+  }
+
+  /* Progress */
+  .progress {
+    margin-bottom:24px;
+  }
+  .progress-track {
+    height:4px;
+    background:var(--cream);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .progress-bar {
+    height:100%;
+    background:var(--olive);
+    border-radius:2px;
+    transition:width 0.35s ease;
+  }
+  .progress-label {
+    font-size:11px;
+    color:var(--gray-soft);
+    text-align:right;
+    margin-top:6px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+
+  /* Screen */
+  .screen {
+    flex:1;
+    display:none;
+    flex-direction:column;
+    animation:fadeIn 0.3s ease;
+  }
+  .screen.active { display:flex; }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(6px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  /* Titles */
+  .title {
+    font-family:'Cormorant Garamond', serif;
+    font-size:30px;
+    font-weight:500;
+    line-height:1.15;
+    color:var(--brown);
+    margin-bottom:12px;
+  }
+  .title em { font-style:italic; color:var(--olive-dark); }
+  .subtitle {
+    font-size:15px;
+    color:var(--brown-soft);
+    line-height:1.6;
+    margin-bottom:24px;
+  }
+
+  /* Cards */
+  .card {
+    background:var(--white);
+    border:1px solid var(--cream-soft);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    box-shadow:var(--shadow-sm);
+    margin-bottom:16px;
+  }
+  .card-title {
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gray-soft);
+    margin-bottom:8px;
+  }
+
+  /* Cita summary card */
+  .cita-summary {
+    background:linear-gradient(135deg, var(--cream) 0%, var(--cream-soft) 100%);
+    border:none;
+    padding:20px;
+  }
+  .cita-summary .row {
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding:6px 0;
+    font-size:14px;
+    gap:12px;
+  }
+  .cita-summary .row + .row { border-top:1px solid rgba(92,58,30,0.08); }
+  .cita-summary .row-label {
+    color:var(--brown-soft);
+    font-size:12px;
+    font-weight:500;
+    flex-shrink:0;
+  }
+  .cita-summary .row-value {
+    color:var(--brown);
+    font-weight:600;
+    text-align:right;
+  }
+  .cita-summary .dir {
+    display:block;
+    padding:12px 0 4px;
+    font-size:13px;
+    color:var(--brown-soft);
+    line-height:1.5;
+  }
+  .cita-summary .dir-label {
+    display:block;
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gray-soft);
+    margin-bottom:4px;
+  }
+
+  /* Question */
+  .question {
+    font-family:'Inter', sans-serif;
+    font-size:19px;
+    font-weight:600;
+    color:var(--brown);
+    line-height:1.35;
+    margin-bottom:16px;
+  }
+  .question-sub {
+    font-size:13px;
+    color:var(--brown-soft);
+    margin-top:-8px;
+    margin-bottom:16px;
+    line-height:1.5;
+  }
+
+  /* Sí/No toggles */
+  .toggle-row {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:20px;
+  }
+  .toggle-btn {
+    background:var(--white);
+    border:2px solid var(--cream-soft);
+    border-radius:var(--radius);
+    padding:18px 12px;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:600;
+    color:var(--brown-soft);
+    cursor:pointer;
+    transition:all 0.2s ease;
+    min-height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .toggle-btn:hover { border-color:var(--olive-light); color:var(--brown); }
+  .toggle-btn.selected {
+    background:var(--olive-soft);
+    border-color:var(--olive);
+    color:var(--olive-dark);
+  }
+  .toggle-btn svg { width:20px; height:20px; }
+
+  /* Pill options (distancia) */
+  .pill-row {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .pill-btn {
+    background:var(--white);
+    border:2px solid var(--cream-soft);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:500;
+    color:var(--brown);
+    cursor:pointer;
+    transition:all 0.2s ease;
+    text-align:left;
+    min-height:52px;
+  }
+  .pill-btn:hover { border-color:var(--olive-light); }
+  .pill-btn.selected {
+    background:var(--olive-soft);
+    border-color:var(--olive);
+    font-weight:600;
+    color:var(--olive-dark);
+  }
+
+  /* Input / textarea */
+  .field {
+    margin-bottom:16px;
+  }
+  .field-label {
+    display:block;
+    font-size:13px;
+    font-weight:500;
+    color:var(--brown);
+    margin-bottom:6px;
+  }
+  .field-hint {
+    font-size:12px;
+    color:var(--gray-soft);
+    margin-top:4px;
+    font-style:italic;
+  }
+  .prefill-tag {
+    display:inline-block;
+    font-size:11px;
+    color:var(--gray-soft);
+    font-style:italic;
+    margin-top:4px;
+    padding-left:2px;
+    transition:opacity 0.2s;
+  }
+  .prefill-tag.hidden { opacity:0; height:0; margin:0; overflow:hidden; }
+
+  input[type="text"], input[type="tel"], textarea {
+    width:100%;
+    font-family:inherit;
+    font-size:16px; /* prevents iOS zoom */
+    color:var(--brown);
+    background:var(--white);
+    border:1.5px solid var(--cream-soft);
+    border-radius:var(--radius-sm);
+    padding:12px 14px;
+    transition:border-color 0.2s;
+    -webkit-appearance:none;
+  }
+  input[type="text"]:focus, input[type="tel"]:focus, textarea:focus {
+    outline:none;
+    border-color:var(--olive);
+  }
+  textarea {
+    resize:vertical;
+    min-height:70px;
+    line-height:1.5;
+  }
+
+  /* Conditional group */
+  .sub-group {
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height 0.35s ease, opacity 0.25s ease, margin 0.2s;
+    margin-top:0;
+  }
+  .sub-group.show {
+    max-height:800px;
+    opacity:1;
+    margin-top:8px;
+  }
+  .sub-group-inner {
+    padding:14px 16px;
+    background:var(--white);
+    border-left:3px solid var(--olive-light);
+    border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom:20px;
+  }
+
+  /* Buttons */
+  .actions {
+    display:flex;
+    gap:10px;
+    margin-top:auto;
+    padding-top:24px;
+  }
+  .btn {
+    flex:1;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:600;
+    padding:14px 18px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    transition:all 0.2s;
+    border:none;
+    min-height:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  .btn-primary {
+    background:var(--olive);
+    color:var(--white);
+  }
+  .btn-primary:hover { background:var(--olive-dark); }
+  .btn-primary:disabled { background:var(--cream-soft); color:var(--gray-soft); cursor:not-allowed; }
+  .btn-secondary {
+    background:transparent;
+    color:var(--brown-soft);
+    border:1.5px solid var(--cream-soft);
+    flex:0 0 auto;
+    min-width:100px;
+  }
+  .btn-secondary:hover { border-color:var(--brown-soft); color:var(--brown); }
+  .btn-shortcut {
+    display:block;
+    width:100%;
+    background:var(--olive-soft);
+    border:2px solid var(--olive);
+    color:var(--olive-dark);
+    padding:18px 16px;
+    border-radius:var(--radius);
+    font-family:inherit;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.2s;
+    margin-bottom:12px;
+    text-align:left;
+    line-height:1.4;
+  }
+  .btn-shortcut:hover { background:var(--olive); color:var(--white); }
+  .btn-shortcut .btn-shortcut-sub {
+    display:block;
+    font-size:13px;
+    font-weight:400;
+    opacity:0.8;
+    margin-top:2px;
+  }
+  .divider-o {
+    text-align:center;
+    color:var(--gray-soft);
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin:16px 0;
+    position:relative;
+  }
+  .divider-o::before, .divider-o::after {
+    content:'';
+    position:absolute;
+    top:50%;
+    width:calc(50% - 20px);
+    height:1px;
+    background:var(--cream-soft);
+  }
+  .divider-o::before { left:0; }
+  .divider-o::after { right:0; }
+
+  /* Banner recurrente */
+  .banner {
+    padding:14px 16px;
+    border-radius:var(--radius);
+    font-size:13px;
+    line-height:1.5;
+    margin-bottom:20px;
+    border:1px solid;
+  }
+  .banner-info {
+    background:var(--cream-soft);
+    border-color:var(--olive-light);
+    color:var(--brown);
+  }
+  .banner-warn {
+    background:var(--amber-bg);
+    border-color:var(--amber-border);
+    color:var(--amber-text);
+  }
+  .banner b { font-weight:700; }
+
+  /* Recurrente sticky mini */
+  .banner-mini {
+    padding:10px 14px;
+    border-radius:var(--radius-sm);
+    font-size:12px;
+    line-height:1.4;
+    margin-bottom:16px;
+    background:var(--cream-soft);
+    color:var(--brown-soft);
+    border:1px solid rgba(154,152,84,0.3);
+    display:none;
+  }
+  .banner-mini.warn {
+    background:var(--amber-bg);
+    color:var(--amber-text);
+    border-color:var(--amber-border);
+  }
+  .banner-mini.show { display:block; }
+
+  /* Skeleton */
+  .skel {
+    background:linear-gradient(90deg, var(--cream-soft) 25%, var(--cream) 50%, var(--cream-soft) 75%);
+    background-size:200% 100%;
+    animation:shimmer 1.4s infinite;
+    border-radius:6px;
+  }
+  @keyframes shimmer {
+    0% { background-position:200% 0; }
+    100% { background-position:-200% 0; }
+  }
+  .skel-title { height:36px; width:70%; margin-bottom:16px; }
+  .skel-line { height:14px; margin-bottom:10px; }
+  .skel-card { height:140px; margin-bottom:16px; border-radius:var(--radius); }
+
+  /* Final */
+  .final-icon {
+    width:64px;
+    height:64px;
+    margin:0 auto 20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--olive-soft);
+    border-radius:50%;
+    color:var(--olive-dark);
+  }
+  .final-title {
+    font-family:'Cormorant Garamond', serif;
+    font-size:44px;
+    font-weight:500;
+    text-align:center;
+    color:var(--olive-dark);
+    margin-bottom:12px;
+    font-style:italic;
+  }
+  .final-msg {
+    text-align:center;
+    font-size:15px;
+    color:var(--brown-soft);
+    line-height:1.6;
+    margin-bottom:8px;
+  }
+  .final-see-you {
+    text-align:center;
+    font-family:'Cormorant Garamond', serif;
+    font-size:20px;
+    font-style:italic;
+    color:var(--brown);
+    margin-bottom:32px;
+  }
+
+  /* Error */
+  .error-screen {
+    text-align:center;
+    padding:60px 20px;
+  }
+  .error-title {
+    font-family:'Cormorant Garamond', serif;
+    font-size:28px;
+    color:var(--brown);
+    margin-bottom:12px;
+  }
+  .error-msg {
+    color:var(--brown-soft);
+    margin-bottom:24px;
+    line-height:1.6;
+  }
+  .whatsapp-link {
+    display:inline-block;
+    background:var(--olive);
+    color:var(--white);
+    padding:14px 26px;
+    border-radius:var(--radius);
+    text-decoration:none;
+    font-weight:600;
+    font-size:15px;
+  }
+
+  /* Utils */
+  .hidden { display:none !important; }
+  .icon-step {
+    width:36px;
+    height:36px;
+    background:var(--olive-soft);
+    color:var(--olive-dark);
+    border-radius:10px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+  .icon-step svg { width:20px; height:20px; }
+
+  @media (max-width:400px) {
+    .app { padding:16px 16px 24px; }
+    .title { font-size:26px; }
+    .final-title { font-size:36px; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- Header + Progress -->
+  <div class="brand" id="brand">
+    <div class="brand-name">exentia</div>
+    <div class="brand-sub">Spa &amp; Beauty Salon</div>
+  </div>
+
+  <div class="progress" id="progress" style="display:none;">
+    <div class="progress-track"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">Paso 1 de 6</div>
+  </div>
+
+  <!-- Loading -->
+  <div class="screen active" id="screen-loading">
+    <div class="skel skel-title"></div>
+    <div class="skel skel-line" style="width:90%"></div>
+    <div class="skel skel-line" style="width:75%"></div>
+    <div class="skel skel-card" style="margin-top:24px"></div>
+    <div class="skel skel-line" style="width:60%; margin-top:20px"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="screen" id="screen-error">
+    <div class="error-screen">
+      <div class="error-title">Este enlace no es válido</div>
+      <div class="error-msg">Puede haber expirado o cambiado. Escríbenos por WhatsApp y con gusto te ayudamos.</div>
+      <a href="https://wa.me/529984803595" class="whatsapp-link">Escribir por WhatsApp</a>
+    </div>
+  </div>
+
+  <!-- Bienvenida -->
+  <div class="screen" id="screen-welcome">
+    <div class="title" id="welcomeTitle">Tu experiencia Exentia está <em>confirmada</em>.</div>
+    <div class="subtitle">Ayúdanos a preparar la llegada de nuestro equipo. Toma menos de dos minutos y nos permite brindarte un servicio puntual, sin contratiempos.</div>
+
+    <div id="banner-recurrente" class="banner banner-info" style="display:none;"></div>
+
+    <div class="card cita-summary">
+      <div class="card-title">Tu cita</div>
+      <div id="cita-details"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btn-start">Preparar mi experiencia</button>
+    </div>
+  </div>
+
+  <!-- Paso 1: Acceso -->
+  <div class="screen" id="screen-1">
+    <div class="banner-mini" id="banner-mini-1"></div>
+    <div class="icon-step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14M10 12h.01M10 8h.01M14 12h.01M14 8h.01"/></svg>
+    </div>
+    <div class="question">¿Existe caseta de seguridad en el lugar?</div>
+    <div class="toggle-row" data-field="tiene_caseta">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="sub-group" id="sub-caseta">
+      <div class="sub-group-inner">
+        <div class="question" style="font-size:16px; margin-bottom:14px;">Cuéntanos cómo entrar:</div>
+        <div class="field">
+          <label class="field-label">¿Debemos registrarnos?</label>
+          <div class="toggle-row" data-field="requiere_registro">
+            <button type="button" class="toggle-btn" data-value="true">Sí</button>
+            <button type="button" class="toggle-btn" data-value="false">No</button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="codigo_acceso">¿Existe algún código de acceso?</label>
+          <input type="text" id="codigo_acceso" data-field="codigo_acceso" autocomplete="off" placeholder="Ej. 1234">
+          <div class="prefill-tag hidden" data-prefill-for="codigo_acceso">Confirmado de tu visita anterior</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="instrucciones_acceso">¿Cómo debe registrarse nuestro equipo?</label>
+          <textarea id="instrucciones_acceso" data-field="instrucciones_acceso" placeholder="Ej. Preguntar por la Sra. López, torre B"></textarea>
+          <div class="prefill-tag hidden" data-prefill-for="instrucciones_acceso">Confirmado de tu visita anterior</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" data-action="back">Atrás</button>
+      <button class="btn btn-primary" data-action="next" data-required-any="tiene_caseta">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- Paso 2: Llegada -->
+  <div class="screen" id="screen-2">
+    <div class="banner-mini" id="banner-mini-2"></div>
+    <div class="icon-step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM23 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM2 12h20M2 12l3-7h14l3 7M6 12v5M18 12v5"/></svg>
+    </div>
+    <div class="question">¿Existe estacionamiento?</div>
+    <div class="toggle-row" data-field="tiene_estacionamiento">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="question" style="margin-top:12px;">¿Hay zona de ascenso y descenso?</div>
+    <div class="toggle-row" data-field="zona_ascenso_descenso">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="question" style="margin-top:12px;">¿Qué tan lejos queda del lugar del servicio?</div>
+    <div class="pill-row" data-field="distancia_estacionamiento">
+      <button type="button" class="pill-btn" data-value="en_el_lugar">En el mismo lugar</button>
+      <button type="button" class="pill-btn" data-value="menos_50m">A menos de 50 m</button>
+      <button type="button" class="pill-btn" data-value="50_200m">Entre 50 y 200 m</button>
+      <button type="button" class="pill-btn" data-value="mas_200m">A más de 200 m</button>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" data-action="back">Atrás</button>
+      <button class="btn btn-primary" data-action="next" data-required-any="tiene_estacionamiento">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- Paso 3: Instalación -->
+  <div class="screen" id="screen-3">
+    <div class="banner-mini" id="banner-mini-3"></div>
+    <div class="icon-step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 12v6h18v-6M6 12V8h12v4M9 12v-4M15 12v-4"/></svg>
+    </div>
+    <div class="question" id="q3-camillas">¿Existe espacio para instalar una camilla?</div>
+    <div class="toggle-row" data-field="espacio_camillas_ok">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="field" style="margin-top:16px;">
+      <label class="field-label" for="piso">¿En qué piso se realizará el servicio?</label>
+      <input type="text" id="piso" data-field="piso" autocomplete="off" placeholder="Ej. PB, 3, 12" inputmode="numeric">
+      <div class="prefill-tag hidden" data-prefill-for="piso">Confirmado de tu visita anterior</div>
+    </div>
+
+    <div class="question" style="margin-top:12px;">¿Hay elevador?</div>
+    <div class="toggle-row" data-field="tiene_elevador">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="question" style="margin-top:12px;">¿Hay que subir escaleras?</div>
+    <div class="toggle-row" data-field="hay_escaleras">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" data-action="back">Atrás</button>
+      <button class="btn btn-primary" data-action="next" data-required-any="espacio_camillas_ok">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- Paso 4: Ambiente -->
+  <div class="screen" id="screen-4">
+    <div class="banner-mini" id="banner-mini-4"></div>
+    <div class="icon-step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+    </div>
+    <div class="question">¿Existe aire acondicionado?</div>
+    <div class="toggle-row" data-field="tiene_aire_acondicionado">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="question" style="margin-top:12px;">¿Hay mascotas?</div>
+    <div class="toggle-row" data-field="hay_mascotas">
+      <button type="button" class="toggle-btn" data-value="true">Sí</button>
+      <button type="button" class="toggle-btn" data-value="false">No</button>
+    </div>
+
+    <div class="sub-group" id="sub-mascotas">
+      <div class="sub-group-inner">
+        <div class="field">
+          <label class="field-label" for="mascotas_detalle">Cuéntanos de tus mascotas</label>
+          <textarea id="mascotas_detalle" data-field="mascotas_detalle" placeholder="Ej. 1 perro pequeño amigable"></textarea>
+          <div class="prefill-tag hidden" data-prefill-for="mascotas_detalle">Confirmado de tu visita anterior</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:6px;">
+      <label class="field-label" for="condiciones_especiales">¿Hay alguna condición especial que debamos considerar?</label>
+      <textarea id="condiciones_especiales" data-field="condiciones_especiales" placeholder="Opcional"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" data-action="back">Atrás</button>
+      <button class="btn btn-primary" data-action="next" data-required-any="tiene_aire_acondicionado,hay_mascotas">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- Paso 5: Contacto -->
+  <div class="screen" id="screen-5">
+    <div class="banner-mini" id="banner-mini-5"></div>
+    <div class="icon-step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
+    </div>
+    <div class="question">¿Quién recibirá a nuestro equipo?</div>
+    <button type="button" class="btn-shortcut" id="btn-yo-recibo">
+      Yo mismo recibiré al equipo
+      <span class="btn-shortcut-sub" id="yo-recibo-sub">Usaremos tus datos de contacto</span>
+    </button>
+    <div class="divider-o">o</div>
+    <div class="field">
+      <label class="field-label" for="receptor_nombre">Otra persona · nombre</label>
+      <input type="text" id="receptor_nombre" data-field="receptor_nombre" autocomplete="off" placeholder="Ej. Ana Pérez">
+      <div class="prefill-tag hidden" data-prefill-for="receptor_nombre">Confirmado de tu visita anterior</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="receptor_telefono">WhatsApp o teléfono</label>
+      <input type="tel" id="receptor_telefono" data-field="receptor_telefono" inputmode="tel" autocomplete="off" placeholder="Ej. 998 123 4567">
+      <div class="prefill-tag hidden" data-prefill-for="receptor_telefono">Confirmado de tu visita anterior</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" data-action="back">Atrás</button>
+      <button class="btn btn-primary" data-action="next">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- Paso 6: Observaciones -->
+  <div class="screen" id="screen-6">
+    <div class="banner-mini" id="banner-mini-6"></div>
+    <div class="icon-step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+    </div>
+    <div class="question">Cualquier información que facilite la llegada de nuestro equipo</div>
+    <div class="question-sub">Opcional, pero útil. Ej. "portón negro, timbre no sirve, avisar al llegar."</div>
+    <div class="field">
+      <textarea id="observaciones" data-field="observaciones" placeholder="Comparte lo que quieras..." style="min-height:120px;"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" data-action="back">Atrás</button>
+      <button class="btn btn-primary" data-action="finish">Finalizar</button>
+    </div>
+  </div>
+
+  <!-- Final -->
+  <div class="screen" id="screen-final">
+    <div class="final-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="final-title">Gracias.</div>
+    <div class="final-msg">Nuestro equipo ya cuenta con la información necesaria para preparar tu servicio.</div>
+    <div class="final-see-you">Nos vemos pronto.</div>
+
+    <div class="card cita-summary" style="margin-top:auto;">
+      <div class="card-title">Tu cita</div>
+      <div id="cita-details-final"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" style="flex:1;" id="btn-edit">Editar mis respuestas</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ============================
+  // Config
+  // ============================
+  var API = {
+    lookup:   'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-prep-lookup',
+    save:     'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-prep-save',
+    complete: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-prep-complete'
+  };
+
+  var TOTAL_STEPS = 6;
+  var STEP_FIELDS = {
+    1: ['tiene_caseta','requiere_registro','codigo_acceso','instrucciones_acceso'],
+    2: ['tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento'],
+    3: ['espacio_camillas_ok','piso','tiene_elevador','hay_escaleras'],
+    4: ['tiene_aire_acondicionado','hay_mascotas','mascotas_detalle','condiciones_especiales'],
+    5: ['receptor_nombre','receptor_telefono','receptor_es_cliente'],
+    6: ['observaciones']
+  };
+  var PREFILLABLE = new Set([
+    'tiene_caseta','requiere_registro','codigo_acceso','instrucciones_acceso',
+    'tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento',
+    'espacio_camillas_ok','piso','tiene_elevador','hay_escaleras',
+    'tiene_aire_acondicionado','hay_mascotas','mascotas_detalle',
+    'receptor_nombre','receptor_telefono','receptor_es_cliente'
+  ]);
+  // Field -> child fields to clear when the parent toggles off
+  var CLEAR_ON_TOGGLE_OFF = {
+    tiene_caseta: ['requiere_registro','codigo_acceso','instrucciones_acceso'],
+    hay_mascotas: ['mascotas_detalle']
+  };
+
+  // ============================
+  // State
+  // ============================
+  var state = {
+    token: null,
+    cita: null,
+    data: {},           // current values
+    touched: {},        // fields the user has touched (removes prefill tag)
+    prevPrep: null,
+    prevMeta: null,
+    lsKey: null,
+    currentStep: 0,     // 0 = welcome
+    completed: false,
+    editing: false
+  };
+
+  // ============================
+  // Utils
+  // ============================
+  function qs(sel, root){ return (root || document).querySelector(sel); }
+  function qsa(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  function getTokenFromUrl(){
+    var m = window.location.search.match(/[?&]prep=([^&#]+)/);
+    return m ? decodeURIComponent(m[1]).trim() : null;
+  }
+
+  function isUuid(s){
+    return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(s || '');
+  }
+
+  function saveLocal(){
+    if (!state.lsKey) return;
+    try {
+      localStorage.setItem(state.lsKey, JSON.stringify({
+        data: state.data,
+        touched: state.touched,
+        currentStep: state.currentStep
+      }));
+    } catch(e){}
+  }
+
+  function loadLocal(){
+    if (!state.lsKey) return null;
+    try {
+      var raw = localStorage.getItem(state.lsKey);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e){ return null; }
+  }
+
+  function fmtFecha(iso){
+    if (!iso) return '';
+    var m = String(iso).match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (!m) return iso;
+    var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    var d = new Date(+m[1], +m[2]-1, +m[3]);
+    return dias[d.getDay()] + ' ' + (+m[3]) + ' de ' + meses[+m[2]-1];
+  }
+
+  function fmtHora(h){
+    if (!h) return '';
+    var m = String(h).match(/^(\d{1,2}):(\d{2})/);
+    if (!m) return String(h).slice(0,5);
+    var hh = +m[1], mm = +m[2];
+    var ampm = hh >= 12 ? 'pm' : 'am';
+    var h12 = ((hh+11)%12)+1;
+    return h12 + ':' + String(mm).padStart(2,'0') + ' ' + ampm;
+  }
+
+  function showScreen(id){
+    qsa('.screen').forEach(function(s){ s.classList.remove('active'); });
+    var el = qs('#' + id);
+    if (el) el.classList.add('active');
+    if (window.scrollTo) window.scrollTo({ top: 0, behavior:'smooth' });
+  }
+
+  function updateProgress(step){
+    var pct = Math.round((step / TOTAL_STEPS) * 100);
+    var bar = qs('#progressBar');
+    var lbl = qs('#progressLabel');
+    var wrap = qs('#progress');
+    if (step < 1 || step > TOTAL_STEPS){
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.style.display = '';
+    bar.style.width = pct + '%';
+    lbl.textContent = 'Paso ' + step + ' de ' + TOTAL_STEPS;
+  }
+
+  // ============================
+  // Prefill from prev_prep
+  // ============================
+  function hydratePrevPrep(){
+    if (!state.prevPrep) return;
+    var incoming = {};
+    Object.keys(state.prevPrep).forEach(function(k){
+      var v = state.prevPrep[k];
+      if (v !== null && v !== undefined && PREFILLABLE.has(k)) {
+        incoming[k] = v;
+      }
+    });
+    // Merge into state.data (don't overwrite anything the user already put)
+    Object.keys(incoming).forEach(function(k){
+      if (state.data[k] === undefined || state.data[k] === null || state.data[k] === '') {
+        state.data[k] = incoming[k];
+      }
+    });
+    // Show recurrente banners
+    var meta = state.prevMeta || {};
+    var mismaDir = !!meta.misma_direccion;
+    var fechaLabel = meta.fecha ? fmtFecha(meta.fecha) : 'tu visita anterior';
+    var bannerBig = qs('#banner-recurrente');
+    if (mismaDir){
+      bannerBig.className = 'banner banner-info';
+      bannerBig.innerHTML = 'Rellenamos tus preferencias de tu servicio del <b>' + fechaLabel + '</b>. Confirma o edita en cada paso si algo cambió.';
+    } else {
+      bannerBig.className = 'banner banner-warn';
+      bannerBig.innerHTML = 'Rellenamos tus preferencias de un servicio anterior. <b>La dirección es diferente esta vez, revisa que todo siga aplicando.</b>';
+    }
+    bannerBig.style.display = '';
+    // Sticky mini banner text for each step
+    var mini = mismaDir
+      ? 'Tus preferencias vienen de tu visita anterior. Confirma o edita si cambió.'
+      : 'Preferencias de una visita anterior. La dirección es distinta, revisa que aplique.';
+    qsa('.banner-mini').forEach(function(b){
+      b.textContent = mini;
+      b.classList.add('show');
+      if (!mismaDir) b.classList.add('warn');
+    });
+  }
+
+  // ============================
+  // Render cita summary
+  // ============================
+  function renderCitaSummary(container){
+    if (!state.cita) { container.innerHTML=''; return; }
+    var c = state.cita;
+    var rows = [];
+    if (c.servicios_label) rows.push(['Servicio', c.servicios_label]);
+    if (c.fecha_agendada)  rows.push(['Fecha', fmtFecha(c.fecha_agendada)]);
+    if (c.hora_agendada)   rows.push(['Hora', fmtHora(c.hora_agendada)]);
+    if (c.num_personas)    rows.push(['Personas', String(c.num_personas)]);
+    if (c.duracion_total_min) rows.push(['Duración', c.duracion_total_min + ' min']);
+    if (c.booking_code)    rows.push(['Código', c.booking_code]);
+    var html = '';
+    rows.forEach(function(r){
+      html += '<div class="row"><span class="row-label">' + r[0] + '</span><span class="row-value">' + escapeHtml(r[1]) + '</span></div>';
+    });
+    if (c.direccion_libre){
+      html += '<div class="dir"><span class="dir-label">Dirección registrada</span>' + escapeHtml(c.direccion_libre) + '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  function escapeHtml(s){
+    return String(s || '').replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+    });
+  }
+
+  // ============================
+  // Render fields from state.data
+  // ============================
+  function applyStateToDom(){
+    // Toggle buttons (Sí/No)
+    qsa('[data-field]').forEach(function(group){
+      var field = group.getAttribute('data-field');
+      var val = state.data[field];
+      // Boolean toggle groups
+      var toggleBtns = qsa('.toggle-btn', group);
+      if (toggleBtns.length){
+        toggleBtns.forEach(function(btn){
+          var bv = btn.getAttribute('data-value');
+          if (val !== undefined && val !== null && String(val) === bv) {
+            btn.classList.add('selected');
+          } else {
+            btn.classList.remove('selected');
+          }
+        });
+      }
+      // Pill buttons
+      var pillBtns = qsa('.pill-btn', group);
+      if (pillBtns.length){
+        pillBtns.forEach(function(btn){
+          var bv = btn.getAttribute('data-value');
+          if (val === bv) btn.classList.add('selected');
+          else btn.classList.remove('selected');
+        });
+      }
+      // Input/textarea (skip if group is a toggle-row / pill-row already)
+    });
+    // Text inputs / textareas
+    qsa('input[data-field], textarea[data-field]').forEach(function(inp){
+      var field = inp.getAttribute('data-field');
+      var val = state.data[field];
+      if (val !== undefined && val !== null) {
+        inp.value = String(val);
+      } else {
+        inp.value = '';
+      }
+    });
+    // Prefill tags
+    qsa('.prefill-tag').forEach(function(tag){
+      var field = tag.getAttribute('data-prefill-for');
+      if (state.prevPrep && !state.touched[field] && state.data[field] !== undefined && state.data[field] !== null && state.data[field] !== '') {
+        tag.classList.remove('hidden');
+      } else {
+        tag.classList.add('hidden');
+      }
+    });
+    // Toggle-btn prefill visual hint: append a tag under the toggle-row when applicable
+    qsa('.toggle-row').forEach(function(row){
+      var field = row.getAttribute('data-field');
+      if (!field) return;
+      var next = row.nextElementSibling;
+      var existing = row.parentNode.querySelector('.prefill-tag-toggle[data-for="'+field+'"]');
+      var needs = state.prevPrep && PREFILLABLE.has(field)
+                  && !state.touched[field]
+                  && state.data[field] !== undefined && state.data[field] !== null;
+      if (needs && !existing){
+        var tag = document.createElement('div');
+        tag.className = 'prefill-tag prefill-tag-toggle';
+        tag.setAttribute('data-for', field);
+        tag.textContent = 'Confirmado de tu visita anterior';
+        tag.style.marginTop = '-14px';
+        tag.style.marginBottom = '14px';
+        row.parentNode.insertBefore(tag, row.nextSibling);
+      } else if (!needs && existing) {
+        existing.parentNode.removeChild(existing);
+      }
+    });
+    // Sub-groups expand
+    updateSubGroups();
+    // Paso 3 pregunta camillas (adaptativa)
+    var q3 = qs('#q3-camillas');
+    if (q3 && state.cita){
+      var np = +state.cita.num_personas || 1;
+      if (np === 2) q3.textContent = '¿Existe espacio para instalar dos camillas?';
+      else if (np >= 3) q3.textContent = '¿Existe un espacio amplio para instalar las camillas requeridas?';
+      else q3.textContent = '¿Existe espacio para instalar una camilla?';
+    }
+    // Paso 5: label "yo recibo" con nombre
+    var yoSub = qs('#yo-recibo-sub');
+    if (yoSub && state.cita && state.cita.cliente_nombre){
+      yoSub.textContent = 'Usaremos los datos de ' + state.cita.cliente_nombre;
+    }
+  }
+
+  function updateSubGroups(){
+    // Caseta -> sub-caseta
+    var caseta = qs('#sub-caseta');
+    if (caseta) {
+      if (state.data.tiene_caseta === true || state.data.tiene_caseta === 'true') caseta.classList.add('show');
+      else caseta.classList.remove('show');
+    }
+    // Mascotas -> sub-mascotas
+    var mas = qs('#sub-mascotas');
+    if (mas) {
+      if (state.data.hay_mascotas === true || state.data.hay_mascotas === 'true') mas.classList.add('show');
+      else mas.classList.remove('show');
+    }
+  }
+
+  // ============================
+  // Field handlers
+  // ============================
+  function markTouched(field){
+    state.touched[field] = true;
+  }
+
+  function bindHandlers(){
+    // Toggle buttons Sí/No
+    qsa('.toggle-row').forEach(function(row){
+      var field = row.getAttribute('data-field');
+      qsa('.toggle-btn', row).forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var v = btn.getAttribute('data-value') === 'true';
+          var prev = state.data[field];
+          state.data[field] = v;
+          markTouched(field);
+          // Clear derived subfields if toggled OFF
+          if (v === false && CLEAR_ON_TOGGLE_OFF[field]) {
+            CLEAR_ON_TOGGLE_OFF[field].forEach(function(sf){
+              state.data[sf] = null;
+              markTouched(sf);
+            });
+          }
+          applyStateToDom();
+          saveLocal();
+        });
+      });
+    });
+
+    // Pill buttons
+    qsa('.pill-row').forEach(function(row){
+      var field = row.getAttribute('data-field');
+      qsa('.pill-btn', row).forEach(function(btn){
+        btn.addEventListener('click', function(){
+          state.data[field] = btn.getAttribute('data-value');
+          markTouched(field);
+          applyStateToDom();
+          saveLocal();
+        });
+      });
+    });
+
+    // Inputs / textareas
+    qsa('input[data-field], textarea[data-field]').forEach(function(inp){
+      var field = inp.getAttribute('data-field');
+      inp.addEventListener('input', function(){
+        state.data[field] = inp.value;
+        markTouched(field);
+        saveLocal();
+        // hide the prefill-tag
+        var tag = qs('.prefill-tag[data-prefill-for="'+field+'"]');
+        if (tag) tag.classList.add('hidden');
+      });
+    });
+
+    // Next / Back / Finish
+    qsa('[data-action]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var action = btn.getAttribute('data-action');
+        if (action === 'back') goPrev();
+        else if (action === 'next') tryNext(btn);
+        else if (action === 'finish') tryFinish(btn);
+      });
+    });
+
+    // Welcome start
+    qs('#btn-start').addEventListener('click', function(){
+      goToStep(state.currentStep && state.currentStep > 0 ? state.currentStep : 1);
+    });
+
+    // Edit final
+    qs('#btn-edit').addEventListener('click', function(){
+      state.editing = true;
+      state.completed = false;
+      goToStep(1);
+    });
+
+    // Atajo yo recibo
+    qs('#btn-yo-recibo').addEventListener('click', function(){
+      state.data.receptor_es_cliente = true;
+      state.data.receptor_nombre = null;
+      state.data.receptor_telefono = null;
+      state.touched.receptor_es_cliente = true;
+      state.touched.receptor_nombre = true;
+      state.touched.receptor_telefono = true;
+      saveLocal();
+      goNext();
+    });
+  }
+
+  // ============================
+  // Navigation
+  // ============================
+  function goToStep(step){
+    if (step === 0){
+      showScreen('screen-welcome');
+      updateProgress(0);
+      state.currentStep = 0;
+      return;
+    }
+    if (step > TOTAL_STEPS){
+      // Final
+      renderCitaSummary(qs('#cita-details-final'));
+      showScreen('screen-final');
+      updateProgress(TOTAL_STEPS);
+      state.currentStep = TOTAL_STEPS;
+      return;
+    }
+    state.currentStep = step;
+    showScreen('screen-' + step);
+    updateProgress(step);
+    applyStateToDom();
+    saveLocal();
+  }
+
+  function goPrev(){
+    if (state.currentStep <= 1) {
+      goToStep(0);
+    } else {
+      goToStep(state.currentStep - 1);
+    }
+  }
+
+  function goNext(){
+    if (state.currentStep >= TOTAL_STEPS){
+      tryFinish();
+    } else {
+      goToStep(state.currentStep + 1);
+    }
+  }
+
+  function tryNext(btn){
+    var required = btn && btn.getAttribute('data-required-any');
+    if (required){
+      var fields = required.split(',').map(function(s){ return s.trim(); });
+      var ok = fields.some(function(f){
+        var v = state.data[f];
+        return (v !== undefined && v !== null && v !== '');
+      });
+      if (!ok){
+        // Highlight the first missing toggle group
+        var firstField = fields[0];
+        var row = qs('.toggle-row[data-field="'+firstField+'"]') || qs('.pill-row[data-field="'+firstField+'"]');
+        if (row){
+          row.style.animation = 'none';
+          row.offsetHeight; // reflow
+          row.style.animation = 'shake 0.35s ease';
+        }
+        return;
+      }
+    }
+    // Autosave step then advance
+    saveStep(state.currentStep).then(function(){
+      goNext();
+    }).catch(function(){
+      // still advance to not block user
+      goNext();
+    });
+  }
+
+  function tryFinish(){
+    saveStep(state.currentStep).then(function(){
+      return completePrep();
+    }).then(function(res){
+      state.completed = true;
+      goToStep(TOTAL_STEPS + 1);
+    }).catch(function(){
+      // Even if network fails, go to final so user isn't stuck
+      goToStep(TOTAL_STEPS + 1);
+    });
+  }
+
+  // ============================
+  // API calls
+  // ============================
+  function payloadForStep(step){
+    var out = {};
+    (STEP_FIELDS[step] || []).forEach(function(k){
+      var v = state.data[k];
+      if (v === undefined) return;
+      if (v === null) return;                       // omit nulls so RPC doesn't touch
+      out[k] = v;
+    });
+    return out;
+  }
+
+  function saveStep(step){
+    if (step < 1 || step > TOTAL_STEPS) return Promise.resolve();
+    var body = { prep: state.token, paso: step, data: payloadForStep(step) };
+    return fetch(API.save, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    }).then(function(r){ return r.json().catch(function(){ return {}; }); });
+  }
+
+  function completePrep(){
+    return fetch(API.complete, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ prep: state.token })
+    }).then(function(r){ return r.json().catch(function(){ return {}; }); });
+  }
+
+  function lookup(token){
+    return fetch(API.lookup + '?prep=' + encodeURIComponent(token), {
+      method:'GET',
+      headers:{'Accept':'application/json'}
+    }).then(function(r){ return r.json(); });
+  }
+
+  // ============================
+  // Boot
+  // ============================
+  function boot(){
+    var token = getTokenFromUrl();
+    if (!token || !isUuid(token)){
+      showScreen('screen-error');
+      return;
+    }
+    state.token = token;
+    state.lsKey = 'exentia_prep_' + token;
+
+    lookup(token).then(function(res){
+      if (!res || !res.ok){
+        showScreen('screen-error');
+        return;
+      }
+      state.cita = res.cita || {};
+      var prepFromServer = res.prep || null;
+      state.prevPrep = null;
+      state.prevMeta = null;
+      // Hydration logic (per §6.5)
+      if (prepFromServer){
+        // Cliente ya empezó — no hydratar desde prev, ignorar prev_prep
+        Object.keys(prepFromServer).forEach(function(k){
+          if (k === 'booking_id' || k === 'ultimo_paso' || k === 'completado_at' || k === 'created_at' || k === 'updated_at') return;
+          state.data[k] = prepFromServer[k];
+          // Mark as touched so we don't show prefill tags for existing data
+          state.touched[k] = true;
+        });
+        state.currentStep = prepFromServer.ultimo_paso || 0;
+        state.completed = !!prepFromServer.completado_at;
+      } else if (res.prev_prep){
+        state.prevPrep = res.prev_prep;
+        state.prevMeta = res.prev_prep_meta || {};
+      }
+      // Merge local state (recent typing offline)
+      var local = loadLocal();
+      if (local && local.data){
+        Object.keys(local.data).forEach(function(k){
+          if (state.data[k] === undefined || state.data[k] === null || state.data[k] === '') {
+            state.data[k] = local.data[k];
+          }
+        });
+        if (local.touched){
+          Object.keys(local.touched).forEach(function(k){ state.touched[k] = true; });
+        }
+      }
+      // Hydrate prev_prep if applicable
+      if (state.prevPrep){
+        hydratePrevPrep();
+      }
+
+      // Render welcome
+      renderCitaSummary(qs('#cita-details'));
+      applyStateToDom();
+
+      if (state.completed){
+        goToStep(TOTAL_STEPS + 1);
+      } else if (state.currentStep && state.currentStep > 0){
+        // Ofrecer continuar donde se quedó pero mantener la bienvenida como entry
+        // El botón "Preparar mi experiencia" saltará directo al último paso guardado + 1 si tiene sentido
+        state.currentStep = Math.min(state.currentStep + 1, TOTAL_STEPS);
+        goToStep(0);
+      } else {
+        state.currentStep = 0;
+        goToStep(0);
+      }
+    }).catch(function(){
+      showScreen('screen-error');
+    });
+  }
+
+  // Shake animation
+  var st = document.createElement('style');
+  st.textContent = '@keyframes shake {0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}50%{transform:translateX(4px);}75%{transform:translateX(-3px);}}';
+  document.head.appendChild(st);
+
+  bindHandlers();
+  boot();
+})();
+</script>
+</body>
+</html>
