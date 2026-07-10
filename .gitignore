@@ -1,5 +1,45 @@
+# ===== Sistema / build =====
 .DS_Store
 *.pyc
 __pycache__/
 .claude/
 node_modules/
+
+# ===== Credenciales / secretos (NUNCA commitear) =====
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials.json
+service_account*.json
+secrets/
+**/credentials.txt
+
+# ===== Carpetas internas (NUNCA publicar) =====
+# Contienen JWTs de Supabase, PIT tokens de GHL, workflows con credenciales hardcodeadas
+monitoreo/
+exentia-vic-refs/
+
+# ===== Documentos internos =====
+documentos/
+correcciones-yaz-*.md
+pendiente_*.txt
+*.docx
+*.xlsx
+*.pdf
+!documentos/*-publico.pdf
+
+# ===== Backups / scratch =====
+*.bak
+*.swp
+*~
+.tmp/
+tmp/
+out/
+dist/
+
+# ===== Editor =====
+.vscode/
+.idea/
+*.iml

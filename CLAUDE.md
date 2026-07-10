@@ -6,6 +6,52 @@ Pagina web + sistema de reservas + tracking para Exentia (Cancun). Sigue el play
 
 ---
 
+## ⚠️ REGLA DE PRUEBAS — Solo teléfonos y cuentas de Victor
+
+**Mientras Exentia esté en fase de pruebas**, cualquier dato de prueba (citas seed, contactos ficticios, upsert de contacts en GHL, envíos de SMS de prueba, formularios sin cliente real) DEBE usar EXCLUSIVAMENTE los datos personales de Victor:
+
+- **Teléfono único autorizado**: `+52 998 346 3802` (E.164: `+529983463802`, wa.me: `529983463802`)
+- **Nombre**: `Test Victor` o similar (nunca inventar nombres genéricos que puedan colisionar con clientes reales)
+- **Email**: usar `vrodriguezpoot98@gmail.com` (solo si es indispensable)
+- **Contactos GHL / upserts**: usar los IDs de contactos de prueba ya creados por Victor. NO crear contactos nuevos con teléfonos random.
+
+**Por qué**: números inventados como `+52199...` pueden pertenecer a personas reales en Cancún y les llegarían SMS/WhatsApp del sistema. Un solo mensaje mal enviado quema al negocio con un desconocido.
+
+**Cómo aplicarlo:**
+- Al hacer `INSERT` seed en `exentia.bookings` o `exentia.terapeutas` para probar workflows → `cliente_telefono = '+529983463802'`.
+- Al probar `exentia-panel-admin-create-cita` o cualquier endpoint que dispare SMS → siempre `cliente_telefono: '+529983463802'`.
+- Al upsertear contacts en GHL → usar el mismo teléfono para que el contact quede vinculado a Victor.
+- Cuando el workflow SÍ dispare un SMS (grupo Avisos Panel o al cliente), Victor lo recibe y confirma que llegó bien.
+- **Al terminar cada prueba**: borrar los seeds con `DELETE FROM exentia.booking_slots ... ; DELETE FROM exentia.bookings ...` para que no queden en el pool real.
+
+**Fin de fase de pruebas**: eliminar esta sección cuando el sistema pase a producción con clientes reales y se defina un sandbox aparte.
+
+---
+
+## ⚠️ REGLA DE DEBUGGING — Los tests de reproducción los hago yo (Victor)
+
+Cuando aparezca un bug reportado por Victor (ej. "no se manda la cita", "no funciona el botón X", "salió un error en Y") **no reproduzcas el flujo desde el backend con curl ni con Chrome MCP para replicar el click**. Victor va a reproducirlo él mismo directamente en el **preview de Claude** (o en el navegador local con DevTools abierto) y te pasará lo que observó:
+
+- Screenshot / logs de la consola
+- Network tab (qué request salió, con qué payload, qué status devolvió)
+- Toast o mensaje visible en la UI
+- Pasos exactos que siguió antes del error
+
+**Tu rol como agente**:
+- Diagnosticar leyendo el código de `exentia-pagina.html` y los workflows n8n (consultar ejecuciones vía `~/.local/bin/n8n raw GET /rest/executions/...`).
+- Consultar Supabase para ver el estado real de la base (`mcp__...__execute_sql`).
+- Explicar la causa raíz con referencias a líneas del código.
+- Proponer / aplicar el fix.
+
+**Lo que NO tienes que hacer**:
+- Simular POSTs a los webhooks con curl para "reproducir" el error del user (esos siempre pasan porque los mandas con payload perfecto).
+- Abrir Chrome MCP para clickear el flujo — Victor ya lo probó y te trae el hallazgo.
+- Crear seeds en la base "para probar" — genera basura innecesaria.
+
+**Por qué**: Victor ya está mirando el navegador cuando el bug pasa. Sus ojos capturan más rápido que cualquier reproducción sintética. Tu tiempo se aprovecha mejor leyendo el código y las ejecuciones reales que él generó, no fabricando pruebas paralelas.
+
+---
+
 ## Estado actual (Fase 1 · 2026-05-26)
 
 ### ✅ Lo que ya esta en produccion

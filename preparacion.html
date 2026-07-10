@@ -303,6 +303,28 @@
   }
   .prefill-tag.hidden { opacity:0; height:0; margin:0; overflow:hidden; }
 
+  /* Required indicator (asterisco) + inline error */
+  .req-asterisk {
+    display:none;
+    color:#b3261e;
+    font-weight:700;
+    margin-left:4px;
+  }
+  .req-asterisk.on { display:inline; }
+  .field-error-msg {
+    display:none;
+    font-size:12px;
+    color:#b3261e;
+    margin-top:6px;
+    line-height:1.4;
+  }
+  .field-error-msg.show { display:block; }
+  .has-error input[type="text"],
+  .has-error input[type="tel"],
+  .has-error textarea { border-color:#b3261e !important; }
+  .has-error .toggle-row .toggle-btn,
+  .has-error .pill-row .pill-btn { border-color:#b3261e; }
+
   input[type="text"], input[type="tel"], textarea {
     width:100%;
     font-family:inherit;
@@ -624,7 +646,7 @@
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14M10 12h.01M10 8h.01M14 12h.01M14 8h.01"/></svg>
     </div>
-    <div class="question">¿Existe caseta de seguridad en el lugar?</div>
+    <div class="question">¿Existe caseta de seguridad en el lugar?<span class="req-asterisk" data-req-for="tiene_caseta">*</span></div>
     <div class="toggle-row" data-field="tiene_caseta">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
@@ -633,29 +655,31 @@
     <div class="sub-group" id="sub-caseta">
       <div class="sub-group-inner">
         <div class="question" style="font-size:16px; margin-bottom:14px;">Cuéntanos cómo entrar:</div>
-        <div class="field">
-          <label class="field-label">¿Debemos registrarnos?</label>
+        <div class="field" data-field-wrap="requiere_registro">
+          <label class="field-label">¿Debemos registrarnos?<span class="req-asterisk" data-req-for="requiere_registro">*</span></label>
           <div class="toggle-row" data-field="requiere_registro">
             <button type="button" class="toggle-btn" data-value="true">Sí</button>
             <button type="button" class="toggle-btn" data-value="false">No</button>
           </div>
         </div>
-        <div class="field">
+        <div class="field" data-field-wrap="codigo_acceso">
           <label class="field-label" for="codigo_acceso">¿Existe algún código de acceso?</label>
           <input type="text" id="codigo_acceso" data-field="codigo_acceso" autocomplete="off" placeholder="Ej. 1234">
           <div class="prefill-tag hidden" data-prefill-for="codigo_acceso">Confirmado de tu visita anterior</div>
         </div>
-        <div class="field">
-          <label class="field-label" for="instrucciones_acceso">¿Cómo debe registrarse nuestro equipo?</label>
+        <div class="field" data-field-wrap="instrucciones_acceso">
+          <label class="field-label" for="instrucciones_acceso">¿Cómo debe registrarse nuestro equipo?<span class="req-asterisk" data-req-for="instrucciones_acceso">*</span></label>
           <textarea id="instrucciones_acceso" data-field="instrucciones_acceso" placeholder="Ej. Preguntar por la Sra. López, torre B"></textarea>
           <div class="prefill-tag hidden" data-prefill-for="instrucciones_acceso">Confirmado de tu visita anterior</div>
         </div>
       </div>
     </div>
 
+    <div class="field-error-msg" id="err-step-1">Completa los campos marcados con <span style="color:#b3261e">*</span> para continuar.</div>
+
     <div class="actions">
       <button class="btn btn-secondary" data-action="back">Atrás</button>
-      <button class="btn btn-primary" data-action="next" data-required-any="tiene_caseta">Siguiente</button>
+      <button class="btn btn-primary" data-action="next">Siguiente</button>
     </div>
   </div>
 
@@ -665,29 +689,33 @@
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM23 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM2 12h20M2 12l3-7h14l3 7M6 12v5M18 12v5"/></svg>
     </div>
-    <div class="question">¿Existe estacionamiento?</div>
+    <div class="question">¿Existe estacionamiento?<span class="req-asterisk" data-req-for="tiene_estacionamiento">*</span></div>
     <div class="toggle-row" data-field="tiene_estacionamiento">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Hay zona de ascenso y descenso?</div>
+    <div class="question" style="margin-top:12px;">¿Hay zona de ascenso y descenso?<span class="req-asterisk" data-req-for="zona_ascenso_descenso">*</span></div>
     <div class="toggle-row" data-field="zona_ascenso_descenso">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Qué tan lejos queda del lugar del servicio?</div>
-    <div class="pill-row" data-field="distancia_estacionamiento">
-      <button type="button" class="pill-btn" data-value="en_el_lugar">En el mismo lugar</button>
-      <button type="button" class="pill-btn" data-value="menos_50m">A menos de 50 m</button>
-      <button type="button" class="pill-btn" data-value="50_200m">Entre 50 y 200 m</button>
-      <button type="button" class="pill-btn" data-value="mas_200m">A más de 200 m</button>
+    <div data-field-wrap="distancia_estacionamiento">
+      <div class="question" style="margin-top:12px;">¿Qué tan lejos queda del lugar del servicio?<span class="req-asterisk" data-req-for="distancia_estacionamiento">*</span></div>
+      <div class="pill-row" data-field="distancia_estacionamiento">
+        <button type="button" class="pill-btn" data-value="en_el_lugar">En el mismo lugar</button>
+        <button type="button" class="pill-btn" data-value="menos_50m">A menos de 50 m</button>
+        <button type="button" class="pill-btn" data-value="50_200m">Entre 50 y 200 m</button>
+        <button type="button" class="pill-btn" data-value="mas_200m">A más de 200 m</button>
+      </div>
     </div>
+
+    <div class="field-error-msg" id="err-step-2">Completa los campos marcados con <span style="color:#b3261e">*</span> para continuar.</div>
 
     <div class="actions">
       <button class="btn btn-secondary" data-action="back">Atrás</button>
-      <button class="btn btn-primary" data-action="next" data-required-any="tiene_estacionamiento">Siguiente</button>
+      <button class="btn btn-primary" data-action="next">Siguiente</button>
     </div>
   </div>
 
@@ -697,33 +725,35 @@
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 12v6h18v-6M6 12V8h12v4M9 12v-4M15 12v-4"/></svg>
     </div>
-    <div class="question" id="q3-camillas">¿Existe espacio para instalar una camilla?</div>
+    <div class="question" id="q3-camillas">¿Existe espacio para instalar una camilla?<span class="req-asterisk" data-req-for="espacio_camillas_ok">*</span></div>
     <div class="toggle-row" data-field="espacio_camillas_ok">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
 
-    <div class="field" style="margin-top:16px;">
-      <label class="field-label" for="piso">¿En qué piso se realizará el servicio?</label>
+    <div class="field" style="margin-top:16px;" data-field-wrap="piso">
+      <label class="field-label" for="piso">¿En qué piso se realizará el servicio?<span class="req-asterisk" data-req-for="piso">*</span></label>
       <input type="text" id="piso" data-field="piso" autocomplete="off" placeholder="Ej. PB, 3, 12" inputmode="numeric">
       <div class="prefill-tag hidden" data-prefill-for="piso">Confirmado de tu visita anterior</div>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Hay elevador?</div>
+    <div class="question" style="margin-top:12px;">¿Hay elevador?<span class="req-asterisk" data-req-for="tiene_elevador">*</span></div>
     <div class="toggle-row" data-field="tiene_elevador">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Hay que subir escaleras?</div>
+    <div class="question" style="margin-top:12px;">¿Hay que subir escaleras?<span class="req-asterisk" data-req-for="hay_escaleras">*</span></div>
     <div class="toggle-row" data-field="hay_escaleras">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
 
+    <div class="field-error-msg" id="err-step-3">Completa los campos marcados con <span style="color:#b3261e">*</span> para continuar.</div>
+
     <div class="actions">
       <button class="btn btn-secondary" data-action="back">Atrás</button>
-      <button class="btn btn-primary" data-action="next" data-required-any="espacio_camillas_ok">Siguiente</button>
+      <button class="btn btn-primary" data-action="next">Siguiente</button>
     </div>
   </div>
 
@@ -733,13 +763,13 @@
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
     </div>
-    <div class="question">¿Existe aire acondicionado?</div>
+    <div class="question">¿Existe aire acondicionado?<span class="req-asterisk" data-req-for="tiene_aire_acondicionado">*</span></div>
     <div class="toggle-row" data-field="tiene_aire_acondicionado">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Hay mascotas?</div>
+    <div class="question" style="margin-top:12px;">¿Hay mascotas?<span class="req-asterisk" data-req-for="hay_mascotas">*</span></div>
     <div class="toggle-row" data-field="hay_mascotas">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
@@ -747,8 +777,8 @@
 
     <div class="sub-group" id="sub-mascotas">
       <div class="sub-group-inner">
-        <div class="field">
-          <label class="field-label" for="mascotas_detalle">Cuéntanos de tus mascotas</label>
+        <div class="field" data-field-wrap="mascotas_detalle">
+          <label class="field-label" for="mascotas_detalle">Cuéntanos de tus mascotas<span class="req-asterisk" data-req-for="mascotas_detalle">*</span></label>
           <textarea id="mascotas_detalle" data-field="mascotas_detalle" placeholder="Ej. 1 perro pequeño amigable"></textarea>
           <div class="prefill-tag hidden" data-prefill-for="mascotas_detalle">Confirmado de tu visita anterior</div>
         </div>
@@ -760,9 +790,11 @@
       <textarea id="condiciones_especiales" data-field="condiciones_especiales" placeholder="Opcional"></textarea>
     </div>
 
+    <div class="field-error-msg" id="err-step-4">Completa los campos marcados con <span style="color:#b3261e">*</span> para continuar.</div>
+
     <div class="actions">
       <button class="btn btn-secondary" data-action="back">Atrás</button>
-      <button class="btn btn-primary" data-action="next" data-required-any="tiene_aire_acondicionado,hay_mascotas">Siguiente</button>
+      <button class="btn btn-primary" data-action="next">Siguiente</button>
     </div>
   </div>
 
@@ -772,22 +804,24 @@
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
     </div>
-    <div class="question">¿Quién recibirá a nuestro equipo?</div>
+    <div class="question">¿Quién recibirá a nuestro equipo?<span class="req-asterisk" data-req-for="receptor_grupo">*</span></div>
     <button type="button" class="btn-shortcut" id="btn-yo-recibo">
       Yo mismo recibiré al equipo
       <span class="btn-shortcut-sub" id="yo-recibo-sub">Usaremos tus datos de contacto</span>
     </button>
     <div class="divider-o">o</div>
-    <div class="field">
-      <label class="field-label" for="receptor_nombre">Otra persona · nombre</label>
+    <div class="field" data-field-wrap="receptor_nombre">
+      <label class="field-label" for="receptor_nombre">Otra persona · nombre<span class="req-asterisk" data-req-for="receptor_nombre">*</span></label>
       <input type="text" id="receptor_nombre" data-field="receptor_nombre" autocomplete="off" placeholder="Ej. Ana Pérez">
       <div class="prefill-tag hidden" data-prefill-for="receptor_nombre">Confirmado de tu visita anterior</div>
     </div>
-    <div class="field">
-      <label class="field-label" for="receptor_telefono">WhatsApp o teléfono</label>
+    <div class="field" data-field-wrap="receptor_telefono">
+      <label class="field-label" for="receptor_telefono">WhatsApp o teléfono<span class="req-asterisk" data-req-for="receptor_telefono">*</span></label>
       <input type="tel" id="receptor_telefono" data-field="receptor_telefono" inputmode="tel" autocomplete="off" placeholder="Ej. 998 123 4567">
       <div class="prefill-tag hidden" data-prefill-for="receptor_telefono">Confirmado de tu visita anterior</div>
     </div>
+
+    <div class="field-error-msg" id="err-step-5">Elige "Yo mismo recibiré" o llena nombre y teléfono de quien recibirá al equipo.</div>
 
     <div class="actions">
       <button class="btn btn-secondary" data-action="back">Atrás</button>
@@ -868,6 +902,60 @@
     tiene_caseta: ['requiere_registro','codigo_acceso','instrucciones_acceso'],
     hay_mascotas: ['mascotas_detalle']
   };
+
+  // Reglas de campos requeridos (con lógica condicional por sugerencia de Luis)
+  // when: opcional. Objeto { fieldA: valorEsperado } — todos deben coincidir.
+  //   Valores especiales: '!=true' → el campo NO debe ser true
+  //   Los booleans se comparan con state.data[k] === true / === false / ...
+  var STEP_REQUIRED = {
+    1: [
+      { field:'tiene_caseta' },
+      { field:'requiere_registro',    when:{ tiene_caseta:true } },
+      { field:'instrucciones_acceso', when:{ tiene_caseta:true, requiere_registro:true } }
+    ],
+    2: [
+      { field:'tiene_estacionamiento' },
+      { field:'zona_ascenso_descenso' },
+      { field:'distancia_estacionamiento', when:{ tiene_estacionamiento:true } }
+    ],
+    3: [
+      { field:'espacio_camillas_ok' },
+      { field:'piso' },
+      { field:'tiene_elevador' },
+      { field:'hay_escaleras' }
+    ],
+    4: [
+      { field:'tiene_aire_acondicionado' },
+      { field:'hay_mascotas' },
+      { field:'mascotas_detalle', when:{ hay_mascotas:true } }
+    ],
+    5: [
+      // Si NO eligió "yo mismo recibiré", nombre y teléfono son requeridos
+      { field:'receptor_nombre',   when:{ receptor_es_cliente:'!=true' } },
+      { field:'receptor_telefono', when:{ receptor_es_cliente:'!=true' } }
+    ],
+    6: []
+  };
+
+  function whenMet(when){
+    if (!when) return true;
+    return Object.keys(when).every(function(k){
+      var expected = when[k];
+      var actual = state.data[k];
+      if (expected === '!=true') return !(actual === true || actual === 'true');
+      if (expected === true)  return actual === true  || actual === 'true';
+      if (expected === false) return actual === false || actual === 'false';
+      return actual === expected || String(actual) === String(expected);
+    });
+  }
+
+  function currentRequired(step){
+    return (STEP_REQUIRED[step] || []).filter(function(r){ return whenMet(r.when); });
+  }
+
+  function isEmpty(v){
+    return v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
+  }
 
   // ============================
   // State
@@ -1117,6 +1205,8 @@
     if (yoSub && state.cita && state.cita.cliente_nombre){
       yoSub.textContent = 'Usaremos los datos de ' + state.cita.cliente_nombre;
     }
+    // Actualiza asteriscos según lógica condicional
+    syncRequiredMarks();
   }
 
   function updateSubGroups(){
@@ -1187,6 +1277,10 @@
         // hide the prefill-tag
         var tag = qs('.prefill-tag[data-prefill-for="'+field+'"]');
         if (tag) tag.classList.add('hidden');
+        // limpia error visual del wrapper si ya tiene valor
+        var wrap = qs('[data-field-wrap="'+field+'"]');
+        if (wrap) wrap.classList.remove('has-error');
+        syncRequiredMarks();
       });
     });
 
@@ -1220,8 +1314,11 @@
       state.touched.receptor_es_cliente = true;
       state.touched.receptor_nombre = true;
       state.touched.receptor_telefono = true;
+      // limpia posibles errores previos del paso 5
+      clearErrors(5);
       saveLocal();
-      goNext();
+      applyStateToDom();
+      saveStep(5).catch(function(){}).then(function(){ goNext(); });
     });
   }
 
@@ -1267,32 +1364,91 @@
   }
 
   function tryNext(btn){
-    var required = btn && btn.getAttribute('data-required-any');
-    if (required){
-      var fields = required.split(',').map(function(s){ return s.trim(); });
-      var ok = fields.some(function(f){
-        var v = state.data[f];
-        return (v !== undefined && v !== null && v !== '');
-      });
-      if (!ok){
-        // Highlight the first missing toggle group
-        var firstField = fields[0];
-        var row = qs('.toggle-row[data-field="'+firstField+'"]') || qs('.pill-row[data-field="'+firstField+'"]');
-        if (row){
-          row.style.animation = 'none';
-          row.offsetHeight; // reflow
-          row.style.animation = 'shake 0.35s ease';
+    var step = state.currentStep;
+    var missing = currentRequired(step).filter(function(r){ return isEmpty(state.data[r.field]); });
+
+    // Limpia estados de error previos en el paso actual
+    clearErrors(step);
+
+    if (missing.length){
+      // Marca cada wrapper de campo faltante con .has-error
+      missing.forEach(function(r){
+        var wrap = qs('[data-field-wrap="'+r.field+'"]');
+        if (wrap) wrap.classList.add('has-error');
+        else {
+          // fallback: sacude el toggle/pill row del padre directo
+          var row = qs('.toggle-row[data-field="'+r.field+'"]') || qs('.pill-row[data-field="'+r.field+'"]');
+          if (row){
+            row.style.animation = 'none';
+            row.offsetHeight;
+            row.style.animation = 'shake 0.35s ease';
+          }
         }
-        return;
+      });
+      // Mensaje inline al final del paso
+      var errMsg = qs('#err-step-'+step);
+      if (errMsg) errMsg.classList.add('show');
+
+      // Focus / scroll al primer campo faltante
+      var first = missing[0].field;
+      var firstInput = qs('#'+first);
+      var firstRow = qs('.toggle-row[data-field="'+first+'"]') || qs('.pill-row[data-field="'+first+'"]');
+      var scrollTarget = firstInput || firstRow || qs('[data-field-wrap="'+first+'"]');
+      if (scrollTarget && scrollTarget.scrollIntoView){
+        scrollTarget.scrollIntoView({ behavior:'smooth', block:'center' });
       }
+      if (firstInput && firstInput.focus) {
+        setTimeout(function(){ firstInput.focus(); }, 350);
+      }
+      return;
     }
     // Autosave step then advance
-    saveStep(state.currentStep).then(function(){
+    saveStep(step).then(function(){
       goNext();
     }).catch(function(){
-      // still advance to not block user
       goNext();
     });
+  }
+
+  function clearErrors(step){
+    var screen = qs('#screen-'+step);
+    if (!screen) return;
+    qsa('.has-error', screen).forEach(function(el){ el.classList.remove('has-error'); });
+    var errMsg = qs('#err-step-'+step);
+    if (errMsg) errMsg.classList.remove('show');
+  }
+
+  function syncRequiredMarks(){
+    // Muestra el asterisco solo cuando el campo está actualmente requerido según el estado
+    var step = state.currentStep;
+    if (!step || step < 1 || step > TOTAL_STEPS) return;
+    var reqSet = {};
+    currentRequired(step).forEach(function(r){ reqSet[r.field] = true; });
+    var screen = qs('#screen-'+step);
+    if (!screen) return;
+    qsa('.req-asterisk', screen).forEach(function(mark){
+      var f = mark.getAttribute('data-req-for');
+      if (f === 'receptor_grupo'){
+        // Grupo receptor: siempre requerido (uno u otro)
+        mark.classList.add('on');
+      } else if (reqSet[f]){
+        mark.classList.add('on');
+      } else {
+        mark.classList.remove('on');
+      }
+    });
+    // Si el usuario ya llenó los faltantes, quita las marcas de error en vivo
+    qsa('[data-field-wrap]', screen).forEach(function(wrap){
+      var f = wrap.getAttribute('data-field-wrap');
+      if (wrap.classList.contains('has-error') && !isEmpty(state.data[f])){
+        wrap.classList.remove('has-error');
+      }
+    });
+    var errMsg = qs('#err-step-'+step);
+    if (errMsg && errMsg.classList.contains('show')){
+      var stillMissing = currentRequired(step).some(function(r){ return isEmpty(state.data[r.field]); });
+      if (!stillMissing) errMsg.classList.remove('show');
+    }
   }
 
   function tryFinish(){

@@ -155,7 +155,7 @@ EXENTIA/                              (id jbhMGG8F1570DcbA)
 | exentia-lead-claim | Hf4Ij8vs7lFbiGUN | POST /webhook/exentia-lead-claim | Lead claim (tracking) |
 | exentia-prep-lookup | SCgQerewDfgaMh25 | GET /webhook/exentia-prep-lookup?prep=&lt;uuid&gt; | Contexto cita + prep actual + prev_prep (recurrentes) para `preparacion.html` |
 | exentia-prep-save | f9NZza8sM0AUeH9J | POST /webhook/exentia-prep-save | Autosave paso 1..6 con whitelist de claves |
-| exentia-prep-complete | 7Y9exy46FHtYKPBb | POST /webhook/exentia-prep-complete | Marca completado + anexa resumen a `notas_internas` + SMS a Avisos Panel + SMS al terapeuta si claimed. Idempotente. |
+| exentia-prep-complete | 7Y9exy46FHtYKPBb | POST /webhook/exentia-prep-complete | Marca completado + anexa resumen a `notas_internas` + sync de 18 CFs de preparación al contacto GHL (PUT `/contacts/{id}`) + SMS a Avisos Panel + SMS al terapeuta si claimed. Idempotente. |
 
 ### Workflows en `ADMINISTRADOR` (14 activos)
 
@@ -217,8 +217,32 @@ Todas incluyen la columna `tipo_cita`.
 - `exentia_cliente_lookup_cancel(p_booking_code)`, `exentia_cliente_cancelacion_preview(...)`, `exentia_cliente_ejecutar_cancelacion(...)` — cancelación por el cliente.
 - `exentia_prep_lookup(p_token)` — devuelve contexto de la cita + `prep` (fila actual, si existe) + `prev_prep` + `prev_prep_meta` (última preparación completada del mismo cliente por `ghl_contact_id` o teléfono, para pre-llenar recurrentes). Match de teléfono via helper `_exentia_phone_last` que quita prefijo mexicano (521/52) y compara últimos 10 dígitos.
 - `exentia_prep_save(p_token, p_paso, p_data jsonb)` — UPSERT autosave por paso; solo actualiza las claves presentes en `p_data`. Devuelve `status: 'saved' | 'not_found' | 'already_completed'`.
-- `exentia_prep_complete(p_token)` — idempotente. Marca `completado_at = now()`, construye resumen legible, reemplaza cualquier bloque previo "Preparación del servicio" en `notas_internas` (separador `\n\n--- Preparación del servicio ---\n`). Devuelve `resumen`, `booking_code`, `cliente_nombre`, fecha/hora y `terapeuta_telefono` (del primer slot claimed/confirmed con teléfono no vacío).
+- `exentia_prep_complete(p_token)` — idempotente. Marca `completado_at = now()`, construye resumen legible, reemplaza cualquier bloque previo "Preparación del servicio" en `notas_internas` (separador `\n\n--- Preparación del servicio ---\n`). Devuelve `status`, `booking_code`, `resumen`, `cliente_nombre`, `fecha_agendada`, `hora_agendada`, `terapeuta_telefono` (del primer slot claimed/confirmed con teléfono no vacío), `ghl_contact_id` y `prep_data` (jsonb `{cf_id: value}` con las 18 respuestas ya normalizadas a "Sí"/"No"/string). El workflow `exentia-prep-complete` usa `prep_data` para hacer PUT `/contacts/{ghl_contact_id}` con `customFields` array.
 - `_exentia_phone_last(p_phone)` — helper IMMUTABLE: normaliza teléfono removiendo caracteres no dígitos, quita prefijo `521` o `52` si aplica, devuelve últimos 10 dígitos. Usado por `exentia_prep_lookup` para matching de cliente recurrente sin GHL contact id.
+
+### GHL Custom Fields — Preparación del servicio (18 CFs)
+Creados en `location 0hGSRrhxkdywVQxCsNOi` bajo el parentId default `ZvOcBfffaTWdJE7UxORO`. El workflow `exentia-prep-complete` los rellena via PUT `/contacts/{id}` cuando el cliente termina el formulario `preparacion.html`. Booleanos vienen como texto "Sí"/"No"/"" (nunca `true`/`false`).
+
+| CF ID | Campo BD | Tipo |
+|---|---|---|
+| `yDPDQzWcXiv3zcn23flY` | tiene_caseta | Sí/No |
+| `4SZlUduFSMv933MyDOoU` | requiere_registro | Sí/No |
+| `hT1GR99GvvNCQyr56UAI` | codigo_acceso | TEXT |
+| `YJqVRIXejD3Ungxh5mV7` | instrucciones_acceso | LARGE_TEXT |
+| `tUGBY6Jx9otpTNwiH3X6` | tiene_estacionamiento | Sí/No |
+| `RpUmkAEjOE6iaYxhmgaJ` | zona_ascenso_descenso | Sí/No |
+| `kHy0sWbLYDVGiphfxVBG` | distancia_estacionamiento | TEXT (En el mismo lugar / Menos de 50 m / Entre 50 y 200 m / Más de 200 m) |
+| `lWZ6P4oGvn2l6MD50JOM` | espacio_camillas_ok | Sí/Ajustado |
+| `XAEAQ2mrUCfKQzoeyiSO` | piso | TEXT |
+| `LUsHvSgrgXcJegnH1rbn` | tiene_elevador | Sí/No |
+| `giF14kIm5tkBaPqD5S5G` | hay_escaleras | Sí/No |
+| `nHrO03x6xUNbil3LGgbh` | tiene_aire_acondicionado | Sí/No |
+| `E5S4jJ1Dy8Zrev5kg7kR` | hay_mascotas | Sí/No |
+| `cqjmAOoicKZdakP6HRjv` | mascotas_detalle | TEXT |
+| `RtGuSOP2ZYaggziOqNDc` | condiciones_especiales | LARGE_TEXT |
+| `k1uz7X3K2FyxM99R0R03` | receptor_nombre (o cliente si `receptor_es_cliente=true`) | TEXT |
+| `2v8SPx8IG8sNSRCNBRxo` | receptor_telefono (o teléfono cliente si es él quien recibe) | TEXT |
+| `uFPayZm7anc3ObJw3pOv` | observaciones | LARGE_TEXT |
 
 ### Triggers
 - `fn_autocreate_slots` (BEFORE INSERT en `bookings`) — crea booking_slots según modalidad y personas_servicios. Tiene fix defensivo para el caso `persona_id=0` en paquete pareja simultaneo.
@@ -590,7 +614,7 @@ En un entorno donde Obsidian no está disponible, este AGENTS.md concentra lo es
 - **Custom field GHL `exentia_es_recurrente`** tiene mojibake en label "Si" (cosmético, 30 s en la UI).
 - **Simplificar fallback** `b.tipo_cita || (b.direccion_libre ? 'domicilio' : 'sucursal')` en `exentia-pagina.html` líneas ~13743 y ~17101 → quedarse solo con `b.tipo_cita || 'sucursal'`.
 - **Recordatorio automático** para clientes que no completaron `preparacion.html` (candidato fase 2: cron revisa `completado_at IS NULL` con cita próxima).
-- **Sincronizar respuestas de preparación a custom fields GHL** (fase 2 si Yaz lo pide — hoy vive solo en `notas_internas` + SMS al equipo).
+- ~~**Sincronizar respuestas de preparación a custom fields GHL**~~ ✅ Implementado 2026-07-06: `exentia-prep-complete` hace PUT `/contacts/{id}` con 18 CFs (`exentia_prep_*`) al terminar el formulario.
 
 **Yaz:**
 - Confirmar servicios reales a domicilio (renombrar tags `gen_servicio_*` → finales).

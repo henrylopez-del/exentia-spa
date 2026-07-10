@@ -6830,6 +6830,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .ck-mod-card:hover { border-color: rgba(154,152,84,0.4); background: #fbf8ef; }
   .ck-mod-card.active { border-color: var(--olive, #9a9854); background: #f6f3e0; box-shadow: 0 2px 8px rgba(154,152,84,0.10); }
+  .ck-mod-card.disabled { opacity: 0.55; cursor: not-allowed; background: #f6f4ee; border-color: rgba(0,0,0,0.08); }
+  .ck-mod-card.disabled:hover { background: #f6f4ee; border-color: rgba(0,0,0,0.08); }
+  .ck-mod-card.disabled .ck-mod-radio { border-color: #d5d2c2; }
   .ck-mod-radio { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #c8c5a0; position: relative; }
   .ck-mod-card.active .ck-mod-radio { border-color: var(--olive, #9a9854); }
   .ck-mod-card.active .ck-mod-radio::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--olive, #9a9854); }
@@ -6843,6 +6846,21 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .ck-mod-fee-amount { font: 700 15px 'Inter', sans-serif; color: #5c3a1e; }
   .ck-mod-fee-amount.tbd { font-size: 12px; font-weight: 500; color: #9a8d75; font-style: italic; }
   .ck-mod-fee-detail { font-size: 10.5px; color: #9a8d75; margin-top: 1px; }
+  .ck-pref-rows { display: flex; flex-direction: column; gap: 10px; }
+  .ck-pref-row { display: flex; flex-direction: column; gap: 5px; }
+  .ck-pref-person { font-size: 11.5px; font-weight: 600; color: #5c3a1e; }
+  .ck-pref-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ck-pref-chip {
+    flex: 1; min-width: 86px; padding: 8px 10px; background: #fff;
+    border: 2px solid rgba(0,0,0,0.06); border-radius: 999px; cursor: pointer;
+    font: 600 12.5px 'Lato', sans-serif; color: #5c3a1e; text-align: center;
+    transition: all .18s ease; white-space: nowrap;
+  }
+  .ck-pref-chip:hover { border-color: rgba(154,152,84,0.4); background: #fbf8ef; }
+  .ck-pref-chip.active { border-color: var(--olive, #9a9854); background: #f6f3e0; box-shadow: 0 2px 8px rgba(154,152,84,0.10); }
+  @media (max-width: 600px) {
+    .ck-pref-chip { min-width: 0; padding: 8px 6px; font-size: 12px; }
+  }
   .ck-totals { border-top: 1px dashed rgba(0,0,0,0.10); padding-top: 12px; display: flex; flex-direction: column; gap: 4px; }
   .ck-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #5c3a1e; }
   .ck-total-row.grand { font-size: 16px; font-weight: 700; padding-top: 6px; border-top: 1px solid rgba(0,0,0,0.08); margin-top: 6px; }
@@ -7239,6 +7257,22 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 <!-- ============================================ -->
 <script>
 /* ============================================================
+   CONFIG GLOBAL EXENTIA — punto único de verdad.
+   URLs de webhooks n8n, WhatsApp del negocio y capacidad de
+   terapeutas. Cambiar aquí impacta tracker, flujo de reserva
+   y todos los links wa.me construidos por JS.
+   ============================================================ */
+window.EXENTIA_CONFIG = {
+  N8N_BASE: 'https://n8n-ntcue-clone-u59578.vm.elestio.app',
+  WEBHOOK_RESERVA: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-reserva',
+  WEBHOOK_TRACK: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-track',
+  WEBHOOK_UPDATE_PHONE: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-update-phone',
+  WA_PHONE: '529984803595',   // WhatsApp del negocio (Yaz)
+  USERS_TOTAL: 2              // Terapeutas disponibles hoy (capacidad para modalidad simultánea)
+};
+</script>
+<script>
+/* ============================================================
    EXENTIA TRACKER v1
    Captura eventos del usuario y los envia a:
    - n8n webhook (siempre)
@@ -7251,9 +7285,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 (function () {
   'use strict';
 
-  // === CONFIG ===
-  var TRACK_URL = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-track';
-  var RESERVA_URL = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-reserva';
+  // === CONFIG (desde EXENTIA_CONFIG global) ===
+  var TRACK_URL = window.EXENTIA_CONFIG.WEBHOOK_TRACK;
+  var RESERVA_URL = window.EXENTIA_CONFIG.WEBHOOK_RESERVA;
   var LANDING_VERSION = window.EX_LANDING_VERSION || 'v1-2026-04-25';
   var FIRST_UTM_DAYS = 30;
 
@@ -9148,6 +9182,15 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           <div class="ck-modalidad-options" id="ck-modalidad-options"></div>
         </div>
 
+        <!-- Preferencia de terapeuta (Masajista / Masajero / Indiferente) -->
+        <div class="ck-section" id="ck-pref-section">
+          <div class="ck-section-head">
+            <span class="ck-section-label">¿Quién prefieres que te atienda?</span>
+            <span class="ck-help">Opcional</span>
+          </div>
+          <div class="ck-pref-rows" id="ck-pref-rows"></div>
+        </div>
+
         <!-- Totales -->
         <div class="ck-totals" id="ck-totals"></div>
       </div>
@@ -9313,46 +9356,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         <div class="pg-result-title" id="pg-result-title">—</div>
         <div class="pg-result-msg" id="pg-result-msg">—</div>
 
-        <!-- ÉXITO: dos vías para confirmar (WhatsApp / contacto en la página) -->
-        <div id="pg-success-actions" style="display:none;">
-          <!-- Preparación de tu experiencia (solo domicilio, solo si tenemos prep_token) -->
-          <button type="button" id="pg-prep-btn" class="choice-btn pg-cta" style="display:none;" onclick="_pgOpenPreparacion()">
-            <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="13" y2="18"/></svg>
-            <div class="choice-text">
-              <strong>Preparar mi experiencia</strong>
-              <span>Cuéntanos cómo llegar y prepara todo en 2 minutos.</span>
-            </div>
-            <span class="choice-arrow" aria-hidden="true">→</span>
-          </button>
-          <p class="pg-success-help">Tu pago quedó registrado. Elige cómo prefieres que el equipo te confirme la cita:</p>
-          <button type="button" class="choice-btn choice-wa pg-cta" onclick="_pgFinishWhatsApp()" type="button">
-            <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg>
-            <div class="choice-text">
-              <strong>Continuar por WhatsApp</strong>
-              <span>Te abrimos el chat con el resumen y el estado del pago.</span>
-            </div>
-            <span class="choice-arrow" aria-hidden="true">→</span>
-          </button>
-          <button type="button" class="choice-btn choice-callme pg-cta" onclick="_pgToggleCallme()">
-            <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 2.06 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.99a16 16 0 0 0 6 6l1.35-1.35a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <div class="choice-text">
-              <strong>Que me contacten aquí mismo</strong>
-              <span>Déjanos tu número y te escribimos por WhatsApp y correo.</span>
-            </div>
-            <span class="choice-arrow" aria-hidden="true">↓</span>
-          </button>
-
-          <!-- Panel desplegable: contacto en la página -->
-          <div class="pg-callme-box" id="pg-callme-box" style="display:none;">
-            <label class="form-label" for="pg-callme-phone">Tu WhatsApp para contactarte</label>
-            <div class="pg-callme-row">
-              <input type="tel" id="pg-callme-phone" inputmode="tel" autocomplete="tel" placeholder="998 123 4567">
-              <button type="button" class="btn pg-callme-send" onclick="_pgFinishCallme()">Enviar →</button>
-            </div>
-            <div class="ex-field-hint" id="pg-callme-error" style="display:none;"></div>
-            <p class="pg-callme-note" id="pg-callme-emailnote">También te contactaremos por correo a <b id="pg-callme-email-shown">tu@correo.com</b> para mandarte el recibo y los detalles.</p>
-          </div>
-        </div>
+        <!-- ÉXITO: las 2 vías de confirmación viven en modal-confirm-final (#pg-success-actions) -->
 
         <!-- FALLO: reintentar -->
         <button type="button" class="btn btn-cream" id="pg-result-retry" onclick="_pgReset()" style="width:100%; justify-content:center; margin-top:10px; display:none;">Intentar otra tarjeta</button>
@@ -9389,6 +9393,48 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         <div class="cf-meta-row"><span class="cf-meta-lbl">Día solicitado</span><span class="cf-meta-val" id="cf-meta-fecha">—</span></div>
         <div class="cf-meta-row"><span class="cf-meta-lbl">Total estimado</span><span class="cf-meta-val" id="cf-meta-total">—</span></div>
       </div>
+
+      <!-- Dos vías para confirmar (WhatsApp / contacto en la página) — post-pago -->
+      <div id="pg-success-actions" style="display:none; margin-top:16px;">
+        <!-- Preparación de tu experiencia (solo domicilio, solo si tenemos prep_token) -->
+        <button type="button" id="pg-prep-btn" class="choice-btn pg-cta" style="display:none;" onclick="_pgOpenPreparacion()">
+          <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="13" y2="18"/></svg>
+          <div class="choice-text">
+            <strong>Preparar mi experiencia</strong>
+            <span>Cuéntanos cómo llegar y prepara todo en 2 minutos.</span>
+          </div>
+          <span class="choice-arrow" aria-hidden="true">→</span>
+        </button>
+        <p class="pg-success-help">Elige cómo prefieres que el equipo te confirme la cita:</p>
+        <button type="button" class="choice-btn choice-wa pg-cta" onclick="_pgFinishWhatsApp()">
+          <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg>
+          <div class="choice-text">
+            <strong>Continuar por WhatsApp</strong>
+            <span>Te abrimos el chat con el resumen y el estado del pago.</span>
+          </div>
+          <span class="choice-arrow" aria-hidden="true">→</span>
+        </button>
+        <button type="button" class="choice-btn choice-callme pg-cta" onclick="_pgToggleCallme()">
+          <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 2.06 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.99a16 16 0 0 0 6 6l1.35-1.35a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div class="choice-text">
+            <strong>Que me contacten aquí mismo</strong>
+            <span>Déjanos tu número y te escribimos por WhatsApp y correo.</span>
+          </div>
+          <span class="choice-arrow" aria-hidden="true">↓</span>
+        </button>
+
+        <!-- Panel desplegable: contacto en la página -->
+        <div class="pg-callme-box" id="pg-callme-box" style="display:none;">
+          <label class="form-label" for="pg-callme-phone">Tu WhatsApp para contactarte</label>
+          <div class="pg-callme-row">
+            <input type="tel" id="pg-callme-phone" inputmode="tel" autocomplete="tel" placeholder="998 123 4567">
+            <button type="button" class="btn pg-callme-send" onclick="_pgFinishCallme()">Enviar →</button>
+          </div>
+          <div class="ex-field-hint" id="pg-callme-error" style="display:none;"></div>
+          <p class="pg-callme-note" id="pg-callme-emailnote">También te contactaremos por correo a <b id="pg-callme-email-shown">tu@correo.com</b> para mandarte el recibo y los detalles.</p>
+        </div>
+      </div>
+
       <p class="cf-disclaimer">Si no recibes nuestra confirmación en las próximas 2 horas en horario hábil, escríbenos al WhatsApp +52 998 480 3595.</p>
     </div>
     <button type="button" class="btn cf-close-btn" onclick="closeFinalConfirm()">Listo, cerrar</button>
@@ -9432,6 +9478,53 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 </a>
 
 <script>
+  // ============================================
+  // HELPERS COMPARTIDOS — normalización y formato
+  // Punto único para lógica repetida en el flujo (teléfono, precios,
+  // fechas y duraciones). Las declaraciones hoistean dentro de este
+  // script, así que son usables desde cualquier función del archivo.
+  // ============================================
+
+  // Teléfono a dígitos E.164 MX (sin '+'): '9983463802' → '529983463802'.
+  // Acepta '+52 998...', '52998...', '521998...' (formato WhatsApp legacy).
+  function toE164MX(p) {
+    var d = String(p || '').replace(/\D/g, '');
+    if (!d) return '';
+    if (d.length === 10) return '52' + d;
+    if (d.length === 13 && d.indexOf('521') === 0) return '52' + d.slice(3);
+    return d;
+  }
+
+  // Precio desde string con '$': 'Masaje · $1,550' → 1550. Sin match → 0.
+  function parsePriceMXN(s) {
+    var m = String(s || '').match(/\$\s*([\d,]+(?:\.\d+)?)/);
+    return m ? parseFloat(m[1].replace(/,/g, '')) || 0 : 0;
+  }
+
+  // Número a '$1,550' (es-MX, sin decimales).
+  function fmtMXN(n) {
+    return '$' + (n || 0).toLocaleString('es-MX', { maximumFractionDigits: 0 });
+  }
+
+  // Fecha ISO a español: fmtFechaES('2026-07-15', '15:00') → 'Miércoles 15 de julio · 15:00'
+  function fmtFechaES(isoDate, time, sep) {
+    var d = new Date(isoDate + 'T00:00:00');
+    var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    var s = dias[d.getDay()] + ' ' + d.getDate() + ' de ' + meses[d.getMonth()];
+    return time ? s + (sep || ' · ') + time : s;
+  }
+
+  // Normaliza t.durations de un tratamiento del catálogo. Fallback con
+  // min:null (no NaN) cuando t.duration no trae dígitos.
+  function getDurations(t) {
+    return t.durations || [{
+      min: parseInt((t.duration || '0').replace(/\D/g, ''), 10) || null,
+      price: t.price,
+      priceCouple: t.priceCouple
+    }];
+  }
+
   // ============================================
   // NAIL ADD-ONS — complementos compartidos por Manicura y Pedicura
   // ============================================
@@ -10297,7 +10390,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             ${(() => {
               // Render de un treatment-card individual
               function renderTreatmentCard(t, visualIdx) {
-                const durs = t.durations || [{min: parseInt((t.duration||'0').replace(/\D/g,''),10), price: t.price, priceCouple: t.priceCouple}];
+                const durs = getDurations(t);
                 const firstDur = durs[0];
                 const hasVariants = Array.isArray(t.variants) && t.variants.length > 0;
                 const priceInd = hasVariants ? t.variants[0].price : firstDur.price;
@@ -10663,10 +10756,54 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   window.switchToPersona = switchToPersona;
   window.removePersona = removePersona;
 
+  // ─── Preferencia de sexo del terapeuta por persona ───
+  // Valores: 'mujer' | 'hombre' | 'indistinto' (default 'mujer'). Vive en personasMeta[pid].prefSexo
+  // (persistido en localStorage 'exentia_personas').
+  // La persona pseudo 0 ("Para los 2" en modo pareja) NUNCA lleva preferencia propia:
+  // se excluye igual que en _ckCalcModalidad. En pareja las personas reales son 1 y 2.
+  function prefPersonasList() {
+    if (typeof svMode !== 'undefined' && svMode === 'parejas') return [1, 2];
+    var ids = (typeof getPersonasInUse === 'function') ? getPersonasInUse() : [1];
+    ids = ids.filter(function(p){ return p !== 0; });
+    return ids.length ? ids : [1];
+  }
+  function prefSexoForPersona(pid) {
+    var rec = personasMeta[pid];
+    var v = rec && rec.prefSexo;
+    return (v === 'mujer' || v === 'hombre' || v === 'indistinto') ? v : 'mujer';
+  }
+  // Campo global preferencia_sexo del POST: '' si ninguna persona ha pasado por el
+  // selector (el caller cae al fallback de sesión); si todas eligieron lo mismo → ese
+  // valor; si difieren → 'mixto' (el detalle por persona viaja en personas_servicios).
+  function prefSexoGlobal() {
+    var ids = prefPersonasList();
+    var touched = ids.some(function(p){ var r = personasMeta[p]; return !!(r && r.prefSexo); });
+    if (!touched) return '';
+    var first = prefSexoForPersona(ids[0]);
+    for (var i = 1; i < ids.length; i++) {
+      if (prefSexoForPersona(ids[i]) !== first) return 'mixto';
+    }
+    return first;
+  }
+  window.prefPersonasList = prefPersonasList;
+  window.prefSexoForPersona = prefSexoForPersona;
+  window.prefSexoGlobal = prefSexoGlobal;
+
   // ============================================
   // INIT
   // ============================================
   document.addEventListener('DOMContentLoaded', () => {
+    // Limpieza one-time: si el URL trae PII de una sesión previa (legacy), quitarla.
+    try {
+      var _u = new URLSearchParams(window.location.search);
+      var _piiKeys = ['first_name','last_name','email','phone'];
+      var _hadPii = _piiKeys.some(function(k){ return _u.has(k); });
+      if (_hadPii) {
+        _piiKeys.forEach(function(k){ _u.delete(k); });
+        var _q = _u.toString();
+        history.replaceState(null, '', window.location.pathname + (_q ? ('?' + _q) : '') + window.location.hash);
+      }
+    } catch(_){}
     renderServicesGrid();
     renderFooterServices();
     updateBadge();
@@ -10899,26 +11036,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     stopFormWatcher();
     closeModal('modal-form');
 
-    // Method from Sarahi-page: add params to PARENT PAGE URL
-    // GHL form_embed.js reads from the browser's URL bar, not iframe src
-    var urlParams = new URLSearchParams(window.location.search);
-    if (window._formUserData.firstName) urlParams.set('first_name', window._formUserData.firstName);
-    if (window._formUserData.lastName) urlParams.set('last_name', window._formUserData.lastName);
-    if (window._formUserData.email) urlParams.set('email', window._formUserData.email);
-    if (window._formUserData.phone) urlParams.set('phone', window._formUserData.phone);
-    history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
-
-    // Also set iframe src with params as backup
-    var calUrl = 'https://api.leadconnectorhq.com/widget/booking/VUbTtrop8lZFx8HRmJzV';
-    var p = ['locale=es'];
-    if (window._formUserData.firstName) p.push('first_name=' + encodeURIComponent(window._formUserData.firstName));
-    if (window._formUserData.lastName) p.push('last_name=' + encodeURIComponent(window._formUserData.lastName));
-    if (window._formUserData.email) p.push('email=' + encodeURIComponent(window._formUserData.email));
-    if (window._formUserData.phone) p.push('phone=' + encodeURIComponent(window._formUserData.phone));
-    calUrl += '?' + p.join('&');
-
-    var calIframe = document.querySelector('#modal-calendar iframe');
-    if (calIframe) calIframe.src = calUrl;
+    // El modal-calendar ahora es vanilla JS (no iframe GHL), así que ya no hace falta
+    // reflejar PII en la URL del padre ni setear iframe.src — los datos viven en
+    // window._formUserData y viajan directo al POST del webhook al confirmar.
 
     setTimeout(function() {
       openModal('modal-calendar');
@@ -11773,9 +11893,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       if (!d.lastName && sess.lastName) d.lastName = sess.lastName;
       if (!d.email && sess.email) d.email = sess.email;
       if (!d.phone && sess.phone) {
-        var pc = String(sess.phone).replace(/\D/g, '');
-        if (pc && !pc.startsWith('52') && pc.length === 10) pc = '52' + pc;
-        d.phone = pc;
+        d.phone = toE164MX(sess.phone);
       }
     } catch(_){}
   }
@@ -12435,22 +12553,13 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
     err.style.display = 'none';
 
-    // Normalizar phone a E.164 (solo dígitos, prefijo MX 52 si falta).
-    // URLSearchParams.set() codifica espacios como '+', y GHL los lee literal — por eso quitamos todo lo no numérico.
-    var phoneClean = (phone || '').replace(/\D/g,'');
-    if (phoneClean && !phoneClean.startsWith('52') && phoneClean.length === 10) phoneClean = '52' + phoneClean;
+    // Normalizar phone a E.164 MX (helper compartido — mismo formato en todos los POSTs)
+    var phoneClean = toE164MX(phone);
 
     window._formUserData = { firstName: firstName, lastName: lastName, phone: phoneClean, email: email, notes: '' };
 
-    // Sincronizar URL params del padre para que el iframe del calendario auto-rellene
-    try {
-      var urlParams = new URLSearchParams(window.location.search);
-      if (firstName) urlParams.set('first_name', firstName);
-      if (lastName) urlParams.set('last_name', lastName);
-      if (email) urlParams.set('email', email);
-      if (phoneClean) urlParams.set('phone', phoneClean);
-      history.replaceState(null, '', window.location.pathname + '?' + urlParams.toString());
-    } catch(ex) {}
+    // (Legacy removido: ya no hay iframe GHL en el calendario, por lo que no
+    // reflejamos PII en la URL del padre — los datos viven en window._formUserData.)
 
     // Disable submit while we POST (anti double-submit)
     _formSubmitting = true;
@@ -12476,6 +12585,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           var items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
           return {
             persona_id: pid,
+            preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(pid) : 'mujer',
             label: (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid),
             servicios: items.map(function(it){
               var d = (typeof _durMinForKey === 'function') ? _durMinForKey(it.key) : null;
@@ -12483,7 +12593,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             })
           };
         });
-        fetch('https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-reserva', {
+        fetch(window.EXENTIA_CONFIG.WEBHOOK_RESERVA, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -12502,7 +12612,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             num_terapeutas_estimado: citaPlace.numTerapeutasEstimado || '',
             costo_traslado_total: citaPlace.costoTrasladoTotal || '',
             personas_servicios: _personasServicios,
-            preferencia_sexo: (_sess && (_sess.preferencia_sexo || _sess.pref_genero)) || '',
+            preferencia_sexo: ((typeof prefSexoGlobal === 'function') ? prefSexoGlobal() : '') || (_sess && (_sess.preferencia_sexo || _sess.pref_genero)) || '',
             notas_cliente: '',
             notas: '',
             lead_ref: leadRef,
@@ -12524,13 +12634,14 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             cliente_autenticado: !!_sess
           })
         }).then(function(r){ return r.json(); }).then(function(j){
+          try { console.log('[ex-reserva] respuesta webhook (pre-booking):', j); } catch(_){}
           if (j && j.booking_code) window._bookingCode = j.booking_code;
           if (j && j.wa_link) window._waLink = j.wa_link;
           if (j && j.prep_token) window._prepToken = j.prep_token;
           if (j && j.tipo_cita) window._prepTipoCita = j.tipo_cita;
           try { _pgSyncPreparacionButton(); } catch(_){}
-        }).catch(function(){});
-      } catch(ex) {}
+        }).catch(function(err){ try { console.error('[ex-reserva] fetch pre-booking falló:', err); } catch(_){} });
+      } catch(ex) { try { console.error('[ex-reserva] error armando payload pre-booking:', ex); } catch(_){} }
     }
 
     try { if (window.exentiaTrack) window.exentiaTrack('form_submit_intent', { has_email: !!email, has_phone: !!phone, source: 'custom_form' }); } catch(e){}
@@ -12617,6 +12728,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     // Limpiar tarjeta y reset del resultado
     ['pg-card','pg-exp','pg-cvc'].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ''; });
     _pgReset();
+    // Nuevo intento de pago = nueva reserva potencial
+    window._reservaPosted = false;
     // Total
     var amt = document.getElementById('pg-amount');
     if (amt) amt.textContent = _pgFormatTotal();
@@ -12655,6 +12768,15 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     var form = document.getElementById('pg-form');
     if (result) { result.style.display = 'none'; result.className = 'pg-result'; }
     if (form) form.style.display = '';
+    // Restaurar el resto del simulador (banner, header, total, tarjetas) por si el
+    // usuario reintenta o reabre el modal después de un success previo.
+    var pgModal = document.getElementById('modal-pago-simulador');
+    if (pgModal) {
+      ['.pg-sim-banner', '.modal-header', '.pg-amount-box', '.pg-test-cards'].forEach(function(sel){
+        var el = pgModal.querySelector(sel);
+        if (el) el.style.display = '';
+      });
+    }
     var errEl = document.getElementById('pg-error');
     if (errEl) errEl.style.display = 'none';
     var submitBtn = document.getElementById('pg-submit');
@@ -12700,6 +12822,16 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     if (!result) return;
     result.className = 'pg-result ' + (outcome === 'ok' ? 'ok' : (outcome === 'warn' ? 'warn' : 'fail'));
     result.style.display = '';
+    // En success-mode ocultar el resto del simulador (banner, header, total, tarjetas)
+    // para que el usuario solo vea el resultado + CTAs de confirmación.
+    var pgModal = document.getElementById('modal-pago-simulador');
+    if (pgModal) {
+      var d = allowFinish ? 'none' : '';
+      ['.pg-sim-banner', '.modal-header', '.pg-amount-box', '.pg-test-cards'].forEach(function(sel){
+        var el = pgModal.querySelector(sel);
+        if (el) el.style.display = d;
+      });
+    }
     var icon = document.getElementById('pg-result-icon');
     if (icon) icon.textContent = outcome === 'ok' ? '✓' : (outcome === 'warn' ? '!' : '✕');
     var t = document.getElementById('pg-result-title');
@@ -12779,8 +12911,16 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       } else if (meta.outcome === 'warn' && !meta.autoApprove) {
         _pgShowResult('warn', meta.label, meta.message, false);
       } else {
-        _pgShowResult('ok', '¡Pago aceptado!', 'Estamos guardando tu reserva. Toca "Confirmar mi cita" para terminar.', true);
+        // Pago ok → la reserva se registra YA y pasamos al pop-up "cita lista",
+        // que trae las 2 vías de confirmación (WhatsApp / que me contacten).
+        _pgShowResult('ok', '¡Pago aceptado!', 'Registrando tu reserva…', true);
         try { if (window.exentiaTrack) window.exentiaTrack('pago_simulador_result', { kind: kind, outcome: 'ok' }); } catch(_){}
+        setTimeout(function(){
+          closeModal('modal-pago-simulador');
+          try {
+            submitAgendarForm({ preventDefault: function(){} }, { allowNoPhone: true, allowNoEmail: true });
+          } catch(err) { try { console.error('[ex-reserva] dispatch post-pago:', err); } catch(_){} }
+        }, 1100);
       }
     }, 900);
     return false;
@@ -12811,12 +12951,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     }
     var ch = window._calChoice;
     if (ch && ch.date && ch.time) {
-      var dd = new Date(ch.date + 'T00:00:00');
-      var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-      var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
       lines.push('');
       lines.push('*Horario:*');
-      lines.push('- ' + dias[dd.getDay()] + ' ' + dd.getDate() + ' de ' + meses[dd.getMonth()] + ', ' + ch.time);
+      lines.push('- ' + fmtFechaES(ch.date, ch.time, ', '));
     }
     if (citaPlace && citaPlace.mode === 'domicilio' && citaPlace.address) {
       lines.push('');
@@ -12827,14 +12964,29 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   // BOTÓN 1: WhatsApp con resumen del pedido y estado de pago.
   function _pgFinishWhatsApp() {
-    // Dispara el submit (mismo POST a exentia-reserva que el flujo normal)
+    // Propagar contacto (session + simulador) a los inputs del ag-form ANTES del submit,
+    // porque submitAgendarForm valida #ag-whatsapp y #ag-email; si están vacíos hace
+    // return false y el fetch a exentia-reserva NO se dispara.
     try {
-      if (typeof submitAgendarForm === 'function') {
-        submitAgendarForm({ preventDefault: function(){} });
+      var d = window._formUserData || {};
+      var agWa = document.getElementById('ag-whatsapp');
+      if (agWa && !agWa.value && d.phone) agWa.value = d.phone;
+      var agEmail = document.getElementById('ag-email');
+      var pgEmail = document.getElementById('pg-email');
+      if (agEmail && !agEmail.value) {
+        agEmail.value = ((pgEmail && pgEmail.value) || d.email || '').trim();
       }
     } catch(_){}
+    // Dispara el submit (mismo POST a exentia-reserva que el flujo normal).
+    // allowNoPhone + allowNoEmail: el user va a mandar mensaje directo por WhatsApp —
+    // su contacto lo captura el equipo desde el chat, no es requisito para persistir.
+    try {
+      if (typeof submitAgendarForm === 'function') {
+        submitAgendarForm({ preventDefault: function(){} }, { allowNoPhone: true, allowNoEmail: true });
+      }
+    } catch(err) { try { console.error('[ex-reserva] _pgFinishWhatsApp error:', err); } catch(_){} }
     var msg = _pgBuildWaMessage();
-    var url = 'https://wa.me/529984803595?text=' + encodeURIComponent(msg);
+    var url = 'https://wa.me/' + window.EXENTIA_CONFIG.WA_PHONE + '?text=' + encodeURIComponent(msg);
     try { if (window.exentiaTrack) window.exentiaTrack('pago_finish_whatsapp', { has_phone: !!(window._formUserData || {}).phone }); } catch(_){}
     window.open(url, '_blank');
     setTimeout(function(){
@@ -12868,21 +13020,28 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       try { phoneEl.focus(); } catch(_){}
       return;
     }
-    // Normalizar a formato E.164 (MX)
-    var e164 = digits.startsWith('52') ? digits : ('52' + digits.slice(-10));
+    // Normalizar a formato E.164 (MX) — helper compartido
+    var e164 = toE164MX(digits);
     try {
       window._formUserData = window._formUserData || {};
       window._formUserData.phone = e164;
       var agWa = document.getElementById('ag-whatsapp');
       if (agWa) agWa.value = e164;
+      // Propagar email (submitAgendarForm valida #ag-email; sin él hace return false silencioso)
+      var agEmail = document.getElementById('ag-email');
+      var pgEmail = document.getElementById('pg-email');
+      if (agEmail && !agEmail.value) {
+        agEmail.value = ((pgEmail && pgEmail.value) || window._formUserData.email || '').trim();
+      }
     } catch(_){}
     var sendBtn = document.querySelector('.pg-callme-send');
     if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Enviando...'; }
     try {
       if (typeof submitAgendarForm === 'function') {
-        submitAgendarForm({ preventDefault: function(){} });
+        // El phone viene del input callme; el email puede faltar (invitado) → allowNoEmail
+        submitAgendarForm({ preventDefault: function(){} }, { allowNoEmail: true });
       }
-    } catch(_){}
+    } catch(err) { try { console.error('[ex-reserva] _pgFinishCallme error:', err); } catch(_){} }
     try { if (window.exentiaTrack) window.exentiaTrack('pago_finish_callme', { phone_e164: e164 }); } catch(_){}
     setTimeout(function(){
       closeModal('modal-pago-simulador');
@@ -12929,12 +13088,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     }
     var ch = window._calChoice;
     if (ch && ch.date && ch.time) {
-      var dd = new Date(ch.date + 'T00:00:00');
-      var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-      var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
       lines.push('');
       lines.push('*Horario que elegí:*');
-      lines.push('- ' + dias[dd.getDay()] + ' ' + dd.getDate() + ' de ' + meses[dd.getMonth()] + ', ' + ch.time);
+      lines.push('- ' + fmtFechaES(ch.date, ch.time, ', '));
     }
     if (d.notes) {
       lines.push('');
@@ -13243,63 +13399,103 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   window.openAgendarModal = openAgendarModal;
 
-  function submitAgendarForm(e) {
+  function submitAgendarForm(e, opts) {
     if (e && e.preventDefault) e.preventDefault();
+    opts = opts || {};
     var _iti = (window._itiInstances && window._itiInstances['ag-whatsapp']) || null;
     var rawWa = (document.getElementById('ag-whatsapp').value || '').trim();
     var whatsapp = _iti && _iti.getNumber ? (_iti.getNumber() || '').trim() : rawWa;
     var email = (document.getElementById('ag-email').value || '').trim();
     var errEl = document.getElementById('ag-error');
     var phoneValid = _iti && _iti.isValidNumber ? _iti.isValidNumber() : (rawWa.replace(/\D/g, '').length >= 10);
-    if (!phoneValid) {
+    // opts.allowNoPhone: usado desde el CTA post-pago "Continuar por WhatsApp",
+    // donde el equipo captura el teléfono cuando el user manda mensaje. En ese
+    // caso permitimos guardar la reserva sin phone (el email queda como contacto).
+    if (!phoneValid && !opts.allowNoPhone) {
+      try { console.warn('[ex-reserva] submit bloqueado: teléfono inválido', { rawWa: rawWa }); } catch(_){}
       if (errEl) { errEl.textContent = 'El número de WhatsApp no es válido para el país seleccionado.'; errEl.style.display = ''; }
       try { document.getElementById('ag-whatsapp').focus(); } catch(_){}
       return false;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) && !opts.allowNoEmail) {
+      try { console.warn('[ex-reserva] submit bloqueado: email inválido/vacío', { email: email }); } catch(_){}
       if (errEl) { errEl.textContent = 'Revisa tu correo electrónico — parece incompleto.'; errEl.style.display = ''; }
       try { document.getElementById('ag-email').focus(); } catch(_){}
       return false;
     }
-    // Guardar en el state (puede sobreescribir si el cliente cambió)
+    // Guardar en el state (sin pisar datos previos con vacíos en modo lenient)
     window._formUserData = window._formUserData || {};
-    window._formUserData.phone = whatsapp || rawWa;
-    window._formUserData.email = email;
+    if (whatsapp || rawWa) window._formUserData.phone = whatsapp || rawWa;
+    if (email) window._formUserData.email = email;
     // Submit final consolidado a n8n exentia-reserva (un solo POST con TODOS los datos)
     try {
-      if (window.fetch) {
+      if (window._reservaPosted) {
+        try { console.log('[ex-reserva] POST ya enviado en este flujo — skip duplicado'); } catch(_){}
+        // La reserva ya existe; si ahora tenemos teléfono (ej. botón "Que me contacten"),
+        // actualizarla vía exentia-update-phone (matchea bookings por email).
+        var _updPhone = ((window._formUserData || {}).phone || whatsapp || rawWa || '').toString();
+        if (_updPhone && window.fetch) {
+          fetch(window.EXENTIA_CONFIG.WEBHOOK_UPDATE_PHONE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              origin: 'post_pago_callme',
+              phone: _updPhone,
+              email: (window._formUserData || {}).email || email || '',
+              booking_code: window._bookingCode || ''
+            })
+          }).then(function(){ try { console.log('[ex-reserva] teléfono actualizado en la reserva'); } catch(_){} })
+            .catch(function(err){ try { console.error('[ex-reserva] update-phone falló:', err); } catch(_){} });
+        }
+      } else if (window.fetch) {
+        window._reservaPosted = true;
         var _agSess = (typeof getClienteSession === 'function') ? getClienteSession() : null;
-        var _agPhone = (window._formUserData.phone || whatsapp || rawWa || '').toString();
+        // toE164MX: unifica el formato del teléfono hacia el webhook (intl-tel-input
+        // devuelve '+52...' con signo; los otros paths mandan dígitos '52...')
+        var _agPhone = toE164MX(window._formUserData.phone || whatsapp || rawWa);
         var _agFirstName = window._formUserData.firstName || '';
         var _agLastName = window._formUserData.lastName || '';
         var _agEmail = window._formUserData.email || email || '';
         var _agPersonas = (typeof getPersonasInUse === 'function') ? getPersonasInUse() : [1];
         var _agDuracion = (typeof _cal2TotalDurationMin === 'function') ? _cal2TotalDurationMin() : 0;
+        // Helper: precio de un cart key. Siempre pedimos precio INDIVIDUAL (personaId=1).
+        // El precio pareja (para los dos) se refleja al sumar 2 personas en personas_servicios.
+        var _priceOf = function(key){
+          try { return (typeof _gsParsePrice === 'function') ? (_gsParsePrice(key, 1) || 0) : 0; } catch(_){ return 0; }
+        };
         var _agServicios = (cart || []).map(function(s){
           var d = (typeof _durMinForKey === 'function') ? _durMinForKey(s) : null;
-          return d != null ? { slug: s, duracion_min: d } : { slug: s };
+          var out = { slug: s, precio_mxn: _priceOf(s) };
+          if (d != null) out.duracion_min = d;
+          return out;
         });
         var _agPersonasServicios = _agPersonas.map(function(pid){
           var items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
           return {
             persona_id: pid,
+            preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(pid) : 'mujer',
             label: (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid),
             servicios: items.map(function(it){
               var d = (typeof _durMinForKey === 'function') ? _durMinForKey(it.key) : null;
-              return d != null ? { slug: it.key, duracion_min: d } : { slug: it.key };
+              var s = { slug: it.key, precio_mxn: _priceOf(it.key, pid) };
+              if (d != null) s.duracion_min = d;
+              return s;
             })
           };
         });
+        // Ticket total = suma de precios de servicios + traslado (si aplica)
+        var _agServiciosSubtotal = _agServicios.reduce(function(a, s){ return a + (parseFloat(s.precio_mxn) || 0); }, 0);
+        var _agTraslado = parseFloat((citaPlace || {}).costoTrasladoTotal || 0) || 0;
+        var _agValorTicket = _agServiciosSubtotal + _agTraslado;
         var _agLeadRef = '';
         try { _agLeadRef = localStorage.getItem('ex_lead_ref') || ''; } catch(_e){}
-        var _agNotas = '';
-        try {
-          var _agNotasEl = document.getElementById('ag-notas') || document.getElementById('cf-notes');
-          if (_agNotasEl && _agNotasEl.value) _agNotas = _agNotasEl.value.trim();
-        } catch(_){}
+        // Notas: no hay campo de notas en la UI actual — leemos del estado por si
+        // algún flujo lo llena (antes se buscaban #ag-notas/#cf-notes, que no existen).
+        var _agNotas = ((window._formUserData || {}).notes || '').trim();
         var _agPlace = citaPlace || {};
 
-        fetch('https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-reserva', {
+        try { console.log('[ex-reserva] POST exentia-reserva →', { nombre: _agFirstName + ' ' + _agLastName, phone: _agPhone, email: _agEmail, fecha: (window._calChoice || {}).date, hora: (window._calChoice || {}).time, servicios: _agServicios, ticket_mxn: _agValorTicket }); } catch(_){}
+        fetch(window.EXENTIA_CONFIG.WEBHOOK_RESERVA, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -13321,7 +13517,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             num_terapeutas_estimado: _agPlace.numTerapeutasEstimado || '',
             costo_traslado_total: _agPlace.costoTrasladoTotal || '',
             personas_servicios: _agPersonasServicios,
-            preferencia_sexo: (_agSess && (_agSess.preferencia_sexo || _agSess.pref_genero)) || '',
+            valor_ticket_mxn: _agValorTicket,
+            preferencia_sexo: ((typeof prefSexoGlobal === 'function') ? prefSexoGlobal() : '') || (_agSess && (_agSess.preferencia_sexo || _agSess.pref_genero)) || '',
             notas_cliente: _agNotas,
             notas: _agNotas,
             lead_ref: _agLeadRef,
@@ -13343,14 +13540,15 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             cliente_autenticado: !!_agSess
           })
         }).then(function(r){ return r.json(); }).then(function(j){
+          try { console.log('[ex-reserva] respuesta webhook:', j); } catch(_){}
           if (j && j.booking_code) window._bookingCode = j.booking_code;
           if (j && j.wa_link) window._waLink = j.wa_link;
           if (j && j.prep_token) window._prepToken = j.prep_token;
           if (j && j.tipo_cita) window._prepTipoCita = j.tipo_cita;
           try { _pgSyncPreparacionButton(); } catch(_){}
-        }).catch(function(){});
+        }).catch(function(err){ try { console.error('[ex-reserva] fetch falló:', err); } catch(_){} });
       }
-    } catch(_){}
+    } catch(err) { try { console.error('[ex-reserva] error armando payload:', err); } catch(_){} }
     closeModal('modal-agendar');
     closeModal('modal-choice');
     showFinalConfirm();
@@ -13368,24 +13566,20 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     var fechaEl = document.getElementById('cf-meta-fecha');
     if (fechaEl) {
       var c = window._calChoice;
-      if (c && c.date) {
-        var dd = new Date(c.date + 'T00:00:00');
-        var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-        var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-        fechaEl.textContent = dias[dd.getDay()] + ' ' + dd.getDate() + ' de ' + meses[dd.getMonth()] + (c.time ? ' · ' + c.time : '');
-      } else {
-        fechaEl.textContent = 'Por confirmar';
-      }
+      fechaEl.textContent = (c && c.date) ? fmtFechaES(c.date, c.time) : 'Por confirmar';
     }
     var totalEl = document.getElementById('cf-meta-total');
     if (totalEl) {
       var sub = 0;
-      cart.forEach(function(c){
-        var m = String(c).match(/\$\s*([\d,]+(?:\.\d+)?)/);
-        if (m) sub += parseFloat(m[1].replace(/,/g,'')) || 0;
-      });
-      totalEl.textContent = sub > 0 ? ('$' + sub.toLocaleString('es-MX')) : 'A confirmar';
+      cart.forEach(function(c){ sub += parsePriceMXN(c); });
+      totalEl.textContent = sub > 0 ? fmtMXN(sub) : 'A confirmar';
     }
+    // Post-pago: mostrar las 2 vías de confirmación (WhatsApp / que me contacten).
+    // En flujos sin pago (path viejo de agendar) se ocultan — su copy asume pago hecho.
+    var actions = document.getElementById('pg-success-actions');
+    if (actions) actions.style.display = window._reservaPosted ? '' : 'none';
+    var callBox = document.getElementById('pg-callme-box');
+    if (callBox) callBox.style.display = 'none';
     openModal('modal-confirm-final');
   }
   window.showFinalConfirm = showFinalConfirm;
@@ -13410,8 +13604,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   function _gsParsePrice(line, personaId) {
     var s = String(line || '');
     // 1) Si la key tiene $X directo, úsalo
-    var m = s.match(/\$\s*([\d,]+(?:\.\d+)?)/);
-    if (m) return parseFloat(m[1].replace(/,/g, '')) || 0;
+    var direct = parsePriceMXN(s);
+    if (direct) return direct;
     // 2) Fallback: buscar el servicio por nombre en SERVICES y leer el precio
     //    (en pareja el cart key no incluye $; el precio se debe inferir del catálogo)
     var name = s.split(' · ')[0];
@@ -13425,21 +13619,18 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     for (var k in window.SERVICES) {
       var t = (window.SERVICES[k].treatments || []).find(function(x){ return x.name === name; });
       if (!t) continue;
-      var durs = t.durations || [{ min: parseInt((t.duration||'0').replace(/\D/g,''),10), price: t.price, priceCouple: t.priceCouple }];
+      var durs = getDurations(t);
       var dur = (durMin != null) ? durs.find(function(d){ return d.min === durMin; }) : durs[0];
       if (!dur) dur = durs[0];
       // personaId=0 → "Para los dos" → priceCouple; cualquier otro → price individual
       var useCouple = (personaId === 0);
       var priceStr = useCouple ? (dur.priceCouple || dur.price) : dur.price;
-      if (!priceStr) return 0;
-      var pm = String(priceStr).match(/\$\s*([\d,]+(?:\.\d+)?)/);
-      return pm ? parseFloat(pm[1].replace(/,/g, '')) || 0 : 0;
+      return priceStr ? parsePriceMXN(priceStr) : 0;
     }
     return 0;
   }
-  function _gsFmt(n) {
-    return '$' + (n || 0).toLocaleString('es-MX', { maximumFractionDigits: 0 });
-  }
+  // Alias del helper compartido (conserva el nombre para no tocar sus call sites)
+  function _gsFmt(n) { return fmtMXN(n); }
   function renderGroupSummary() {
     var personasEl = document.getElementById('gs-personas');
     var totalsEl = document.getElementById('gs-totals');
@@ -13579,15 +13770,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   // ═══════════════════════════════════════════════════════════════════
   // POP-UPS DEDICADOS DE PAREJA · paquete → P1 → P2 → resumen
   // ═══════════════════════════════════════════════════════════════════
+  // Aliases de helpers compartidos (conservan el nombre para no tocar sus call sites)
   function _ppParseNum(s) {
     if (typeof s === 'number') return s;
-    if (!s) return 0;
-    // Extraer SÓLO el segmento con $ para no confundir con minutos u otras cifras
-    var m = String(s).match(/\$\s*([\d,]+(?:\.\d+)?)/);
-    if (!m) return 0;
-    return parseFloat(m[1].replace(/,/g, '')) || 0;
+    return parsePriceMXN(s);
   }
-  function _ppFmt(n) { return '$' + (n || 0).toLocaleString('es-MX', { maximumFractionDigits: 0 }); }
+  function _ppFmt(n) { return fmtMXN(n); }
 
   function _ppGetTreatments(scope) {
     // scope: 'paquete' (con priceCouple) | 'p1' | 'p2' (catálogo individual)
@@ -13637,7 +13825,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
 
   function _ppRenderRow(t, scope, personaId) {
-    var durs = t.durations || [{ min: parseInt((t.duration||'0').replace(/\D/g,''),10) || null, price: t.price, priceCouple: t.priceCouple }];
+    var durs = getDurations(t);
     var selIdx = (typeof t._ppDur === 'number') ? t._ppDur : 0;
     var dur = durs[selIdx] || durs[0];
     var usePriceCouple = (scope === 'paquete');
@@ -13694,7 +13882,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         var svc = this.getAttribute('data-svc');
         var t = allTreatments[svc];
         if (!t) return;
-        var durs = t.durations || [{ min: parseInt((t.duration||'0').replace(/\D/g,''),10) || null, price: t.price, priceCouple: t.priceCouple }];
+        var durs = getDurations(t);
         var selIdx = (typeof t._ppDur === 'number') ? t._ppDur : 0;
         var dur = durs[selIdx];
         var keyMatch = (durs.length > 1) ? (t.name + ' · ' + dur.min + ' min · ' + (scope === 'paquete' ? (dur.priceCouple || dur.price) : dur.price)) : (t.name + ' · ' + (scope === 'paquete' ? (dur.priceCouple || dur.price) : dur.price));
@@ -13849,7 +14037,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
           window._sv2GroupQty = GSZ_MAX;
           if (overflow) overflow.style.display = '';
           if (waLink) {
-            waLink.href = 'https://wa.me/529984803595?text=' + encodeURIComponent('Hola Exentia, somos más de 10 personas y queremos coordinar una experiencia grupal. ¿Me pueden ayudar?');
+            waLink.href = 'https://wa.me/' + window.EXENTIA_CONFIG.WA_PHONE + '?text=' + encodeURIComponent('Hola Exentia, somos más de 10 personas y queremos coordinar una experiencia grupal. ¿Me pueden ayudar?');
           }
         } else if (next < GSZ_MIN) {
           return; // no hace nada (botón debería estar disabled)
@@ -13998,7 +14186,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     }
     var tarifa = (citaPlace && citaPlace.costoTraslado) ? Number(citaPlace.costoTraslado) : 0;
     var isHome = citaPlace && citaPlace.mode === 'domicilio';
-    var usersTotal = parseInt(window.EXENTIA_USERS_TOTAL, 10) || 2;
+    var usersTotal = parseInt(window.EXENTIA_USERS_TOTAL, 10) || window.EXENTIA_CONFIG.USERS_TOTAL || 2;
 
     // Tiempo total acumulado del cart (suma de duraciones por item)
     // → usado para "Opción económica" (1 terapeuta sola) — debe caber en una jornada saludable.
@@ -14026,6 +14214,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     var nSim = n;
     var nTurnos = Math.max(1, Math.min(n, usersTotal));
     var simFeasible = (nSim <= usersTotal);
+    var simReason = simFeasible ? '' :
+      ('Requiere ' + nSim + ' terapeutas al mismo tiempo · solo hay ' + usersTotal + ' disponibles hoy.');
     return {
       n: n,
       tarifa: tarifa,
@@ -14033,8 +14223,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       usersTotal: usersTotal,
       totalMin: totalMin,
       soloMaxMin: SOLO_MAX_MIN,
-      simultaneo: { terapeutas: nSim,    costo: isHome ? nSim * tarifa    : 0, feasible: simFeasible },
-      turnos:     { terapeutas: nTurnos, costo: isHome ? nTurnos * tarifa : 0, feasible: true },
+      simultaneo: { terapeutas: nSim,    costo: isHome ? nSim * tarifa    : 0, feasible: simFeasible, reason: simReason },
+      turnos:     { terapeutas: nTurnos, costo: isHome ? nTurnos * tarifa : 0, feasible: true, reason: '' },
       economica:  { terapeutas: 1,       costo: isHome ? tarifa           : 0, feasible: economicaFeasible, reason: economicaReason }
     };
   }
@@ -14112,18 +14302,18 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       }
     }
 
-    // ─── Modalidad (Excel paso 3): solo si hay 2-3 personas y modo domicilio.
-    //     Sin precios calculados — pendiente integración con calendarios de terapeutas.
-    //     El cliente elige su preferencia, Exentia confirma cuántas terapeutas asignar.
+    // ─── Modalidad (Excel paso 3): visible con ≥2 personas.
+    //     En domicilio: 3 opciones con costo de traslado (simultáneo / turnos / económica).
+    //     En sucursal: 2 opciones sin costo (simultáneo / turnos). No hay "económica" —
+    //     el equipo asigna cabinas y terapeutas según disponibilidad interna.
     var modSection = document.getElementById('ck-modalidad-section');
     var modOptions = document.getElementById('ck-modalidad-options');
-    // Mostrar modalidad para cualquier grupo o pareja a domicilio (sin tope superior — la opción
-    // "Al mismo tiempo" se autofiltra si N > usersTotal disponibles, ver _ckCalcModalidad)
-    var showModalidad = (n >= 2 && calc.isHome);
+    var showModalidad = (n >= 2);
     if (modSection) modSection.style.display = showModalidad ? '' : 'none';
     if (showModalidad && modOptions) {
-      // En Pareja (svMode='parejas') solo dejamos "Al mismo tiempo" y "Opción económica".
-      // En Grupo damos las 3: simultáneo, por turno, económica.
+      // En Pareja (svMode='parejas') solo dejamos "Al mismo tiempo" y "Opción económica"
+      // (esta última solo en domicilio; en sucursal se cae al filtro y desaparece).
+      // En Grupo damos: simultáneo, por turno, económica (económica solo domicilio).
       var isPareja = (typeof svMode !== 'undefined' && svMode === 'parejas');
       var mods = isPareja ? [
         { key: 'simultaneo', title: 'Al mismo tiempo',
@@ -14138,15 +14328,24 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         { key: 'economica', title: 'Opción económica',
           desc: 'Una sola terapeuta atiende a todas · el equipo confirma' }
       ];
-      // Filtrar opciones no factibles según la capacidad de terapeutas
-      mods = mods.filter(function(m){ var i = calc[m.key]; return !i || i.feasible !== false; });
+      // En sucursal quitamos "económica" (no hay ahorro real: la tarifa es por servicio, no por terapeuta)
+      if (!calc.isHome) {
+        mods = mods.filter(function(m){ return m.key !== 'economica'; });
+      }
+      // Todas las opciones se muestran; las no-factibles quedan visibles pero
+      // deshabilitadas con su razón (más transparente para el cliente).
       var modHtml = '';
       mods.forEach(function(m){
-        var active = citaPlace.modalidad === m.key ? ' active' : '';
         var info = calc[m.key];
-        // Precio del traslado para esa opción (si tenemos tarifa de zona)
+        var disabled = (info && info.feasible === false);
+        var active = (!disabled && citaPlace.modalidad === m.key) ? ' active' : '';
+        var klass = 'ck-mod-card' + active + (disabled ? ' disabled' : '');
+        // Precio del traslado (solo si es factible; si no, mostramos el motivo)
         var feeHtml = '';
-        if (info && calc.isHome && calc.tarifa > 0) {
+        if (disabled && info && info.reason) {
+          feeHtml = '<div class="ck-mod-fee"><div class="ck-mod-fee-amount tbd">No disponible</div>'
+                  + '<div class="ck-mod-fee-detail">' + info.reason + '</div></div>';
+        } else if (info && calc.isHome && calc.tarifa > 0) {
           var detail = info.terapeutas + ' terap. × $' + calc.tarifa.toLocaleString('es-MX');
           feeHtml = '<div class="ck-mod-fee">'
                   +   '<div class="ck-mod-fee-amount">$' + info.costo.toLocaleString('es-MX') + '</div>'
@@ -14155,7 +14354,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         } else if (info && calc.isHome) {
           feeHtml = '<div class="ck-mod-fee"><div class="ck-mod-fee-amount tbd">por calcular</div></div>';
         }
-        modHtml += '<button type="button" class="ck-mod-card' + active + '" data-mod="' + m.key + '">'
+        modHtml += '<button type="button" class="' + klass + '" data-mod="' + m.key + '"'
+                +   (disabled ? ' disabled aria-disabled="true"' : '') + '>'
                 +   '<div class="ck-mod-radio"></div>'
                 +   '<div class="ck-mod-info"><div class="ck-mod-title">' + m.title + '</div><div class="ck-mod-desc">' + m.desc + '</div></div>'
                 +   feeHtml
@@ -14163,6 +14363,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       });
       modOptions.innerHTML = modHtml;
       modOptions.querySelectorAll('.ck-mod-card').forEach(function(card){
+        if (card.disabled) return; // no listener en las no-disponibles
         card.onclick = function(){
           citaPlace.modalidad = this.getAttribute('data-mod');
           var calcSel = _ckCalcModalidad();
@@ -14172,6 +14373,57 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
             citaPlace.costoTrasladoTotal = sel.costo;
           }
           renderCheckoutCart();
+        };
+      });
+    }
+
+    // ─── Preferencia de terapeuta (por persona; aplica en individual, pareja y grupo) ───
+    var prefSection = document.getElementById('ck-pref-section');
+    var prefRows = document.getElementById('ck-pref-rows');
+    if (prefSection && prefRows && typeof personasMeta !== 'undefined') {
+      var PREF_OPTS = [
+        { val: 'mujer', label: 'Mujer' },
+        { val: 'hombre', label: 'Hombre' },
+        { val: 'indistinto', label: 'Indiferente' }
+      ];
+      // Personas reales (sin la pseudo-persona 0 del paquete de pareja).
+      var prefIds = (typeof prefPersonasList === 'function') ? prefPersonasList() : [1];
+      // Default: preferencia guardada en la sesión del cliente (solo la primera persona real).
+      // El perfil usa 'cualquiera' como neutro → se normaliza a 'indistinto'.
+      var _prefSess = (typeof getClienteSession === 'function') ? getClienteSession() : null;
+      var sessPref = (_prefSess && (_prefSess.preferencia_sexo || _prefSess.pref_genero)) || '';
+      if (sessPref === 'cualquiera' || sessPref === 'indiferente') sessPref = 'indistinto';
+      if (sessPref !== 'mujer' && sessPref !== 'hombre' && sessPref !== 'indistinto') sessPref = '';
+      var prefHtml = '';
+      prefIds.forEach(function(pid, idx){
+        if (!personasMeta[pid]) personasMeta[pid] = { id: pid, label: 'Persona ' + pid };
+        if (!personasMeta[pid].prefSexo) {
+          personasMeta[pid].prefSexo = (idx === 0 && sessPref) ? sessPref : 'mujer';
+        }
+        var curPref = personasMeta[pid].prefSexo;
+        var rowLabel = (prefIds.length > 1)
+          ? '<div class="ck-pref-person">' + ((typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid)) + '</div>'
+          : '';
+        var chipsHtml = PREF_OPTS.map(function(o){
+          return '<button type="button" class="ck-pref-chip' + (curPref === o.val ? ' active' : '')
+               + '" data-pid="' + pid + '" data-pref="' + o.val + '">' + o.label + '</button>';
+        }).join('');
+        prefHtml += '<div class="ck-pref-row">' + rowLabel + '<div class="ck-pref-chips">' + chipsHtml + '</div></div>';
+      });
+      prefRows.innerHTML = prefHtml;
+      try { if (typeof savePersonasMeta === 'function') savePersonasMeta(); } catch(_){}
+      prefRows.querySelectorAll('.ck-pref-chip').forEach(function(chip){
+        chip.onclick = function(){
+          var pidClicked = parseInt(this.getAttribute('data-pid'), 10);
+          if (!personasMeta[pidClicked]) personasMeta[pidClicked] = { id: pidClicked, label: 'Persona ' + pidClicked };
+          personasMeta[pidClicked].prefSexo = this.getAttribute('data-pref');
+          try { if (typeof savePersonasMeta === 'function') savePersonasMeta(); } catch(_){}
+          var wrap = this.parentNode;
+          if (wrap) {
+            var sib = wrap.querySelectorAll('.ck-pref-chip');
+            for (var ci = 0; ci < sib.length; ci++) sib[ci].classList.remove('active');
+          }
+          this.classList.add('active');
         };
       });
     }
@@ -14234,11 +14486,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
       var ch = window._calChoice;
       var txt = schedEl.querySelector('.ck-schedule-text');
       if (ch && ch.date && ch.time) {
-        var d = new Date(ch.date + 'T00:00:00');
-        var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-        var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-        var label = dias[d.getDay()] + ' ' + d.getDate() + ' de ' + meses[d.getMonth()] + ' · ' + ch.time;
-        if (txt) txt.textContent = label;
+        if (txt) txt.textContent = fmtFechaES(ch.date, ch.time);
         schedEl.classList.add('is-set');
       } else {
         if (txt) txt.textContent = 'Selecciona un horario';
@@ -14831,9 +15079,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   // Referencia de arquitectura: vault/AInnovation/Tecnico/Exentia - Panel terapeutas auth
   // ═══════════════════════════════════════════════════════════════════
   var CLIENTE_AUTH = {
-    OTP_REQUEST: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-otp-request',
-    OTP_VERIFY:  'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-otp-verify',
-    GOOGLE_LOGIN:'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-google-login-v2',
+    OTP_REQUEST: window.EXENTIA_CONFIG.N8N_BASE + '/webhook/exentia-cliente-otp-request',
+    OTP_VERIFY:  window.EXENTIA_CONFIG.N8N_BASE + '/webhook/exentia-cliente-otp-verify',
+    GOOGLE_LOGIN: window.EXENTIA_CONFIG.N8N_BASE + '/webhook/exentia-cliente-google-login-v2',
     GOOGLE_CLIENT_ID: '223783119059-nnt368qs43fmhd72uo93v9jh91r89clp.apps.googleusercontent.com',
     JWT_KEY: 'exentia_cliente_jwt',
     OTP_PENDING_KEY: 'exentia_cliente_otp_pending'
@@ -15050,7 +15298,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   // ═══════════════════════════════════════════════════════════════════
   var SUPA_URL = 'https://fneppfjeywhayknrgahe.supabase.co';
   var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuZXBwZmpleXdoYXlrbnJnYWhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk4NjMzMTQsImV4cCI6MjA3NTQzOTMxNH0.DuSL3Dv44AtASDam5uL1NJecy141rT5NFaYNRtPcnvw';
-  var YAZ_WHATSAPP = '529984803595'; // sin '+', formato wa.me
+  var YAZ_WHATSAPP = window.EXENTIA_CONFIG.WA_PHONE; // sin '+', formato wa.me
   var _cuentaState = { profile: null, bookings: [], tab: 'inicio', loading: false };
 
   function getClienteSession() {
@@ -15726,7 +15974,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     if (cart.length >= CART_TOO_BIG_THRESHOLD && !window._ctbDismissed) {
       var link = document.getElementById('ctb-link');
       if (link) {
-        link.href = 'https://wa.me/529984803595?text=' + encodeURIComponent('Hola Exentia, queremos hacer una reserva grande (' + cart.length + ' servicios). ¿Me pueden ayudar a coordinarla?');
+        link.href = 'https://wa.me/' + window.EXENTIA_CONFIG.WA_PHONE + '?text=' + encodeURIComponent('Hola Exentia, queremos hacer una reserva grande (' + cart.length + ' servicios). ¿Me pueden ayudar a coordinarla?');
       }
       toast.style.display = '';
     } else {
@@ -16915,8 +17163,15 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     var isPairStep = (svMode === 'parejas' && (window.svPairStep === 'p1' || window.svPairStep === 'p2'));
     var isGroupStep = (svMode === 'grupo' && window.svGroupStep && window._sv2GroupQty >= 2);
     var n = cart.length;
+    // En grupo cada persona DEBE tener al menos 1 servicio para avanzar.
+    // (En pareja los extras de P1/P2 son opcionales — el paquete ya cubre a ambos.)
+    var groupCurrItems = 0;
+    if (isGroupStep && typeof getItemsForPersona === 'function') {
+      groupCurrItems = getItemsForPersona(window.svGroupStep).length;
+    }
     if (btn) {
-      btn.disabled = (isPairStep || isGroupStep) ? false : (n === 0);
+      if (isGroupStep) btn.disabled = (groupCurrItems === 0);
+      else btn.disabled = isPairStep ? false : (n === 0);
     }
     if (label) {
       if (window._gsEditReturn && (svMode === 'parejas' || svMode === 'grupo')) {
@@ -16936,6 +17191,11 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
         var sub = (typeof getItemsForPersona === 'function') ? getItemsForPersona(window.svPairPersona || 1).length : 0;
         summary.classList.toggle('has-items', sub > 0);
         summaryText.innerHTML = sub === 0 ? 'Sin extras para Persona ' + (window.svPairPersona || 1) : '<span class="select-summary-text-strong">' + sub + '</span> extra' + (sub > 1 ? 's' : '') + ' para Persona ' + (window.svPairPersona || 1);
+      } else if (isGroupStep) {
+        summary.classList.toggle('has-items', groupCurrItems > 0);
+        summaryText.innerHTML = groupCurrItems === 0
+          ? 'Persona ' + window.svGroupStep + ' aún no elige servicios'
+          : '<span class="select-summary-text-strong">' + groupCurrItems + '</span> servicio' + (groupCurrItems > 1 ? 's' : '') + ' para Persona ' + window.svGroupStep;
       } else if (n === 0) {
         summary.classList.remove('has-items');
         summaryText.textContent = 'Aún no has elegido nada';
@@ -16963,6 +17223,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     if (svMode === 'parejas' && window.svPairStep === 'p2') { ppGoTo('resumen'); return; }
     if (svMode === 'grupo' && window.svGroupStep && window._sv2GroupQty) {
       var qty = window._sv2GroupQty;
+      // Guard: la persona actual necesita al menos 1 servicio antes de avanzar
+      var _grpCurrItems = (typeof getItemsForPersona === 'function') ? getItemsForPersona(window.svGroupStep).length : 0;
+      if (_grpCurrItems === 0) {
+        if (typeof showFlowToast === 'function') showFlowToast('Agrega al menos un servicio para la Persona ' + window.svGroupStep + ' antes de continuar.', 'warn');
+        return;
+      }
       if (window.svGroupStep < qty) { openGroupPersona(window.svGroupStep + 1); return; }
       // Última persona → resumen
       if (typeof openGroupSummary === 'function') { openGroupSummary(true); closeModal('modal-select'); return; }
@@ -17274,6 +17540,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     'Revisa tu reserva y elige cómo cerrarla': 'Review your booking and choose how to finish it',
     'Tus servicios': 'Your services', '+ cambiar / agregar': '+ change / add',
     '¿Cómo prefieren recibir el servicio?': 'How would you like to receive the service?',
+    '¿Quién prefieres que te atienda?': 'Who would you prefer to be treated by?',
+    'Mujer': 'Female', 'Hombre': 'Male', 'Indiferente': 'No preference',
     'Elige una opción': 'Choose an option',
     'Sí, al mismo tiempo': 'Yes, at the same time',
     'Varias terapeutas atienden a la vez · sesión más rápida': 'Several therapists at once · faster session',
@@ -17647,6 +17915,60 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     applyLang();
     obs.observe(document.body, { childList: true, subtree: true, characterData: true });
   });
+})();
+</script>
+
+<!-- Build badge — timestamp de la última edición del HTML. Actualizar EX_BUILD abajo cada vez que se edite. -->
+<style>
+#ex-build-badge {
+  position: fixed;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(20,20,20,.78);
+  color: #e8dfc0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.35;
+  padding: 5px 9px;
+  border-radius: 6px;
+  z-index: 999999;
+  user-select: text;
+  pointer-events: auto;
+  opacity: .85;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+#ex-build-badge:hover { opacity: 1; }
+#ex-build-badge b { color: #b5b062; font-weight: 700; }
+#ex-build-badge .ex-build-ago { color: #b5b062; }
+</style>
+<div id="ex-build-badge" title="Última edición del HTML (hora Cancún UTC-5)"></div>
+<script>
+(function(){
+  // Actualizar EX_BUILD manualmente en cada Edit del HTML (hora Cancún, UTC-5)
+  var EX_BUILD = { version: 'v150', stamp: '2026-07-10 14:50' };
+  var el = document.getElementById('ex-build-badge');
+  if (!el) return;
+  // Parse stamp como hora Cancún (UTC-5) -> Date UTC
+  function parseCancun(s) {
+    var m = s.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/);
+    if (!m) return null;
+    return new Date(Date.UTC(+m[1], +m[2]-1, +m[3], +m[4]+5, +m[5]));
+  }
+  var buildDate = parseCancun(EX_BUILD.stamp);
+  function ago() {
+    if (!buildDate) return '';
+    var diffSec = Math.floor((Date.now() - buildDate.getTime()) / 1000);
+    if (diffSec < 0) return 'en el futuro';
+    if (diffSec < 60)  return 'hace ' + diffSec + ' s';
+    if (diffSec < 3600) return 'hace ' + Math.floor(diffSec/60) + ' min';
+    if (diffSec < 86400) return 'hace ' + Math.floor(diffSec/3600) + ' h';
+    return 'hace ' + Math.floor(diffSec/86400) + ' d';
+  }
+  function render() {
+    el.innerHTML = '<b>' + EX_BUILD.version + '</b> · ' + EX_BUILD.stamp + ' Cancún · <span class="ex-build-ago">' + ago() + '</span>';
+  }
+  render();
+  setInterval(render, 15000);
 })();
 </script>
 

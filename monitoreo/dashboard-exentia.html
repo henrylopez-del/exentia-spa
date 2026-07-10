@@ -21,7 +21,7 @@ html, body { overflow: hidden !important; margin: 0 !important; padding: 0 !impo
 -->
 <meta charset=&quot;UTF-8&quot;>
 <meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, viewport-fit=cover&quot;>
-<link rel=&quot;preconnect&quot; href=&quot;https://fneppfjeywhayknrgahe.supabase.co&quot; crossorigin>
+<link rel=&quot;preconnect&quot; href=&quot;__SUPABASE_URL__&quot; crossorigin>
 <link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
 <link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin>
 <style>
@@ -662,10 +662,10 @@ html, body { margin: 0 !important; padding: 0 !important; background: #FAFAFA !i
 
 <script>
 (function(){
-  var SB_URL = 'https://fneppfjeywhayknrgahe.supabase.co';
-  var SB_KEY = 'sb_publishable_zLroeuC3ZrE-K_zVGFwi3Q_UyYG6ZYB';
-  var N8N_PAGO_WEBHOOK = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-pago';
-  var N8N_TAG_WEBHOOK = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-tag';
+  var SB_URL = '__SUPABASE_URL__';
+  var SB_KEY = '__SUPABASE_PUBLISHABLE_KEY__';
+  var N8N_PAGO_WEBHOOK = '__N8N_WEBHOOK_PAGO__';
+  var N8N_TAG_WEBHOOK = '__N8N_BASE_URL__/webhook/exentia-tag';
   var TZ = 'America/Cancun';
   var POLL_MS = 10000;
   var Q = String.fromCharCode(34);
