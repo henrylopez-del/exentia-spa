@@ -8373,6 +8373,23 @@ window.EXENTIA_CONFIG = {
 
 <script>
   // ============================================
+  // STORAGE VERSIONADO — migración de localStorage entre deploys.
+  // Corre ANTES de que cart/cartMeta/personas se hidraten desde
+  // localStorage (más abajo en este mismo script): si corriera en
+  // DOMContentLoaded, el estado viejo ya estaría cargado en memoria
+  // y persistCart() lo re-escribiría, anulando la migración.
+  // NO limpia: exentia_cliente_jwt (sesión), exentia_lang, ex_lead_ref.
+  // ============================================
+  var EX_STORE_VERSION = '2';
+  try {
+    if (localStorage.getItem('exentia_v') !== EX_STORE_VERSION) {
+      ['exentia_cart','exentia_cart_meta','exentia_personas','exentia_persona_current','exentia_persona_counter','exentia_cita_place'].forEach(function(k){ localStorage.removeItem(k); });
+      localStorage.setItem('exentia_v', EX_STORE_VERSION);
+      console.log('[ex-store] storage migrado a v' + EX_STORE_VERSION);
+    }
+  } catch(_){}
+
+  // ============================================
   // HELPERS COMPARTIDOS — normalización y formato
   // Punto único para lógica repetida en el flujo (teléfono, precios,
   // fechas y duraciones). Las declaraciones hoistean dentro de este
@@ -8417,6 +8434,160 @@ window.EXENTIA_CONFIG = {
       price: t.price,
       priceCouple: t.priceCouple
     }];
+  }
+
+  // ============================================
+  // RESERVA — payload y POST únicos al webhook exentia-reserva.
+  // Antes había 2 builders casi idénticos (submitCustomForm pre-booking
+  // y submitAgendarForm final). Este builder es el punto único de verdad;
+  // `extra` pisa/añade los campos específicos del caller
+  // ({mode:'calendar'} en pre-booking, {origin:'agendar_form'} en el final).
+  //
+  // Unificaciones INTENCIONALES vs los builders viejos (mejoras, no regresiones):
+  //  - El pre-booking ahora también manda precio_mxn, valor_ticket_mxn,
+  //    notas, cartMeta y el fallback de dirección (antes solo el final).
+  //  - tipo_cita normalizado a `citaPlace.mode || null` (antes el
+  //    pre-booking podía mandar undefined).
+  // ============================================
+  function buildReservaPayload(extra) {
+    var d = window._formUserData || {};
+    var firstName = d.firstName || '';
+    var lastName = d.lastName || '';
+    var phone = toE164MX(d.phone || '');
+    var email = d.email || '';
+    var sess = (typeof getClienteSession === 'function') ? getClienteSession() : null;
+    var personas = (typeof getPersonasInUse === 'function') ? getPersonasInUse() : [1];
+    var duracionTotal = (typeof _cal2TotalDurationMin === 'function') ? _cal2TotalDurationMin() : 0;
+    var place = (typeof citaPlace !== 'undefined' && citaPlace) ? citaPlace : {};
+    // Precio de un cart key. Siempre pedimos precio INDIVIDUAL (personaId=1).
+    // El precio pareja (para los dos) se refleja al sumar 2 personas en personas_servicios.
+    function priceOf(key) {
+      try { return (typeof _gsParsePrice === 'function') ? (_gsParsePrice(key, 1) || 0) : 0; } catch(_){ return 0; }
+    }
+    var servicios = (cart || []).map(function(s){
+      var dm = (typeof _durMinForKey === 'function') ? _durMinForKey(s) : null;
+      var out = { slug: s, precio_mxn: priceOf(s) };
+      if (dm != null) out.duracion_min = dm;
+      return out;
+    });
+    var personasServicios = personas.map(function(pid){
+      var items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
+      return {
+        persona_id: pid,
+        preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(pid) : 'mujer',
+        label: (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid),
+        servicios: items.map(function(it){
+          var dm = (typeof _durMinForKey === 'function') ? _durMinForKey(it.key) : null;
+          var s = { slug: it.key, precio_mxn: priceOf(it.key) };
+          if (dm != null) s.duracion_min = dm;
+          return s;
+        })
+      };
+    });
+    // Ticket total = suma de precios de servicios + traslado (si aplica)
+    var subtotal = servicios.reduce(function(a, s){ return a + (parseFloat(s.precio_mxn) || 0); }, 0);
+    var traslado = parseFloat(place.costoTrasladoTotal || 0) || 0;
+    var leadRef = '';
+    try { leadRef = localStorage.getItem('ex_lead_ref') || ''; } catch(_e){}
+    // Notas: no hay campo de notas en la UI actual — leemos del estado por si
+    // algún flujo lo llena.
+    var notas = (d.notes || '').trim();
+    var base = {
+      firstName: firstName,
+      lastName: lastName,
+      phone: phone,
+      email: email,
+      cliente_nombre: (firstName + (lastName ? ' ' + lastName : '')).trim(),
+      cliente_telefono: phone,
+      cliente_email: email,
+      servicios: servicios,
+      fecha: (window._calChoice && window._calChoice.date) ? window._calChoice.date : null,
+      hora: (window._calChoice && window._calChoice.time) ? window._calChoice.time : null,
+      duracion_total_min: duracionTotal || null,
+      num_personas: personas.length,
+      personas_total: personas.length,
+      modalidad: place.modalidad || (personas.length === 1 ? 'individual' : 'simultaneo'),
+      num_terapeutas_estimado: place.numTerapeutasEstimado || '',
+      costo_traslado_total: place.costoTrasladoTotal || '',
+      personas_servicios: personasServicios,
+      valor_ticket_mxn: subtotal + traslado,
+      preferencia_sexo: ((typeof prefSexoGlobal === 'function') ? prefSexoGlobal() : '') || (sess && (sess.preferencia_sexo || sess.pref_genero)) || '',
+      notas_cliente: notas,
+      notas: notas,
+      lead_ref: leadRef,
+      tipo_cita: place.mode || null,
+      direccion: place.address || (typeof window.buildDireccionLibre === 'function' ? window.buildDireccionLibre() : ''),
+      direccion_maps_url: place.mapsUrl || '',
+      zona_colonia: place.zona || '',
+      calle: place.calle || '',
+      num_ext: place.num_ext || '',
+      num_int: place.num_int || '',
+      referencias: place.referencias || '',
+      lat: place.lat || '',
+      lng: place.lng || '',
+      zona_cobertura: place.zonaNum || '',
+      costo_traslado: place.costoTraslado || '',
+      distancia_km: place.distKm || '',
+      cartMeta: (typeof cartMeta !== 'undefined' ? cartMeta.slice() : []),
+      ghl_contact_id: (sess && sess.contactId) || '',
+      cliente_autenticado: !!sess
+    };
+    return Object.assign({}, base, extra || {});
+  }
+
+  // POST único al webhook exentia-reserva: timeout 10s (AbortController)
+  // + 1 reintento tras 2s + cola offline en localStorage si ambos fallan.
+  // opts.skipState: true → no escribe window._bookingCode/_prepToken/_prepTipoCita
+  // (usado por el replay de la cola offline, para no pisar el estado de la
+  // sesión actual con una reserva vieja).
+  function sendReserva(payload, opts) {
+    opts = opts || {};
+    try {
+      console.log('[ex-reserva] POST exentia-reserva →', {
+        origin: payload.origin || payload.mode || '',
+        nombre: payload.cliente_nombre, phone: payload.cliente_telefono, email: payload.cliente_email,
+        fecha: payload.fecha, hora: payload.hora,
+        servicios: payload.servicios, ticket_mxn: payload.valor_ticket_mxn
+      });
+    } catch(_){}
+    function doFetch() {
+      var ctrl = (typeof AbortController === 'function') ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function(){ try { ctrl.abort(); } catch(_){} }, 10000) : null;
+      return fetch(window.EXENTIA_CONFIG.WEBHOOK_RESERVA, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: ctrl ? ctrl.signal : undefined
+      }).then(function(r){
+        if (timer) clearTimeout(timer);
+        return r.json();
+      }, function(err){
+        if (timer) clearTimeout(timer);
+        throw err;
+      });
+    }
+    return doFetch()
+      .catch(function(){
+        // 1 reintento tras 2s (timeout o error de red)
+        return new Promise(function(res){ setTimeout(res, 2000); }).then(doFetch);
+      })
+      .then(function(j){
+        try { console.log('[ex-reserva] respuesta webhook:', j); } catch(_){}
+        if (!opts.skipState) {
+          try {
+            if (j && j.booking_code) window._bookingCode = j.booking_code;
+            if (j && j.prep_token) window._prepToken = j.prep_token;
+            if (j && j.tipo_cita) window._prepTipoCita = j.tipo_cita;
+            if (typeof _pgSyncPreparacionButton === 'function') { try { _pgSyncPreparacionButton(); } catch(_){} }
+          } catch(_){}
+        }
+        return j;
+      })
+      .catch(function(err){
+        try { localStorage.setItem('exentia_pending_reserva', JSON.stringify(payload)); } catch(_){}
+        try { console.error('[ex-reserva] guardado en cola offline', err); } catch(_){}
+        return null;
+      });
   }
 
   // ============================================
@@ -9535,7 +9706,26 @@ window.EXENTIA_CONFIG = {
     savePersonasMeta();
   }
 
-  function saveCartMeta() { try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta)); } catch(e){} }
+  // ============================================
+  // persistCart — punto ÚNICO de persistencia de exentia_cart +
+  // exentia_cart_meta. Si cart y cartMeta se desincronizaron (bug),
+  // reconstruye meta conservando las entradas válidas por índice.
+  // ============================================
+  function persistCart() {
+    try {
+      if (cartMeta.length !== cart.length) {
+        console.warn('[ex-cart] cart/cartMeta desincronizados (' + cart.length + ' vs ' + cartMeta.length + ') — reconstruyendo meta');
+        var _pidFill = (typeof currentPersonaId !== 'undefined' ? currentPersonaId : 1);
+        while (cartMeta.length > cart.length) cartMeta.pop();
+        while (cartMeta.length < cart.length) cartMeta.push({ personaId: _pidFill });
+      }
+      localStorage.setItem('exentia_cart', JSON.stringify(cart));
+      localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta || []));
+    } catch(e) { console.warn('[ex-cart] persist falló', e); }
+  }
+  // saveCartMeta delega en persistCart: los hooks de cart.push/splice ya
+  // llamaban saveCartMeta — ahora cada mutación persiste cart Y meta juntos.
+  function saveCartMeta() { persistCart(); }
   function savePersonasMeta() {
     try {
       localStorage.setItem('exentia_personas', JSON.stringify(personasMeta));
@@ -9543,6 +9733,57 @@ window.EXENTIA_CONFIG = {
       localStorage.setItem('exentia_persona_counter', String(_personaIdCounter));
     } catch(e){}
   }
+
+  // ============================================
+  // resetFlowState — reset central del estado del flujo de reserva.
+  // Antes había ~6 bloques de reset parciales dispersos, cada uno con un
+  // subconjunto distinto. Flags en opts (todas opcionales):
+  //   keepCalChoice: true  → NO borra window._calChoice (fecha/hora elegida)
+  //   keepWizard: true     → NO resetea svPairStep/svPairPersona/svPairSection
+  //   personas: 'keep' (default) | 'reset1' (deja solo Persona 1 y guarda)
+  //            | 'wipe' (borra todas sin recrear — el flujo las repobla)
+  //   svMode: undefined (no tocar) | null | 'individual'
+  //   clearPlace: true     → citaPlace.mode=null + borra exentia_cita_place
+  //   clearBooking: true   → limpia _bookingCode/_reservaPosted (evita fuga
+  //                          de estado entre reservas de la misma sesión)
+  // Siempre: vacía cart+cartMeta (vía splice, pasa por los hooks),
+  // persiste y refresca el badge.
+  // ============================================
+  function resetFlowState(opts) {
+    opts = opts || {};
+    try { if (cart.length) cart.splice(0, cart.length); } catch(_){}
+    try { if (typeof cartMeta !== 'undefined' && cartMeta.length) cartMeta.splice(0, cartMeta.length); } catch(_){}
+    try { persistCart(); } catch(_){}
+    if (!opts.keepCalChoice) window._calChoice = null;
+    if (!opts.keepWizard) {
+      window.svPairStep = 'paquete';
+      window.svPairPersona = 1;
+      window.svPairSection = 'paquete';
+    }
+    if (opts.personas === 'reset1') {
+      try {
+        Object.keys(personasMeta).forEach(function(k){ if (k !== '1') delete personasMeta[k]; });
+        if (!personasMeta[1]) personasMeta[1] = { id: 1, label: 'Persona 1' };
+        currentPersonaId = 1;
+        savePersonasMeta();
+      } catch(_){}
+    } else if (opts.personas === 'wipe') {
+      try { Object.keys(personasMeta).forEach(function(k){ delete personasMeta[k]; }); } catch(_){}
+    }
+    if (opts.svMode !== undefined) {
+      try { svMode = opts.svMode; } catch(_){}
+    }
+    if (opts.clearPlace) {
+      try { if (typeof citaPlace !== 'undefined' && citaPlace) citaPlace.mode = null; } catch(_){}
+      try { localStorage.removeItem('exentia_cita_place'); } catch(_){}
+    }
+    if (opts.clearBooking) {
+      window._bookingCode = null;
+      window._reservaPosted = false;
+    }
+    try { if (typeof updateBadge === 'function') updateBadge(); } catch(_){}
+  }
+  window.resetFlowState = resetFlowState;
 
   // Hook cart.push para mantener cartMeta sincronizado
   const _origCartPush = cart.push.bind(cart);
@@ -9673,6 +9914,20 @@ window.EXENTIA_CONFIG = {
         history.replaceState(null, '', window.location.pathname + (_q ? ('?' + _q) : '') + window.location.hash);
       }
     } catch(_){}
+    // Cola offline de reservas: si un POST a exentia-reserva falló en una sesión
+    // previa (sendReserva la guardó), reintentar UNA vez. skipState: no pisamos
+    // el estado de booking de la sesión actual con una reserva vieja. Si vuelve
+    // a fallar, sendReserva la re-guarda en la cola.
+    try {
+      var _pendRaw = localStorage.getItem('exentia_pending_reserva');
+      if (_pendRaw) {
+        localStorage.removeItem('exentia_pending_reserva');
+        var _pendPayload = JSON.parse(_pendRaw);
+        sendReserva(_pendPayload, { skipState: true }).then(function(j){
+          if (j) { try { console.log('[ex-reserva] cola offline reenviada'); } catch(_){} }
+        });
+      }
+    } catch(_){}
     renderServicesGrid();
     renderFooterServices();
     updateBadge();
@@ -9797,7 +10052,7 @@ window.EXENTIA_CONFIG = {
           window.openAddonsDrawer(foundSvc, foundCat);
           return; // El drawer se encarga del cart
         }
-        localStorage.setItem('exentia_cart', JSON.stringify(cart));
+        persistCart();
         if (typeof updateBadge === 'function') updateBadge();
         return;
       }
@@ -9824,7 +10079,7 @@ window.EXENTIA_CONFIG = {
           btn.style.color = 'var(--brown)';
           btn.style.borderColor = 'var(--cream)';
         }
-        localStorage.setItem('exentia_cart', JSON.stringify(cart));
+        persistCart();
         if (typeof updateBadge === 'function') updateBadge();
         return;
       }
@@ -9843,7 +10098,7 @@ window.EXENTIA_CONFIG = {
         btn.style.color = '';
         btn.style.borderColor = '';
       }
-      localStorage.setItem('exentia_cart', JSON.stringify(cart));
+      persistCart();
       if (typeof updateBadge === 'function') updateBadge();
     });
 
@@ -11219,75 +11474,10 @@ window.EXENTIA_CONFIG = {
     // los datos (fecha, hora, duracion_total_min) — evita ghost bookings duplicados.
     var shouldPost = !window._bookingCode && isCalendar;
     if (shouldPost) {
+      // Payload + POST unificados (buildReservaPayload lee window._formUserData,
+      // que se acaba de setear arriba con los valores de este form).
       try {
-        var leadRef = '';
-        try { leadRef = localStorage.getItem('ex_lead_ref') || ''; } catch(_e){}
-        var _sess = (typeof getClienteSession === 'function') ? getClienteSession() : null;
-        var _personas = (typeof getPersonasInUse === 'function') ? getPersonasInUse() : [1];
-        var _duracionTotal = (typeof _cal2TotalDurationMin === 'function') ? _cal2TotalDurationMin() : 0;
-        var _servicios = (cart || []).map(function(s){
-          var d = (typeof _durMinForKey === 'function') ? _durMinForKey(s) : null;
-          return d != null ? { slug: s, duracion_min: d } : { slug: s };
-        });
-        var _personasServicios = _personas.map(function(pid){
-          var items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
-          return {
-            persona_id: pid,
-            preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(pid) : 'mujer',
-            label: (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid),
-            servicios: items.map(function(it){
-              var d = (typeof _durMinForKey === 'function') ? _durMinForKey(it.key) : null;
-              return d != null ? { slug: it.key, duracion_min: d } : { slug: it.key };
-            })
-          };
-        });
-        fetch(window.EXENTIA_CONFIG.WEBHOOK_RESERVA, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            firstName: firstName,
-            lastName: lastName,
-            phone: phoneClean,
-            email: email,
-            cliente_nombre: firstName + (lastName ? ' ' + lastName : ''),
-            cliente_telefono: phoneClean,
-            cliente_email: email,
-            servicios: _servicios,
-            duracion_total_min: _duracionTotal || null,
-            num_personas: _personas.length,
-            personas_total: _personas.length,
-            modalidad: citaPlace.modalidad || (_personas.length === 1 ? 'individual' : 'simultaneo'),
-            num_terapeutas_estimado: citaPlace.numTerapeutasEstimado || '',
-            costo_traslado_total: citaPlace.costoTrasladoTotal || '',
-            personas_servicios: _personasServicios,
-            preferencia_sexo: ((typeof prefSexoGlobal === 'function') ? prefSexoGlobal() : '') || (_sess && (_sess.preferencia_sexo || _sess.pref_genero)) || '',
-            notas_cliente: '',
-            notas: '',
-            lead_ref: leadRef,
-            mode: isCalendar ? 'calendar' : 'whatsapp',
-            tipo_cita: citaPlace.mode,
-            direccion: citaPlace.address || (typeof window.buildDireccionLibre === 'function' ? window.buildDireccionLibre() : ''),
-            direccion_maps_url: citaPlace.mapsUrl || '',
-            zona_colonia: citaPlace.zona || '',
-            calle: citaPlace.calle || '',
-            num_ext: citaPlace.num_ext || '',
-            num_int: citaPlace.num_int || '',
-            referencias: citaPlace.referencias || '',
-            lat: citaPlace.lat || '',
-            lng: citaPlace.lng || '',
-            zona_cobertura: citaPlace.zonaNum || '',
-            costo_traslado: citaPlace.costoTraslado || '',
-            distancia_km: citaPlace.distKm || '',
-            ghl_contact_id: (_sess && _sess.contactId) || '',
-            cliente_autenticado: !!_sess
-          })
-        }).then(function(r){ return r.json(); }).then(function(j){
-          try { console.log('[ex-reserva] respuesta webhook (pre-booking):', j); } catch(_){}
-          if (j && j.booking_code) window._bookingCode = j.booking_code;
-          if (j && j.prep_token) window._prepToken = j.prep_token;
-          if (j && j.tipo_cita) window._prepTipoCita = j.tipo_cita;
-          try { _pgSyncPreparacionButton(); } catch(_){}
-        }).catch(function(err){ try { console.error('[ex-reserva] fetch pre-booking falló:', err); } catch(_){} });
+        sendReserva(buildReservaPayload({ mode: isCalendar ? 'calendar' : 'whatsapp' }));
       } catch(ex) { try { console.error('[ex-reserva] error armando payload pre-booking:', ex); } catch(_){} }
     }
 
@@ -12049,103 +12239,10 @@ window.EXENTIA_CONFIG = {
         }
       } else if (window.fetch) {
         window._reservaPosted = true;
-        var _agSess = (typeof getClienteSession === 'function') ? getClienteSession() : null;
-        // toE164MX: unifica el formato del teléfono hacia el webhook (intl-tel-input
-        // devuelve '+52...' con signo; los otros paths mandan dígitos '52...')
-        var _agPhone = toE164MX(window._formUserData.phone || whatsapp || rawWa);
-        var _agFirstName = window._formUserData.firstName || '';
-        var _agLastName = window._formUserData.lastName || '';
-        var _agEmail = window._formUserData.email || email || '';
-        var _agPersonas = (typeof getPersonasInUse === 'function') ? getPersonasInUse() : [1];
-        var _agDuracion = (typeof _cal2TotalDurationMin === 'function') ? _cal2TotalDurationMin() : 0;
-        // Helper: precio de un cart key. Siempre pedimos precio INDIVIDUAL (personaId=1).
-        // El precio pareja (para los dos) se refleja al sumar 2 personas en personas_servicios.
-        var _priceOf = function(key){
-          try { return (typeof _gsParsePrice === 'function') ? (_gsParsePrice(key, 1) || 0) : 0; } catch(_){ return 0; }
-        };
-        var _agServicios = (cart || []).map(function(s){
-          var d = (typeof _durMinForKey === 'function') ? _durMinForKey(s) : null;
-          var out = { slug: s, precio_mxn: _priceOf(s) };
-          if (d != null) out.duracion_min = d;
-          return out;
-        });
-        var _agPersonasServicios = _agPersonas.map(function(pid){
-          var items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
-          return {
-            persona_id: pid,
-            preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(pid) : 'mujer',
-            label: (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid),
-            servicios: items.map(function(it){
-              var d = (typeof _durMinForKey === 'function') ? _durMinForKey(it.key) : null;
-              var s = { slug: it.key, precio_mxn: _priceOf(it.key, pid) };
-              if (d != null) s.duracion_min = d;
-              return s;
-            })
-          };
-        });
-        // Ticket total = suma de precios de servicios + traslado (si aplica)
-        var _agServiciosSubtotal = _agServicios.reduce(function(a, s){ return a + (parseFloat(s.precio_mxn) || 0); }, 0);
-        var _agTraslado = parseFloat((citaPlace || {}).costoTrasladoTotal || 0) || 0;
-        var _agValorTicket = _agServiciosSubtotal + _agTraslado;
-        var _agLeadRef = '';
-        try { _agLeadRef = localStorage.getItem('ex_lead_ref') || ''; } catch(_e){}
-        // Notas: no hay campo de notas en la UI actual — leemos del estado por si
-        // algún flujo lo llena (antes se buscaban #ag-notas/#cf-notes, que no existen).
-        var _agNotas = ((window._formUserData || {}).notes || '').trim();
-        var _agPlace = citaPlace || {};
-
-        try { console.log('[ex-reserva] POST exentia-reserva →', { nombre: _agFirstName + ' ' + _agLastName, phone: _agPhone, email: _agEmail, fecha: (window._calChoice || {}).date, hora: (window._calChoice || {}).time, servicios: _agServicios, ticket_mxn: _agValorTicket }); } catch(_){}
-        fetch(window.EXENTIA_CONFIG.WEBHOOK_RESERVA, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            origin: 'agendar_form',
-            firstName: _agFirstName,
-            lastName: _agLastName,
-            phone: _agPhone,
-            email: _agEmail,
-            cliente_nombre: (_agFirstName + (_agLastName ? ' ' + _agLastName : '')).trim(),
-            cliente_telefono: _agPhone,
-            cliente_email: _agEmail,
-            servicios: _agServicios,
-            fecha: (window._calChoice && window._calChoice.date) ? window._calChoice.date : null,
-            hora: (window._calChoice && window._calChoice.time) ? window._calChoice.time : null,
-            duracion_total_min: _agDuracion || null,
-            num_personas: _agPersonas.length,
-            personas_total: _agPersonas.length,
-            modalidad: _agPlace.modalidad || (_agPersonas.length === 1 ? 'individual' : 'simultaneo'),
-            num_terapeutas_estimado: _agPlace.numTerapeutasEstimado || '',
-            costo_traslado_total: _agPlace.costoTrasladoTotal || '',
-            personas_servicios: _agPersonasServicios,
-            valor_ticket_mxn: _agValorTicket,
-            preferencia_sexo: ((typeof prefSexoGlobal === 'function') ? prefSexoGlobal() : '') || (_agSess && (_agSess.preferencia_sexo || _agSess.pref_genero)) || '',
-            notas_cliente: _agNotas,
-            notas: _agNotas,
-            lead_ref: _agLeadRef,
-            tipo_cita: _agPlace.mode || null,
-            direccion: _agPlace.address || '',
-            direccion_maps_url: _agPlace.mapsUrl || '',
-            zona_colonia: _agPlace.zona || '',
-            calle: _agPlace.calle || '',
-            num_ext: _agPlace.num_ext || '',
-            num_int: _agPlace.num_int || '',
-            referencias: _agPlace.referencias || '',
-            lat: _agPlace.lat || '',
-            lng: _agPlace.lng || '',
-            zona_cobertura: _agPlace.zonaNum || '',
-            costo_traslado: _agPlace.costoTraslado || '',
-            distancia_km: _agPlace.distKm || '',
-            cartMeta: (typeof cartMeta !== 'undefined' ? cartMeta.slice() : []),
-            ghl_contact_id: (_agSess && _agSess.contactId) || '',
-            cliente_autenticado: !!_agSess
-          })
-        }).then(function(r){ return r.json(); }).then(function(j){
-          try { console.log('[ex-reserva] respuesta webhook:', j); } catch(_){}
-          if (j && j.booking_code) window._bookingCode = j.booking_code;
-          if (j && j.prep_token) window._prepToken = j.prep_token;
-          if (j && j.tipo_cita) window._prepTipoCita = j.tipo_cita;
-          try { _pgSyncPreparacionButton(); } catch(_){}
-        }).catch(function(err){ try { console.error('[ex-reserva] fetch falló:', err); } catch(_){} });
+        // Payload + POST unificados. buildReservaPayload lee window._formUserData
+        // (phone/email se acaban de refrescar arriba con los valores de este form)
+        // y normaliza el teléfono con toE164MX.
+        sendReserva(buildReservaPayload({ origin: 'agendar_form' }));
       }
     } catch(err) { try { console.error('[ex-reserva] error armando payload:', err); } catch(_){} }
     closeModal('modal-agendar');
@@ -12185,14 +12282,10 @@ window.EXENTIA_CONFIG = {
 
   function closeFinalConfirm() {
     closeModal('modal-confirm-final');
-    // Reset del estado de reserva (no del lead — el usuario completó)
-    try { cart.splice(0, cart.length); } catch(_){}
-    try { if (typeof cartMeta !== 'undefined') cartMeta.splice(0, cartMeta.length); } catch(_){}
-    try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(_){}
-    try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta || [])); } catch(_){}
-    window._calChoice = null;
-    window.svPairStep = 'paquete';
-    if (typeof updateBadge === 'function') updateBadge();
+    // Reset del estado de reserva (no del lead — el usuario completó).
+    // clearBooking: también limpia _bookingCode/_reservaPosted para que una
+    // segunda reserva en la misma sesión arranque desde cero (antes se fugaban).
+    resetFlowState({ clearBooking: true });
     if (typeof closeAllFlowModals === 'function') closeAllFlowModals();
   }
   window.closeFinalConfirm = closeFinalConfirm;
@@ -12501,8 +12594,7 @@ window.EXENTIA_CONFIG = {
           cart.push(keyMatch);
           if (prevPid !== null) { try { currentPersonaId = prevPid; } catch(_){} }
         }
-        try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(_){}
-        try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta)); } catch(_){}
+        persistCart();
         if (typeof updateBadge === 'function') updateBadge();
         if (typeof renderCartBadge === 'function') renderCartBadge();
         renderPairProductList(container.id, scope);
@@ -13228,11 +13320,8 @@ window.EXENTIA_CONFIG = {
         // para evitar inconsistencias entre items y modalidad elegida.
         if (prevMode && prevMode !== mode && cart && cart.length > 0) {
           var n = cart.length;
-          try { cart.splice(0, cart.length); } catch(e){}
-          try { if (typeof cartMeta !== 'undefined') cartMeta.splice(0, cartMeta.length); } catch(e){}
-          try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(e){}
-          try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta || [])); } catch(e){}
-          try { if (typeof updateBadge === 'function') updateBadge(); } catch(e){}
+          // Solo carrito: conserva fecha, wizard y personas (comportamiento previo 1:1)
+          resetFlowState({ keepCalChoice: true, keepWizard: true });
           try { if (typeof renderCartPanel === 'function') renderCartPanel(); } catch(e){}
           showFlowToast('Carrito reiniciado · cambiaste la modalidad (' + n + ' servicio' + (n===1?'':'s') + ')', 'warn');
         }
@@ -13295,15 +13384,9 @@ window.EXENTIA_CONFIG = {
         svMode = mode;
         // Reiniciar carrito si cambia la modalidad (los productos no se traducen entre modos)
         if (prevMode && prevMode !== mode) {
-          try { cart.splice(0, cart.length); } catch(e){}
-          try { if (typeof cartMeta !== 'undefined') cartMeta.splice(0, cartMeta.length); } catch(e){}
-          try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(e){}
-          try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta || [])); } catch(e){}
-          window.svPairSection = 'paquete';
-          window.svPairPersona = 1;
-          window.svPairStep = 'paquete';
-          Object.keys(personasMeta).forEach(function(k){ delete personasMeta[k]; });
-          if (typeof updateBadge === 'function') updateBadge();
+          // personas:'wipe' — se repueblan justo abajo según el nuevo modo.
+          // keepCalChoice: la fecha no se toca aquí (comportamiento previo 1:1).
+          resetFlowState({ keepCalChoice: true, personas: 'wipe' });
           if (typeof renderCartBadge === 'function') renderCartBadge();
         }
         // Re-poblar personas según el nuevo modo
@@ -13380,17 +13463,11 @@ window.EXENTIA_CONFIG = {
   // (paquetes, vista detalle, services-grid). Vacía el cart, modalidad e individual/pareja/grupo
   // para que el flujo arranque desde cero — el único item que queda es el que acaba de clickear.
   function _resetFlowFromLanding() {
-    try { cart.splice(0, cart.length); } catch(_){}
-    try { if (typeof cartMeta !== 'undefined') cartMeta.splice(0, cartMeta.length); } catch(_){}
-    try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(_){}
-    try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta || [])); } catch(_){}
-    try { if (citaPlace) citaPlace.mode = null; } catch(_){}
-    try { localStorage.removeItem('exentia_cita_place'); } catch(_){}
-    try { window.svMode = null; } catch(_){}
-    try { window.svPairStep = 'paquete'; window.svPairPersona = 1; window.svPairSection = 'paquete'; } catch(_){}
-    try { if (typeof personasMeta !== 'undefined') Object.keys(personasMeta).forEach(function(k){ delete personasMeta[k]; }); } catch(_){}
+    // personas:'wipe' — el flujo las repobla según la modalidad elegida.
+    // También borra window._calChoice (fecha/hora vieja no debe sobrevivir
+    // a un restart desde landing — antes se fugaba al nuevo flujo).
+    resetFlowState({ personas: 'wipe', svMode: null, clearPlace: true });
     try { if (typeof closeAllFlowModals === 'function') closeAllFlowModals(); } catch(_){}
-    try { if (typeof updateBadge === 'function') updateBadge(); } catch(_){}
   }
   window._resetFlowFromLanding = _resetFlowFromLanding;
 
@@ -14321,7 +14398,7 @@ window.EXENTIA_CONFIG = {
       if (Array.isArray(arr)) {
         cart.splice(0, cart.length);
         arr.forEach(function(s){ cart.push(s.nombre || s.name || s); });
-        try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(_){}
+        persistCart();
       }
     } catch(_){}
     setTimeout(function(){ smartAgendar(); }, 200);
@@ -14481,31 +14558,23 @@ window.EXENTIA_CONFIG = {
 
   function removeFromCart(index) {
     cart.splice(index, 1);
-    localStorage.setItem('exentia_cart', JSON.stringify(cart));
+    persistCart();
     updateBadge();
     renderCartPanel();
   }
   window.removeFromCart = removeFromCart;
 
   function clearCart() {
-    // Usar splice para pasar por el hook de cart (no `cart.length = 0` que evade el hook).
-    if (cart.length) cart.splice(0, cart.length);
-    if (cartMeta.length) cartMeta.splice(0, cartMeta.length);
-    try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(e){}
-    try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta)); } catch(e){}
     // Reset también el modo + personas: si el cliente "Limpia todo" probablemente
     // empieza desde cero, no quiere quedarse con personas fantasma o el modo Grupo activo.
-    try { svMode = 'individual'; } catch(e){}
-    Object.keys(personasMeta).forEach(function(k){ if (k !== '1') delete personasMeta[k]; });
-    if (!personasMeta[1]) personasMeta[1] = { id: 1, label: 'Persona 1' };
-    currentPersonaId = 1;
-    try { savePersonasMeta(); } catch(e){}
+    // keepCalChoice/keepWizard: "Limpiar todo" vacía servicios, no la fecha ya elegida
+    // ni el paso del wizard (comportamiento previo 1:1).
+    resetFlowState({ keepCalChoice: true, keepWizard: true, personas: 'reset1', svMode: 'individual' });
     // Re-render
     if (typeof renderSelectView === 'function' && document.getElementById('modal-select').classList.contains('open')) {
       renderSelectView();
     }
     if (typeof renderCartPanel === 'function') renderCartPanel();
-    updateBadge();
   }
   window.clearCart = clearCart;
 
@@ -14532,7 +14601,7 @@ window.EXENTIA_CONFIG = {
 
   function updateBadge() {
     // El badge/panel de carrito fue eliminado del HTML; esta función solo persiste el carrito.
-    localStorage.setItem('exentia_cart', JSON.stringify(cart));
+    persistCart();
     _checkCartTooBig();
   }
 
@@ -14804,7 +14873,7 @@ window.EXENTIA_CONFIG = {
       }
     });
     // Persistir
-    try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(_){}
+    persistCart();
   }
 
   function confirmAddons() {
@@ -14821,7 +14890,7 @@ window.EXENTIA_CONFIG = {
       closeAddonsDrawer();
       if (typeof _resetFlowFromLanding === 'function') _resetFlowFromLanding();
       cart.push(key);
-      try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(e){}
+      persistCart();
       if (typeof updateBadge === 'function') updateBadge();
       window._pendingPickService = svcName;
       window._pendingPickCategory = catSlug;
@@ -15633,7 +15702,7 @@ window.EXENTIA_CONFIG = {
     const idx = (typeof findCartIndexForPersona === 'function') ? findCartIndexForPersona(name, pid) : cart.indexOf(name);
     if (idx === -1) { cart.push(name); el.classList.add('on'); }
     else { cart.splice(idx, 1); el.classList.remove('on'); }
-    localStorage.setItem('exentia_cart', JSON.stringify(cart));
+    persistCart();
     updateBadge();
     updateSvBottom();
     document.querySelectorAll('.sv-cat').forEach(c => {
@@ -15824,8 +15893,7 @@ window.EXENTIA_CONFIG = {
       setTimeout(function(){
         cart.length = 0;
         cartMeta.length = 0;
-        try { localStorage.setItem('exentia_cart', JSON.stringify(cart)); } catch(e){}
-        try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta)); } catch(e){}
+        try { persistCart(); } catch(e){}
         if (typeof updateBadge === 'function') updateBadge();
         window._formUserData = {};
         // Reset ubicación: la próxima cita debe arrancar por el place-first limpio
@@ -15886,6 +15954,9 @@ window.EXENTIA_CONFIG = {
         return setTimeout(tryOpen, 100);
       }
       if (demoCart && typeof window.cart !== 'undefined') {
+        // Excepción a persistCart(): esto escribe window.cart (array DEMO para
+        // screenshots vía ?cart=1), NO el `cart` léxico real — persistCart()
+        // persistiría el carrito real vacío y rompería el deep-link demo.
         window.cart = ['Masaje Relajante', 'Limpieza Facial Profunda'];
         try { localStorage.setItem('exentia_cart', JSON.stringify(window.cart)); } catch(e){}
       }
@@ -16440,7 +16511,7 @@ window.EXENTIA_CONFIG = {
 <script>
 (function(){
   // Actualizar EX_BUILD manualmente en cada Edit del HTML (hora Cancún, UTC-5)
-  var EX_BUILD = { version: 'v151', stamp: '2026-07-10 15:13' };
+  var EX_BUILD = { version: 'v152', stamp: '2026-07-10 16:17' };
   var el = document.getElementById('ex-build-badge');
   if (!el) return;
   // Parse stamp como hora Cancún (UTC-5) -> Date UTC
