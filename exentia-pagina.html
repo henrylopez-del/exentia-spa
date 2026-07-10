@@ -371,21 +371,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     inset: 0;
     background: linear-gradient(135deg, rgba(92, 58, 30, 0.1), transparent);
   }
-  .hero-monogram {
-    position: absolute;
-    top: 48px; right: 48px;
-    width: 120px; height: 44px;
-    border-radius: 50%;
-    background: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--brown);
-    font-family: 'Playfair Display', serif;
-    font-size: 64px;
-    font-weight: 500;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.2);
-  }
 
   /* ============ SECTION TITLES ============ */
   section { padding: 64px 0; }
@@ -461,46 +446,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
 
   /* ============ RIBBON TOP (promo subtle) ============ */
-  .promo-ribbon {
-    background: var(--brown);
-    color: var(--cream);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    padding: 0;
-    min-height: 32px;
-    font-size: 12px;
-    overflow: hidden;
-    transition: max-height 0.4s ease, min-height 0.4s ease, padding 0.3s ease;
-    max-height: 60px;
-  }
-  .promo-ribbon.hidden { max-height: 0; min-height: 0; padding: 0; border: none; }
-  .promo-ribbon-link {
-    display: inline-flex; align-items: center; gap: 12px;
-    color: var(--cream); text-decoration: none;
-    padding: 8px 44px 8px 16px;
-    transition: opacity 0.2s;
-  }
-  .promo-ribbon-link:hover { opacity: 0.88; }
-  .promo-ribbon-icon { color: var(--cream); opacity: 0.7; font-size: 14px; }
-  .promo-ribbon-text { letter-spacing: 0.3px; }
-  .promo-ribbon-text b { font-weight: 600; }
-  .promo-ribbon-cta {
-    color: var(--cream);
-    border-bottom: 1px solid rgba(243, 228, 199, 0.5);
-    padding-bottom: 1px;
-    font-weight: 500;
-    margin-left: 4px;
-  }
-  .promo-ribbon-close {
-    position: absolute; right: 12px; top: 50%;
-    transform: translateY(-50%);
-    background: none; border: none;
-    color: var(--cream); opacity: 0.6;
-    cursor: pointer; padding: 4px 8px;
-    font-size: 14px;
-    transition: opacity 0.2s;
-  }
-  .promo-ribbon-close:hover { opacity: 1; }
 
   /* ============ PROMOCIONES Y PAQUETES (Henry mockup style) ============ */
   .promos {
@@ -523,12 +468,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     color: var(--text); font-size: 15px; line-height: 1.6; margin: 0;
   }
 
-  .promos-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-top: 8px;
-  }
   /* ═══════════════════════════════════════════════════════════════════
      PACKAGES · estilo editorial split 50/50 (zigzag)
      ═══════════════════════════════════════════════════════════════════ */
@@ -610,159 +549,16 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .pkg-price-new { font-size: 24px; }
   }
 
-  .promo-card {
-    background: var(--white);
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 2px 24px var(--shadow);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .promo-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 24px 48px var(--shadow-lg);
-  }
   /* === Placeholder "Próximamente" para promos sin info confirmada === */
-  .promo-card.coming-soon {
-    background: linear-gradient(180deg, var(--cream-soft) 0%, var(--white) 100%);
-    border: 1px dashed rgba(176,169,111,0.45);
-    box-shadow: 0 2px 14px rgba(130,96,64,0.06);
-  }
-  .promo-card.coming-soon:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 26px rgba(130,96,64,0.1);
-  }
-  .promo-card.coming-soon .promo-img {
-    background-color: rgba(176,169,111,0.12);
-    background-blend-mode: luminosity;
-    filter: grayscale(0.35) brightness(1.05);
-    opacity: 0.85;
-  }
-  .promo-card.coming-soon .promo-img::after {
-    background: linear-gradient(180deg, rgba(242,218,178,0.0) 0%, rgba(242,218,178,0.45) 100%);
-  }
-  .promo-card.coming-soon .promo-soon-tag {
-    position: absolute;
-    top: 16px; left: 16px;
-    background: var(--brown);
-    color: var(--cream);
-    padding: 6px 14px;
-    border-radius: 100px;
-    font: 700 10px 'Lato', sans-serif;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    z-index: 2;
-    box-shadow: 0 4px 12px rgba(130,96,64,0.25);
-  }
-  .promo-card.coming-soon .promo-body { padding-top: 22px; }
-  .promo-card.coming-soon h3 { color: var(--brown); opacity: 0.9; }
-  .promo-card.coming-soon .promo-soon-msg {
-    font: 400 13px 'Lato', sans-serif;
-    color: var(--text-light);
-    line-height: 1.55;
-    margin: 8px 0 18px;
-    padding: 14px 16px;
-    background: rgba(176,169,111,0.08);
-    border-left: 3px solid var(--olive);
-    border-radius: 6px;
-  }
-  .promo-card.coming-soon .promo-soon-msg b { color: var(--brown); font-weight: 700; }
-  .promo-card.coming-soon .promo-soon-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--white);
-    color: var(--olive-dark);
-    border: 1.5px solid var(--olive);
-    padding: 11px 18px;
-    border-radius: 100px;
-    font: 700 11px 'Lato', sans-serif;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all 0.2s;
-    cursor: pointer;
-  }
-  .promo-card.coming-soon .promo-soon-cta:hover {
-    background: var(--olive);
-    color: var(--white);
-    transform: translateY(-1px);
-  }
-  .promo-card.coming-soon .promo-soon-cta svg { width: 14px; height: 14px; }
-  .promo-tag {
-    position: absolute;
-    top: 16px; left: 16px;
-    z-index: 2;
-    background: var(--olive);
-    color: var(--white);
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    border-radius: 2px;
-    font-weight: 500;
-  }
   .promo-tag-soft {
     background: var(--cream);
     color: var(--brown);
-  }
-  .promo-img {
-    height: 220px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-  }
-  .promo-img::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 50%, rgba(92, 58, 30, 0.25));
-  }
-  .promo-body {
-    padding: 26px 24px 24px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  .promo-body h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    color: var(--brown);
-    margin-bottom: 10px;
-    font-weight: 500;
-    font-style: italic;
-    line-height: 1.15;
   }
   .promo-desc {
     font-size: 13.5px;
     color: var(--text-light);
     line-height: 1.55;
     margin-bottom: 14px;
-  }
-  .promo-list {
-    list-style: none;
-    margin: 0 0 18px;
-    padding: 14px 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    border-top: 1px solid rgba(154, 152, 84, 0.15);
-  }
-  .promo-list li {
-    font-size: 13px;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .promo-list li::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--olive);
-    flex-shrink: 0;
   }
   .promo-foot {
     margin-top: auto;
@@ -803,14 +599,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     letter-spacing: 0.3px;
     font-style: italic;
   }
-  @media (max-width: 1200px) {
-    .promos-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 900px) {
-    .promos-grid { grid-template-columns: repeat(2, 1fr); }
-  }
   @media (max-width: 600px) {
-    .promos-grid { grid-template-columns: 1fr; gap: 18px; }
     .promos { padding: 48px 0; }
     .promos-header h2 { font-size: 34px; }
   }
@@ -1341,20 +1130,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .treatment-card.has-dur-chips .treatment-duration { display: none; }
   /* Divisor entre secciones (Base / Express) en vista detalle */
-  .treatment-section-divider {
-    grid-column: 1 / -1;
-    margin: 30px 0 8px;
-    font: 700 11px 'Lato', sans-serif;
-    letter-spacing: 1.5px;
-    color: var(--olive-dark);
-    text-transform: uppercase;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .treatment-section-divider::after {
-    content: ''; flex: 1; height: 1px;
-    background: rgba(176,169,111,0.3);
-  }
-  .treatment-section-divider:first-child { margin-top: 0; }
   /* Badge "Personalizable" en el título del card */
   .treatment-customizable-badge {
     display: inline-flex;
@@ -1571,33 +1346,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     box-shadow: 0 16px 48px var(--shadow);
     max-width: 1100px;
     margin: 0 auto;
-  }
-  .calendar-header {
-    padding: 40px 48px;
-    background: var(--brown);
-    color: var(--cream);
-    text-align: center;
-  }
-  .calendar-header .eyebrow {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    opacity: 0.8;
-    margin-bottom: 8px;
-  }
-  .calendar-header h3 {
-    font-size: 32px;
-    font-weight: 400;
-  }
-  .calendar-header h3 em { font-style: italic; color: var(--olive-light); }
-  .calendar-iframe-wrap {
-    background: var(--white);
-    min-height: 700px;
-  }
-  .calendar-iframe-wrap iframe {
-    width: 100%;
-    min-height: 700px;
-    border: none;
   }
 
   /* ============ UBICACION ============ */
@@ -1865,32 +1613,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     padding: 100px 0 120px;
     background: var(--off-white);
   }
-  .sv-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--olive);
-    cursor: pointer;
-    margin-bottom: 32px;
-    padding: 10px 20px;
-    border: 1px solid var(--olive);
-    border-radius: 100px;
-    transition: all 0.2s;
-    background: none;
-    font-family: inherit;
-  }
-  .sv-back:hover { background: var(--olive); color: var(--white); }
-  .sv-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(36px, 4vw, 52px);
-    color: var(--brown);
-    margin-bottom: 8px;
-    font-weight: 300;
-  }
-  .sv-title em { font-style: italic; color: var(--olive); }
   .sv-desc {
     font-size: 14px;
     color: var(--text-light);
@@ -1898,41 +1620,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
 
   /* ============ MODAL SELECT V2 — Hero + lista (Variant 03) ============ */
-  .sv2-mode-banner {
-    display: flex; align-items: center; gap: 10px;
-    background: linear-gradient(135deg, #f6f3e0 0%, #fbf8ef 100%);
-    border: 1px solid rgba(154,152,84,0.30);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin: 0 6px 10px;
-    font-size: 12.5px;
-    color: var(--brown, #5c3a1e);
-    line-height: 1.4;
-  }
-  .sv2-mode-banner svg { flex-shrink: 0; color: var(--olive-dark, #7d7c3f); }
-  .sv2-mode-banner span { flex: 1; }
-  .sv2-mode-banner span b { color: var(--olive-dark, #7d7c3f); font-weight: 700; }
   /* Variante sucursal: tono brown */
-  .sv2-mode-banner-venue {
-    background: linear-gradient(135deg, #f5ece0 0%, #fbf6ee 100%);
-    border-color: rgba(130,96,64,0.30);
-    color: var(--brown, #5c3a1e);
-  }
-  .sv2-mode-banner-venue svg { color: var(--brown, #826040); }
-  .sv2-mode-banner-venue span b { color: var(--brown, #826040); }
-  .sv2-mode-banner-venue .sv2-mode-change { background: var(--brown, #826040); }
-  .sv2-mode-banner-venue .sv2-mode-change:hover { background: #6b4f33; }
-  .sv2-mode-change {
-    flex-shrink: 0; background: var(--olive, #9a9854); color: #fff;
-    border: none; border-radius: 100px; padding: 5px 12px;
-    font: 600 11px 'Lato', 'Inter', sans-serif; cursor: pointer;
-    letter-spacing: 0.5px;
-  }
-  .sv2-mode-change:hover { background: var(--olive-dark, #7d7c3f); }
-  @media (max-width: 600px) {
-    .sv2-mode-banner { flex-wrap: wrap; font-size: 11.5px; }
-    .sv2-mode-change { width: 100%; padding: 6px 12px; }
-  }
   .sv2-tabs {
     display: flex;
     gap: 6px;
@@ -2104,37 +1792,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .sv2-mode-btn svg { width: 16px; height: 16px; }
 
   /* Stepper de cantidad para modo Grupo */
-  .sv2-group-qty {
-    margin: 0 auto 20px;
-    max-width: 460px;
-    background: linear-gradient(180deg, #fbf6e9, #f5edd6);
-    border: 1px solid #d4c9a8;
-    border-radius: 14px;
-    padding: 16px 18px;
-    text-align: center;
-    animation: sv2GroupQtyFade .35s cubic-bezier(.4,0,.2,1);
-  }
   @keyframes sv2GroupQtyFade {
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
-  }
-  .sv2-group-qty-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #9a9854;
-    margin-bottom: 10px;
-  }
-  .sv2-group-qty-stepper {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: #fff;
-    border: 1.5px solid #b0a96f;
-    border-radius: 999px;
-    padding: 4px;
-    box-shadow: 0 4px 12px rgba(154,152,84,.12);
   }
   .sv2-qty-btn {
     width: 34px;
@@ -2159,13 +1819,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     color: #5c3a1e;
     line-height: 1;
   }
-  .sv2-group-qty-hint {
-    font-size: 12px;
-    color: #8a7c64;
-    margin-top: 10px;
-    line-height: 1.45;
-  }
-  .sv2-group-qty-hint b { color: #7d7c3f; font-weight: 700; }
 
   /* Wizard de grupo (persona por persona) */
   .sv2-wizard {
@@ -2731,18 +2384,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .treatment-group-body .treatment-card:last-child { margin-bottom: 0; }
 
   /* Subtítulos para separar Base/Express dentro de la lista de Uñas */
-  .sv2-list-divider {
-    margin: 14px 6px 8px;
-    font: 700 10px 'Lato', sans-serif;
-    letter-spacing: 1.5px;
-    color: var(--olive-dark);
-    text-transform: uppercase;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .sv2-list-divider::after {
-    content: ''; flex: 1; height: 1px;
-    background: rgba(176,169,111,0.3);
-  }
   /* Badge "Personalizable" en filas con add-ons */
   .sv2-row-customizable {
     display: inline-flex; align-items: center; gap: 3px;
@@ -3434,9 +3075,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .sv-group {
     break-inside: avoid;
   }
-  .sv-cats {
-    display: contents;
-  }
   .sv-cat {
     background: var(--white);
     border: 2px solid transparent;
@@ -3506,9 +3144,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .sv-cat.open .arrow { transform: rotate(180deg); }
 
-  @media (max-width: 600px) {
-    .sv-cats { grid-template-columns: repeat(2, 1fr); }
-  }
 
   /* Treatments accordion */
   .sv-treatments {
@@ -3635,43 +3270,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   /* Bottom continue bar */
   /* Pareja Viva — Paso 1: elegir tipo de experiencia */
-  .sv2-pair-choose { margin: 8px 0 16px; }
-  .sv2-pair-choose-head { text-align: center; margin-bottom: 14px; }
-  .sv2-pair-choose-eyebrow {
-    font: 700 10.5px 'Lato', sans-serif; color: #7d7c3f;
-    letter-spacing: 1.4px; text-transform: uppercase;
-  }
-  .sv2-pair-choose-title {
-    font: 400 22px 'Cormorant Garamond', serif; color: #5c3a1e;
-    margin: 4px 0 2px;
-  }
-  .sv2-pair-choose-title em { color: #7d7c3f; font-style: italic; font-weight: 600; }
-  .sv2-pair-choose-sub { font-size: 12.5px; color: #8a8268; margin: 0; }
-  .sv2-pair-choose-cards { display: flex; flex-direction: column; gap: 10px; max-width: 520px; margin: 0 auto; }
-  .sv2-pair-choose-card {
-    display: flex; align-items: center; gap: 14px;
-    background: #fff; border: 1.5px solid rgba(154,152,84,0.25);
-    border-radius: 14px; padding: 14px 16px; cursor: pointer;
-    text-align: left; transition: all .15s ease;
-  }
-  .sv2-pair-choose-card:hover {
-    border-color: #9a9854; background: #fbf8ef; transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(154,152,84,0.15);
-  }
-  .sv2-pair-choose-icon {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(154,152,84,0.12); color: #7d7c3f;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .sv2-pair-choose-text { flex: 1; min-width: 0; }
-  .sv2-pair-choose-name { font: 600 14px 'Inter', sans-serif; color: #5c3a1e; }
-  .sv2-pair-choose-desc { font-size: 12px; color: #8a8268; margin-top: 2px; line-height: 1.4; }
-  .sv2-pair-choose-arrow { color: #9a9854; font-size: 18px; }
 
   /* Banner "Misma experiencia para los dos" + cambiar tipo */
   /* Pareja P1/P2: ocultar indicador "Agregando a Persona X" y el banner "A domicilio" (el badge superior ya lo dice todo) */
   .modal-box.pair-step-active #active-persona-indicator { display: none !important; }
-  .modal-box.pair-step-active .sv2-mode-banner { display: none !important; }
 
   /* Modal Group-Size · pop-up para elegir N personas */
   #modal-group-size .gsz-header { text-align: center; margin: 8px 0 18px; }
@@ -3764,30 +3366,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
 
   /* Banner sticky de Pareja arriba del catálogo (modo p1/p2) — fallback legacy, ya no se usa */
-  .sv2-pair-banner-step {
-    background: #fbf8ef; border: 1px solid rgba(154,152,84,0.20);
-    border-radius: 14px; padding: 14px 18px;
-    margin: 0 0 14px;
-  }
-  .sv2-pair-banner-step .sv2-wiz-progress { margin-bottom: 10px; }
-  .sv2-pair-banner-info { text-align: center; }
-  .sv2-pair-banner-eyebrow {
-    font: 700 10.5px 'Lato', sans-serif; letter-spacing: 1.4px;
-    color: var(--olive-dark, #7d7c3f); text-transform: uppercase;
-  }
-  .sv2-pair-banner-title {
-    font: 400 22px 'Cormorant Garamond', serif;
-    color: var(--brown, #5c3a1e); margin: 4px 0;
-    display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
-  }
-  .sv2-pair-banner-title em { color: var(--olive-dark, #7d7c3f); font-style: italic; font-weight: 600; }
-  .sv2-pair-banner-pill {
-    font: 700 10px 'Lato', sans-serif; letter-spacing: 1.2px;
-    background: #eee5d3; color: #8a8268;
-    padding: 3px 8px; border-radius: 99px; text-transform: uppercase;
-  }
-  .sv2-pair-banner-why { font-size: 12.5px; color: #8a8268; margin: 2px 0 6px; }
-  .sv2-pair-banner-count { font-size: 12px; font-weight: 600; color: var(--olive-dark, #7d7c3f); }
 
   /* Footer del modal-select con skip + continuar */
   .select-actions { display: flex; align-items: center; gap: 12px; }
@@ -3970,13 +3548,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .pp-cta, .pp-skip { width: 100%; }
   }
 
-  .sv2-pair-banner-mode {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    background: #fbf8ef; border: 1px solid rgba(154,152,84,0.25);
-    border-radius: 10px; padding: 10px 14px; margin: 8px 0 16px;
-  }
-  .sv2-pair-banner-info strong { display: block; font: 600 13px 'Inter', sans-serif; color: #5c3a1e; }
-  .sv2-pair-banner-info span { font-size: 11.5px; color: #8a8268; }
   .sv2-pair-banner-change {
     background: transparent; border: 1px solid rgba(154,152,84,0.40);
     color: #7d7c3f; font: 600 11px 'Inter', sans-serif;
@@ -4069,148 +3640,11 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .gs-footer-amount { font: 700 22px 'Inter', sans-serif; color: #5c3a1e; }
   #gs-continue { padding: 12px 22px; }
 
-  .sv-bottom {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 97;
-    background: var(--brown);
-    color: var(--cream);
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    transform: translateY(100%);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
-  }
-  .sv-bottom.show { transform: translateY(0); }
-  .sv-bottom .txt { font-size: 14px; font-weight: 500; }
-  .sv-bottom .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-  .sv-bottom .chip {
-    padding: 4px 12px;
-    background: rgba(243, 228, 199, 0.2);
-    border: 1px solid rgba(243, 228, 199, 0.3);
-    border-radius: 20px;
-    font-size: 11px;
-    color: var(--cream);
-  }
-  .sv-bottom .cont-btn {
-    padding: 12px 32px;
-    background: var(--cream);
-    color: var(--brown);
-    border: none;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    font-family: inherit;
-    transition: background 0.2s;
-    white-space: nowrap;
-  }
-  .sv-bottom .cont-btn:hover { background: var(--white); }
 
-  @media (max-width: 768px) {
-    .sv-cats { grid-template-columns: repeat(2, 1fr); }
-  }
 
   /* ============ CART BADGE (floating) ============ */
-  .cart-badge {
-    position: fixed;
-    bottom: 32px; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    z-index: 98;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 28px;
-    background: var(--brown);
-    color: var(--cream);
-    border-radius: 100px;
-    box-shadow: 0 8px 32px rgba(92, 58, 30, 0.35);
-    font-size: 13px;
-    font-weight: 500;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    cursor: pointer;
-  }
-  .cart-badge.show { transform: translateX(-50%) translateY(0); }
-  .cart-badge .count {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--olive);
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .cart-badge .cb-btn {
-    padding: 8px 20px;
-    background: var(--cream);
-    color: var(--brown);
-    border: none;
-    border-radius: 100px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    font-family: inherit;
-  }
-  .cart-badge .cb-btn:hover { background: var(--white); }
 
   /* Cart panel */
-  .cart-panel {
-    position: fixed;
-    bottom: 80px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    z-index: 98;
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(92, 58, 30, 0.25);
-    width: 340px;
-    max-height: 300px;
-    overflow-y: auto;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .cart-panel.open {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-  }
-  .cart-panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 18px;
-    border-bottom: 1px solid rgba(154, 152, 84, 0.1);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--brown);
-  }
-  .cart-clear {
-    font-size: 11px;
-    color: var(--olive);
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  .cart-clear:hover { color: var(--brown); }
-  .cart-panel-item {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 18px;
-    border-bottom: 1px solid rgba(154, 152, 84, 0.06);
-    font-size: 13px;
-    color: var(--text);
-  }
-  .cart-panel-item:last-child { border-bottom: none; }
   .cart-item-info {
     flex: 1;
     min-width: 0;
@@ -4258,127 +3692,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   /* ╔══════════════════════════════════════════════════════════════╗
      ║  CARRITO MULTI-PERSONA (F2)                                  ║
      ╚══════════════════════════════════════════════════════════════╝ */
-  .cart-persona-group {
-    border-radius: 12px;
-    margin: 8px 12px;
-    overflow: hidden;
-    transition: all .25s cubic-bezier(.4,0,.2,1);
-    background: #fff;
-    border: 1px solid #efe7d0;
-  }
-  .cart-persona-group.active {
-    border: 1.5px solid #b0a96f;
-    box-shadow: 0 4px 14px rgba(154,152,84,.15);
-  }
-  .cart-persona-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 12px;
-    cursor: pointer;
-    background: linear-gradient(180deg, #fbf6e9, #f7efd8);
-    border-bottom: 1px solid #efe7d0;
-    transition: background .2s;
-  }
-  .cart-persona-group:not(.active) .cart-persona-header { background: #fbf6e9; }
-  .cart-persona-group:not(.active) .cart-persona-header:hover { background: #f5edd6; }
-  .cart-persona-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-  }
-  .cart-persona-badge {
-    flex: 0 0 22px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: #9a9854;
-    color: #fdfbf4;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0;
-  }
-  .cart-persona-group:not(.active) .cart-persona-badge {
-    background: #d4c9a8;
-  }
-  .cart-persona-label {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: #5c3a1e;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .cart-persona-current {
-    font-size: 9.5px;
-    font-weight: 600;
-    color: #fdfbf4;
-    background: #7d7c3f;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    padding: 3px 7px;
-    border-radius: 8px;
-    margin-left: 4px;
-  }
-  .cart-persona-del {
-    flex: 0 0 22px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: transparent;
-    border: 0;
-    color: #b09b78;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all .2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .cart-persona-del:hover { background: #fdecea; color: #d9534f; }
-  .cart-persona-items {
-    padding: 4px 0;
-  }
-  .cart-persona-empty {
-    padding: 12px 14px;
-    text-align: center;
-    font-size: 11.5px;
-    color: #9a8672;
-    font-style: italic;
-    background: #fdfbf4;
-  }
-  .cart-add-persona {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: calc(100% - 24px);
-    margin: 10px 12px 12px;
-    padding: 12px;
-    background: #fdfbf4;
-    color: #7d7c3f;
-    border: 1.5px dashed #b0a96f;
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .25s;
-  }
-  .cart-add-persona:hover {
-    background: #f4f0dd;
-    border-color: #7d7c3f;
-    border-style: solid;
-    transform: translateY(-1px);
-  }
-  .cart-add-persona.cart-add-persona-empty {
-    margin-top: 0;
-  }
-  .cart-add-persona svg { color: #9a9854; }
 
   /* Indicador en modal-select de qué persona recibe los servicios */
   #active-persona-indicator {
@@ -4694,28 +4007,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
 
   /* ============ CALENDARIO modal (ampliado) ============ */
-  .modal-box-calendar {
-    width: 96% !important;
-    max-width: 1100px !important;
-    max-height: 95vh !important;
-  }
-  .modal-body-calendar {
-    padding: 8px 8px 0 !important;
-  }
-  .calendar-iframe-tall {
-    width: 100%;
-    border: none;
-    min-height: 820px;
-    height: 82vh;
-    display: block;
-    border-radius: 8px;
-    background: var(--white);
-  }
-  @media (max-width: 700px) {
-    .modal-box-calendar { width: 98% !important; max-height: 96vh !important; }
-    .modal-body-calendar { padding: 4px 4px 0 !important; }
-    .calendar-iframe-tall { min-height: 700px; height: 78vh; }
-  }
 
   /* ╔══════════════════════════════════════════════════════════════╗
      ║  MODAL ADDRESS (F6) · paso extra solo para domicilio        ║
@@ -4951,32 +4242,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     line-height: 1.55;
     margin: 0;
   }
-  .mfa-back-pin {
-    background: transparent;
-    border: 0;
-    color: #7d7c3f;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: underline;
-    font-family: inherit;
-  }
-  .mfa-back-pin:hover { color: #5c3a1e; }
-  .mfa-zone-tag {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    background: #fbf6e9;
-    border: 1px solid #d4c9a8;
-    border-radius: 999px;
-    padding: 8px 14px;
-    margin: 0 auto 20px;
-    width: fit-content;
-    font-size: 12px;
-    color: #5c3a1e;
-  }
-  .mfa-zone-tag.visible { display: inline-flex; }
-  .mfa-zone-tag b { color: #7d7c3f; font-weight: 700; }
   .mfa-fields { display: flex; flex-direction: column; gap: 14px; }
   .mfa-row { display: flex; flex-direction: column; gap: 6px; }
   .mfa-row .form-label {
@@ -5191,12 +4456,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .mm-subtitle { font-size: 13px; color: #8a7c64; line-height: 1.55; margin: 0; }
 
   /* Contexto del cálculo: personas + zona */
-  .mm-context {
-    margin: 16px 0 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
   .mm-context-card {
     background: #fbf6e9;
     border: 1px solid #e8d8b8;
@@ -5293,14 +4552,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     line-height: 1.45;
     margin-bottom: 8px;
   }
-  .mm-card-numbers {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 8px 14px;
-    padding-top: 8px;
-    border-top: 1px dashed #e8d8b8;
-  }
   .mm-card-cost {
     font-family: 'Cormorant Garamond', serif;
     font-size: 24px;
@@ -5349,19 +4600,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     color: #fdfbf4;
     transform: scale(1.08);
   }
-  .mm-tip {
-    font-size: 11.5px;
-    color: #8a7c64;
-    background: #fbf6e9;
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    line-height: 1.5;
-  }
-  .mm-tip svg { color: #9a9854; flex: 0 0 auto; margin-top: 1px; }
 
   .mm-footer { text-align: center; }
   .mm-continue-btn {
@@ -5402,27 +4640,13 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   @media (max-width: 540px) {
     .mm-box { padding: 32px 22px 24px; border-radius: 18px; }
     .mm-title { font-size: 23px; }
-    .mm-context { grid-template-columns: 1fr; }
     .mm-card { padding: 14px 16px; }
-    .mm-card-numbers { flex-direction: column; align-items: flex-start; gap: 6px; }
   }
 
   /* ╔══════════════════════════════════════════════════════════════╗
      ║  MODAL PLACE-FIRST · ubicación premium spa                  ║
      ║  Aparece antes del selector de servicios                    ║
      ╚══════════════════════════════════════════════════════════════╝ */
-  .mpf-box {
-    max-width: 520px;
-    width: 100%;
-    background: linear-gradient(180deg, #fdfbf4 0%, #faf4e6 100%);
-    border-radius: 22px;
-    box-shadow: 0 30px 80px rgba(92, 58, 30, 0.18), 0 8px 24px rgba(92, 58, 30, 0.08);
-    padding: 42px 36px 32px;
-    overflow-y: auto;
-    max-height: 92vh;
-    position: relative;
-    animation: mpfFadeIn .5s cubic-bezier(.16, 1, .3, 1);
-  }
   @keyframes mpfFadeIn {
     from { opacity: 0; transform: translateY(20px) scale(.97); }
     to { opacity: 1; transform: translateY(0) scale(1); }
@@ -5430,7 +4654,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   /* Header con branding */
   .mpf-header { text-align: center; margin-bottom: 28px; }
-  .mpf-brand { display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .mpf-brand-name {
     font-family: 'Inter', sans-serif;
     font-size: 17px;
@@ -5452,20 +4675,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     height: 1px;
     background: linear-gradient(90deg, transparent, #9a9854, transparent);
     margin: 18px auto;
-  }
-  .mpf-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 30px;
-    font-weight: 400;
-    color: #5c3a1e;
-    margin: 0 0 8px;
-    line-height: 1.18;
-    letter-spacing: -0.005em;
-  }
-  .mpf-title em {
-    color: #9a9854;
-    font-style: italic;
-    font-weight: 500;
   }
   .mpf-subtitle {
     font-size: 13px;
@@ -5643,24 +4852,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     margin: 4px 8px 10px;
   }
-  .sv2-pair-tab {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px;
-    background: #fff;
-    border: 2px solid rgba(154,152,84,0.20);
-    border-radius: 12px;
-    cursor: pointer; text-align: left;
-    transition: all .18s ease;
-    color: var(--brown, #5c3a1e);
-  }
-  .sv2-pair-tab:hover { border-color: rgba(154,152,84,0.45); background: #fbf8ef; }
-  .sv2-pair-tab.active {
-    border-color: var(--olive, #9a9854);
-    background: linear-gradient(135deg, #f6f3e0 0%, #fbf8ef 100%);
-    box-shadow: 0 4px 12px rgba(154,152,84,0.15);
-  }
-  .sv2-pair-tab svg { flex-shrink: 0; color: var(--olive-dark, #7d7c3f); }
-  .sv2-pair-tab.active svg { color: var(--olive, #9a9854); }
   .sv2-pair-tab-title { font: 700 13px 'Inter', sans-serif; }
   .sv2-pair-tab-sub { font-size: 10.5px; color: #9a8d75; letter-spacing: 0.4px; text-transform: uppercase; margin-top: 1px; }
   .sv2-pair-persona-chips {
@@ -5707,12 +4898,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     color: var(--olive-dark, #7d7c3f);
   }
   .sv2-mode-pill { font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; font-size: 11px; }
-  .sv2-mode-edit {
-    background: transparent; border: none; cursor: pointer;
-    color: var(--olive, #9a9854); font: 600 11.5px 'Inter', sans-serif;
-    text-decoration: underline; padding: 2px 6px;
-  }
-  .sv2-mode-edit:hover { color: var(--olive-dark, #7d7c3f); }
 
   /* MODAL MODALITY · cards Individual/Pareja/Grupo */
   .md-card {
@@ -5886,27 +5071,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
 
   /* Detalle a domicilio: mapa + dirección */
-  .mpf-home-detail {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(.4, 0, .2, 1), opacity 0.3s;
-    margin-bottom: 0;
-  }
-  .mpf-home-detail.open {
-    max-height: 800px;
-    opacity: 1;
-    margin-bottom: 18px;
-    animation: mpfDetailFade .5s ease-out 0.1s both;
-  }
   @keyframes mpfDetailFade {
     from { transform: translateY(-8px); }
     to { transform: translateY(0); }
-  }
-  .mpf-home-search {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
   }
   .mpf-search-wrap {
     flex: 1;
@@ -5961,26 +5128,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .mpf-autocomplete-item:last-child { border-bottom: none; }
   .mpf-autocomplete-item:hover { background: #fbf6e9; }
-  .mpf-use-location-btn {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 11px 14px;
-    background: #fdfbf4;
-    border: 1.5px solid #e8dfc0;
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 500;
-    color: #7d7c3f;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .mpf-use-location-btn:hover {
-    background: #f3e4c7;
-    border-color: #c4b884;
-  }
   .mpf-map-wrap {
     position: relative;
     width: 100%;
@@ -6069,40 +5216,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     text-align: center;
     margin-top: 8px;
   }
-  .mpf-continue-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 16px;
-    background: #7d7c3f;
-    color: #fdfbf4;
-    border: 0;
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
-    box-shadow: 0 6px 18px rgba(124, 124, 63, 0.22);
-  }
-  .mpf-continue-btn:hover:not(:disabled) {
-    background: #5c3a1e;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 28px rgba(92, 58, 30, 0.28);
-  }
-  .mpf-continue-btn:active:not(:disabled) {
-    transform: translateY(0);
-  }
-  .mpf-continue-btn:disabled {
-    background: #d4c9a8;
-    color: #fdfbf4;
-    cursor: not-allowed;
-    box-shadow: none;
-    opacity: 0.6;
-  }
   .mpf-footnote {
     font-size: 10.5px;
     color: #9a9854;
@@ -6112,15 +5225,11 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   /* Mobile */
   @media (max-width: 540px) {
-    .mpf-box { padding: 32px 22px 24px; border-radius: 18px; }
-    .mpf-title { font-size: 25px; }
     .mpf-card { padding: 14px 16px; gap: 12px; }
     .mpf-card-icon { flex-basis: 42px; width: 42px; height: 42px; }
     .mpf-card-title { font-size: 14.5px; }
     .mpf-card-sub { font-size: 11.5px; }
     .mpf-google-map { height: 200px; }
-    .mpf-home-search { flex-direction: column; }
-    .mpf-use-location-btn { width: 100%; justify-content: center; }
   }
 
   /* ============ MODAL FLEX (con footer sticky) ============ */
@@ -6368,16 +5477,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     font-style: italic;
   }
 
-  .cf-map-preview {
-    margin-top: 10px;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1.5px solid var(--olive-soft);
-    box-shadow: 0 4px 14px rgba(130,96,64,0.12);
-  }
-  .cf-map-preview iframe {
-    width: 100%; height: 180px; border: none; display: block;
-  }
 
   /* ===== Layout V1: mapa full-width arriba + campos debajo ===== */
   .address-toolbar {
@@ -6464,23 +5563,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .form-row-split .form-row { margin-bottom: 14px; }
 
   /* Aviso: pin debe estar bien */
-  .cf-pin-warning {
-    display: flex; align-items: flex-start; gap: 10px;
-    margin: 8px 0 6px;
-    padding: 11px 13px;
-    background: linear-gradient(180deg, #fff8e1 0%, #fff4d1 100%);
-    border: 1px solid #f0c674;
-    border-radius: 8px;
-    font-size: 12px;
-    color: var(--text);
-    line-height: 1.45;
-  }
-  .cf-pin-warning svg {
-    color: #c67d00; flex-shrink: 0; margin-top: 1px;
-  }
-  .cf-pin-warning b {
-    color: #8a5d00; display: block; margin-bottom: 2px;
-  }
 
   /* "Pin fijado en" — estilo Google Place card */
   .cf-address-summary {
@@ -6697,63 +5779,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
 
   /* Email opt-in toggle */
   .optin-block { margin-bottom: 14px; }
-  .optin-toggle {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    background: var(--cream-soft);
-    border: 1.5px solid rgba(154, 152, 84, 0.18);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all .2s;
-    user-select: none;
-  }
-  .optin-toggle:hover { border-color: var(--olive); }
-  .optin-toggle input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    width: 0; height: 0;
-  }
-  .optin-check {
-    width: 22px; height: 22px;
-    flex-shrink: 0;
-    border: 2px solid var(--olive-light);
-    border-radius: 6px;
-    background: var(--white);
-    color: transparent;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all .2s;
-  }
-  .optin-toggle input[type="checkbox"]:checked + .optin-check {
-    background: var(--olive);
-    border-color: var(--olive);
-    color: #fff;
-  }
-  .optin-text {
-    font-size: 13.5px;
-    color: var(--brown);
-    font-weight: 500;
-    line-height: 1.3;
-  }
-  .optin-text .opt {
-    color: var(--text-light);
-    font-weight: 400;
-    font-size: 11px;
-  }
-  .optin-reveal {
-    max-height: 0;
-    overflow: hidden;
-    margin: 0;
-    transition: max-height .3s ease, margin-top .3s ease;
-  }
-  .optin-reveal.show {
-    max-height: 44px;
-    margin-top: 10px;
-  }
 
   /* ============ LANGUAGE TOGGLE (ES/EN) ============ */
   .lang-toggle {
@@ -6839,9 +5864,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .ck-mod-info { flex: 1; min-width: 0; }
   .ck-mod-title { font-size: 14px; font-weight: 600; color: #5c3a1e; }
   .ck-mod-desc { font-size: 11.5px; color: #9a8d75; margin-top: 2px; line-height: 1.4; }
-  .ck-mod-price { text-align: right; flex-shrink: 0; }
-  .ck-mod-price-val { font-size: 14px; font-weight: 700; color: #5c3a1e; }
-  .ck-mod-price-lbl { font-size: 10.5px; color: #9a8d75; }
   .ck-mod-fee { text-align: right; flex-shrink: 0; min-width: 90px; }
   .ck-mod-fee-amount { font: 700 15px 'Inter', sans-serif; color: #5c3a1e; }
   .ck-mod-fee-amount.tbd { font-size: 12px; font-weight: 500; color: #9a8d75; font-style: italic; }
@@ -6870,7 +5892,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   @media (max-width: 600px) {
     .checkout-cart { padding: 14px 12px; }
     .ck-mod-card { padding: 10px 12px; gap: 10px; }
-    .ck-mod-price-val { font-size: 13px; }
   }
 
   /* ============ CHOICE MODAL ============ */
@@ -6896,17 +5917,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .choice-wa:hover { background: #1eb558; border-color: #189549; }
   .choice-cal { color: var(--brown); border-color: rgba(154,152,84,0.45); }
   .choice-cal:hover { background: var(--cream-soft); border-color: var(--olive); }
-  .choice-agendar {
-    background: var(--brown, #5c3a1e); border-color: var(--brown, #5c3a1e); color: #fff;
-    box-shadow: 0 8px 24px rgba(92, 58, 30, 0.22);
-  }
-  .choice-agendar:hover { background: #401f0c; border-color: #401f0c; }
 
   /* MODAL Agendar form */
-  #modal-agendar .ag-header { text-align: center; margin: 6px 0 16px; }
-  #modal-agendar .ag-header h2 { font: 400 24px 'Cormorant Garamond', serif; color: var(--brown, #5c3a1e); margin: 0; }
-  #modal-agendar .ag-header h2 em { color: var(--olive-dark, #7d7c3f); font-style: italic; font-weight: 600; }
-  #modal-agendar .ag-header p { font-size: 13px; color: #8a8268; margin: 6px 0 0; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.5; }
   .ag-field { margin-bottom: 14px; }
   .ag-field label {
     display: block; font: 700 11px 'Lato', sans-serif; letter-spacing: 1.2px;
@@ -7133,13 +6145,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .promo-grid { grid-template-columns: 1fr; gap: 22px; }
     .promos { padding: 64px 0 56px; }
     .promos-header h2 { font-size: 34px; }
-    .promo-banner { flex-direction: column; align-items: flex-start; padding: 20px 22px; }
-    .promo-banner .btn-sm { width: 100%; text-align: center; }
     .promo-card-img { height: 180px; }
-    .promo-ribbon { font-size: 11px; }
-    .promo-ribbon-link { gap: 8px; padding: 8px 36px 8px 12px; }
-    .promo-ribbon-cta { display: none; }
-    .promo-ribbon-text { letter-spacing: 0; }
     .filosofia-grid, .ubicacion-grid, .intro-grid { grid-template-columns: 1fr; gap: 48px; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .nav-links { display: none; }
@@ -7171,7 +6177,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .hero-btns .btn { text-align: center; }
     .hero-right { min-height: 240px; }
     .hero-values { position: static; margin-top: 20px; gap: 16px; flex-wrap: wrap; font-size: 9px; }
-    .hero-monogram { width: 72px; height: 72px; font-size: 36px; top: 16px; right: 16px; }
     .hero-eyebrow { font-size: 9px; margin-bottom: 16px; }
 
     /* Values */
@@ -7241,10 +6246,6 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .sv-cat-img { height: 44px; }
     .sv-cat-name { font-size: 16px; }
     .sv-group:has(.sv-treatments.open) { grid-column: span 1; }
-
-    /* Cart badge */
-    .cart-badge { padding: 10px 20px; font-size: 12px; bottom: 20px; }
-    .cart-badge .count { width: 24px; height: 24px; font-size: 12px; }
 
     /* WhatsApp */
     .whatsapp-float { width: 52px; height: 52px; bottom: 16px; right: 16px; }
@@ -7501,7 +6502,6 @@ window.EXENTIA_CONFIG = {
 
   // Expose globally
   window.exentiaTrack = send;
-  window.ExentiaTrack = { send: send, ref: function () { return LEAD_REF; }, sid: session.id };
 
   // === USER PROPERTIES GA4 (segmentación) ===
   if (typeof window.gtag === 'function') {
@@ -7594,115 +6594,9 @@ window.EXENTIA_CONFIG = {
     };
   }
 
-  function bindServiceCards() {
-    // service_card_view via IntersectionObserver
-    var cards = document.querySelectorAll('[data-service-slug]');
-    if (cards.length && 'IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            send('service_card_view', getServiceMeta(e.target.dataset.serviceSlug));
-            io.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.5 });
-      cards.forEach(function (c) { io.observe(c); });
-    }
-    // service_select on click
-    bindClick('[data-event="service_select"]', 'service_select', function (el) {
-      return getServiceMeta(el.dataset.serviceSlug);
-    });
-    bindClick('[data-event="service_detail_view"]', 'service_detail_view', function (el) {
-      return getServiceMeta(el.dataset.serviceSlug);
-    });
-  }
-
-  function bindForm() {
-    var form = document.getElementById('reserva-form') || document.getElementById('lead-form');
-    if (!form || form.dataset.exTracked === '1') return;
-    form.dataset.exTracked = '1';
-
-    var started = false;
-    form.querySelectorAll('input, select, textarea').forEach(function (el) {
-      el.addEventListener('focus', function () {
-        if (!started) {
-          started = true;
-          send('form_start');
-        }
-      });
-      // form_field_complete (en blur con valor)
-      el.addEventListener('blur', function () {
-        if (el.value && el.value.length > 0) {
-          send('form_field_complete', { field: el.name || el.id || 'unknown' });
-        }
-      });
-    });
-
-    form.addEventListener('submit', function () {
-      var cart = window.cart || [];
-      send('form_submit_intent', {
-        servicios_seleccionados: cart.length,
-        servicios_lista: cart.join(', ')
-      });
-    });
-
-    // maps_link_paste
-    var mapsField = form.querySelector('[name="direccion_maps_url"], [name="maps_url"]');
-    if (mapsField) {
-      mapsField.addEventListener('paste', function (e) {
-        var pasted = (e.clipboardData || window.clipboardData).getData('text');
-        if (pasted && /maps\.app\.goo\.gl|google\.com\/maps/i.test(pasted)) {
-          send('maps_link_paste');
-        }
-      });
-    }
-
-    // photo_upload_start / complete
-    var photoField = form.querySelector('input[type="file"]');
-    if (photoField) {
-      photoField.addEventListener('change', function () {
-        var n = photoField.files ? photoField.files.length : 0;
-        send('photo_upload_complete', { count: n });
-      });
-      photoField.addEventListener('click', function () {
-        send('photo_upload_start');
-      });
-    }
-  }
-
-  function bindCalendarHooks() {
-    bindClick('[data-event="calendar_view"]', 'calendar_view');
-    bindClick('[data-event="calendar_time_slot_click"]', 'calendar_time_slot_click', function (el) {
-      return { slot: el.dataset.slot || null };
-    });
-  }
-
-  // === HELPER PUBLICO PARA SUBMIT DE FORMULARIO RESERVA ===
-  // window.exentiaSubmitReserva({cliente_nombre, cliente_telefono, servicios, ...})
-  // POST a webhook exentia-reserva, dispara form_submit_whatsapp y abre wa_link.
-  window.exentiaSubmitReserva = function (data) {
-    var payload = Object.assign({ lead_ref: LEAD_REF }, data || {});
-    return fetch(RESERVA_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        send('form_submit_whatsapp', { booking_code: j.booking_code });
-        if (j.wa_link) {
-          window.location.href = j.wa_link;
-        }
-        return j;
-      });
-  };
-
   function bindAll() {
     bindWhatsAppLinks();
     bindCallLinks();
-    bindServiceCards();
-    bindForm();
-    bindCalendarHooks();
   }
 
   if (document.readyState === 'loading') {
@@ -10175,31 +9069,6 @@ window.EXENTIA_CONFIG = {
   // ============================================
 
   // ============================================
-  // RIBBON TOP (close + persist dismissal session)
-  // ============================================
-  function closePromoRibbon() {
-    var r = document.getElementById('promo-ribbon');
-    if (r) r.classList.add('hidden');
-    try { sessionStorage.setItem('ex_ribbon_closed', '1'); } catch(e){}
-    try { if (window.exentiaTrack) window.exentiaTrack('promo_ribbon_close'); } catch(e){}
-  }
-  window.closePromoRibbon = closePromoRibbon;
-
-  function initPromoRibbon() {
-    try {
-      if (sessionStorage.getItem('ex_ribbon_closed') === '1') {
-        var r = document.getElementById('promo-ribbon');
-        if (r) r.classList.add('hidden');
-      }
-    } catch(e){}
-    // Track clicks en el ribbon link
-    var link = document.querySelector('.promo-ribbon-link');
-    if (link) link.addEventListener('click', function(){
-      try { if (window.exentiaTrack) window.exentiaTrack('promo_ribbon_click'); } catch(e){}
-    });
-  }
-
-  // ============================================
   // EXIT-INTENT POPUP: eliminado por petición del cliente
   // ============================================
 
@@ -10808,7 +9677,6 @@ window.EXENTIA_CONFIG = {
     renderFooterServices();
     updateBadge();
     handleRoute();
-    initPromoRibbon();
 
     // Nav scroll effect
     const navbar = document.getElementById('navbar');
@@ -11002,49 +9870,8 @@ window.EXENTIA_CONFIG = {
   // GLOBAL FUNCTIONS (outside DOMContentLoaded)
   // ============================================
 
-  // === DETECT FORM SUBMIT AND OPEN CALENDAR ===
-  var _formSubmitDone = false;
+  // Estado vivo del flujo: datos del usuario (form / sesión) que viajan al POST del webhook.
   window._formUserData = {};
-
-  // Listen for ALL postMessages
-  window.addEventListener('message', function(e) {
-    // Our custom message with user data
-    if (e.data && e.data.type === 'exentia-form-submitted') {
-      window._formUserData = {
-        firstName: e.data.firstName || '',
-        lastName: e.data.lastName || '',
-        email: e.data.email || '',
-        phone: e.data.phone || ''
-      };
-      formSubmitted();
-      return;
-    }
-    // GHL height change detection
-    if (e.data && typeof e.data === 'string') {
-      try {
-        var parsed = JSON.parse(e.data);
-        if (parsed.height && parsed.height < 300 && _initialHeight > 500) {
-          formSubmitted();
-        }
-      } catch(ex) {}
-    }
-  });
-
-  function formSubmitted() {
-    if (_formSubmitDone) return;
-    _formSubmitDone = true;
-    stopFormWatcher();
-    closeModal('modal-form');
-
-    // El modal-calendar ahora es vanilla JS (no iframe GHL), así que ya no hace falta
-    // reflejar PII en la URL del padre ni setear iframe.src — los datos viven en
-    // window._formUserData y viajan directo al POST del webhook al confirmar.
-
-    setTimeout(function() {
-      openModal('modal-calendar');
-      _formSubmitDone = false;
-    }, 600);
-  }
 
   // === FLOW LOADER (overlay durante transiciones entre modales) ===
   function showFlowLoader() {
@@ -11075,64 +9902,6 @@ window.EXENTIA_CONFIG = {
   }
   window.openModal = openModal;
   window.closeModal = closeModal;
-
-  function openCalendarModal() {
-    openModal('modal-calendar');
-  }
-  window.openCalendarModal = openCalendarModal;
-
-  // Watch for GHL form completion
-  var _formWatcher = null;
-  var _initialHeight = 0;
-  var _observer = null;
-
-  function startFormWatcher() {
-    _formSubmitDone = false;
-    _initialHeight = 0;
-
-    setTimeout(function() {
-      // Record initial height
-      var ep = document.getElementById('exentia-form-iframe-wrapper') ||
-               document.getElementById('exentia-form-iframe-div');
-      if (ep) _initialHeight = ep.offsetHeight;
-
-      // Method 1: MutationObserver - watches for DOM changes in iframe wrapper
-      try {
-        var target = document.querySelector('#modal-form .modal-box');
-        if (target) {
-          _observer = new MutationObserver(function(mutations) {
-            var ep2 = document.getElementById('exentia-form-iframe-wrapper') ||
-                      document.getElementById('exentia-form-iframe-div');
-            if (ep2 && _initialHeight > 400) {
-              var newH = ep2.offsetHeight;
-              if (newH > 0 && newH < _initialHeight * 0.5) {
-                formSubmitted();
-              }
-            }
-          });
-          _observer.observe(target, { childList: true, subtree: true, attributes: true });
-        }
-      } catch(e) {}
-
-      // Method 2: Polling interval as backup
-      _formWatcher = setInterval(function() {
-        var ep3 = document.getElementById('exentia-form-iframe-wrapper') ||
-                  document.getElementById('exentia-form-iframe-div');
-        if (ep3 && _initialHeight > 400) {
-          var h = ep3.offsetHeight;
-          if (h > 0 && h < _initialHeight * 0.5) {
-            formSubmitted();
-          }
-          if (h > _initialHeight) _initialHeight = h;
-        }
-      }, 1500);
-    }, 4000);
-  }
-
-  function stopFormWatcher() {
-    if (_formWatcher) clearInterval(_formWatcher);
-    if (_observer) _observer.disconnect();
-  }
 
   // === CUSTOM FORM (reemplaza el iframe nativo de GHL) ===
   // El usuario llena solo lo que quiere. Email/teléfono son opcionales (al menos uno).
@@ -11220,11 +9989,6 @@ window.EXENTIA_CONFIG = {
     }
     return inside;
   }
-  function pointInPolys(lat, lng, polys) {
-    for (var k = 0; k < polys.length; k++) { if (pointInRing(lat, lng, polys[k])) return true; }
-    return false;
-  }
-
   function classifyZone(lat, lng, colonia) {
     var d = haversineKm(SPA_ORIGIN, { lat: lat, lng: lng });
     // Sub-detección para mostrar el nombre del subpolígono específico
@@ -11323,88 +10087,8 @@ window.EXENTIA_CONFIG = {
       + '<span style="width:12px;height:12px;border-radius:50%;background:' + z.color + ';margin-top:3px;flex:0 0 auto;"></span>'
       + '<div style="font-size:12.5px;color:#3d3d2e;line-height:1.45;"><b>' + z.nombre + '</b><br>Traslado <b>$' + z.costo + '</b> por terapeuta · el total depende del número de terapeutas.</div>'
       + '</div>';
-    if (typeof window.calcTraslado === 'function') window.calcTraslado();
   }
   window.updateZoneFeedback = updateZoneFeedback;
-
-  // Cálculo dinámico del traslado: depende de num_personas + modalidad + zona
-  function calcTraslado() {
-    var box = document.getElementById('cf-traslado-estimado');
-    if (!box) return;
-    var isHome = citaPlace.mode === 'domicilio';
-    var personas = parseInt((document.getElementById('cf-num-personas')||{}).value || '1', 10);
-    var modalidad = (document.getElementById('cf-modalidad')||{}).value || 'simultaneo';
-    var tarifa = citaPlace.costoTraslado;
-    var zonaNum = citaPlace.zonaNum;
-
-    // No mostrar si no aplica
-    if (!isHome || !zonaNum || !tarifa) {
-      box.style.display = 'none';
-      box.innerHTML = '';
-      citaPlace.numTerapeutasEstimado = null;
-      citaPlace.costoTrasladoTotal = null;
-      return;
-    }
-
-    // Lógica del Excel:
-    // 1 persona → 1 terapeuta (individual)
-    // 2 personas + simultáneo → 2 terapeutas
-    // 2 personas + turnos → 1 terapeuta
-    // 2 personas + económica → 1 terapeuta (mínimo viable)
-    // 3+ personas + simultáneo → asumimos 3 (mínimo de grupo, Yaz confirma exacto)
-    // 3+ personas + turnos → 1 terapeuta
-    // 3+ personas + económica → 1 terapeuta
-    var nTerapeutas;
-    if (personas === 1) {
-      nTerapeutas = 1;
-    } else if (personas === 2) {
-      nTerapeutas = (modalidad === 'simultaneo') ? 2 : 1;
-    } else { // 3+
-      nTerapeutas = (modalidad === 'simultaneo') ? 3 : 1;
-    }
-
-    var total = nTerapeutas * tarifa;
-    var maxSimul = personas; // máximo teórico = una terapeuta por persona
-    var ahorro = (maxSimul * tarifa) - total;
-
-    var zoneColor = ({1:'#3fa34d', 2:'#d9a300', 3:'#d9534f'})[zonaNum] || '#9a9854';
-    var zoneName = 'Zona ' + zonaNum;
-    var modLabel = ({simultaneo:'simultánea', turnos:'por turnos', economica:'más económica'})[modalidad] || 'simultánea';
-
-    var html = '<div style="background:#fbf6e9;border:1px solid #c4b884;border-radius:12px;padding:12px 14px;margin-top:10px;">'
-      + '<div style="display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;color:#9a9854;text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px;">'
-      + '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>'
-      + 'Estimado de traslado'
-      + '</div>'
-      + '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#5c5c4a;margin-bottom:6px;">'
-      + '<span style="width:9px;height:9px;border-radius:50%;background:' + zoneColor + ';display:inline-block;"></span>'
-      + '<span>' + zoneName + ' · $' + tarifa + ' por terapeuta</span>'
-      + '</div>'
-      + '<div style="font-size:14.5px;color:#3d3d2e;line-height:1.45;">'
-      + 'Atención <b>' + modLabel + '</b> con <b>' + nTerapeutas + '</b> terapeuta' + (nTerapeutas > 1 ? 's' : '') + '<br>'
-      + '<span style="font-size:18px;font-weight:600;color:#5c3a1e;">$' + total + '</span> de traslado'
-      + (ahorro > 0 ? ' <span style="font-size:11.5px;color:#7d7c3f;">· ahorras $' + ahorro + ' vs simultánea</span>' : '')
-      + '</div>';
-
-    if (modalidad === 'turnos' && personas > 1) {
-      html += '<div style="display:flex;align-items:flex-start;gap:6px;margin-top:8px;padding:8px 10px;background:#fff8e6;border-radius:8px;font-size:11.5px;color:#7a5b00;line-height:1.4;">'
-        + '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto;margin-top:1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
-        + 'El tiempo total de atención será mayor por la modalidad consecutiva.'
-        + '</div>';
-    }
-    if (personas >= 3) {
-      html += '<div style="font-size:11.5px;color:#9a9854;margin-top:8px;line-height:1.4;">'
-        + 'Coordinaremos contigo el detalle exacto del grupo y el número final de terapeutas.'
-        + '</div>';
-    }
-    html += '</div>';
-
-    box.innerHTML = html;
-    box.style.display = 'block';
-    citaPlace.numTerapeutasEstimado = nTerapeutas;
-    citaPlace.costoTrasladoTotal = total;
-  }
-  window.calcTraslado = calcTraslado;
 
   function newSessionToken() {
     // UUID v4 simple para session tokens de Places
@@ -11741,22 +10425,6 @@ window.EXENTIA_CONFIG = {
     return bits.join(', ');
   }
 
-  function resetCitaPlace() {
-    citaPlace = { mode: 'sucursal', address: '', mapsUrl: '', calle:'', num_ext:'', num_int:'', zona:'', referencias:'', lat: null, lng: null };
-    _manuallyTouched = { calle: false, num_ext: false, zona: false };
-    document.querySelectorAll('.cita-place-btn').forEach(function(b, i){
-      b.classList.toggle('active', i === 0);
-      b.setAttribute('aria-checked', i === 0 ? 'true' : 'false');
-    });
-    var addrBlock = document.getElementById('cf-address-block');
-    if (addrBlock) addrBlock.style.display = 'none';
-    ['cf-address-input','cf-calle','cf-num-ext','cf-num-int','cf-zona','cf-referencias'].forEach(function(id){
-      var el = document.getElementById(id); if (el) el.value = '';
-    });
-    var summary = document.getElementById('cf-address-summary');
-    if (summary) summary.style.display = 'none';
-  }
-
   if (document.readyState !== 'loading') wireCitaPlace();
   else document.addEventListener('DOMContentLoaded', wireCitaPlace);
 
@@ -11954,23 +10622,6 @@ window.EXENTIA_CONFIG = {
       } else {
         editLink.style.display = 'none';
       }
-    }
-    // Wire up place toggle listener
-    var placeToggle = document.getElementById('cita-place-toggle');
-    if (placeToggle && !placeToggle._listenerSet) {
-      placeToggle.querySelectorAll('.cita-place-btn').forEach(function(btn){
-        btn.addEventListener('click', function(e){
-          e.preventDefault();
-          var place = this.getAttribute('data-place');
-          placeToggle.querySelectorAll('.cita-place-btn').forEach(function(b){
-            b.classList.toggle('active', b.getAttribute('data-place') === place);
-            b.setAttribute('aria-checked', b.getAttribute('data-place') === place ? 'true' : 'false');
-          });
-          // Filter service cards in the select modal if it's open
-          filterServicesByPlace(place);
-        });
-      });
-      placeToggle._listenerSet = true;
     }
     // F4: si ya se eligió ubicación en modal-place-first, esconder los bloques viejos y mostrar resumen
     updatePlaceSummary();
@@ -12180,9 +10831,6 @@ window.EXENTIA_CONFIG = {
       if (summaryRow) summaryRow.style.display = 'none';
       return;
     }
-
-    // Sincroniza visualmente los botones del toggle con la decisión guardada
-    if (typeof syncPlaceToggle === 'function') syncPlaceToggle(citaPlace.mode);
 
     var isHome = citaPlace.mode === 'domicilio';
 
@@ -12636,7 +11284,6 @@ window.EXENTIA_CONFIG = {
         }).then(function(r){ return r.json(); }).then(function(j){
           try { console.log('[ex-reserva] respuesta webhook (pre-booking):', j); } catch(_){}
           if (j && j.booking_code) window._bookingCode = j.booking_code;
-          if (j && j.wa_link) window._waLink = j.wa_link;
           if (j && j.prep_token) window._prepToken = j.prep_token;
           if (j && j.tipo_cita) window._prepTipoCita = j.tipo_cita;
           try { _pgSyncPreparacionButton(); } catch(_){}
@@ -13069,53 +11716,6 @@ window.EXENTIA_CONFIG = {
     });
   });
 
-  window.goWhatsApp = function() {
-    var d = window._formUserData || {};
-    var fullName = (d.firstName || '') + (d.lastName ? ' ' + d.lastName : '');
-    var serv = (cart || []);
-    // Resumen estructurado de la reserva
-    var lines = [];
-    lines.push('Hola Exentia, quiero agendar una cita.');
-    lines.push('');
-    lines.push('*Mis datos:*');
-    if (fullName.trim()) lines.push('- Nombre: ' + fullName.trim());
-    if (d.phone) lines.push('- WhatsApp: ' + d.phone);
-    if (d.email) lines.push('- Correo: ' + d.email);
-    if (serv.length) {
-      lines.push('');
-      lines.push('*Servicios que quiero:*');
-      serv.forEach(function(s){ lines.push('- ' + s); });
-    }
-    var ch = window._calChoice;
-    if (ch && ch.date && ch.time) {
-      lines.push('');
-      lines.push('*Horario que elegí:*');
-      lines.push('- ' + fmtFechaES(ch.date, ch.time, ', '));
-    }
-    if (d.notes) {
-      lines.push('');
-      lines.push('*Comentarios:*');
-      lines.push(d.notes);
-    }
-    var msg = lines.join('\n');
-    var url = 'https://wa.me/529984803595?text=' + encodeURIComponent(msg);
-    try { if (window.exentiaTrack) window.exentiaTrack('form_submit_whatsapp', { source: 'choice_modal', booking_code: window._bookingCode || null, has_email: !!d.email, has_phone: !!d.phone, n_servicios: serv.length }); } catch(e){}
-    window.open(url, '_blank');
-    // Reset flow so user can start over
-    closeModal('modal-choice');
-    cart.splice(0, cart.length);
-    try { if (typeof cartMeta !== 'undefined') cartMeta.splice(0, cartMeta.length); } catch(_){}
-    localStorage.setItem('exentia_cart', JSON.stringify(cart));
-    try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta || [])); } catch(_){}
-    updateBadge();
-    window._formUserData = {};
-    window._calChoice = null;
-    window.svPairStep = 'paquete';
-    window.svPairPersona = 1;
-    window.svPairChoice = null;
-    if (typeof closeAllFlowModals === 'function') closeAllFlowModals();
-  };
-
   function openSelectModal() {
     // Si entramos con un producto pre-seleccionado (desde la landing), saltamos al tab correcto
     if (window._pendingPickCategory && window.SERVICES && window.SERVICES[window._pendingPickCategory]) {
@@ -13542,7 +12142,6 @@ window.EXENTIA_CONFIG = {
         }).then(function(r){ return r.json(); }).then(function(j){
           try { console.log('[ex-reserva] respuesta webhook:', j); } catch(_){}
           if (j && j.booking_code) window._bookingCode = j.booking_code;
-          if (j && j.wa_link) window._waLink = j.wa_link;
           if (j && j.prep_token) window._prepToken = j.prep_token;
           if (j && j.tipo_cita) window._prepTipoCita = j.tipo_cita;
           try { _pgSyncPreparacionButton(); } catch(_){}
@@ -14702,7 +13301,6 @@ window.EXENTIA_CONFIG = {
           try { localStorage.setItem('exentia_cart_meta', JSON.stringify(cartMeta || [])); } catch(e){}
           window.svPairSection = 'paquete';
           window.svPairPersona = 1;
-          window.svPairChoice = null;
           window.svPairStep = 'paquete';
           Object.keys(personasMeta).forEach(function(k){ delete personasMeta[k]; });
           if (typeof updateBadge === 'function') updateBadge();
@@ -14789,7 +13387,7 @@ window.EXENTIA_CONFIG = {
     try { if (citaPlace) citaPlace.mode = null; } catch(_){}
     try { localStorage.removeItem('exentia_cita_place'); } catch(_){}
     try { window.svMode = null; } catch(_){}
-    try { window.svPairStep = 'paquete'; window.svPairPersona = 1; window.svPairChoice = null; window.svPairSection = 'paquete'; } catch(_){}
+    try { window.svPairStep = 'paquete'; window.svPairPersona = 1; window.svPairSection = 'paquete'; } catch(_){}
     try { if (typeof personasMeta !== 'undefined') Object.keys(personasMeta).forEach(function(k){ delete personasMeta[k]; }); } catch(_){}
     try { if (typeof closeAllFlowModals === 'function') closeAllFlowModals(); } catch(_){}
     try { if (typeof updateBadge === 'function') updateBadge(); } catch(_){}
@@ -14813,7 +13411,7 @@ window.EXENTIA_CONFIG = {
   var _mpfMarker = null;
   var _mpfDebounce = null;
 
-  // openPlaceFirstModal y _mpfSelectMode removidos: modal-place-first ya no existe.
+  // openPlaceFirstModal sigue VIVO (definido arriba, con varios call sites); _mpfSelectMode sí fue removido.
   // Las funciones _mpfInitMap/_mpfSetPin/_mpfRenderZone se conservan porque
   // modal-address reutiliza los IDs mpf-* (mapa, autocomplete, feedback de zona).
 
@@ -15861,58 +14459,7 @@ window.EXENTIA_CONFIG = {
   }
   window.openModalidadModal = openModalidadModal;
 
-  function syncPlaceToggle(mode) {
-    var toggle = document.getElementById('cita-place-toggle');
-    if (!toggle) return;
-    toggle.querySelectorAll('.cita-place-btn').forEach(function(b){
-      var on = b.getAttribute('data-place') === mode;
-      b.classList.toggle('active', on);
-      b.setAttribute('aria-checked', on ? 'true' : 'false');
-    });
-    if (typeof window.filterServicesByPlace === 'function') window.filterServicesByPlace(mode);
-  }
-  window.syncPlaceToggle = syncPlaceToggle;
-
-  function toggleCartPanel() {
-    const panel = document.getElementById('cart-panel');
-    if (!panel) return;
-    const isOpen = panel.classList.contains('open');
-    if (isOpen) {
-      panel.classList.remove('open');
-    } else {
-      renderCartPanel();
-      panel.classList.add('open');
-    }
-  }
-  window.toggleCartPanel = toggleCartPanel;
-
-  function renderCartPanel() {
-    const el = document.getElementById('cart-panel-items');
-    if (!el) return;
-    // Lista plana — sin personas, sin "Añadir otra persona".
-    // Para grupos: el pop-up tiene el wizard completo (se abre con el botón Grupo).
-    if (cart.length === 0) {
-      el.innerHTML = '<div style="padding:18px 16px;text-align:center;font-size:12px;color:#9a8672;">Aún no has agregado servicios</div>';
-      return;
-    }
-    var html = '';
-    cart.forEach(function(key, idx){
-      var parts = String(key).split(' · ');
-      var name = parts[0];
-      var chips = parts.slice(1);
-      var chipsHtml = chips.length
-        ? '<div class="cart-item-chips">' + chips.map(function(c){ return '<span class="cart-item-chip">' + c + '</span>'; }).join('') + '</div>'
-        : '';
-      html += '<div class="cart-panel-item">'
-        + '<div class="cart-item-info">'
-        +   '<div class="cart-item-name">' + name + '</div>'
-        +   chipsHtml
-        + '</div>'
-        + '<button class="cart-remove" onclick="event.stopPropagation(); removeFromCart(' + idx + ')" aria-label="Quitar">&#10005;</button>'
-        + '</div>';
-    });
-    el.innerHTML = html;
-  }
+  function renderCartPanel() { /* no-op: cart-panel eliminado del HTML */ }
 
   // Indica en la UI a qué persona se le está agregando
   function updatePersonaBadge() {
@@ -15937,9 +14484,6 @@ window.EXENTIA_CONFIG = {
     localStorage.setItem('exentia_cart', JSON.stringify(cart));
     updateBadge();
     renderCartPanel();
-    if (cart.length === 0) {
-      document.getElementById('cart-panel').classList.remove('open');
-    }
   }
   window.removeFromCart = removeFromCart;
 
@@ -15962,7 +14506,6 @@ window.EXENTIA_CONFIG = {
     }
     if (typeof renderCartPanel === 'function') renderCartPanel();
     updateBadge();
-    document.getElementById('cart-panel').classList.remove('open');
   }
   window.clearCart = clearCart;
 
@@ -15988,19 +14531,9 @@ window.EXENTIA_CONFIG = {
   });
 
   function updateBadge() {
-    const badge = document.getElementById('cart-badge');
-    const count = document.getElementById('cart-count');
-    const text = document.getElementById('cart-text');
-    _checkCartTooBig();
-    if (!badge) return;
-    if (cart.length > 0) {
-      badge.classList.add('show');
-      count.textContent = cart.length;
-      text.textContent = cart.length === 1 ? 'servicio' : 'servicios';
-    } else {
-      badge.classList.remove('show');
-    }
+    // El badge/panel de carrito fue eliminado del HTML; esta función solo persiste el carrito.
     localStorage.setItem('exentia_cart', JSON.stringify(cart));
+    _checkCartTooBig();
   }
 
   // ============================================
@@ -17072,44 +15605,6 @@ window.EXENTIA_CONFIG = {
   }
   window.selectBackButton = selectBackButton;
 
-  function renderSelectView_LEGACY_UNUSED() {
-    const container = document.getElementById('select-content');
-    if (!container) return;
-    let html = '<div class="sv-list">';
-    Object.values(SERVICES).forEach(s => {
-      const hasSelected = cart.some(c => s.treatments.some(t => t.name === c));
-      const selectedCount = cart.filter(c => s.treatments.some(t => t.name === c)).length;
-      const showDesc = ['masajes', 'faciales', 'spakids'].includes(s.slug);
-      html += `<div class="sv-group" data-cat="${s.slug}"><div class="sv-cat ${hasSelected ? 'has-selected' : ''}"><div class="sv-cat-img" style="background-image:url('${s.heroImage}')"></div><div class="sv-cat-body"><div class="sv-cat-name">${s.name}</div><div class="sv-cat-count">${s.treatments.length} opciones</div></div></div><div class="sv-treatments">`;
-      s.treatments.forEach(t => {
-        const isOn = cart.includes(t.name);
-        html += `<div class="sv-treat ${isOn ? 'on' : ''}" data-svc="${t.name}"><div class="info"><div class="name">${t.name}</div></div><div class="price">${t.price}</div></div>`;
-      });
-      html += '</div></div>';
-    });
-    container.innerHTML = html;
-    updateSvBottom();
-    container.querySelectorAll('.sv-cat').forEach(function(el) {
-      el.onclick = function() {
-        var group = this.closest('.sv-group');
-        if (group) toggleCat(group.dataset.cat);
-      };
-    });
-    container.querySelectorAll('.sv-treat').forEach(function(el) {
-      el.onclick = function(e) {
-        e.stopPropagation();
-        toggleTreat(this, this.dataset.svc);
-        var group = this.closest('.sv-group');
-        if (group) {
-          var cat = group.querySelector('.sv-cat');
-          var treats = group.querySelector('.sv-treatments');
-          if (cat) cat.classList.remove('open');
-          if (treats) treats.classList.remove('open');
-        }
-      };
-    });
-  }
-
   function toggleCat(slug) {
     const group = document.querySelector(`.sv-group[data-cat="${slug}"]`);
     if (!group) return;
@@ -17945,7 +16440,7 @@ window.EXENTIA_CONFIG = {
 <script>
 (function(){
   // Actualizar EX_BUILD manualmente en cada Edit del HTML (hora Cancún, UTC-5)
-  var EX_BUILD = { version: 'v150', stamp: '2026-07-10 14:50' };
+  var EX_BUILD = { version: 'v151', stamp: '2026-07-10 15:13' };
   var el = document.getElementById('ex-build-badge');
   if (!el) return;
   // Parse stamp como hora Cancún (UTC-5) -> Date UTC
