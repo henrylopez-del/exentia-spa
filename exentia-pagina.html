@@ -11539,12 +11539,12 @@ window.EXENTIA_CONFIG = {
   };
 
   function _pgFormatTotal() {
-    // Lee el total que ya calculó modal-choice (footerAmt) o cae al subtotal del cart
-    var foot = document.getElementById('gs-footer-amount');
-    if (foot && foot.textContent) return foot.textContent;
+    // Total real desde el builder del payload (servicios + traslado) — misma
+    // fuente que el webhook. El #gs-footer-amount arranca en '$0' hardcodeado
+    // en flujo individual, por eso NO se lee de ahí.
     try {
-      var sub = (cart || []).reduce(function(s, key){ return s + ((typeof _gsParsePrice === 'function') ? _gsParsePrice(key, 0) : 0); }, 0);
-      return '$' + sub.toLocaleString('es-MX');
+      var t = buildReservaPayload().valor_ticket_mxn || 0;
+      return fmtMXN(t);
     } catch(_) { return '$0'; }
   }
 
@@ -11767,34 +11767,60 @@ window.EXENTIA_CONFIG = {
   // ===== Post-pago: dos vías para confirmar =====
 
   // Construye el mensaje de WhatsApp con resumen + estado del pago (post-pago).
+  // Se arma desde buildReservaPayload() — misma fuente que el webhook, así el
+  // mensaje siempre coincide con lo que quedó guardado en la reserva.
   function _pgBuildWaMessage() {
-    var d = window._formUserData || {};
-    var fullName = (d.firstName || '') + (d.lastName ? ' ' + d.lastName : '');
-    var serv = (cart || []);
+    var p = buildReservaPayload();
+    var prefLabel = { mujer: 'Mujer', hombre: 'Hombre', indistinto: 'Indiferente' };
     var lines = [];
     lines.push('Hola Exentia, acabo de pagar y quiero confirmar mi cita.');
+    if (window._bookingCode) {
+      lines.push('');
+      lines.push('*Código de reserva:* ' + window._bookingCode);
+    }
     lines.push('');
     lines.push('*Estado del pago:* ✅ Aceptado (simulador de pruebas)');
-    lines.push('*Total:* ' + _pgFormatTotal());
+    lines.push('*Total:* ' + fmtMXN(p.valor_ticket_mxn || 0));
     lines.push('');
     lines.push('*Mis datos:*');
-    if (fullName.trim()) lines.push('- Nombre: ' + fullName.trim());
-    if (d.phone) lines.push('- WhatsApp: ' + d.phone);
-    if (d.email) lines.push('- Correo: ' + d.email);
-    if (serv.length) {
-      lines.push('');
+    if (p.cliente_nombre) lines.push('- Nombre: ' + p.cliente_nombre);
+    if (p.cliente_telefono) lines.push('- WhatsApp: +' + p.cliente_telefono);
+    if (p.cliente_email) lines.push('- Correo: ' + p.cliente_email);
+    // Servicios: en grupo/pareja desglosados por persona con su preferencia;
+    // en individual, lista plana + preferencia al final.
+    var pers = p.personas_servicios || [];
+    var esGrupo = p.num_personas > 1;
+    lines.push('');
+    if (esGrupo) {
+      lines.push('*Servicios (' + p.num_personas + ' personas):*');
+      pers.forEach(function(per){
+        var pref = prefLabel[per.preferencia_sexo] || '';
+        lines.push(per.label + (pref ? ' (' + pref.toLowerCase() + ')' : '') + ':');
+        (per.servicios || []).forEach(function(s){
+          lines.push('  - ' + s.slug + (s.precio_mxn ? ' · ' + fmtMXN(s.precio_mxn) : ''));
+        });
+      });
+      var modLabel = { simultaneo: 'Al mismo tiempo', turnos: 'Por turnos', economica: 'Opción económica' }[p.modalidad];
+      if (modLabel) lines.push('*Modalidad:* ' + modLabel);
+    } else {
       lines.push('*Servicios:*');
-      serv.forEach(function(s){ lines.push('- ' + s); });
+      (p.servicios || []).forEach(function(s){
+        lines.push('- ' + s.slug + (s.precio_mxn ? ' · ' + fmtMXN(s.precio_mxn) : ''));
+      });
+      var prefInd = pers[0] && prefLabel[pers[0].preferencia_sexo];
+      if (prefInd) lines.push('*Preferencia de terapeuta:* ' + prefInd);
     }
-    var ch = window._calChoice;
-    if (ch && ch.date && ch.time) {
+    if (p.fecha && p.hora) {
       lines.push('');
       lines.push('*Horario:*');
-      lines.push('- ' + fmtFechaES(ch.date, ch.time, ', '));
+      lines.push('- ' + fmtFechaES(p.fecha, p.hora, ', '));
     }
-    if (citaPlace && citaPlace.mode === 'domicilio' && citaPlace.address) {
-      lines.push('');
-      lines.push('*A domicilio:* ' + citaPlace.address);
+    lines.push('');
+    if (p.tipo_cita === 'domicilio') {
+      lines.push('*A domicilio:* ' + (p.direccion || p.zona_colonia || 'por confirmar'));
+      if (p.costo_traslado_total) lines.push('*Traslado:* ' + fmtMXN(parseFloat(p.costo_traslado_total) || 0));
+    } else {
+      lines.push('*En sucursal:* Plaza Hive · Av. Huayacán, Cancún');
     }
     return lines.join('\n');
   }
@@ -16511,7 +16537,7 @@ window.EXENTIA_CONFIG = {
 <script>
 (function(){
   // Actualizar EX_BUILD manualmente en cada Edit del HTML (hora Cancún, UTC-5)
-  var EX_BUILD = { version: 'v152', stamp: '2026-07-10 16:17' };
+  var EX_BUILD = { version: 'v153', stamp: '2026-07-13 09:22' };
   var el = document.getElementById('ex-build-badge');
   if (!el) return;
   // Parse stamp como hora Cancún (UTC-5) -> Date UTC
