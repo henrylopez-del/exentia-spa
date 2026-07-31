@@ -13553,7 +13553,12 @@ try {
         var personaId = (cartMeta && cartMeta[i]) ? cartMeta[i].personaId : null;
         sub += (typeof _gsParsePrice === 'function') ? _gsParsePrice(c, personaId) : parsePriceMXN(c);
       });
-      totalEl.textContent = sub > 0 ? fmtMXN(sub) : 'A confirmar';
+      // Traslado a domicilio: mismo campo que usa buildReservaPayload para
+      // valor_ticket_mxn — sin esto el total del modal final no coincidía
+      // con lo cobrado/enviado al backend.
+      var _cfPlace = (typeof citaPlace !== 'undefined' && citaPlace) ? citaPlace : {};
+      var _cfTraslado = (_cfPlace.mode === 'domicilio') ? (parseFloat(_cfPlace.costoTrasladoTotal || 0) || 0) : 0;
+      totalEl.textContent = (sub + _cfTraslado) > 0 ? fmtMXN(sub + _cfTraslado) : 'A confirmar';
     }
     // Post-pago: mostrar las 2 vías de confirmación (WhatsApp / que me contacten).
     // En flujos sin pago (path viejo de agendar) se ocultan — su copy asume pago hecho.
@@ -17860,7 +17865,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v215-pref-sexo-pareja-fix', stamp: '2026-07-30 18:05' };
+  var EX_BUILD = { version: 'v216-total-con-traslado', stamp: '2026-07-31 16:09' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
