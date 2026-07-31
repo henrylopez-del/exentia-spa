@@ -39,6 +39,9 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-LQ4YJQ2MZV');
+  // Google Ads (Andrea) — etiqueta base para conversiones/remarketing.
+  // Mismo gtag.js que GA4: NO cargar el script una segunda vez.
+  gtag('config', 'AW-18207180087');
 </script>
 
 <!-- Meta Pixel Code -->
@@ -157,6 +160,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     border-bottom: 1px solid rgba(154, 152, 84, 0.1);
     transition: all 0.3s;
   }
+  /* En la vista de detalle la barra .cat-tabs va pegada abajo del nav.
+     El border-bottom del nav + border-bottom de la barra creaba una doble
+     línea visible: quitamos la del nav aquí (la barra ya define el borde).
+     Usamos :has() (Chrome/Safari/Edge modernos) + fallback JS body.in-detail. */
+  body:has(#service-detail-view:not(.hidden)) nav,
+  body.in-detail nav { border-bottom: none; }
   nav.scrolled {
     box-shadow: 0 2px 24px var(--shadow);
   }
@@ -682,6 +691,16 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .service-home-badge.unavailable {
     background: rgba(210, 180, 140, 0.2);
     color: var(--brown);
+  }
+  /* Grupo de 2 badges (Sucursal + Domicilio) cuando el servicio aplica en ambos */
+  .service-home-badge-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .service-home-badge-group .service-home-badge {
+    margin-bottom: 0;
   }
   .service-info p {
     font-size: 13px;
@@ -1237,11 +1256,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     box-shadow: 0 2px 8px rgba(154, 152, 84, 0.15);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .treatment-duration::before {
-    content: '⏱';
-    font-size: 14px;
-    line-height: 1;
-  }
+  /* Icono del reloj removido para uniformidad — las tarjetas con chips de
+     duración (60 min / 90 min) no lo mostraban, así que se veía inconsistente.
+     El chip/badge ya comunica claramente la duración. */
   .treatment-card:hover .treatment-duration {
     background: var(--olive);
     color: var(--white);
@@ -3814,19 +3831,33 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     top: 70px; /* debajo del nav fijo */
     left: 0; right: 0;
     z-index: 50;
-    background: rgba(253, 251, 244, 0.97);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(154, 152, 84, 0.16);
-    padding: 12px 0;
-    box-shadow: 0 4px 16px rgba(92, 58, 30, 0.05);
+    /* Background y blur EXACTOS al nav para que se vean como una sola pieza.
+       Antes 0.97 vs 0.96 del nav → línea sutil visible sobre el hero image. */
+    background: rgba(253, 251, 244, 0.96);
+    backdrop-filter: blur(12px);
+    /* Sin border-top (para no separar del nav), sin shadow (evita halo).
+       Un solo border-bottom sutil marca dónde termina la barra sobre el hero. */
+    border-bottom: 1px solid rgba(154, 152, 84, 0.12);
+    /* Centrado vertical REAL: altura fija + flex, sin trucos de padding. */
+    height: 64px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
   }
-  /* Espacio para compensar la barra fija solo en la vista de detalle */
+  /* Espacio para compensar la barra fija solo en la vista de detalle.
+     Antes 124px eran justos en desktop y el título tapaba en mobile.
+     Ahora subimos a 150px desktop / 140px mobile para dejar respirar el hero. */
   #service-detail-view:not(.hidden) ~ * .agendar,
   #service-detail-view .detail-hero {
-    padding-top: 124px !important; /* deja espacio para tabs */
+    padding-top: 150px !important;
+  }
+  @media (max-width: 700px) {
+    #service-detail-view .detail-hero { padding-top: 140px !important; }
   }
   .cat-tabs-track {
     display: flex;
+    align-items: center; /* centrar los óvalos verticalmente dentro de la barra */
     gap: 8px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -3835,6 +3866,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    width: 100%;
+    height: 100%; /* llena la barra de 64px; los óvalos quedan al centro exacto */
   }
   .cat-tabs-track::-webkit-scrollbar { display: none; }
   .cat-tab {
@@ -3899,7 +3932,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   /* Ocultamos el back-btn original — los tabs ahora hacen navegación */
   #service-detail-view .back-btn { display: none !important; }
   @media (max-width: 600px) {
-    .cat-tabs { top: 56px; padding: 10px 0; }
+    .cat-tabs { top: 56px; height: 56px; padding: 0; }
     .cat-tabs-track { padding: 0 14px; gap: 6px; }
     .cat-tab { padding: 8px 13px; font-size: 11px; }
   }
@@ -4690,6 +4723,17 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     flex-direction: column;
     gap: 12px;
     margin-bottom: 22px;
+  }
+  /* Layout 2 columnas del modal-place-first en desktop; 1 columna en móvil
+     para que "En sucursal Exentia" no se rompa palabra a palabra. */
+  .mpf-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 700px) {
+    .mpf-options-grid { grid-template-columns: 1fr; gap: 12px; }
   }
   /* ═══════ CALENDARIO PROPIO (cal2) ═══════ */
   .cal2-wrap {
@@ -6184,14 +6228,25 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .values-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .value-item .label { font-size: 18px; }
 
-    /* Services */
-    .services-grid { grid-template-columns: 1fr; gap: 16px; }
-    .service-img { height: 180px; }
-    .service-info { padding: 20px; }
-    .service-info h3 { font-size: 22px; }
-    .section-title { margin-bottom: 32px; }
-    .section-title h2 { font-size: 28px; }
+    /* Services — grid 2 columnas denso para reducir scroll ~75% en mobile */
+    .services-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .service-img { height: 110px; }
+    .service-img .icon { width: 32px; height: 32px; top: 8px; right: 8px; }
+    .service-info { padding: 12px 12px 14px; }
+    .service-info h3 { font-size: 16px; margin-bottom: 6px; line-height: 1.15; }
+    .service-info p { display: none; }
+    .service-home-badge-group { gap: 4px; margin-bottom: 8px; }
+    .service-home-badge { font-size: 9px; padding: 3px 7px; }
+    .service-cta { padding-top: 10px; }
+    .service-cta .price { font-size: 9px; }
+    .service-cta .arrow { width: 26px; height: 26px; font-size: 12px; }
+    .section-title { margin-bottom: 24px; }
+    .section-title h2 { font-size: 26px; }
     .section-title .eyebrow { font-size: 9px; padding: 4px 14px; }
+
+    /* Promos — se dejan con el layout original de desktop en mobile (1 col,
+       imagen grande arriba). El intento de compactarlas cortaba mal las
+       fotos de spa; el cliente prefiere la vista tradicional. */
 
     /* Filosofia */
     .filosofia-grid { gap: 32px; }
@@ -6213,11 +6268,24 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .intro-gallery { height: 300px; }
     .intro-content h2 { font-size: 26px; }
 
-    /* Treatments */
-    .treatment-card { grid-template-columns: 1fr; gap: 12px; padding: 20px; }
-    .treatment-num { font-size: 32px; }
-    .treatment-info h3 { font-size: 18px; }
-    .treatment-book { width: 100%; text-align: center; margin-top: 8px; }
+    /* Treatments — compactos para reducir scroll ~55% en detalle de servicio.
+       Grid en 3 columnas: info arriba (span 3), abajo chip + precio + botón en línea */
+    .treatment-card {
+      grid-template-columns: auto auto 1fr;
+      align-items: center;
+      column-gap: 10px;
+      row-gap: 10px;
+      padding: 14px 16px;
+      border-radius: 8px;
+    }
+    .treatment-num { display: none; }
+    .treatment-info { grid-column: 1 / -1; grid-row: 1; }
+    .treatment-info h3 { font-size: 16px; margin-bottom: 4px; }
+    .treatment-info p { font-size: 12px; line-height: 1.45;
+                         display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .treatment-duration { grid-column: 1; grid-row: 2; justify-self: start; padding: 5px 10px; font-size: 11px; box-shadow: none; }
+    .treatment-price { grid-column: 2; grid-row: 2; justify-self: start; font-size: 22px; }
+    .treatment-book { grid-column: 3; grid-row: 2; justify-self: end; width: auto; padding: 9px 18px; font-size: 10px; margin-top: 0; }
 
     /* Related */
     .related-grid { grid-template-columns: 1fr; }
@@ -6251,6 +6319,194 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     .whatsapp-float { width: 52px; height: 52px; bottom: 16px; right: 16px; }
     .whatsapp-float svg { width: 26px; height: 26px; }
   }
+
+  /* ═══════════════ HEADER MOBILE HAMBURGER + DRAWER ═══════════════
+     Desktop no cambia. En mobile ocultamos lang/user/btn del header
+     (esos tres eran los que apretaban el layout y ponían "AGENDAR CITA"
+     en 2 líneas) y los movemos a un drawer accesible por el hamburger.
+     La navegación (.nav-links) que estaba muerta en mobile ahora vive
+     dentro del drawer. */
+  .nav-burger { display: none; }
+
+  @media (max-width: 700px) {
+    /* Ocultar del header lo que se movió al drawer */
+    #navbar .nav-wrap > .lang-toggle,
+    #navbar .nav-wrap > .nav-user-btn,
+    #navbar .nav-wrap > .btn { display: none !important; }
+
+    /* Hamburger visible */
+    .nav-burger {
+      display: inline-flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      width: 44px; height: 44px;
+      background: transparent; border: none;
+      padding: 0; gap: 5px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-burger span {
+      display: block; width: 22px; height: 1.5px;
+      background: var(--brown, #5c3a1e);
+      border-radius: 2px;
+      transition: transform .25s ease, opacity .2s ease;
+      transform-origin: center;
+    }
+    .nav-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .nav-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Header: solo logo + hamburger, sin el resto */
+    #navbar .nav-wrap { justify-content: space-between; }
+    #navbar .nav-logo { height: 34px; }
+  }
+
+  /* Drawer: definido fuera del media para poder animar, pero solo se abre en mobile */
+  .mobile-drawer-scrim {
+    position: fixed; inset: 0;
+    background: rgba(92, 58, 30, 0.35);
+    opacity: 0; pointer-events: none;
+    transition: opacity .28s ease;
+    z-index: 998;
+  }
+  .mobile-drawer-scrim.open { opacity: 1; pointer-events: auto; }
+
+  .mobile-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(86vw, 340px);
+    background: var(--off-white, #fdfbf4);
+    box-shadow: -12px 0 40px rgba(92, 58, 30, 0.18);
+    transform: translateX(100%);
+    transition: transform .32s cubic-bezier(.4,0,.2,1);
+    z-index: 999;
+    display: flex; flex-direction: column;
+    padding: 20px 24px calc(20px + env(safe-area-inset-bottom));
+    padding-top: calc(16px + env(safe-area-inset-top));
+    overflow-y: auto;
+  }
+  .mobile-drawer.open { transform: translateX(0); }
+
+  .mobile-drawer-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(154,152,84,0.18);
+  }
+  .mobile-drawer-logo { height: 32px; width: auto; }
+  .mobile-drawer-close {
+    width: 40px; height: 40px; border: none; background: transparent;
+    font-size: 20px; color: var(--brown, #5c3a1e); cursor: pointer;
+  }
+
+  .mobile-drawer-nav {
+    /* override: el elemento nav global tiene position:fixed; adentro del drawer NO */
+    position: static; top: auto; left: auto; right: auto; bottom: auto;
+    background: transparent; box-shadow: none; padding: 20px 0 8px;
+    display: flex; flex-direction: column; width: 100%; height: auto;
+  }
+  .mobile-drawer-nav a {
+    display: block; padding: 14px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500;
+    color: var(--brown, #5c3a1e); text-decoration: none;
+    border-bottom: 1px solid rgba(154,152,84,0.10);
+    cursor: pointer;
+  }
+  .mobile-drawer-nav a:last-child { border-bottom: none; }
+
+  .mobile-drawer-account { padding: 12px 0; }
+  .mobile-drawer-user {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    background: rgba(154,152,84,0.10);
+    border: 1px solid rgba(154,152,84,0.30);
+    border-radius: 100px;
+    font: 500 12px 'Lato', sans-serif;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--olive-dark, #7d7c3f);
+    cursor: pointer;
+  }
+
+  .mobile-drawer-lang {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid rgba(154,152,84,0.18);
+    border-bottom: 1px solid rgba(154,152,84,0.18);
+  }
+  .mobile-drawer-lang > span {
+    font: 500 11px 'Lato', sans-serif;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--brown, #5c3a1e);
+  }
+  .mobile-drawer-lang .lang-toggle { margin: 0; }
+
+  .mobile-drawer-contact {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 20px 0;
+    font: 400 13px 'Inter', sans-serif;
+    color: var(--brown, #5c3a1e);
+  }
+  .mobile-drawer-contact a {
+    color: var(--olive-dark, #7d7c3f);
+    text-decoration: none; font-weight: 600;
+  }
+
+  .mobile-drawer-cta {
+    margin-top: auto;
+    padding: 16px 24px;
+    background: var(--olive, #9a9854);
+    color: #fff;
+    border: none; border-radius: 4px;
+    font: 500 12px 'Lato', sans-serif;
+    letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  body.drawer-open { overflow: hidden; }
+
+  /* ═══════════════ MOBILE POLISH BATCH (v158+) ═══════════════
+     Fixes de auditoría UI móvil: badge de versión que tapa CTAs,
+     inputs con font <16px que hacen zoom en iOS, hero eyebrow
+     rompiendo palabras, tabs sin señal de overflow. */
+  @media (max-width: 700px) {
+    /* 1. Ocultar badge de versión en mobile (tapa CTAs). Se sigue viendo
+          con ?debug=1 en la URL — útil para test sin ensuciar el layout. */
+    #ex-build-badge { display: none; }
+
+    /* 2. Address input: 16px evita auto-zoom iOS; apilar con botón mi ubicación */
+    #modal-address .mfa-search-row { flex-direction: column; gap: 10px; }
+    #mpf-address-input { font-size: 16px; padding: 14px 14px 14px 36px; }
+    #modal-address .mfa-search-row > button { width: 100%; min-height: 44px; }
+
+    /* 3. Stepper del modal-select sticky con fondo — antes los labels 1/2/3
+          se perdían tras las pills de duración al scrollear */
+    #modal-select .stepper {
+      background: var(--off-white, #fdfbf4);
+      position: sticky; top: 0; z-index: 5;
+      padding: 12px 20px 8px; margin-bottom: 0;
+      box-shadow: 0 4px 8px -6px rgba(92,58,30,0.15);
+    }
+
+    /* 4. Hero eyebrow: menor letter-spacing para que "CANCÚN" no caiga solo */
+    .hero-eyebrow { letter-spacing: 3px; gap: 10px; }
+    .hero-eyebrow::before { width: 24px; }
+
+    /* 5. Hero values: "WELLNESS · NATURE · ORGANIC · RELAX" en 1 línea */
+    .hero-values { gap: 10px; font-size: 10px; letter-spacing: 1.5px; }
+    .hero-values span { gap: 6px; }
+
+    /* 6. Tabs con scroll horizontal: fade-out derecho como señal visual */
+    .sv2-tabs, .sv2-hero-tabs {
+      -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent 100%);
+              mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 32px), transparent 100%);
+      scroll-padding-right: 32px;
+    }
+
+    /* 7. Zonas domicilio: wrap centrado en vez de romper una zona sola en línea 2 */
+    .mfa-zonas-legend { flex-wrap: wrap; justify-content: center; column-gap: 14px; row-gap: 6px; }
+
+    /* 8. WhatsApp float un poco más arriba para no tapar sticky footers */
+    .whatsapp-float { bottom: 20px; right: 14px; }
+  }
+  /* Toggle para volver a ver el badge en mobile durante debug */
+  html[data-debug="1"] #ex-build-badge { display: block !important; }
 </style>
 
 <!-- ============================================ -->
@@ -6268,9 +6524,28 @@ window.EXENTIA_CONFIG = {
   WEBHOOK_RESERVA: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-reserva',
   WEBHOOK_TRACK: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-track',
   WEBHOOK_UPDATE_PHONE: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-update-phone',
+  WEBHOOK_STRIPE_CHECKOUT: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-stripe-checkout',
+  // ⚠ PRODUCCIÓN — cobros REALES. Tarjeta 4242 NO funciona aquí; cualquier tarjeta
+  // que se capture cobra de verdad. Para volver a pruebas: cambiar esta pk_ por la
+  // pk_test_ de exentia/.env.stripe (y también el sk_ + whsec_ en los dos workflows n8n).
+  STRIPE_PUBLISHABLE_KEY: 'pk_test_51TwOstA1ZmEhwrG8cZjdVSimnI1KfBwECHMREEjs9XTWEqjoNnoL9ojdCI4jOusXYAqXMZnEfeScyXAH7krriZBS00PRpuubCm',
+  PAYMENT_MODE: 'stripe',  // 'stripe' (default) | 'simulator'. Override en runtime con ?pago=simulator
+  WEBHOOK_CATALOGO: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-catalogo',
+  CATALOGO_MODE: 'remoto',  // 'remoto' (Supabase vía n8n, default) | 'local' (hardcodeado, fallback). Override con ?catalogo=local para forzar el hardcodeado.
   WA_PHONE: '529984803595',   // WhatsApp del negocio (Yaz)
   USERS_TOTAL: 2              // Terapeutas disponibles hoy (capacidad para modalidad simultánea)
 };
+// Override PAYMENT_MODE desde query param (test opt-in sin afectar producción)
+try {
+  var _pmParam = new URLSearchParams(window.location.search).get('pago');
+  if (_pmParam === 'stripe' || _pmParam === 'simulator') {
+    window.EXENTIA_CONFIG.PAYMENT_MODE = _pmParam;
+  }
+  var _catParam = new URLSearchParams(window.location.search).get('catalogo');
+  if (_catParam === 'remoto' || _catParam === 'local') {
+    window.EXENTIA_CONFIG.CATALOGO_MODE = _catParam;
+  }
+} catch(_){}
 </script>
 <script>
 /* ============================================================
@@ -6685,6 +6960,16 @@ window.EXENTIA_CONFIG = {
 }
 </script>
 <link rel="icon" type="image/png" href="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/aa3395ee-8e87-4e6b-8afb-7883b655e612.png">
+<!-- Stripe.js canal DAHLIA. Cargar SIN async/defer y desde el CDN oficial.
+     La cuenta de Exentia nació ya en la API nueva, donde ui_mode=embedded fue
+     renombrado a embedded_page. Esa sesión SOLO la entiende
+     createEmbeddedCheckoutPage; initEmbeddedCheckout se queda colgado sin
+     resolver ni fallar (verificado 2026-07-28 con una sesión real).
+     A pesar del nombre, createEmbeddedCheckoutPage monta INLINE dentro del
+     contenedor que le pasemos a mount() — medido: iframe embedded-checkout de
+     878x560 dentro de #stripe-checkout-container. Los iframes extra a nivel
+     <body> (embedded-checkout-modals) son solo overlays de 3DS/Link. -->
+<script src="https://js.stripe.com/dahlia/stripe.js"></script>
 </head>
 <body>
 
@@ -6711,8 +6996,48 @@ window.EXENTIA_CONFIG = {
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
     </button>
     <button class="btn" onclick="smartAgendar()">Agendar Cita</button>
+
+    <!-- Hamburger — solo visible en mobile, oculta lang/user/btn en el header -->
+    <button type="button" class="nav-burger" id="nav-burger" aria-label="Menú" aria-expanded="false" aria-controls="mobile-drawer" onclick="toggleMobileDrawer()">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+
+<!-- Drawer mobile: navegación + Mi cuenta + Idioma + Contacto + CTA -->
+<div class="mobile-drawer-scrim" id="mobile-drawer-scrim" onclick="closeMobileDrawer()"></div>
+<aside class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+  <div class="mobile-drawer-head">
+    <img src="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/ac9b9fc8-d547-4638-9acc-46236261ea4c.png" alt="Exentia" class="mobile-drawer-logo">
+    <button type="button" class="mobile-drawer-close" aria-label="Cerrar" onclick="closeMobileDrawer()">&#10005;</button>
+  </div>
+  <nav class="mobile-drawer-nav">
+    <a data-nav="home" onclick="closeMobileDrawer()">Inicio</a>
+    <a data-scroll="#servicios-anchor" data-nav="home" onclick="closeMobileDrawer()">Servicios</a>
+    <a data-scroll="#promos-anchor" data-nav="home" onclick="closeMobileDrawer()">Promociones</a>
+    <a data-scroll="#filosofia-anchor" data-nav="home" onclick="closeMobileDrawer()">Filosofía</a>
+    <a data-scroll="#ubicacion" onclick="closeMobileDrawer()">Ubicación</a>
+  </nav>
+  <div class="mobile-drawer-account">
+    <button type="button" class="mobile-drawer-user" onclick="closeMobileDrawer(); toggleUserDropdown(event)">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      <span>Mi cuenta</span>
+    </button>
+  </div>
+  <div class="mobile-drawer-lang">
+    <span>Idioma</span>
+    <div class="lang-toggle" role="group">
+      <button type="button" class="lang-mirror-es active" onclick="setLang('es'); syncLangMirror();">ES</button>
+      <button type="button" class="lang-mirror-en" onclick="setLang('en'); syncLangMirror();">EN</button>
+    </div>
+  </div>
+  <div class="mobile-drawer-contact">
+    <a href="tel:+529984803595">998 480 3595</a>
+    <span>Av. Huayacán, Plaza Hive, Cancún</span>
+    <span>Lun-Sáb 10AM-6PM</span>
+  </div>
+  <button type="button" class="mobile-drawer-cta" onclick="closeMobileDrawer(); smartAgendar();">Agendar Cita</button>
+</aside>
 
 <!-- Dropdown del usuario (visible al click en el monito de la nav) -->
 <div class="ex-userdrop" id="ex-userdrop" aria-hidden="true">
@@ -6854,7 +7179,7 @@ window.EXENTIA_CONFIG = {
       <div class="section-title">
         <span class="eyebrow">Realzamos la belleza de tu esencia</span>
         <h2>Nuestros <em>Servicios</em></h2>
-        <p>Cada experiencia tiene su propio mundo. Explora nuestros servicios y descubre la que fue hecha para ti.</p>
+        <p>Cada experiencia tiene su propio mundo. Explora nuestros servicios y descubre el que fue hecho para ti.</p>
       </div>
       <div class="services-grid" id="services-grid">
         <!-- Populated by JavaScript -->
@@ -6959,7 +7284,7 @@ window.EXENTIA_CONFIG = {
           </div>
         </article>
       </div>
-      <p class="promos-disclaimer">Los precios mostrados son finales con descuento. Otras promociones están en confirmación con el equipo.</p>
+      <p class="promos-disclaimer">Los precios mostrados son finales con descuento. Otras promociones están pendientes de confirmación por el equipo.</p>
     </div>
   </section>
 
@@ -7258,7 +7583,7 @@ window.EXENTIA_CONFIG = {
       <p>Elige cómo te atenderemos. Después verás los servicios disponibles para esa opción.</p>
     </div>
     <div class="modal-body">
-      <div class="mpf-options" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+      <div class="mpf-options mpf-options-grid">
         <button type="button" class="mpf-card" data-mode="sucursal" aria-pressed="false">
           <div class="mpf-card-icon">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>
@@ -7418,7 +7743,7 @@ window.EXENTIA_CONFIG = {
     <div class="pp-step-labels"><span>Para los 2</span><span class="active">Persona 1</span><span>Persona 2</span></div>
     <div class="pp-badge-row"><span class="pp-badge pp-badge-p1">PERSONA 1</span></div>
     <h2 class="pp-title">¿Algo extra para <em>Persona 1</em>?</h2>
-    <p class="pp-why">Servicios individuales sólo para ella. Si no quiere extras, salta este paso.</p>
+    <p class="pp-why">Servicios individuales solo para ella. Si no quiere extras, salta este paso.</p>
     <div class="pp-body" id="pp-list-p1"></div>
     <div class="pp-running"><small>Subtotal Persona 1</small><span id="pp-sub-p1">$0</span></div>
     <div class="pp-foot">
@@ -7444,7 +7769,7 @@ window.EXENTIA_CONFIG = {
     <div class="pp-step-labels"><span>Para los 2</span><span>Persona 1</span><span class="active">Persona 2</span></div>
     <div class="pp-badge-row"><span class="pp-badge pp-badge-p2">PERSONA 2</span></div>
     <h2 class="pp-title">¿Algo extra para <em>Persona 2</em>?</h2>
-    <p class="pp-why">Servicios individuales sólo para ella. Si no quiere extras, salta directo al resumen.</p>
+    <p class="pp-why">Servicios individuales solo para ella. Si no quiere extras, salta directo al resumen.</p>
     <div class="pp-body" id="pp-list-p2"></div>
     <div class="pp-running"><small>Subtotal Persona 2</small><span id="pp-sub-p2">$0</span></div>
     <div class="pp-foot">
@@ -8167,6 +8492,110 @@ window.EXENTIA_CONFIG = {
 </div>
 
 <!-- MODAL: SIMULADOR DE PAGOS (Stripe testing) -->
+<!-- Stripe Embedded Checkout (modo real, se abre solo con PAYMENT_MODE=stripe) -->
+<style>
+  /* MONTAJE INLINE (initEmbeddedCheckout, canal v3).
+     Stripe renderiza dentro de #stripe-checkout-container con alto constante
+     ~620px sin importar el ancho que le demos (medido a 460/620/900/1120px).
+     Con 620px de alto el checkout completo — incluido el botón Pagar — cabe
+     en cualquier laptop sin scroll, que era justo el problema. */
+  #modal-stripe {
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;             /* red de seguridad en pantallas muy bajas */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 24px 16px;
+  }
+  #modal-stripe .modal-box {
+    /* Solo el checkout de Stripe (sin columna propia): 560px es el ancho
+       natural de su formulario embebido. */
+    max-width: 560px;
+    width: 100%;
+    padding: 0;
+    max-height: none;
+    height: auto;
+    /* NO puede ser overflow:hidden — rompería el position:sticky del resumen
+       (sticky deja de funcionar si CUALQUIER ancestro recorta el overflow).
+       Las esquinas redondeadas se logran en las columnas del grid. */
+    overflow: visible;
+    display: block;
+    border-radius: 16px;
+    background: #fff;
+    /* Sombra neutra: antes tenía el café de la marca (92,58,30) y teñía de
+       sepia el borde del modal contra el fondo oscuro. */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.20), 0 5px 15px rgba(0, 0, 0, 0.10);
+    margin: auto;
+  }
+  /* Una sola columna: el checkout de Stripe ES todo el modal */
+  #stripe-grid { display: block; }
+  #modal-stripe #stripe-checkout-container {
+    width: 100%;
+    min-height: 320px;            /* colchón mientras el iframe reporta su altura */
+    background: #fff;
+    border-radius: 16px;
+  }
+  /* X sobre la esquina del modal. Ya no necesita ser fixed: con 620px de alto
+     el modal cabe en pantalla y la X nunca se va de vista. */
+  #modal-stripe .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    z-index: 10;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.94);
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.16);
+    cursor: pointer;
+    font-size: 15px;
+    color: #444;
+    transition: background .15s ease, transform .15s ease;
+  }
+  #modal-stripe .modal-close:hover { background: #fff; transform: scale(1.08); }
+  /* Scrollbar del overlay, discreta */
+  #modal-stripe { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.3) transparent; }
+  #modal-stripe::-webkit-scrollbar { width: 10px; }
+  #modal-stripe::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3); border-radius: 10px;
+    border: 3px solid transparent; background-clip: content-box;
+  }
+  #modal-stripe::-webkit-scrollbar-track { background: transparent; }
+  /* Fallback: si Stripe retira initEmbeddedCheckout de v3 y caemos a
+     createEmbeddedCheckoutPage, esa variante abre su PROPIO modal a pantalla
+     completa sobre el <body>. Nuestra caja quedaría en 0px y su backdrop
+     oscuro estorbaría encima. Cuando eso pase, nos apagamos y le dejamos
+     la pantalla a Stripe. */
+  #modal-stripe[data-stripe-mode="page"] { background: transparent; padding: 0; }
+  #modal-stripe[data-stripe-mode="page"] .modal-box { box-shadow: none; background: transparent; }
+  #modal-stripe[data-stripe-mode="page"] .modal-close { display: none; }
+  /* Móvil */
+  @media (max-width: 600px) {
+    #modal-stripe { padding: 10px 8px; }
+    #modal-stripe .modal-box { max-width: 100%; border-radius: 12px; }
+    #modal-stripe #stripe-checkout-container { border-radius: 12px; }
+  }
+</style>
+<div class="modal-overlay" id="modal-stripe" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-close" onclick="_pgStripeClose()" aria-label="Cerrar" style="z-index:10;">&#10005;</div>
+    <div id="stripe-status" style="padding:64px 24px; text-align:center; color:var(--brown,#5c3a1e); font-family:'Inter',sans-serif;">
+      <div style="font-size:14px; opacity:0.7;">Cargando pasarela segura de Stripe…</div>
+    </div>
+    <!-- Solo el checkout de Stripe: sus line items reales ya muestran el
+         desglose completo (servicios + traslado + total), así que no hay
+         columna propia — todo el detalle vive en un solo lugar. -->
+    <div id="stripe-grid" style="display:none;">
+      <div id="stripe-checkout-container"></div>
+    </div>
+    <div id="stripe-confirm" style="display:none; padding:64px 24px; text-align:center; font-family:'Inter',sans-serif;">
+      <div style="font-size:44px; color:#3ecf8e; margin-bottom:12px;">✓</div>
+      <div style="font-size:20px; color:var(--brown,#5c3a1e); font-weight:600; margin-bottom:8px;">Confirmando tu pago…</div>
+      <div style="font-size:14px; opacity:0.7;">En un momento te mostramos tu cita confirmada.</div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay pg-modal" id="modal-pago-simulador">
   <div class="modal-box" style="max-width:560px;">
     <div class="modal-close" onclick="closeModal('modal-pago-simulador')" aria-label="Cerrar">&#10005;</div>
@@ -8295,7 +8724,7 @@ window.EXENTIA_CONFIG = {
           <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="13" y2="18"/></svg>
           <div class="choice-text">
             <strong>Preparar mi experiencia</strong>
-            <span>Cuéntanos cómo llegar y prepara todo en 2 minutos.</span>
+            <span>Cuéntanos cómo llegar y prepararemos todo en 2 minutos.</span>
           </div>
           <span class="choice-arrow" aria-hidden="true">→</span>
         </button>
@@ -8472,9 +8901,13 @@ window.EXENTIA_CONFIG = {
     });
     var personasServicios = personas.map(function(pid){
       var items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
+      // La pseudo-persona 0 ("Para los 2") no tiene preferencia propia: su slot
+      // termina siendo el de Persona 1, así que hereda la preferencia de P1.
+      // Sin esto caía al default 'mujer' y pisaba lo que eligió el cliente.
+      var prefPid = (pid === 0) ? 1 : pid;
       return {
         persona_id: pid,
-        preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(pid) : 'mujer',
+        preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(prefPid) : 'mujer',
         label: (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid),
         servicios: items.map(function(it){
           var dm = (typeof _durMinForKey === 'function') ? _durMinForKey(it.key) : null;
@@ -8484,6 +8917,23 @@ window.EXENTIA_CONFIG = {
         })
       };
     });
+    // Pareja: garantizar que las DOS personas reales viajen con su preferencia,
+    // aunque alguna no tenga items propios (ej. solo el paquete de P0 y el usuario
+    // quedó parado en P1: sin esto la preferencia de P2 nunca llegaba al backend).
+    if (typeof svMode !== 'undefined' && svMode === 'parejas') {
+      [1, 2].forEach(function(pid){
+        var lbl = (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid);
+        var covered = personasServicios.some(function(e){ return e.label === lbl; });
+        if (!covered) {
+          personasServicios.push({
+            persona_id: pid,
+            preferencia_sexo: (typeof prefSexoForPersona === 'function') ? prefSexoForPersona(pid) : 'mujer',
+            label: lbl,
+            servicios: []
+          });
+        }
+      });
+    }
     // Ticket total = suma de precios de servicios + traslado (si aplica)
     var subtotal = servicios.reduce(function(a, s){ return a + (parseFloat(s.precio_mxn) || 0); }, 0);
     var traslado = parseFloat(place.costoTrasladoTotal || 0) || 0;
@@ -8527,6 +8977,12 @@ window.EXENTIA_CONFIG = {
       lng: place.lng || '',
       zona_cobertura: place.zonaNum || '',
       costo_traslado: place.costoTraslado || '',
+      // en_area_cobertura: true = zona con tarifa fija (Z1/Z2/Z3); false = en Cancún
+      // pero fuera de zonas mapeadas (equipo confirma costo). Solo aplica a domicilio.
+      // null cuando es cita en sucursal — el backend lo ignora en ese caso.
+      en_area_cobertura: (place.mode === 'domicilio')
+        ? (typeof place.enAreaCobertura === 'boolean' ? place.enAreaCobertura : null)
+        : null,
       distancia_km: place.distKm || '',
       cartMeta: (typeof cartMeta !== 'undefined' ? cartMeta.slice() : []),
       ghl_contact_id: (sess && sess.contactId) || '',
@@ -8542,6 +8998,26 @@ window.EXENTIA_CONFIG = {
   // sesión actual con una reserva vieja).
   function sendReserva(payload, opts) {
     opts = opts || {};
+    // Guardián duro: nunca aceptar reservas para fechas ya pasadas.
+    // El picker cal2 ya bloquea días pasados en la UI, pero cualquier bypass
+    // (URL, deep-link, retry offline, admin manual, cambio de reloj) queda cerrado acá.
+    // Solo valida si la fecha viene en el payload — algunos flujos permiten fecha:null
+    // (whatsapp "sin fecha" para que el equipo confirme).
+    if (payload && payload.fecha) {
+      try {
+        var _hoyCancun = new Date();
+        _hoyCancun.setHours(0,0,0,0);
+        var _pFecha = new Date(payload.fecha + 'T00:00:00');
+        if (!isNaN(_pFecha) && _pFecha < _hoyCancun) {
+          console.warn('[ex-reserva] BLOQUEADO: fecha en el pasado', payload.fecha);
+          try {
+            if (typeof showToast === 'function') showToast('No se pueden agendar citas en fechas ya pasadas. Elige otro día.');
+            else alert('No se pueden agendar citas en fechas ya pasadas. Elige otro día.');
+          } catch(_){}
+          return Promise.resolve(null);
+        }
+      } catch(_){}
+    }
     try {
       console.log('[ex-reserva] POST exentia-reserva →', {
         origin: payload.origin || payload.mode || '',
@@ -8805,7 +9281,7 @@ window.EXENTIA_CONFIG = {
         'Corte Cabello Dama': 'Cortes de Salón',
         'Corte Cabello Dama c/Ampolleta': 'Cortes de Salón',
         'Corte Cabello Hombre': 'Cortes de Salón',
-        'Shampoo y Secado Cabello': 'Peinado y Estilizado',
+        'Shampoo y Secado de Cabello': 'Peinado y Estilizado',
         'Planchado Express': 'Peinado y Estilizado',
         'Peinado Cabello Corto': 'Peinado y Estilizado',
         'Peinado Cabello Mediano': 'Peinado y Estilizado',
@@ -8869,10 +9345,10 @@ window.EXENTIA_CONFIG = {
       heroImage: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/48ecafe1-ab17-4408-923e-998d85e61e58.webp',
       duration: 'Desde 60 min',
       treatments: [
-        { name: 'Diva Spa', desc: 'Masaje Relajante + Facial Orgánico + Manicura con Gel + Pedicura con Gel.', durations: [{ min: 240, price: '$3,296' }], homeAvailable: false, isPaquete: true, ahorro: '$824', descuento: '20%' },
-        { name: 'Ritual Exentia', desc: 'Masaje Exentia 60 min + Facial Orgánico 60 min. Disponible también a domicilio.', durations: [{ min: 120, price: '$2,180' }], homeAvailable: true, isPaquete: true, ahorro: '$660', descuento: '23%' },
-        { name: 'Ritual Exentia Plus', desc: 'Masaje Exentia 90 min + Facial Orgánico. Versión extendida del ritual signature.', durations: [{ min: 150, price: '$2,580' }], homeAvailable: true, isPaquete: true, ahorro: '$710', descuento: '22%' },
-        { name: 'Ritual Caballero', desc: 'Masaje terapéutico + Corte de cabello + Servicio de barbería completo.', durations: [{ min: 125, price: '$1,785' }], homeAvailable: false, isPaquete: true, ahorro: '$315', descuento: '15%' }
+        { name: 'Diva Spa', desc: 'Masaje Relajante + Facial Orgánico + Manicura con Gel + Pedicura con Gel.', durations: [{ min: 240, price: '$3,296' }], homeAvailable: false, isPaquete: true, ahorro: '$824', descuento: '20%', precioOld: '$4,120', eyebrow: 'PROMOCIÓN', incluye: 'Masaje Relajante + Facial Orgánico + Manicura con Gel + Pedicura con Gel. La experiencia completa de bienestar en un solo lugar.', img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/48ecafe1-ab17-4408-923e-998d85e61e58.webp' },
+        { name: 'Ritual Exentia', desc: 'Masaje Exentia 60 min + Facial Orgánico 60 min. Disponible también a domicilio.', durations: [{ min: 120, price: '$2,180' }], homeAvailable: true, isPaquete: true, ahorro: '$660', descuento: '23%', precioOld: '$2,840', eyebrow: 'RITUAL · 60 MIN', incluye: 'Masaje Exentia 60 min + Facial Orgánico 60 min. La combinación perfecta para desconectarte y renovar tu energía. Disponible también a domicilio (+$250 traslado zona 1).', img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/2f85d6c7-2bf4-4180-a930-4d9d6c27ded9.webp' },
+        { name: 'Ritual Exentia Plus', desc: 'Masaje Exentia 90 min + Facial Orgánico. Versión extendida del ritual signature.', durations: [{ min: 150, price: '$2,580' }], homeAvailable: true, isPaquete: true, ahorro: '$710', descuento: '22%', precioOld: '$3,290', eyebrow: 'RITUAL · 90 MIN', incluye: 'Masaje Exentia 90 min + Facial Orgánico. La versión extendida del ritual signature, con 30 minutos más para profundizar la relajación.', img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/2f85d6c7-2bf4-4180-a930-4d9d6c27ded9.webp' },
+        { name: 'Ritual Caballero', desc: 'Masaje terapéutico + Corte de cabello + Servicio de barbería completo.', durations: [{ min: 125, price: '$1,785' }], homeAvailable: false, isPaquete: true, ahorro: '$315', descuento: '15%', precioOld: '$2,100', eyebrow: 'CABALLERO · 125 MIN', incluye: 'Masaje terapéutico + Corte de cabello + Servicio de barbería completo. Una mañana entera dedicada al hombre que quiere verse y sentirse bien.', img: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/4fb8f090-157f-4e19-a426-d3c72510b10f.webp' }
       ]
     },
     masajes: {
@@ -8916,7 +9392,11 @@ window.EXENTIA_CONFIG = {
         { name: 'Masaje Reductivo Manual', desc: 'Manipulación profunda para moldear y activar tejido adiposo.', homeAvailable: true, durations: [{min: 60, price: '$1,550', priceCouple: '$3,100'}] },
         { name: 'Envoltura Corporal Desintoxicante', desc: 'Envoltura con ingredientes naturales que purifica y nutre la piel.', homeAvailable: true, durations: [{min: 75, price: '$1,350', priceCouple: '$2,250'}] },
         { name: 'Masaje Prenatal', desc: 'Alivio suave y seguro diseñado especialmente para futuras mamás.', homeAvailable: true, durations: [{min: 60, price: '$1,550'}, {min: 90, price: '$1,840'}] },
-        { name: 'Shiatsu en Silla Japonesa', desc: 'Presión en puntos energéticos para liberar tensión sin desvestirse.', homeAvailable: false, durations: [{min: 60, price: '$990'}] }
+        { name: 'Shiatsu en Silla Japonesa', desc: 'Presión en puntos energéticos para liberar tensión sin desvestirse.', homeAvailable: false, durations: [{min: 60, price: '$990'}] },
+        // Producto simbólico para pruebas reales de Stripe. Se mantiene al final del
+        // catálogo para que sea difícil de notar; si un cliente real lo elige, sigue
+        // teniendo sentido comercial (propina agradecimiento al equipo).
+        { name: 'Propina para el equipo', desc: 'Un pequeño detalle de agradecimiento para el equipo que te atiende.', homeAvailable: true, durations: [{min: 5, price: '$10'}] }
         // Reflexología (15/30), Craneofacial, Head Massage y Tiempo Extra
         // viven como complementos en MASSAGE_ADDONS (drawer al elegir un masaje).
       ]
@@ -9071,19 +9551,19 @@ window.EXENTIA_CONFIG = {
         { name: 'Corte Cabello Dama', desc: 'Corte personalizado con mascarilla hidratante y estilizado incluido.', homeAvailable: false, durations: [{min: 80, price: '$650'}] },
         { name: 'Corte Cabello Dama c/Ampolleta', desc: 'Corte con ampolleta nutritiva, mascarilla y estilizado.', homeAvailable: false, durations: [{min: 90, price: '$750'}] },
         { name: 'Corte Cabello Hombre', desc: 'Corte moderno con mascarilla y fluido hidratante incluido.', homeAvailable: false, durations: [{min: 45, price: '$350'}] },
-        { name: 'Shampoo y Secado Cabello', desc: 'Lavado profesional y secado con cepillo. Precio varía según largo.', homeAvailable: false, durations: [{min: 60, price: 'Desde $600'}] },
-        { name: 'Planchado Express', desc: 'Plancha rápida para un look impecable. Precio varía según largo.', homeAvailable: false, durations: [{min: 30, price: 'Desde $500'}] },
+        { name: 'Shampoo y Secado de Cabello', desc: 'Lavado profesional y secado con cepillo. El precio varía según el largo.', homeAvailable: false, durations: [{min: 60, price: '$600'}] },
+        { name: 'Planchado Express', desc: 'Plancha rápida para un look impecable. El precio varía según el largo.', homeAvailable: false, durations: [{min: 30, price: '$500'}] },
         { name: 'Peinado Cabello Corto', desc: 'Brushing, moldeado o planchado en cabello corto.', homeAvailable: false, durations: [{min: 50, price: '$850'}] },
         { name: 'Peinado Cabello Mediano', desc: 'Brushing, moldeado o planchado en cabello hasta hombros.', homeAvailable: false, durations: [{min: 60, price: '$1,000'}] },
         { name: 'Peinado Novia', desc: 'Peinado elegante y duradero diseñado para tu día especial.', homeAvailable: false, durations: [{min: 115, price: '$1,700'}] },
-        { name: 'Nanoplastia', desc: 'Reestructuración profunda anti-frizz. Precio varía según largo.', homeAvailable: false, durations: [{min: 150, price: 'Desde $2,300'}] },
-        { name: 'Keratina', desc: 'Brillo, nutrición y suavidad duradera. Precio varía según largo.', homeAvailable: false, durations: [{min: 150, price: 'Desde $2,300'}] },
-        { name: 'Botox Capilar', desc: 'Hidratación profunda y rejuvenecimiento del cabello. Precio varía según largo.', homeAvailable: false, durations: [{min: 150, price: 'Desde $2,300'}] },
-        { name: 'Extensiones de Cabello Método Brasileño', desc: 'Extensiones de cabello natural. Precio varía según largo y cantidad.', homeAvailable: false, durations: [{min: 180, price: 'Desde $2,800'}] },
-        { name: 'Diseño de Color Personalizado', desc: 'Mechas, balayage o baby lights con matiz, despunte y estilizado. Precio varía según largo.', homeAvailable: false, durations: [{min: 360, price: 'Desde $2,500'}] },
-        { name: 'Retoque de Raíz Tinte', desc: 'Retoque de raíz con tinte. Precio varía según largo.', homeAvailable: false, durations: [{min: 115, price: 'Desde $1,300'}] },
-        { name: 'Baño de Color', desc: 'Color gloss o toner para revitalizar el tono. Precio varía según largo.', homeAvailable: false, durations: [{min: 60, price: 'Desde $1,000'}] },
-        { name: 'Tinte Global', desc: 'Tinte completo con mascarilla hidratante y estilizado. Precio varía según largo.', homeAvailable: false, durations: [{min: 135, price: 'Desde $1,700'}] }
+        { name: 'Nanoplastia', desc: 'Reestructuración profunda anti-frizz. El precio varía según el largo.', homeAvailable: false, durations: [{min: 150, price: '$2,300'}] },
+        { name: 'Keratina', desc: 'Brillo, nutrición y suavidad duradera. El precio varía según el largo.', homeAvailable: false, durations: [{min: 150, price: '$2,300'}] },
+        { name: 'Botox Capilar', desc: 'Hidratación profunda y rejuvenecimiento del cabello. El precio varía según el largo.', homeAvailable: false, durations: [{min: 150, price: '$2,300'}] },
+        { name: 'Extensiones de Cabello Método Brasileño', desc: 'Extensiones de cabello natural. El precio varía según el largo y la cantidad.', homeAvailable: false, durations: [{min: 180, price: '$2,800'}] },
+        { name: 'Diseño de Color Personalizado', desc: 'Mechas, balayage o baby lights con matiz, despunte y estilizado. El precio varía según el largo.', homeAvailable: false, durations: [{min: 360, price: '$2,500'}] },
+        { name: 'Retoque de Raíz Tinte', desc: 'Retoque de raíz con tinte. El precio varía según el largo.', homeAvailable: false, durations: [{min: 115, price: '$1,300'}] },
+        { name: 'Baño de Color', desc: 'Color gloss o toner para revitalizar el tono. El precio varía según el largo.', homeAvailable: false, durations: [{min: 60, price: '$1,000'}] },
+        { name: 'Tinte Global', desc: 'Tinte completo con mascarilla hidratante y estilizado. El precio varía según el largo.', homeAvailable: false, durations: [{min: 135, price: '$1,700'}] }
       ]
     },
     maquillaje: {
@@ -9175,7 +9655,7 @@ window.EXENTIA_CONFIG = {
       heroTitle: 'magia para peques',
       tagline: 'Experiencias especiales para los más pequeños',
       emoji: '🌈',
-      shortDesc: 'Experiencias especiales para los más pequeños. Manicure, pedicure y diversión en un ambiente seguro.',
+      shortDesc: 'Experiencias especiales para los más pequeños. Manicura, pedicura y diversión en un ambiente seguro.',
       longDesc: 'En Exentia creemos que el autocuidado comienza desde pequeños. Nuestro espacio SpaKids está diseñado para que niñas y niños vivan su primera experiencia de spa de manera divertida, segura y mágica.',
       longDesc2: 'Productos 100% seguros para pieles delicadas, ambiente lleno de color y diversión, y atención personalizada por especialistas entrenadas en el cuidado infantil.',
       heroImage: 'https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/dc6a708d-4ab3-437d-a407-d2856985309f.webp',
@@ -9232,11 +9712,282 @@ window.EXENTIA_CONFIG = {
   // Conectar complementos (add-ons) a Masajes y Faciales
   SERVICES.masajes.addons = MASSAGE_ADDONS;
   SERVICES.faciales.addons = FACIAL_ADDONS;
-  SERVICES.masajes.treatments.forEach(function(t){ t.hasAddons = true; });
-  SERVICES.faciales.treatments.forEach(function(t){ t.hasAddons = true; });
+  // hasAddons queda ON salvo que el panel admin haya marcado tieneExtras=false para ese producto.
+  SERVICES.masajes.treatments.forEach(function(t){ t.hasAddons = (t.tieneExtras !== false); });
+  SERVICES.faciales.treatments.forEach(function(t){ t.hasAddons = (t.tieneExtras !== false); });
 
   // ============================================
-  // PACKAGES: sección Promociones ahora es estática (mockup Henry style)
+  // CATÁLOGO REMOTO (Supabase vía n8n) — cache-first
+  //
+  // El catálogo hardcodeado de arriba queda como FALLBACK. Con
+  // CATALOGO_MODE='remoto' (?catalogo=remoto), loadRemoteCatalog()
+  // reemplaza SERVICES / *_ADDONS / GROUP_CONFIG con los datos de
+  // exentia.catalogo_* ANTES del primer render.
+  //   · Con cache en localStorage: aplica el cache al instante y el
+  //     fetch corre en background SOLO para guardar el cache de la
+  //     próxima visita (no re-aplica post-render: mutar SERVICES ya
+  //     renderizado dejaría la vista desincronizada).
+  //   · Sin cache (primera visita): espera el fetch máx 2s; si falla,
+  //     queda el hardcodeado.
+  // Los precios llegan como números (1550) y aquí se formatean al
+  // shape legacy string ('$1,550') que esperan los 6 parsers de la
+  // página. NO cambiar el formato: cart keys y checkout dependen de él.
+  // ============================================
+  var CATALOGO_CACHE_KEY = 'exentia_catalogo_v1';
+
+  function _catFmtPrice(n) {
+    if (n == null || n === '') return undefined;
+    var num = Math.round(parseFloat(n) * 100) / 100;
+    // Enteros sin decimales, con comas estilo en-US: '$1,550' (idéntico al hardcodeado)
+    return '$' + num.toLocaleString('en-US');
+  }
+
+  function applyCatalog(remote) {
+    if (!remote || !remote.secciones || !remote.secciones.length) return false;
+
+    var newServices = {};
+    var newGroupConfig = {};
+
+    remote.secciones.forEach(function(sec) {
+      var svc = {
+        slug: sec.slug,
+        name: sec.nombre,
+        heroTitle: sec.hero_title || undefined,
+        tagline: sec.tagline || '',
+        emoji: sec.emoji || '',
+        shortDesc: sec.short_desc || '',
+        longDesc: sec.long_desc || '',
+        duration: sec.duration_label || '',
+        heroImage: sec.hero_image || '',
+        treatments: []
+      };
+      if (sec.long_desc2) svc.longDesc2 = sec.long_desc2;
+      if (sec.gallery) svc.gallery = sec.gallery;
+      if (sec.features) svc.features = sec.features;
+      if (sec.supports_parejas) svc.supportsParejas = true;
+      // rating fijo del diseño (no vive en la base)
+      if (sec.slug !== 'paquetes') svc.rating = 5.0;
+
+      var subs = (sec.subsecciones || []);
+      if (subs.length) {
+        newGroupConfig[sec.slug] = { order: subs.map(function(s){ return s.nombre; }), map: {} };
+      }
+
+      (sec.productos || []).forEach(function(p) {
+        var t = { name: p.nombre, desc: p.descripcion || '' };
+        var durs = (p.duraciones || []).map(function(d) {
+          var o = { min: d.min, price: _catFmtPrice(d.precio_mxn) };
+          if (d.precio_pareja_mxn != null) o.priceCouple = _catFmtPrice(d.precio_pareja_mxn);
+          return o;
+        });
+        if (durs.length) t.durations = durs;
+        t.homeAvailable = !!p.home_available;
+        // Flag por producto: si el panel lo marcó "no ofrecer extras", lo respetamos.
+        // (Por default el JSON manda true; solo lo agregamos al treatment cuando es false
+        // para no romper productos legacy que no lo traen.)
+        if (p.tiene_extras === false) t.tieneExtras = false;
+        if (p.is_paquete) {
+          t.isPaquete = true;
+          if (p.ahorro_mxn != null) t.ahorro = _catFmtPrice(p.ahorro_mxn);
+          if (p.descuento_pct != null) t.descuento = p.descuento_pct + '%';
+          if (p.precio_old_mxn != null) t.precioOld = _catFmtPrice(p.precio_old_mxn);
+          if (p.incluye_texto) t.incluye = p.incluye_texto;
+          if (p.eyebrow) t.eyebrow = p.eyebrow;
+          if (p.foto_url) t.img = p.foto_url;
+        }
+        if (p.variants && p.variants.length) {
+          t.variants = p.variants.map(function(v) {
+            return { type: v.type, price: _catFmtPrice(v.precio_mxn) };
+          });
+        }
+        svc.treatments.push(t);
+        if (p.subseccion && newGroupConfig[sec.slug]) {
+          newGroupConfig[sec.slug].map[p.nombre] = p.subseccion;
+        }
+      });
+
+      newServices[sec.slug] = svc;
+    });
+
+    // Complementos: reconstruir los 3 diccionarios con el shape legacy
+    function buildAddonGroup(g) {
+      var out = { key: g.key, label: g.label, type: g.tipo };
+      if (g.badge) out.badge = g.badge;
+      if (g.tipo === 'bool') {
+        out.price = g.precio_mxn != null ? parseFloat(g.precio_mxn) : 0;
+        if (g.descripcion) out.desc = g.descripcion;
+      } else {
+        if (g.explain_title) out.explainTitle = g.explain_title;
+        if (g.explain_sub) out.explainSub = g.explain_sub;
+        out.options = (g.opciones || []).map(function(o) {
+          var opt = { id: o.opt_id, name: o.nombre, price: parseFloat(o.precio_mxn) || 0, desc: o.descripcion || '' };
+          if (o.short) opt.short = o.short;
+          return opt;
+        });
+      }
+      out.appliesTo = g.applies_to;
+      return out;
+    }
+    function buildAddonDict(list) {
+      var dict = {};
+      (list || []).forEach(function(g) { dict[g.key] = buildAddonGroup(g); });
+      return dict;
+    }
+    var comp = remote.complementos || {};
+    var newNail = buildAddonDict(comp.nail);
+    var newMassage = buildAddonDict(comp.masaje);
+    var newFacial = buildAddonDict(comp.facial);
+
+    // Mutar los objetos globales SIN cambiar la referencia (hay closures que capturan
+    // NAIL_ADDONS/etc por nombre) — vaciar y rellenar in place.
+    function replaceInPlace(target, source) {
+      Object.keys(target).forEach(function(k){ delete target[k]; });
+      Object.keys(source).forEach(function(k){ target[k] = source[k]; });
+    }
+    replaceInPlace(NAIL_ADDONS, newNail);
+    replaceInPlace(MASSAGE_ADDONS, newMassage);
+    replaceInPlace(FACIAL_ADDONS, newFacial);
+    replaceInPlace(GROUP_CONFIG, newGroupConfig);
+    replaceInPlace(SERVICES, newServices);
+    window.SERVICES = SERVICES;
+
+    // Re-ejecutar el wiring legacy (idéntico al bloque de arriba)
+    if (SERVICES.manicura) SERVICES.manicura.addons = NAIL_ADDONS;
+    if (SERVICES.pedicura) SERVICES.pedicura.addons = NAIL_ADDONS;
+    if (SERVICES.masajes) {
+      SERVICES.masajes.addons = MASSAGE_ADDONS;
+      SERVICES.masajes.treatments.forEach(function(t){ t.hasAddons = (t.tieneExtras !== false); });
+    }
+    if (SERVICES.faciales) {
+      SERVICES.faciales.addons = FACIAL_ADDONS;
+      SERVICES.faciales.treatments.forEach(function(t){ t.hasAddons = (t.tieneExtras !== false); });
+    }
+    return true;
+  }
+
+  // NETWORK-FIRST (v210). El cache-first anterior causaba que un cambio hecho en
+  // el panel admin no se viera hasta la SEGUNDA recarga: la página pintaba el
+  // cache viejo y el "re-render en vivo" no siempre alcanzaba todas las vistas
+  // (grid, detalle de sección, promos, footer). Ahora siempre se pide el
+  // catálogo fresco ANTES del primer render; el cache queda solo como respaldo
+  // si la red falla. El JSON pesa ~64KB y el webhook responde en <1s, así que
+  // el costo es imperceptible y a cambio nunca se muestra data obsoleta.
+  function loadRemoteCatalog() {
+    if ((window.EXENTIA_CONFIG || {}).CATALOGO_MODE !== 'remoto') return Promise.resolve(false);
+    var url = window.EXENTIA_CONFIG.WEBHOOK_CATALOGO;
+    if (!url) return Promise.resolve(false);
+
+    function readCache() {
+      try {
+        var c = JSON.parse(localStorage.getItem(CATALOGO_CACHE_KEY) || 'null');
+        return (c && c.secciones && c.secciones.length) ? c : null;
+      } catch(_) { return null; }
+    }
+
+    // cache:'no-store' + query anti-cache: evita que el navegador o un proxy
+    // sirvan una copia vieja del webhook (n8n manda Cache-Control max-age=300).
+    var bust = url + (url.indexOf('?') === -1 ? '?' : '&') + '_=' + Date.now();
+    var fresh = fetch(bust, { cache: 'no-store' }).then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function(json) {
+      if (!json || !json.secciones || !json.secciones.length) throw new Error('catálogo vacío');
+      try { localStorage.setItem(CATALOGO_CACHE_KEY, JSON.stringify(json)); } catch(_){}
+      return json;
+    });
+
+    // Si la red tarda más de 3s, seguimos con cache/hardcodeado para no bloquear
+    // el primer render. El fetch sigue vivo y actualiza el cache para la próxima.
+    var timeout = new Promise(function(res) { setTimeout(function(){ res('__timeout__'); }, 3000); });
+
+    return Promise.race([
+      fresh.catch(function(e) { console.warn('[catalogo] fetch falló:', e && e.message); return '__error__'; }),
+      timeout
+    ]).then(function(json) {
+      if (json && json !== '__timeout__' && json !== '__error__') {
+        console.info('[catalogo] catálogo remoto aplicado (versión ' + json.version + ')');
+        return applyCatalog(json);
+      }
+      // Red lenta o caída → respaldo con lo último que se guardó
+      var cached = readCache();
+      if (cached) {
+        console.warn('[catalogo] usando respaldo local (versión ' + cached.version + ')');
+        applyCatalog(cached);
+        // Si el fetch lento termina después, re-aplicar y re-renderizar todo.
+        fresh.then(function(late) {
+          if (!late || String(late.version) === String(cached.version)) return;
+          applyCatalog(late);
+          rerenderCatalogViews();
+          console.info('[catalogo] actualizado tarde (versión ' + late.version + ')');
+        }).catch(function(){});
+        return true;
+      }
+      console.warn('[catalogo] sin red ni respaldo: se usa el catálogo incluido en la página');
+      return false;
+    });
+  }
+  window.loadRemoteCatalog = loadRemoteCatalog;
+
+  // Re-pinta todas las vistas que dependen de SERVICES/GROUP_CONFIG.
+  function rerenderCatalogViews() {
+    try { if (typeof renderServicesGrid === 'function') renderServicesGrid(); } catch(_){}
+    try { if (typeof renderFooterServices === 'function') renderFooterServices(); } catch(_){}
+    try { if (typeof renderPromosSection === 'function') renderPromosSection(); } catch(_){}
+    try { if (typeof handleRoute === 'function' && location.hash) handleRoute(); } catch(_){}
+  }
+  window.rerenderCatalogViews = rerenderCatalogViews;
+
+  // ============================================
+  // PROMOCIONES DINÁMICAS — regenera las cards .pkg-row desde
+  // SERVICES.paquetes (mismo markup que las estáticas). Así un paquete
+  // nuevo agregado por SQL aparece en la landing, y los precios nunca
+  // se desincronizan del checkout. Las cards estáticas del HTML quedan
+  // como contenido inicial (no-JS) y se reemplazan aquí.
+  // ============================================
+  function renderPromosSection() {
+    var list = document.querySelector('#promos-anchor .promos-list');
+    var paq = SERVICES.paquetes;
+    if (!list || !paq || !paq.treatments || !paq.treatments.length) return;
+
+    var sucSvg = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>';
+    var homeSvg = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H10v7H6a2 2 0 0 1-2-2V10z"/></svg>';
+
+    list.innerHTML = paq.treatments.map(function(t, i) {
+      var price = (t.durations && t.durations[0] && t.durations[0].price) || '';
+      var nameParts = String(t.name).split(' ');
+      var nameHtml = nameParts.length > 1
+        ? nameParts[0] + ' <em>' + nameParts.slice(1).join(' ') + '</em>'
+        : '<em>' + t.name + '</em>';
+      var badge = (t.descuento && t.ahorro)
+        ? '<span class="pkg-badge">\u2212' + t.descuento + ' · Ahorras ' + t.ahorro + '</span>'
+        : '';
+      var loc = t.homeAvailable
+        ? '<span class="pkg-loc pkg-loc-home">' + homeSvg + ' A domicilio</span>'
+        : '<span class="pkg-loc pkg-loc-suc">' + sucSvg + ' Solo sucursal</span>';
+      var nameAttr = String(t.name).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      return '<article class="pkg-row' + (i % 2 === 1 ? ' pkg-reverse' : '') + '">'
+        + '<div class="pkg-img" style="background-image:url(\'' + (t.img || paq.heroImage || '') + '\')">' + badge + '</div>'
+        + '<div class="pkg-body">'
+        +   '<div class="pkg-eyebrow">'
+        +     '<span class="pkg-eyebrow-cat">' + (t.eyebrow || 'PROMOCIÓN') + '</span>'
+        +     loc
+        +   '</div>'
+        +   '<h3 class="pkg-name">' + nameHtml + '</h3>'
+        +   '<p class="pkg-includes">' + (t.incluye || t.desc || '') + '</p>'
+        +   '<div class="pkg-prices">'
+        +     (t.precioOld ? '<span class="pkg-price-old">' + t.precioOld + '</span>' : '')
+        +     '<span class="pkg-price-new">' + price + '</span>'
+        +   '</div>'
+        +   '<button type="button" class="pkg-cta" data-pick-svc="' + nameAttr + '" data-category="paquetes" onclick="reservarPaquete(\'' + nameAttr + '\', \'paquetes\')">Reservar este paquete →</button>'
+        + '</div>'
+        + '</article>';
+    }).join('');
+  }
+  window.renderPromosSection = renderPromosSection;
+
+  // ============================================
+  // PACKAGES: sección Promociones ahora se regenera desde SERVICES.paquetes
+  // (renderPromosSection). El HTML estático es solo el contenido inicial.
   // ============================================
 
   // ============================================
@@ -9251,11 +10002,21 @@ window.EXENTIA_CONFIG = {
     // 'paquetes' tiene su propia sección abajo (#promos-anchor), no se duplica acá.
     grid.innerHTML = Object.values(SERVICES).filter(s => s.slug !== 'paquetes').map(service => {
       const hasHomeAvailable = service.treatments && service.treatments.some(t => t.homeAvailable === true);
-      // Mismo ícono que el modal-place-first (consistencia visual)
+      // Mismos íconos que el modal-place-first (consistencia visual)
       const homeSvg = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H10v7H6a2 2 0 0 1-2-2V10z"/></svg>';
+      const shopSvg = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>';
+      // Si aplica domicilio, mostramos AMBOS (En sucursal + A domicilio). Si NO aplica
+      // domicilio, mostramos SOLO el badge "En sucursal" con el mismo diseño (ícono
+      // de tienda + estilo available), para evitar la confusión que causaba "Solo en
+      // sucursal" en gris — se leía como "no disponible" cuando en realidad sí lo está.
       const badgeHtml = hasHomeAvailable
-        ? '<div class="service-home-badge available">' + homeSvg + '<span>A domicilio</span></div>'
-        : '<div class="service-home-badge unavailable">Solo en sucursal</div>';
+        ? '<div class="service-home-badge-group">'
+          + '<div class="service-home-badge available">' + shopSvg + '<span>En sucursal</span></div>'
+          + '<div class="service-home-badge available">' + homeSvg + '<span>A domicilio</span></div>'
+        + '</div>'
+        : '<div class="service-home-badge-group">'
+          + '<div class="service-home-badge available">' + shopSvg + '<span>En sucursal</span></div>'
+        + '</div>';
       return `
       <div class="service-card" data-service="${service.slug}" data-home-available="${hasHomeAvailable ? 'true' : 'false'}">
         <div class="service-img" style="background-image: url('${service.heroImage}');">
@@ -9382,7 +10143,25 @@ window.EXENTIA_CONFIG = {
           <div class="intro-grid">
             <div class="intro-content">
               <span class="eyebrow">Nuestra Experiencia</span>
-              <h2>Descubre el arte del <em>${service.name.toLowerCase()}</em></h2>
+              <h2>${(() => {
+                // Mapping por categoría — el template genérico "del ${name}" producía
+                // gramática rota ("del masajes", "del faciales", "del manicura").
+                const slug = (service.slug || '').toLowerCase();
+                const map = {
+                  'masajes':   ['Descubre el arte del ', 'masaje'],
+                  'faciales':  ['Descubre el arte del ', 'cuidado facial'],
+                  'manicura':  ['Descubre el arte de la ', 'manicura'],
+                  'pedicura':  ['Descubre el arte de la ', 'pedicura'],
+                  'cabello':   ['Descubre el arte del ', 'cuidado capilar'],
+                  'depilacion':['Descubre el arte de la ', 'depilación'],
+                  'maquillaje':['Descubre el arte del ', 'maquillaje'],
+                  'spakids':   ['Descubre el arte del ', 'bienestar infantil'],
+                  'lash':      ['Descubre el arte de las ', 'pestañas'],
+                  'paquetes':  ['Descubre nuestras ', 'promociones']
+                };
+                const entry = map[slug] || ['Descubre el arte de ', service.name.toLowerCase()];
+                return entry[0] + '<em>' + entry[1] + '</em>';
+              })()}</h2>
               <p>${service.longDesc}</p>
               <p>${service.longDesc2}</p>
               <ul class="intro-features">
@@ -9423,7 +10202,7 @@ window.EXENTIA_CONFIG = {
                 <span class="modality-label">Parejas</span>
               </button>
             </div>
-            <p class="modality-hint">Las parejas comparten cabina y experiencia simultánea. Los servicios sin variante pareja se atenúan automáticamente.</p>
+            <p class="modality-hint" style="margin-top:14px; margin-bottom:24px; line-height:1.5;">Las experiencias para parejas se realizan de forma simultánea en la misma cabina. Solo se mostrarán los tratamientos disponibles en modalidad para parejas.</p>
           </div>
           ` : ''}
           <div class="treatments-list">
@@ -9503,7 +10282,7 @@ window.EXENTIA_CONFIG = {
                 <div class="info">
                   <h4>${r.name}</h4>
                   <p>${r.tagline}</p>
-                  <div class="arrow-link">Explorar <span>→</span></div>
+                  <div class="arrow-link" style="cursor:pointer;">Ver servicio <span>→</span></div>
                 </div>
               </div>
             `).join('')}
@@ -9514,6 +10293,24 @@ window.EXENTIA_CONFIG = {
 
     const view = document.getElementById('service-detail-view');
     view.innerHTML = html;
+
+    // Auto-centrar la .cat-tab.active en el scroll horizontal (mobile).
+    // Antes la tab activa quedaba a la izquierda cortada. Ahora siempre en el centro.
+    try {
+      var _catTrack = view.querySelector('.cat-tabs-track');
+      var _catActive = _catTrack && _catTrack.querySelector('.cat-tab.active');
+      if (_catTrack && _catActive) {
+        var _barRect = _catTrack.getBoundingClientRect();
+        var _tabRect = _catActive.getBoundingClientRect();
+        var _delta = (_tabRect.left - _barRect.left) - (_barRect.width / 2 - _tabRect.width / 2);
+        _catTrack.scrollTo({ left: _catTrack.scrollLeft + _delta, behavior: 'auto' });
+      }
+    } catch(_){}
+
+    // Pegar la barra de categorías EXACTAMENTE al borde inferior del nav.
+    // El top fijo de 70px no coincide con la altura real del nav (que varía
+    // entre desktop y mobile por el tamaño del logo) — se mide en vivo.
+    try { if (typeof window._syncCatTabsTop === 'function') window._syncCatTabsTop(); } catch(_){}
 
     // Wire modality toggle (Individual / Parejas / Grupo)
     var modToggle = view.querySelector('#modality-toggle');
@@ -9588,6 +10385,17 @@ window.EXENTIA_CONFIG = {
     view.querySelectorAll('[data-service]').forEach(el => {
       el.addEventListener('click', (e) => {
         if (e.target.closest('button')) return;
+        // 'paquetes' no tiene vista de detalle propia; vive como sección
+        // #promos-anchor en la home. Related-cards con slug=paquetes tienen
+        // que llevar allá, no a #servicio/paquetes (que quedaba en blanco).
+        if (el.dataset.service === 'paquetes') {
+          location.hash = '';
+          setTimeout(function(){
+            var target = document.querySelector('#promos-anchor');
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+          return;
+        }
         location.hash = '#servicio/' + el.dataset.service;
       });
     });
@@ -9649,6 +10457,9 @@ window.EXENTIA_CONFIG = {
 
     homeView.classList.add('hidden');
     detailView.classList.add('hidden');
+    // Fallback para navegadores sin :has() — el CSS quita el border-bottom
+    // del nav cuando body tiene esta clase, para no crear doble línea con .cat-tabs.
+    document.body.classList.toggle('in-detail', viewId === 'service-detail-view');
 
     if (viewId === 'service-detail-view') {
       detailView.classList.remove('hidden');
@@ -9656,6 +10467,36 @@ window.EXENTIA_CONFIG = {
       homeView.classList.remove('hidden');
     }
   }
+
+  // El navegador restaura el scroll previo al recargar (scroll restoration),
+  // lo que dejaba la vista de servicio cargada "a media altura" con el
+  // breadcrumb oculto tras las barras fijas. Lo manejamos nosotros.
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch(_){}
+
+  // Pega la barra de categorías (.cat-tabs) al borde inferior REAL del nav.
+  // El top fijo por CSS (70px desktop / 56px mobile) no coincide con la altura
+  // real del nav, que varía por el tamaño del logo → hueco o encimado.
+  // También ajusta el padding-top del hero para que el breadcrumb respire.
+  window._syncCatTabsTop = function() {
+    try {
+      var nb = document.getElementById('navbar');
+      var ct = document.querySelector('#service-detail-view .cat-tabs');
+      if (!nb || !ct) return;
+      // Usamos getBoundingClientRect().bottom en vez de offsetHeight — los
+      // rects son floats precisos y evitan el gap de 1-2px por redondeo que
+      // dejaba ver el fondo del hero entre nav y barra.
+      var navBottom = nb.getBoundingClientRect().bottom;
+      // Restamos 1px extra para que la barra SOLAPE al nav 1px y no quede
+      // ninguna raya del hero visible (el nav ya no tiene border-bottom).
+      ct.style.top = Math.floor(navBottom - 1) + 'px';
+      var hero = document.querySelector('#service-detail-view .detail-hero');
+      if (hero) {
+        var barH = ct.offsetHeight || 64;
+        hero.style.setProperty('padding-top', Math.ceil(navBottom + barH + 20) + 'px', 'important');
+      }
+    } catch(_){}
+  };
+  window.addEventListener('resize', function(){ window._syncCatTabsTop(); });
 
   function handleRoute() {
     const hash = location.hash;
@@ -9665,6 +10506,9 @@ window.EXENTIA_CONFIG = {
       renderServiceDetail(serviceMatch[1]);
       showView('service-detail-view');
       window.scrollTo({ top: 0, behavior: 'instant' });
+      // Segundo scrollTo tras el primer paint: las imágenes del hero al cargar
+      // desplazan el layout y el scroll quedaba ~40px abajo.
+      setTimeout(function(){ window.scrollTo(0, 0); }, 80);
     } else {
       showView('home-view');
       if (hash && hash !== '#' && hash !== '#home') {
@@ -9902,7 +10746,9 @@ window.EXENTIA_CONFIG = {
   // ============================================
   // INIT
   // ============================================
-  document.addEventListener('DOMContentLoaded', () => {
+  // async: el catálogo remoto (si CATALOGO_MODE='remoto') se resuelve ANTES
+  // del primer render. Con cache local es instantáneo; sin cache espera máx 2s.
+  document.addEventListener('DOMContentLoaded', async () => {
     // Limpieza one-time: si el URL trae PII de una sesión previa (legacy), quitarla.
     try {
       var _u = new URLSearchParams(window.location.search);
@@ -9928,8 +10774,11 @@ window.EXENTIA_CONFIG = {
         });
       }
     } catch(_){}
+    // Catálogo remoto ANTES del primer render (no-op si CATALOGO_MODE='local')
+    try { await loadRemoteCatalog(); } catch(e) { console.warn('[catalogo]', e); }
     renderServicesGrid();
     renderFooterServices();
+    renderPromosSection();
     updateBadge();
     handleRoute();
 
@@ -10221,9 +11070,24 @@ window.EXENTIA_CONFIG = {
     [[21.1572,-86.79777],[21.1492,-86.7876],[21.1479,-86.7866],[21.1473,-86.7858],[21.1472,-86.7854],[21.1476,-86.7836],[21.148,-86.7805],[21.1477,-86.777],[21.1465,-86.7733],[21.1446,-86.7704],[21.1426,-86.7675],[21.1415,-86.7656],[21.1405,-86.7636],[21.1398,-86.7619],[21.1393,-86.7605],[21.1392,-86.7574],[21.1391,-86.7559],[21.1396,-86.7549],[21.1413,-86.7512],[21.14,-86.739],[21.13348,-86.73929],[21.128,-86.742],[21.1267,-86.7467],[21.1245,-86.749],[21.1234,-86.75],[21.1218,-86.7506],[21.119,-86.7518],[21.1173,-86.7528],[21.1146,-86.7535],[21.1116,-86.7558],[21.11,-86.7575],[21.109,-86.7582],[21.1076,-86.7587],[21.10612,-86.75894],[21.10678,-86.76001],[21.10817,-86.76297],[21.10892,-86.76605],[21.10932,-86.76716],[21.1099,-86.768],[21.11049,-86.76974],[21.11205,-86.77097],[21.11524,-86.77038],[21.11806,-86.77074],[21.12006,-86.77061],[21.12188,-86.77134],[21.12398,-86.7718],[21.12628,-86.77024],[21.1289,-86.76891],[21.13062,-86.76826],[21.13226,-86.7677],[21.13074,-86.76835],[21.13198,-86.76808],[21.12908,-86.76896],[21.12513,-86.7706],[21.1295,-86.76883],[21.12301,-86.77144],[21.12814,-86.77032],[21.1314,-86.76841],[21.132,-86.76808],[21.13262,-86.76769],[21.1323,-86.7678],[21.1336,-86.7704],[21.135,-86.7729],[21.1372,-86.7761],[21.1385,-86.7779],[21.1389,-86.7791],[21.139,-86.7802],[21.1387,-86.782],[21.1382,-86.7854],[21.1391,-86.7898],[21.1413,-86.7932],[21.1436,-86.7952],[21.14494,-86.79711],[21.14664,-86.7996],[21.15088,-86.80831]],
     // Corredor Puerto Juárez / Ultramar Ferry (entre Costa Mujeres y Centro)
     [[21.19968,-86.8105],[21.19932,-86.80054],[21.18468,-86.80651],[21.18484,-86.81093]],
-    // Av. Huayacán (corredor real ajustado por Yaz, incluye Exentia, corta antes de Lol-Be)
-    [[21.13364,-86.83339],[21.13199,-86.82938],[21.11076,-86.83916],[21.09531,-86.84155],[21.097,-86.862],[21.088,-86.866],[21.07119,-86.87408],[21.07207,-86.87997],[21.08243,-86.88262],[21.092,-86.876],[21.1,-86.872],[21.115,-86.86],[21.1218,-86.85307],[21.12817,-86.84455]]
+    // Av. Huayacán (corredor real ajustado por Yaz 2026-07-29, incluye Exentia + SM. 4, se extiende al norte hasta Bonampak)
+    [[21.135,-86.83288],[21.1351,-86.83276],[21.13503,-86.82732],[21.11076,-86.83916],[21.09531,-86.84155],[21.097,-86.862],[21.088,-86.866],[21.07956,-86.86772],[21.07107,-86.87367],[21.07207,-86.87997],[21.08243,-86.88262],[21.0949,-86.87201],[21.10513,-86.88578],[21.13619,-86.90198],[21.14147,-86.89208],[21.1435,-86.8897],[21.14838,-86.87813],[21.15427,-86.86687],[21.16132,-86.8515],[21.1462,-86.83609]]
   ];
+  // ─── Zona "por confirmar" (color canela, fondo del mapa) ─────────
+  // Cualquier punto DENTRO de Cancún metropolitano pero FUERA de Z1/Z2/Z3.
+  // Se dibuja debajo de las otras zonas, así el color solo aparece donde no hay tarifa fija.
+  // El cliente lo ve como "el equipo te confirma el traslado"; no se le rechaza la reserva.
+  // Área: envuelve Puerto Juárez / Costa Mujeres al norte, Nizuc al sur,
+  // Alfredo Bonfil / Aeropuerto al oeste, todo el litoral al este.
+  var CANCUN_POLY = [
+    [21.28,-86.815],[21.28,-86.75],   // Costa Mujeres norte
+    [21.15,-86.735],                  // Hotelera Punta Cancún
+    [21.05,-86.752],[21.02,-86.775],  // Punta Nizuc
+    [20.99,-86.85],[21.02,-86.90],    // Aeropuerto sur / oeste
+    [21.10,-86.92],[21.18,-86.92],    // Bonfil / Costa Mujeres oeste
+    [21.24,-86.87],[21.28,-86.815]
+  ];
+
   // Zona 3 (rojo): Hotelera km 12.5–22 + Lagos del Sol/Aeropuerto + Costa Mujeres — $400
   var Z3_POLYS = [
     // Hotelera km 12.5–22 (hasta Punta Nizuc)
@@ -10254,8 +11118,10 @@ window.EXENTIA_CONFIG = {
     if (pointInRing(lat, lng, Z3_POLYS[0])) return { ok: true, dist: d, zona: 3, costo: 400, nombre: 'Zona 3 · Hotelera km 12.5–22 (hasta Nizuc)', color: '#C62828' };
     if (pointInRing(lat, lng, Z3_POLYS[1])) return { ok: true, dist: d, zona: 3, costo: 400, nombre: 'Zona 3 · Lagos del Sol / Aeropuerto', color: '#C62828' };
     if (pointInRing(lat, lng, Z3_POLYS[2])) return { ok: true, dist: d, zona: 3, costo: 400, nombre: 'Zona 3 · Costa Mujeres / Punta Sam', color: '#C62828' };
-    if (d > 30) return { ok: false, dist: d };          // otra ciudad → fuera de cobertura
-    return { ok: true, dist: d, zona: null };           // en Cancún pero sin zona predefinida → por confirmar
+    // Dentro del área de Cancún metropolitano pero fuera de las zonas con tarifa fija →
+    // el equipo confirma el costo. Se acepta la reserva; el backend recibe en_area_cobertura=false.
+    if (pointInRing(lat, lng, CANCUN_POLY)) return { ok: true, dist: d, zona: 'confirmar', costo: null, nombre: 'Cancún · por confirmar', color: '#c98a7a' };
+    return { ok: false, dist: d };  // fuera de Cancún → sí es "fuera de cobertura" de verdad
   }
 
   // Dibuja los polígonos de cobertura en cualquier mapa (reutilizable).
@@ -10276,6 +11142,10 @@ window.EXENTIA_CONFIG = {
         }));
       });
     }
+    // Área de Cancún metropolitano (canela suave). Se dibuja PRIMERO con zIndex bajo
+    // para que las zonas con tarifa fija queden encima y solo se vea este color donde
+    // no hay cobertura tabulada. Es la señal visual de "por confirmar".
+    addPolys([CANCUN_POLY], '#8b5a3c', '#c98a7a', 1);
     addPolys(Z1_POLYS, '#1B5E20', '#2E7D32', 2);
     addPolys(Z2_POLYS, '#E65100', '#F9A825', 2);
     addPolys(Z3_POLYS, '#8E0000', '#C62828', 2);
@@ -10314,6 +11184,7 @@ window.EXENTIA_CONFIG = {
     citaPlace.distKm = Math.round(z.dist * 10) / 10;
     if (!z.ok) {
       citaPlace.cobertura = false;
+      citaPlace.enAreaCobertura = false;
       citaPlace.zonaNum = null;
       citaPlace.costoTraslado = null;
       box.style.display = 'block';
@@ -10324,17 +11195,26 @@ window.EXENTIA_CONFIG = {
       return;
     }
     citaPlace.cobertura = true;
-    if (z.zona === null) {
-      // Dentro de Cancún pero fuera de las 3 zonas con tarifa fija → el equipo confirma
-      citaPlace.zonaNum = null;
-      citaPlace.costoTraslado = null;
+    if (z.zona === 'confirmar') {
+      // Dentro de Cancún pero fuera de las zonas con tarifa fija → el equipo confirma el traslado.
+      // Sí procesamos la reserva; el backend recibe en_area_cobertura=false.
+      // Tono sutil (crema claro, sin íconos de alarma) para no espantar al cliente.
+      // Se cobra la TARIFA MÁXIMA ($400, la de Zona 3) por defecto. Si el equipo
+      // determina que la dirección está más cerca, ajusta a la baja al confirmar.
+      // zonaNum = 3 mantiene funcionando toda la aritmética de traslado ya existente
+      // (multiplicación por terapeutas, resumen, payload); en_area_cobertura=false es
+      // lo que marca la reserva para revisión del equipo.
+      citaPlace.enAreaCobertura = false;
+      citaPlace.zonaNum = 3;
+      citaPlace.costoTraslado = 400;
       box.style.display = 'block';
-      box.innerHTML = '<div style="display:flex;gap:8px;align-items:flex-start;background:#fff8e6;border:1px solid #d9a300;border-radius:10px;padding:10px 12px;">'
-        + '<span style="font-size:15px;line-height:1.2;">📍</span>'
-        + '<div style="font-size:12.5px;color:#7a5b00;line-height:1.45;">Tu ubicación está fuera de las zonas con tarifa fija. <b>Sí podemos ir a domicilio</b>; el equipo te confirma el costo de traslado al agendar.</div>'
+      box.innerHTML = '<div style="display:flex;gap:8px;align-items:flex-start;background:#faf4e6;border:1px solid #e0d3b0;border-radius:10px;padding:10px 12px;">'
+        + '<span style="width:10px;height:10px;border-radius:50%;background:#c98a7a;margin-top:5px;flex:0 0 auto;"></span>'
+        + '<div style="font-size:12.5px;color:#5c3a1e;line-height:1.5;">Sí llegamos a esta dirección. Traslado <b>$400</b> por terapeuta; el equipo <b>confirma el monto final</b> al recibir tu reserva y lo ajusta si corresponde.</div>'
         + '</div>';
       return;
     }
+    citaPlace.enAreaCobertura = true;
     citaPlace.zonaNum = z.zona;
     citaPlace.costoTraslado = z.costo;
     box.style.display = 'block';
@@ -10809,14 +11689,21 @@ window.EXENTIA_CONFIG = {
   function hydrateFormUserDataFromSession() {
     try {
       var sess = (typeof getClienteSession === 'function') ? getClienteSession() : null;
-      if (!sess) return;
       window._formUserData = window._formUserData || {};
       var d = window._formUserData;
-      if (!d.firstName && sess.firstName) d.firstName = sess.firstName;
-      if (!d.lastName && sess.lastName) d.lastName = sess.lastName;
-      if (!d.email && sess.email) d.email = sess.email;
-      if (!d.phone && sess.phone) {
-        d.phone = toE164MX(sess.phone);
+      if (sess) {
+        if (!d.firstName && sess.firstName) d.firstName = sess.firstName;
+        if (!d.lastName && sess.lastName) d.lastName = sess.lastName;
+        if (!d.email && sess.email) d.email = sess.email;
+        if (!d.phone && sess.phone) d.phone = toE164MX(sess.phone);
+      }
+      // Fallback localStorage: aunque no haya JWT activo, si el usuario ya
+      // pagó/reservó antes en este navegador, el email quedó guardado.
+      if (!d.email) {
+        try {
+          var savedEmail = localStorage.getItem('exentia_last_email');
+          if (savedEmail) d.email = savedEmail;
+        } catch(_){}
       }
     } catch(_){}
   }
@@ -11093,7 +11980,12 @@ window.EXENTIA_CONFIG = {
     // Si es sucursal, no hace falta porque el toggle ya dice todo.
     if (isHome && citaPlace.zonaNum && summaryBox && summaryRow) {
       summaryRow.style.display = '';
-      var zColor = ({1:'#3fa34d', 2:'#d9a300', 3:'#d9534f'})[citaPlace.zonaNum] || '#9a9854';
+      // Si la dirección quedó fuera de las zonas mapeadas se cobra la tarifa máxima
+      // (zonaNum=3) pero la etiqueta NO debe decir "Zona 3" — sería engañoso. Se muestra
+      // "Por confirmar" con el color canela del área sin tarifa fija.
+      var esPorConfirmar = (citaPlace.enAreaCobertura === false);
+      var zColor = esPorConfirmar ? '#c98a7a' : (({1:'#3fa34d', 2:'#d9a300', 3:'#d9534f'})[citaPlace.zonaNum] || '#9a9854');
+      var zLabel = esPorConfirmar ? 'Traslado por confirmar' : ('Zona ' + citaPlace.zonaNum);
       var addrText = citaPlace.address || 'Dirección detallada abajo';
       summaryBox.innerHTML = '<div class="cf-place-summary-icon">'
         +   '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z"/></svg>'
@@ -11101,7 +11993,7 @@ window.EXENTIA_CONFIG = {
         + '<div class="cf-place-summary-info">'
         +   '<div class="cf-place-summary-label">Pin guardado · Domicilio</div>'
         +   '<div class="cf-place-summary-mode">' + addrText + '</div>'
-        +   '<div class="cf-place-summary-zone"><span class="cf-place-summary-zone-dot" style="background:' + zColor + ';"></span>Zona ' + citaPlace.zonaNum + ' · $' + citaPlace.costoTraslado + '/terapeuta</div>'
+        +   '<div class="cf-place-summary-zone"><span class="cf-place-summary-zone-dot" style="background:' + zColor + ';"></span>' + zLabel + ' · $' + citaPlace.costoTraslado + '/terapeuta</div>'
         + '</div>'
         + '<button type="button" class="cf-place-summary-change" onclick="changeLocation()">'
         +   '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
@@ -11170,6 +12062,9 @@ window.EXENTIA_CONFIG = {
         zona: citaPlace.zona || '',
         zonaNum: citaPlace.zonaNum || '',
         costoTraslado: citaPlace.costoTraslado || '',
+        // Se guarda para que al reusar la dirección la reserva siga marcada como
+        // "el equipo confirma el traslado" y no se pierda el flag.
+        enAreaCobertura: (typeof citaPlace.enAreaCobertura === 'boolean') ? citaPlace.enAreaCobertura : null,
         calle: citaPlace.calle || '',
         num_ext: citaPlace.num_ext || '',
         num_int: citaPlace.num_int || '',
@@ -11191,6 +12086,14 @@ window.EXENTIA_CONFIG = {
     citaPlace.zona = saved.zona || '';
     citaPlace.zonaNum = saved.zonaNum || '';
     citaPlace.costoTraslado = saved.costoTraslado || '';
+    // Direcciones guardadas antes de este cambio no traen el flag: se recalcula
+    // desde las coordenadas para no marcar por error una reserva como "en zona".
+    if (typeof saved.enAreaCobertura === 'boolean') {
+      citaPlace.enAreaCobertura = saved.enAreaCobertura;
+    } else if (saved.lat && saved.lng && typeof classifyZone === 'function') {
+      var _zs = classifyZone(saved.lat, saved.lng, saved.zona || '');
+      citaPlace.enAreaCobertura = (_zs.ok && _zs.zona !== 'confirmar');
+    }
     citaPlace.calle = saved.calle || '';
     citaPlace.num_ext = saved.num_ext || '';
     citaPlace.num_int = saved.num_int || '';
@@ -11548,7 +12451,259 @@ window.EXENTIA_CONFIG = {
     } catch(_) { return '$0'; }
   }
 
+  // ===== Stripe Checkout (modo real, feature-flagged) =====
+  // Usa el mismo builder de payload que el simulador para mantener el shape
+  // idéntico. La cita real se crea en el webhook receiver n8n cuando Stripe
+  // confirma el pago (checkout.session.completed), no aquí.
+  function _pgStripeUuidV4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+      var r = Math.random()*16|0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  // Instancia global del widget Stripe (guardada para destroy)
+  window._exentiaStripeCheckout = null;
+
+  // Rescata el correo del cliente desde CUALQUIER fuente conocida (JWT logueado,
+  // inputs del flujo, o localStorage de sesiones anteriores). Si lo encuentra,
+  // lo persiste en localStorage para que la próxima sesión también lo tenga.
+  function _pgResolveEmail() {
+    var readVal = function(id){
+      var el = document.getElementById(id);
+      return el && el.value ? String(el.value).trim() : '';
+    };
+    var isValid = function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); };
+
+    var candidates = [];
+    // 1. JWT session (usuario logueado) — puede haberse hidratado ya
+    try { if (typeof hydrateFormUserDataFromSession === 'function') hydrateFormUserDataFromSession(); } catch(_){}
+    candidates.push((window._formUserData || {}).email);
+    // 2. getClienteSession directo por si no hidrata
+    try {
+      var sess = (typeof getClienteSession === 'function') ? getClienteSession() : null;
+      if (sess && sess.email) candidates.push(sess.email);
+    } catch(_){}
+    // 3. Inputs de todos los formularios donde pudo teclear el email
+    ['cf-email','ag-email','pg-email','pg-callme-email'].forEach(function(id){
+      candidates.push(readVal(id));
+    });
+    // 4. localStorage — email persistido de una sesión anterior
+    try { candidates.push(localStorage.getItem('exentia_last_email') || ''); } catch(_){}
+
+    var email = '';
+    for (var i = 0; i < candidates.length; i++) {
+      var v = String(candidates[i] || '').trim().toLowerCase();
+      if (v && isValid(v)) { email = v; break; }
+    }
+    // Propagar hacia adelante: _formUserData + localStorage
+    if (email) {
+      try { window._formUserData = window._formUserData || {}; window._formUserData.email = email; } catch(_){}
+      try { localStorage.setItem('exentia_last_email', email); } catch(_){}
+    }
+    return email;
+  }
+  window._pgResolveEmail = _pgResolveEmail;
+
+  function _pgStripeClose() {
+    // Cierre manual del modal Stripe (X o click al overlay).
+    var modal = document.getElementById('modal-stripe');
+    try {
+      if (window._exentiaStripeCheckout && typeof window._exentiaStripeCheckout.destroy === 'function') {
+        window._exentiaStripeCheckout.destroy();
+      }
+    } catch(err) { console.warn('[stripe] destroy falló:', err); }
+    window._exentiaStripeCheckout = null;
+    if (modal) modal.style.display = 'none';
+    var container = document.getElementById('stripe-checkout-container');
+    if (container) container.innerHTML = '';
+    var status = document.getElementById('stripe-status');
+    if (status) status.style.display = '';
+    var confirm = document.getElementById('stripe-confirm');
+    if (confirm) confirm.style.display = 'none';
+    // Regresar el grid a su estado inicial (oculto): si se reabre el modal,
+    // el "Cargando…" debe verse solo, sin el resumen viejo detrás.
+    var grid = document.getElementById('stripe-grid');
+    if (grid) grid.style.display = 'none';
+    try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_close_manual'); } catch(_){}
+  }
+  window._pgStripeClose = _pgStripeClose;
+
+  function _pgStripeCheckout() {
+    // Resolver email de cualquier fuente ANTES de construir el payload,
+    // para que buildReservaPayload lea _formUserData.email ya poblado.
+    var resolvedEmail = _pgResolveEmail();
+    var payload;
+    try { payload = buildReservaPayload({ origin: 'stripe' }); }
+    catch (err) {
+      console.warn('[stripe] buildReservaPayload falló:', err);
+      alert('No pudimos preparar tu carrito para el pago. Recarga la página y vuelve a intentarlo.');
+      return;
+    }
+    // Refuerzo: si el email resuelto existe pero no llegó al payload por alguna razón, forzarlo
+    if (resolvedEmail && !payload.cliente_email) {
+      payload.cliente_email = resolvedEmail;
+      payload.email = resolvedEmail;
+    }
+    if (!payload || !Array.isArray(payload.personas_servicios) || payload.personas_servicios.length === 0) {
+      alert('Falta información del carrito. Regresa al catálogo y vuelve a intentarlo.');
+      return;
+    }
+    if (!payload.fecha || !payload.hora) {
+      alert('Falta elegir fecha y hora antes de pagar.');
+      return;
+    }
+    if (!window.Stripe) {
+      alert('La pasarela de pago aún no cargó. Recarga la página y vuelve a intentarlo.');
+      return;
+    }
+
+    var bookingUuid = _pgStripeUuidV4();
+    payload.booking_uuid = bookingUuid;
+    payload.return_origin = window.location.origin + window.location.pathname;
+
+    // Mandar las líneas de cobro EXPLÍCITAS, las mismas que pinta el resumen.
+    // Si no las mandamos, n8n las reconstruye por su cuenta desde el payload y
+    // se abre la puerta a que su cálculo y el nuestro se separen. Con esto hay
+    // una sola verdad: lo que el cliente ve es lo que Stripe cobra.
+    // (El traslado NO va aquí — n8n lo agrega como línea aparte; ver _pgCobroDesglose.)
+    try {
+      var _desglose = _pgCobroDesglose();
+      payload.stripe_line_items = _desglose.items.map(function(li){
+        return { name: li.name, unit_amount: li.unit_amount, quantity: li.quantity };
+      });
+      console.log('[stripe] a cobrar:', _desglose.total,
+                  '= servicios', _desglose.subtotal, '+ traslado', _desglose.traslado);
+    } catch(err) {
+      console.warn('[stripe] no se pudieron armar las líneas, n8n las reconstruirá:', err);
+    }
+
+    // Cerrar el modal-choice y mostrar el modal-stripe con estado "cargando"
+    try { closeModal('modal-choice'); } catch(_){}
+    var modal = document.getElementById('modal-stripe');
+    if (modal) modal.style.display = 'flex';
+    var statusEl = document.getElementById('stripe-status');
+    var container = document.getElementById('stripe-checkout-container');
+    var confirmEl = document.getElementById('stripe-confirm');
+    if (statusEl) statusEl.style.display = '';
+    if (container) container.innerHTML = '';
+    if (confirmEl) confirmEl.style.display = 'none';
+
+    try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_start', { booking_uuid: bookingUuid, total: payload.valor_ticket_mxn || payload.precio_total_mxn || 0 }); } catch(_){}
+
+    var CFG = window.EXENTIA_CONFIG || {};
+    var stripe = Stripe(CFG.STRIPE_PUBLISHABLE_KEY);
+
+    // fetchClientSecret: callback que Stripe llama para obtener el client_secret
+    var fetchClientSecret = function() {
+      return fetch(CFG.WEBHOOK_STRIPE_CHECKOUT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(body){
+        if (!body || !body.clientSecret) {
+          throw new Error('backend no devolvió clientSecret: ' + JSON.stringify(body));
+        }
+        try { localStorage.setItem('exentia_last_stripe_uuid', body.booking_uuid || bookingUuid); } catch(_){}
+        return body.clientSecret;
+      });
+    };
+
+    // PREFERIR createEmbeddedCheckoutPage: es la única que entiende las sesiones
+    // ui_mode=embedded_page, el único modo embebido que acepta la cuenta de Exentia
+    // (nació en la API nueva, donde `embedded` a secas ya no existe). Con una sesión
+    // embedded_page, initEmbeddedCheckout devuelve una promesa que nunca resuelve ni
+    // falla — el modal se queda en blanco y Stripe pinta "Something went wrong".
+    // El nombre engaña: createEmbeddedCheckoutPage monta INLINE en el contenedor de
+    // mount(), no a pantalla completa. Se mantiene initEmbeddedCheckout como respaldo
+    // por si algún día se vuelve a emitir sesiones ui_mode=embedded.
+    var initFn = (typeof stripe.createEmbeddedCheckoutPage === 'function')
+      ? stripe.createEmbeddedCheckoutPage.bind(stripe)
+      : (typeof stripe.initEmbeddedCheckout === 'function'
+          ? stripe.initEmbeddedCheckout.bind(stripe)
+          : null);
+    if (!initFn) {
+      alert('La versión de Stripe.js no soporta Embedded Checkout. Contacta a soporte.');
+      _pgStripeClose();
+      return;
+    }
+    try {
+      var _mst = document.getElementById('modal-stripe');
+      if (_mst) _mst.setAttribute('data-stripe-mode', 'inline');
+    } catch(_){}
+
+    initFn({
+      fetchClientSecret: fetchClientSecret,
+      onComplete: function() {
+        // El widget confirmó que el pago se completó (client-side).
+        // El webhook backend seguirá disparándose para crear la cita en Supabase.
+        try {
+          if (window._exentiaStripeCheckout && typeof window._exentiaStripeCheckout.destroy === 'function') {
+            window._exentiaStripeCheckout.destroy();
+          }
+        } catch(_){}
+        window._exentiaStripeCheckout = null;
+        // Mostrar el estado "confirmando" en el modal-stripe brevemente.
+        // Ocultamos el grid completo (resumen + formulario) para que el check
+        // de confirmación quede centrado y solo, sin el pedido al lado.
+        if (container) container.innerHTML = '';
+        var gridOk = document.getElementById('stripe-grid');
+        if (gridOk) gridOk.style.display = 'none';
+        if (statusEl) statusEl.style.display = 'none';
+        if (confirmEl) confirmEl.style.display = '';
+        // Después de 1.5s, cerrar el modal-stripe y abrir la vista de éxito.
+        // La UI de "cita confirmada + WhatsApp + contacto" vive en #modal-confirm-final
+        // (#pg-success-actions está DENTRO de ese modal, no del pago-simulador).
+        // showFinalConfirm() la muestra si window._reservaPosted === true.
+        setTimeout(function(){
+          var m = document.getElementById('modal-stripe');
+          if (m) m.style.display = 'none';
+          // Marcar el dispatch como ya enviado — showFinalConfirm() usa este flag
+          // para decidir si mostrar #pg-success-actions
+          window._pgReservaSent = true;
+          window._reservaPosted = true;
+          try {
+            if (typeof showFinalConfirm === 'function') {
+              showFinalConfirm();
+            } else {
+              // Fallback (no debería pasar): abrir pago-simulador con vista de éxito
+              openModal('modal-pago-simulador');
+              _pgShowResult('ok', '¡Cita confirmada!', 'Tu pago fue procesado y tu cita ya quedó guardada.', true);
+            }
+          } catch(err) { console.warn('[stripe] showFinalConfirm falló:', err); }
+          try { if (typeof clearCart === 'function') clearCart(); } catch(_){}
+          try { localStorage.removeItem('exentia_last_stripe_uuid'); } catch(_){}
+          try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_success', { booking_uuid: bookingUuid }); } catch(_){}
+        }, 1500);
+      }
+    })
+    .then(function(checkout) {
+      window._exentiaStripeCheckout = checkout;
+      // Ocultar el "Cargando…" JUSTO ANTES del mount (el iframe necesita altura visible)
+      if (statusEl) statusEl.style.display = 'none';
+      var grid = document.getElementById('stripe-grid');
+      if (grid) grid.style.display = '';
+      checkout.mount('#stripe-checkout-container');
+    })
+    .catch(function(err) {
+      console.error('[stripe] init falló:', err);
+      if (statusEl) {
+        statusEl.style.display = '';
+        statusEl.innerHTML = '<div style="color:#d9534f; font-size:14px;">No pudimos abrir la pasarela.<br>Cierra este modal y vuelve a intentar.</div>';
+      }
+    });
+  }
+  window._pgStripeCheckout = _pgStripeCheckout;
+
   function openPagoSimulador() {
+    // Si el flag apunta a Stripe, saltar el simulador y crear la Checkout Session real
+    try {
+      if ((window.EXENTIA_CONFIG || {}).PAYMENT_MODE === 'stripe') {
+        return _pgStripeCheckout();
+      }
+    } catch(_){}
     closeModal('modal-choice');
     // Pre-rellenar email del usuario logueado / del flujo
     try {
@@ -11769,6 +12924,56 @@ window.EXENTIA_CONFIG = {
   // Construye el mensaje de WhatsApp con resumen + estado del pago (post-pago).
   // Se arma desde buildReservaPayload() — misma fuente que el webhook, así el
   // mensaje siempre coincide con lo que quedó guardado en la reserva.
+  // FUENTE ÚNICA de lo que se cobra.
+  // Antes había dos cálculos independientes: la página mostraba
+  // `valor_ticket_mxn` (solo servicios) y n8n reconstruía las líneas por su
+  // cuenta y le sumaba el traslado. En citas a domicilio eso hacía que la
+  // pantalla dijera un número y Stripe cobrara otro.
+  // Ahora esta función arma las líneas UNA vez: el mismo array se manda a
+  // Stripe y se pinta en el resumen, así no pueden divergir.
+  //
+  // OJO: las líneas NO incluyen el traslado. El nodo "Build Session" de n8n lo
+  // agrega como línea aparte cuando tipo_cita === 'domicilio'. Si lo metiéramos
+  // aquí también, se cobraría dos veces.
+  function _pgCobroDesglose() {
+    var p;
+    try { p = buildReservaPayload(); } catch(_) { p = {}; }
+    var items = [];
+    function agregar(label, s) {
+      var precio = Number(s.precio_mxn) || 0;
+      if (precio <= 0) return;               // los "a cotizar" no se cobran aquí
+      var slug = s.slug || s.nombre || 'Servicio';
+      items.push({
+        name: (label ? label + ' · ' : '') + slug,
+        unit_amount: Math.round(precio * 100),
+        quantity: 1,
+        _persona: label || '',
+        _slug: slug,
+        _precio: precio
+      });
+    }
+    var personas = p.personas_servicios || [];
+    if (personas.length) {
+      personas.forEach(function(per, i){
+        var label = per.label || ('Persona ' + (i + 1));
+        (per.servicios || []).forEach(function(s){ agregar(label, s); });
+      });
+    }
+    if (!items.length) {
+      (p.servicios || []).forEach(function(s){ agregar('', s); });
+    }
+    var traslado = (p.tipo_cita === 'domicilio') ? (parseFloat(p.costo_traslado_total) || 0) : 0;
+    var subtotalCent = items.reduce(function(acc, li){ return acc + li.unit_amount * (li.quantity || 1); }, 0);
+    return {
+      items: items,
+      traslado: traslado,
+      subtotal: subtotalCent / 100,
+      total: (subtotalCent + Math.round(traslado * 100)) / 100,   // = lo que cobra Stripe
+      payload: p
+    };
+  }
+  window._pgCobroDesglose = _pgCobroDesglose;
+
   function _pgBuildWaMessage() {
     var p = buildReservaPayload();
     var prefLabel = { mujer: 'Mujer', hombre: 'Hombre', indistinto: 'Indiferente' };
@@ -11912,6 +13117,52 @@ window.EXENTIA_CONFIG = {
     }, 600);
   }
   window._pgFinishCallme = _pgFinishCallme;
+
+  // ===== Retorno desde Stripe Checkout (fallback para flows con 3DS/redirect) =====
+  // Con ui_mode=embedded_page + redirect_on_completion=if_required, la mayoría
+  // de pagos con tarjeta NO redirigen — se disparan por onComplete del widget.
+  // Pero flows con 3DS challenge o métodos que redirigen sí regresan aquí con
+  // ?stripe_success=1&session_id=... y hay que mostrar la vista de éxito.
+  function _pgHandleStripeReturn() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var isSuccess = params.get('stripe_success') === '1';
+      if (!isSuccess) return;
+
+      var bookingUuid = params.get('booking_uuid') || null;
+      var sessionId = params.get('session_id') || null;
+
+      // Limpiar los query params para que un refresh no re-dispare el flujo
+      try {
+        var cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+      } catch(_){}
+
+      try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_success_redirect', { booking_uuid: bookingUuid, session_id: sessionId }); } catch(_){}
+      // Marcar el dispatch como ya enviado (showFinalConfirm mira este flag)
+      window._pgReservaSent = true;
+      window._reservaPosted = true;
+      // Abrir la vista de éxito con los 2 CTAs (WhatsApp / contacto)
+      try {
+        if (typeof showFinalConfirm === 'function') {
+          showFinalConfirm();
+        } else {
+          openModal('modal-pago-simulador');
+          _pgShowResult('ok', '¡Cita confirmada!', 'Tu pago fue procesado y tu cita ya quedó guardada.', true);
+        }
+      } catch(err) { console.warn('[stripe] showFinalConfirm falló:', err); }
+      try { if (typeof clearCart === 'function') clearCart(); } catch(_){}
+      try { localStorage.removeItem('exentia_last_stripe_uuid'); } catch(_){}
+    } catch (err) {
+      console.warn('[stripe] handler retorno falló:', err);
+    }
+  }
+  // Corre después del resto del init (buildReservaPayload, openModal, etc. ya cargados)
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(_pgHandleStripeReturn, 300);
+  } else {
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(_pgHandleStripeReturn, 300); });
+  }
 
   // Formateo en vivo de inputs (mientras escribe el cliente)
   document.addEventListener('DOMContentLoaded', function(){
@@ -12143,7 +13394,7 @@ window.EXENTIA_CONFIG = {
     });
     // Label dinámico con duración
     var label = document.getElementById('cal2-slots-label');
-    if (label) label.textContent = 'Horarios disponibles · duración aprox ' + durMin + ' min';
+    if (label) label.textContent = 'Horarios disponibles · duración aprox. ' + durMin + ' min';
   }
 
   function updateCal2Selection() {
@@ -12292,8 +13543,16 @@ window.EXENTIA_CONFIG = {
     }
     var totalEl = document.getElementById('cf-meta-total');
     if (totalEl) {
+      // Bug: parsePriceMXN solo funciona cuando la key del cart lleva "$XXX" embebido.
+      // Los adicionales (Persona X → servicio individual) NO tienen el $ en la key, así que
+      // sumaban 0 y el "Total estimado" mostraba solo el precio pareja. _gsParsePrice
+      // hace fallback al catálogo (SERVICES) leyendo nombre + duración, y respeta pareja
+      // vs individual con el personaId (0 = "Para los dos").
       var sub = 0;
-      cart.forEach(function(c){ sub += parsePriceMXN(c); });
+      cart.forEach(function(c, i){
+        var personaId = (cartMeta && cartMeta[i]) ? cartMeta[i].personaId : null;
+        sub += (typeof _gsParsePrice === 'function') ? _gsParsePrice(c, personaId) : parsePriceMXN(c);
+      });
       totalEl.textContent = sub > 0 ? fmtMXN(sub) : 'A confirmar';
     }
     // Post-pago: mostrar las 2 vías de confirmación (WhatsApp / que me contacten).
@@ -13000,7 +14259,11 @@ window.EXENTIA_CONFIG = {
         var addr = citaPlace.address || (
           [citaPlace.calle, citaPlace.num_ext, citaPlace.zona].filter(Boolean).join(' ')
         ) || 'A domicilio';
-        var zonaTxt = citaPlace.zonaNum ? ('Zona ' + citaPlace.zonaNum) : '';
+        // Fuera de zonas mapeadas se cobra tarifa máxima pero la etiqueta dice
+        // "por confirmar" — nunca "Zona 3", que daría una precisión que no tenemos.
+        var zonaTxt = (citaPlace.enAreaCobertura === false)
+          ? 'Traslado por confirmar'
+          : (citaPlace.zonaNum ? ('Zona ' + citaPlace.zonaNum) : '');
         locEl.innerHTML = '<div class="ck-loc-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 22s-7-7.5-7-13a7 7 0 0 1 14 0c0 5.5-7 13-7 13z"/></svg></div>'
           + '<div class="ck-loc-info">'
           + '<div class="ck-loc-title">A domicilio</div>'
@@ -13656,14 +14919,20 @@ window.EXENTIA_CONFIG = {
       box.innerHTML = '<b>Fuera de cobertura</b> · esta dirección está fuera de Exentia At Home. Mueve el pin a una zona cubierta o regresa a elegir sucursal.';
       return;
     }
-    if (z.zona === null) {
-      citaPlace.zonaNum = null;
-      citaPlace.costoTraslado = null;
-      setBtn(false);
+    if (z.zona === 'confirmar') {
+      // En Cancún pero fuera de zonas con tarifa fija — se cobra la tarifa MÁXIMA
+      // ($400 = Zona 3) y el equipo ajusta a la baja si corresponde al confirmar.
+      // zonaNum=3 mantiene la aritmética de traslado; en_area_cobertura=false marca
+      // la reserva para revisión. Se PERMITE continuar (botón habilitado).
+      citaPlace.enAreaCobertura = false;
+      citaPlace.zonaNum = 3;
+      citaPlace.costoTraslado = 400;
+      setBtn(true);
       box.className = 'mfa-zone-feedback warn';
-      box.innerHTML = '<b>Sin zona con tarifa fija.</b> Mueve el pin a Zona 1 (Centro), Zona 2 (Hotelera) o Zona 3 (Aeropuerto) para continuar.';
+      box.innerHTML = 'Sí llegamos a esta dirección. Traslado <b>$400</b> por terapeuta; el equipo <b>confirma el monto final</b> al recibir tu reserva.';
       return;
     }
+    citaPlace.enAreaCobertura = true;
     citaPlace.zonaNum = z.zona;
     citaPlace.costoTraslado = z.costo;
     setBtn(true);
@@ -15263,6 +16532,20 @@ window.EXENTIA_CONFIG = {
     container.innerHTML = tabsHtml + heroHtml + modalityHtml + listHtml;
     updateSvBottom();
 
+    // Auto-centrar la tab activa en el scroll horizontal (mobile) — antes quedaba
+    // pegada a la izquierda o cortada por la mitad, ahora siempre en el centro.
+    try {
+      var activeTab = container.querySelector('.sv2-tab.active');
+      var tabsBar = container.querySelector('.sv2-tabs');
+      if (activeTab && tabsBar) {
+        var barRect = tabsBar.getBoundingClientRect();
+        var tabRect = activeTab.getBoundingClientRect();
+        // Calcular scroll para que la tab quede centrada en el bar
+        var delta = (tabRect.left - barRect.left) - (barRect.width / 2 - tabRect.width / 2);
+        tabsBar.scrollTo({ left: tabsBar.scrollLeft + delta, behavior: 'auto' });
+      }
+    } catch(_){}
+
     // Wire botón "Cambiar a sucursal/domicilio" del banner de modalidad
     var modeChangeBtn = container.querySelector('[data-action="change-place"]');
     if (modeChangeBtn) {
@@ -16014,16 +17297,22 @@ window.EXENTIA_CONFIG = {
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   i18n ES/EN + conversión MXN→USD
+   i18n ES/EN (SOLO texto — los precios NUNCA se convierten)
    Patrón: toggle pill en navbar (estándar de sitios turísticos Cancún).
    Mecanismo: diccionario exact-match sobre text nodes + patterns regex
    para frases dinámicas + MutationObserver para contenido renderizado.
-   En EN, los precios MXN se muestran convertidos a USD (entero, sin
-   decimales). Los cálculos internos y el payload siguen en MXN/español.
+
+   ⚠️ La conversión MXN→USD se ELIMINÓ el 2026-07-28. Motivo:
+   Exentia cobra siempre en pesos y Stripe carga en MXN. La conversión
+   corría sobre TODOS los textos en modo EN con una tasa fija de 17.5,
+   así que un cliente en inglés veía "$299 USD" en pantalla mientras la
+   tarjeta se le cargaba en MXN — dos números que no coincidían, con una
+   tasa que además se desactualizaba sola.
+   Si algún día se quiere mostrar USD, tiene que ser referencial y
+   explícito ("aprox. $299 USD · se cobra en MXN"), nunca reemplazando
+   el precio real.
 ═══════════════════════════════════════════════════════════════════ */
 (function(){
-  // Tasa de cambio interna — ajustar aquí cuando cambie el tipo de cambio.
-  var USD_RATE = window.EXENTIA_USD_RATE || 17.5;
 
   var DICT = {
     // ── Navbar / ribbon ──
@@ -16042,7 +17331,7 @@ window.EXENTIA_CONFIG = {
     // ── Secciones ──
     'Realzamos la belleza de tu esencia': 'We enhance the beauty of your essence',
     'Nuestros': 'Our',
-    'Cada experiencia tiene su propio mundo. Explora nuestros servicios y descubre la que fue hecha para ti.': 'Every experience has its own world. Explore our services and discover the one made for you.',
+    'Cada experiencia tiene su propio mundo. Explora nuestros servicios y descubre el que fue hecho para ti.': 'Every experience has its own world. Explore our services and discover the one made for you.',
     'Experiencias completas con beneficio': 'Complete experiences with savings',
     'Promociones y': 'Promotions &',
     'Combinamos tus servicios favoritos en experiencias diseñadas para un cuidado integral.': 'We combine your favorite services into experiences designed for complete care.',
@@ -16051,12 +17340,12 @@ window.EXENTIA_CONFIG = {
     'Masaje profundo de 90 minutos combinado con facial orgánico para máxima renovación.': 'A deep 90-minute massage combined with an organic facial for maximum renewal.',
     'Masaje relajante, corte de cabello y servicio de barbería para el caballero Exentia.': 'Relaxing massage, haircut and barber service for the Exentia gentleman.',
     'Servicio de barbería': 'Barber service',
-    'Los precios mostrados son finales con descuento. Otras promociones están en confirmación con el equipo.': 'Prices shown are final with discount. Other promotions are being confirmed with the team.',
+    'Los precios mostrados son finales con descuento. Otras promociones están pendientes de confirmación por el equipo.': 'Prices shown are final with discount. Other promotions are being confirmed with the team.',
     'Reservar': 'Book', 'Reservar Ahora': 'Book Now', 'Agendar Ahora': 'Book Now',
     'Nuestra Filosofía': 'Our Philosophy',
     'Equilibrio para tu': 'Balance for your', 'mente y cuerpo': 'mind & body',
-    'Cuidarte no debería sentirse como un lujo lejano, sino como algo que mereces cada día. Desde que llegas, el ritmo del exterior se queda atrás y comienza una experiencia de calma, bienestar y reconexión.': 'Taking care of yourself shouldn’t feel like a distant luxury, but something you deserve every day. From the moment you arrive, the outside pace stays behind and an experience of calm, wellness and reconnection begins.',
-    'Trabajamos con productos orgánicos y naturales porque creemos que lo que toca tu piel es tan importante como lo que sientes mientras te cuidan. Escuchamos primero, recomendamos después y adaptamos cada servicio a lo que tu cuerpo necesita hoy.': 'We work with organic, natural products because we believe what touches your skin is as important as what you feel while being cared for. We listen first, recommend later, and adapt every service to what your body needs today.',
+    'Cuidarte no debería sentirse como un lujo lejano, sino como algo que mereces cada día. Desde que llegas, el ritmo del exterior se queda atrás y comienza una experiencia de calma, bienestar y reconexión.': 'Taking care of yourself shouldn’t feel like a distant luxury, but like something you deserve every day. From the moment you arrive, the outside pace stays behind and an experience of calm, wellness and reconnection begins.',
+    'Trabajamos con productos orgánicos y naturales porque creemos que lo que toca tu piel es tan importante como lo que sientes mientras te cuidan. Escuchamos primero, recomendamos después y adaptamos cada servicio a lo que tu cuerpo necesita hoy.': 'We work with organic, natural products because we believe what touches your skin is as important as what you feel while being cared for. We listen first, then recommend, and adapt every service to what your body needs today.',
     'Espacio Íntimo': 'Intimate Space', 'Ambiente privado para tu total relajación': 'A private setting for total relaxation',
     'Productos Orgánicos': 'Organic Products', 'Ingredientes naturales de alta calidad': 'High-quality natural ingredients',
     'Expertas Certificadas': 'Certified Experts', 'Profesionales apasionadas por tu bienestar': 'Professionals passionate about your wellness',
@@ -16070,7 +17359,7 @@ window.EXENTIA_CONFIG = {
     'Resolvemos tus dudas': 'We answer your questions', 'Preguntas': 'Frequently Asked', 'Frecuentes': 'Questions',
     // ── FAQ ──
     '¿Necesito hacer cita previa?': 'Do I need an appointment?',
-    'Sí, te recomendamos agendar tu cita con anticipación para garantizar tu espacio y que podamos preparar todo para tu experiencia. Puedes reservar directamente desde nuestra página en pocos pasos o por WhatsApp.': 'Yes, we recommend booking in advance to guarantee your spot so we can prepare everything for your experience. You can book directly from our page in a few steps or via WhatsApp.',
+    'Sí, te recomendamos agendar tu cita con anticipación para garantizar tu espacio y que podamos preparar todo para tu experiencia. Puedes reservar directamente desde nuestra página en pocos pasos o por WhatsApp.': 'Yes, we recommend booking in advance to guarantee your spot, so we can prepare everything for your experience. You can book directly from our page in a few steps or via WhatsApp.',
     '¿Qué tipo de productos utilizan?': 'What kind of products do you use?',
     'Trabajamos con productos orgánicos y naturales cuidadosamente seleccionados. Creemos que lo que toca tu piel es tan importante como lo que sientes mientras te cuidan. Utilizamos ingredientes reales y fórmulas limpias que nutren y restauran.': 'We work with carefully selected organic, natural products. We believe what touches your skin matters as much as what you feel while being cared for. We use real ingredients and clean formulas that nourish and restore.',
     '¿Cuál es su horario de atención?': 'What are your opening hours?',
@@ -16148,18 +17437,18 @@ window.EXENTIA_CONFIG = {
     'Te ayudamos por WhatsApp': 'We’ll help you on WhatsApp',
     'Una asesora confirma tu cita y resuelve tus dudas': 'An advisor confirms your appointment and answers your questions',
     'Agenda aquí': 'Book here',
-    'Elige fecha y hora en el calendario, listo en 1 minuto': 'Pick a date and time on the calendar, done in 1 minute',
+    'Elige fecha y hora en el calendario, listo en 1 minuto': 'Pick a date and time on the calendar — done in 1 minute',
     'Para agendar en línea necesitamos tu correo y WhatsApp. Si prefieres, continúa por WhatsApp y nosotros lo cerramos contigo.': 'To book online we need your email and WhatsApp. If you prefer, continue on WhatsApp and we’ll finish it with you.',
     'Si la disponibilidad del equipo cambia, te avisamos antes de confirmar la cita.': 'If team availability changes, we’ll let you know before confirming your appointment.',
     'Cargo mínimo por 1 terapeuta. Elige una opción arriba para ver el cargo exacto.': 'Minimum fee for 1 therapist. Choose an option above to see the exact fee.',
-    'Cargo mínimo por 1 terapeuta. El equipo confirma el final según cuántas atiendan.': 'Minimum fee for 1 therapist. The team confirms the final fee based on how many attend.',
+    'Cargo mínimo por 1 terapeuta. El equipo confirma el final según cuántas atiendan.': 'Minimum fee for 1 therapist. The team confirms the final fee based on how many therapists attend.',
     'Para grupos de 4+ personas, una asesora de Exentia revisa tu caso por WhatsApp y confirma cuántas terapeutas asignar.': 'For groups of 4+, an Exentia advisor reviews your case on WhatsApp and confirms how many therapists to assign.',
     '* Algunos servicios se cotizan por separado y no se suman al total.': '* Some services are quoted separately and are not added to the total.',
     'a confirmar*': 'to be quoted*',
     // ── Categorías ──
     'Masajes': 'Massages', 'Faciales': 'Facials', 'Manicura': 'Manicure', 'Pedicura': 'Pedicure',
     'Cabello': 'Hair', 'Maquillaje': 'Makeup', 'Depilación': 'Waxing', 'SpaKids': 'Spa Kids',
-    'Nuestras especialistas te ayudan a obtener resultados duraderos con técnicas delicadas y productos de la más alta calidad. Servicios para caballero: precio +50% adicional sobre la tarifa mostrada.': 'Our specialists help you achieve lasting results with delicate techniques and the highest quality products. Services for men: +50% additional over the displayed price.',
+    'Nuestras especialistas te ayudan a obtener resultados duraderos con técnicas delicadas y productos de la más alta calidad. Servicios para caballero: precio +50% adicional sobre la tarifa mostrada.': 'Our specialists help you achieve lasting results with delicate techniques and the highest quality products. Services for men: an additional 50% over the displayed price.',
     'Lash & Cejas': 'Lash & Brows',
     'relajación pura': 'pure relaxation', 'piel radiante': 'radiant skin',
     'arte en tus manos': 'art in your hands', 'pies perfectos': 'perfect feet',
@@ -16181,7 +17470,7 @@ window.EXENTIA_CONFIG = {
     'Cortes personalizados, color, tratamientos capilares profundos y peinados especiales.': 'Custom cuts, color, deep hair treatments and special hairstyles.',
     'Maquillaje profesional para eventos, ocasiones especiales y el día más importante de tu vida.': 'Professional makeup for events, special occasions and the most important day of your life.',
     'Depilación con cera hipoalergénica tibia para todas las zonas. Piel suave hasta por 4 semanas.': 'Warm hypoallergenic waxing for every area. Smooth skin for up to 4 weeks.',
-    'Experiencias especiales para los más pequeños. Manicure, pedicure y diversión en un ambiente seguro.': 'Special experiences for little ones. Manicure, pedicure and fun in a safe environment.',
+    'Experiencias especiales para los más pequeños. Manicura, pedicura y diversión en un ambiente seguro.': 'Special experiences for little ones. Manicure, pedicure and fun in a safe environment.',
     'Realza tu mirada de forma natural. Lash lifting para pestañas rizadas y laminado de cejas perfectamente definidas.': 'Enhance your gaze naturally. Lash lifting for curled lashes and perfectly defined laminated brows.',
     // ── Grupos / subsecciones ──
     'Signature Exentia': 'Exentia Signature', 'Terapéuticos': 'Therapeutic',
@@ -16203,7 +17492,7 @@ window.EXENTIA_CONFIG = {
     'Tratamiento orientado a dolor muscular específico y postura.': 'Treatment focused on specific muscle pain and posture.',
     'Masaje de Espalda': 'Back Massage',
     'Sesión focalizada en hombros, cervicales y zona lumbar.': 'A session focused on shoulders, neck and lower back.',
-    'Masaje Terapéutico con Ventosas': 'Cupping Therapeutic Massage',
+    'Masaje Terapéutico con Ventosas': 'Therapeutic Cupping Massage',
     'Ventosas que liberan adherencias musculares y mejoran circulación.': 'Cupping that releases muscle adhesions and improves circulation.',
     'Masaje Terapéutico de Piedras Calientes': 'Hot Stone Therapeutic Massage',
     'Piedras volcánicas que derriten el estrés y reactivan la circulación.': 'Volcanic stones that melt away stress and boost circulation.',
@@ -16226,7 +17515,7 @@ window.EXENTIA_CONFIG = {
     'Masaje Prenatal': 'Prenatal Massage',
     'Alivio suave y seguro diseñado especialmente para futuras mamás.': 'Gentle, safe relief designed especially for moms-to-be.',
     'Shiatsu en Silla Japonesa': 'Japanese Chair Shiatsu',
-    'Presión en puntos energéticos para liberar tensión sin desvestirse.': 'Pressure on energy points to release tension, fully clothed.',
+    'Presión en puntos energéticos para liberar tensión sin desvestirse.': 'Pressure on energy points to release tension — no need to undress.',
     'Craneofacial': 'Craniofacial', 'Masaje Tiempo Extra': 'Extra Massage Time',
     // ── Servicios: faciales ──
     'Facial Orgánico': 'Organic Facial',
@@ -16243,7 +17532,7 @@ window.EXENTIA_CONFIG = {
     'Técnica rusa premium con cutícula limpia y acabado en gel semipermanente.': 'Premium Russian technique with clean cuticles and a semi-permanent gel finish.',
     'Manicura Exentia Caballero': 'Exentia Men’s Manicure',
     'Manicura clásica para caballero con limado, hidratación y pulido.': 'Classic men’s manicure with filing, hydration and buffing.',
-    'Corte de Uñas': 'Nail Trim', 'Corte y limado básico, en manos o pies.': 'Basic trim and filing, hands or feet.',
+    'Corte de Uñas': 'Nail Trim', 'Corte y limado básico, en manos o pies.': 'Basic trim and filing for hands or feet.',
     'Esmaltado Regular': 'Regular Polish', 'Solo esmalte clásico (sin manicura completa).': 'Classic polish only (no full manicure).',
     'Esmaltado Regular Infantil': 'Kids’ Regular Polish', 'Esmaltado regular para los más pequeños con productos suaves.': 'Regular polish for little ones with gentle products.',
     'Esmaltado Francés': 'French Polish', 'Solo el clásico look francés con líneas perfectas.': 'Just the classic French look with perfect lines.',
@@ -16281,7 +17570,7 @@ window.EXENTIA_CONFIG = {
     'Corte Cabello Dama': 'Women’s Haircut', 'Corte personalizado con mascarilla hidratante y estilizado incluido.': 'Custom cut with hydrating mask and styling included.',
     'Corte Cabello Dama c/Ampolleta': 'Women’s Haircut + Ampoule', 'Corte con ampolleta nutritiva, mascarilla y estilizado.': 'Cut with nourishing ampoule, mask and styling.',
     'Corte Cabello Hombre': 'Men’s Haircut', 'Corte moderno con mascarilla y fluido hidratante incluido.': 'Modern cut with mask and hydrating fluid included.',
-    'Shampoo y Secado Cabello': 'Shampoo & Blow-Dry',
+    'Shampoo y Secado de Cabello': 'Shampoo & Blow-Dry',
     'Planchado Express': 'Express Flat Iron', 'Plancha rápida para un look impecable.': 'Quick flat iron for a flawless look.',
     'Peinado Cabello Corto': 'Short Hair Styling', 'Brushing, moldeado o planchado en cabello corto.': 'Blowout, shaping or flat iron on short hair.',
     'Peinado Cabello Mediano': 'Medium Hair Styling', 'Brushing, moldeado o planchado en cabello mediano.': 'Blowout, shaping or flat iron on medium hair.',
@@ -16310,19 +17599,19 @@ window.EXENTIA_CONFIG = {
     'Patillas': 'Sideburns', 'Depilación de patillas con cera tibia.': 'Sideburn waxing with warm wax.',
     'Barba': 'Chin', 'Depilación de barba con cera profesional.': 'Chin waxing with professional wax.',
     'Nuca': 'Nape', 'Depilación de nuca con cera tibia.': 'Nape waxing with warm wax.',
-    'Axilas': 'Underarms', 'Axilas con cera hipoalergénica.': 'Underarms with hypoallergenic wax.',
+    'Axilas': 'Underarms', 'Axilas con cera hipoalergénica.': 'Underarm waxing with hypoallergenic wax.',
     'Brasileño': 'Brazilian', 'Depilación completa de zona íntima con cera hipoalergénica.': 'Full intimate waxing with hypoallergenic wax.',
-    'Resaque Bikini': 'Bikini Line', 'Línea de bikini regular.': 'Regular bikini line.',
-    'Resaque Bikini Profundo': 'Deep Bikini Line', 'Bikini línea profunda.': 'Deep bikini line.',
+    'Resaque Bikini': 'Bikini Line', 'Línea de bikini regular.': 'Regular bikini line waxing.',
+    'Resaque Bikini Profundo': 'Deep Bikini Line', 'Bikini línea profunda.': 'Deep bikini line waxing.',
     'Línea Interglútea': 'Intergluteal Line', 'Depilación íntima con cera hipoalergénica.': 'Intimate waxing with hypoallergenic wax.',
-    'Glúteos': 'Buttocks', 'Glúteos con cera hipoalergénica.': 'Buttocks with hypoallergenic wax.',
+    'Glúteos': 'Buttocks', 'Glúteos con cera hipoalergénica.': 'Buttocks waxing with hypoallergenic wax.',
     'Piernas': 'Full Legs', '1/2 Piernas': 'Half Legs', 'Media pierna con cera.': 'Half leg waxing.',
-    'Brazos': 'Full Arms', 'Brazos completos con cera tibia.': 'Full arms with warm wax.',
+    'Brazos': 'Full Arms', 'Brazos completos con cera tibia.': 'Full arm waxing with warm wax.',
     '1/2 Brazos': 'Half Arms', 'Medio brazo con cera.': 'Half arm waxing.',
-    'Espalda': 'Back', 'Espalda completa con cera profesional.': 'Full back with professional wax.',
+    'Espalda': 'Back', 'Espalda completa con cera profesional.': 'Full back waxing with professional wax.',
     'Espalda Baja': 'Lower Back', 'Depilación de espalda baja con cera.': 'Lower back waxing.',
     'Pecho': 'Chest', 'Depilación de pecho con cera profesional.': 'Chest waxing with professional wax.',
-    'Abdomen': 'Abdomen', 'Abdomen con cera tibia.': 'Abdomen with warm wax.',
+    'Abdomen': 'Abdomen', 'Abdomen con cera tibia.': 'Abdomen waxing with warm wax.',
     'Línea Abdomen': 'Abdomen Line', 'Depilación de línea de abdomen con cera tibia.': 'Abdomen line waxing with warm wax.',
     'Cuerpo Completo': 'Full Body', 'Depilación corporal integral. Requiere anticipo.': 'Full-body waxing. Deposit required.',
     // ── Servicios: spa kids / cejas ──
@@ -16330,11 +17619,11 @@ window.EXENTIA_CONFIG = {
     'Experiencia de spa diseñada para adolescentes, en un ambiente relajante y seguro.': 'A spa experience designed for teens in a relaxing, safe environment.',
     'Laminado de ceja': 'Brow Lamination', 'Laminado que alinea y fija el vello para cejas perfectamente definidas.': 'Lamination that aligns and sets the hairs for perfectly defined brows.',
     'Laminado, diseño y depilación': 'Lamination, Design & Waxing', 'Laminado completo con diseño personalizado y depilación de contorno.': 'Full lamination with custom design and contour waxing.',
-    'Laminado de cejas + henna + depilación': 'Brow Lamination + Henna + Waxing', 'Laminado + henna + depilación: cejas más densas y dirigidas.': 'Lamination + henna + waxing: denser, well-directed brows.',
+    'Laminado de cejas + henna + depilación': 'Brow Lamination + Henna + Waxing', 'Laminado + henna + depilación: cejas más densas y dirigidas.': 'Lamination + henna + waxing: denser, well-shaped brows.',
     // ── Add-ons drawer ──
-    'Arte en uñas': 'Nail Art', 'Efecto': 'Effect', 'Extra Largo': 'Extra Length', 'Retiro previo': 'Previous Removal',
+    'Arte en uñas': 'Nail Art', 'Efecto': 'Effect', 'Extra Largo': 'Extra Length', 'Retiro previo': 'Prior Removal',
     'Sin arte': 'No art', 'Sin efecto': 'No effect', 'Ninguno': 'None', 'Sin reflexología': 'No reflexology',
-    'Opcional': 'Optional', 'Si traes uñas': 'If you have nails on',
+    'Opcional': 'Optional', 'Si traes uñas': 'If you currently have nails',
     'No agregar arte a tu servicio.': 'Don’t add art to your service.',
     'Acabado regular del esmalte o gel.': 'Regular polish or gel finish.',
     'No traes esmalte ni gel anterior.': 'No previous polish or gel.',
@@ -16391,15 +17680,6 @@ window.EXENTIA_CONFIG = {
   try { lang = localStorage.getItem('exentia_lang') || 'es'; } catch(e){}
   var _applying = false;
 
-  function toUSD(str) {
-    return str.replace(/\$\s?([\d][\d,]*(?:\.\d+)?)/g, function(m, num){
-      var v = parseFloat(num.replace(/,/g, ''));
-      if (!isFinite(v) || v <= 0) return m;
-      var usd = Math.round(v / USD_RATE);
-      return '$' + usd.toLocaleString('en-US') + ' USD';
-    });
-  }
-
   function translateText(src) {
     var trimmed = src.trim().replace(/\s+/g, ' ');
     if (!trimmed) return src;
@@ -16412,7 +17692,9 @@ window.EXENTIA_CONFIG = {
       out = src;
       for (var i = 0; i < PATTERNS.length; i++) out = out.replace(PATTERNS[i][0], PATTERNS[i][1]);
     }
-    return toUSD(out);
+    // Se traduce el texto pero los importes se devuelven intactos: los precios
+    // se muestran en MXN en los dos idiomas, igual que se cobran.
+    return out;
   }
 
   function walk(root) {
@@ -16467,6 +17749,43 @@ window.EXENTIA_CONFIG = {
     applyLang();
     try { if (window.exentiaTrack) window.exentiaTrack('lang_toggle', { lang: l }); } catch(e){}
   };
+
+  // ═══════════════ MOBILE DRAWER (hamburger menu) ═══════════════
+  window.toggleMobileDrawer = function() {
+    var drawer = document.getElementById('mobile-drawer');
+    var scrim = document.getElementById('mobile-drawer-scrim');
+    var burger = document.getElementById('nav-burger');
+    if (!drawer || !scrim || !burger) return;
+    var isOpen = drawer.classList.toggle('open');
+    scrim.classList.toggle('open', isOpen);
+    burger.setAttribute('aria-expanded', String(isOpen));
+    drawer.setAttribute('aria-hidden', String(!isOpen));
+    document.body.classList.toggle('drawer-open', isOpen);
+    try { if (window.exentiaTrack) window.exentiaTrack('mobile_drawer_' + (isOpen ? 'open' : 'close')); } catch(_){}
+  };
+  window.closeMobileDrawer = function() {
+    var drawer = document.getElementById('mobile-drawer');
+    if (!drawer || !drawer.classList.contains('open')) return;
+    drawer.classList.remove('open');
+    var scrim = document.getElementById('mobile-drawer-scrim');
+    var burger = document.getElementById('nav-burger');
+    if (scrim) scrim.classList.remove('open');
+    if (burger) burger.setAttribute('aria-expanded', 'false');
+    drawer.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('drawer-open');
+  };
+  // Sincroniza los botones ES/EN espejos del drawer con el toggle del header
+  window.syncLangMirror = function() {
+    var esBtn = document.getElementById('lang-es');
+    if (!esBtn) return;
+    var isEs = esBtn.classList.contains('active');
+    var mirrorEs = document.querySelector('.lang-mirror-es');
+    var mirrorEn = document.querySelector('.lang-mirror-en');
+    if (mirrorEs) mirrorEs.classList.toggle('active', isEs);
+    if (mirrorEn) mirrorEn.classList.toggle('active', !isEs);
+  };
+  // Cerrar con ESC
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') window.closeMobileDrawer(); });
 
   // Observer: re-aplica sobre contenido dinámico (modales, renders)
   var obs = new MutationObserver(function(muts){
@@ -16536,8 +17855,14 @@ window.EXENTIA_CONFIG = {
 <div id="ex-build-badge" title="Última edición del HTML (hora Cancún UTC-5)"></div>
 <script>
 (function(){
-  // Actualizar EX_BUILD manualmente en cada Edit del HTML (hora Cancún, UTC-5)
-  var EX_BUILD = { version: 'v153', stamp: '2026-07-13 09:22' };
+  // Actualizar EX_BUILD en cada Edit del HTML.
+  // IMPORTANTE: el stamp va en hora REAL de Cancún (UTC-5). Obtenerla con:
+  //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
+  // Si se pone una hora inventada más adelante que el reloj del navegador,
+  // el badge no puede calcular la antigüedad y pierde su utilidad.
+  var EX_BUILD = { version: 'v215-pref-sexo-pareja-fix', stamp: '2026-07-30 18:05' };
+  // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
+  try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
   if (!el) return;
   // Parse stamp como hora Cancún (UTC-5) -> Date UTC
@@ -16550,7 +17875,14 @@ window.EXENTIA_CONFIG = {
   function ago() {
     if (!buildDate) return '';
     var diffSec = Math.floor((Date.now() - buildDate.getTime()) / 1000);
-    if (diffSec < 0) return 'en el futuro';
+    // Stamp por delante del reloj del navegador. Dos casos distintos:
+    //  · Desfase chico (≤10 min): reloj del visitante atrasado o build recién
+    //    hecho — es ruido, se reporta como recién publicado.
+    //  · Desfase grande: el stamp está mal escrito o el reloj del equipo está
+    //    muy corrido. Se dice explícito para poder corregirlo.
+    if (diffSec < 0) {
+      return (-diffSec <= 600) ? 'recién' : 'reloj desfasado';
+    }
     if (diffSec < 60)  return 'hace ' + diffSec + ' s';
     if (diffSec < 3600) return 'hace ' + Math.floor(diffSec/60) + ' min';
     if (diffSec < 86400) return 'hace ' + Math.floor(diffSec/3600) + ' h';
