@@ -821,6 +821,13 @@
       <div class="prefill-tag hidden" data-prefill-for="receptor_telefono">Confirmado de tu visita anterior</div>
     </div>
 
+    <!-- Solo se muestra cuando el sistema NO tiene el teléfono del cliente registrado (ver boot) -->
+    <div class="field" data-field-wrap="cliente_telefono" style="margin-top:18px; display:none;">
+      <label class="field-label" for="cliente_telefono">Tu número de teléfono<span class="req-asterisk" data-req-for="cliente_telefono">*</span></label>
+      <input type="tel" id="cliente_telefono" data-field="cliente_telefono" inputmode="tel" autocomplete="tel" placeholder="Ej. 998 123 4567">
+      <div class="prefill-tag hidden" data-prefill-for="cliente_telefono">Confirmado de tu visita anterior</div>
+    </div>
+
     <div class="field-error-msg" id="err-step-5">Elige "Yo mismo recibiré" o llena nombre y teléfono de quien recibirá al equipo.</div>
 
     <div class="actions">
@@ -887,7 +894,7 @@
     2: ['tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento'],
     3: ['espacio_camillas_ok','piso','tiene_elevador','hay_escaleras'],
     4: ['tiene_aire_acondicionado','hay_mascotas','mascotas_detalle','condiciones_especiales'],
-    5: ['receptor_nombre','receptor_telefono','receptor_es_cliente'],
+    5: ['receptor_nombre','receptor_telefono','receptor_es_cliente','cliente_telefono'],
     6: ['observaciones']
   };
   var PREFILLABLE = new Set([
@@ -895,7 +902,7 @@
     'tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento',
     'espacio_camillas_ok','piso','tiene_elevador','hay_escaleras',
     'tiene_aire_acondicionado','hay_mascotas','mascotas_detalle',
-    'receptor_nombre','receptor_telefono','receptor_es_cliente'
+    'receptor_nombre','receptor_telefono','receptor_es_cliente','cliente_telefono'
   ]);
   // Field -> child fields to clear when the parent toggles off
   var CLEAR_ON_TOGGLE_OFF = {
@@ -932,7 +939,10 @@
     5: [
       // Si NO eligió "yo mismo recibiré", nombre y teléfono son requeridos
       { field:'receptor_nombre',   when:{ receptor_es_cliente:'!=true' } },
-      { field:'receptor_telefono', when:{ receptor_es_cliente:'!=true' } }
+      { field:'receptor_telefono', when:{ receptor_es_cliente:'!=true' } },
+      // Teléfono del cliente: requerido solo cuando el sistema no lo tiene registrado
+      // (_pedir_cliente_tel lo setea boot() según lookup.tiene_telefono)
+      { field:'cliente_telefono',  when:{ _pedir_cliente_tel:true } }
     ],
     6: []
   };
@@ -1520,6 +1530,12 @@
         return;
       }
       state.cita = res.cita || {};
+      // Teléfono del cliente: solo se pide (y se muestra el campo) cuando el
+      // sistema NO lo tiene registrado. tiene_telefono viene del lookup.
+      var _pedirTel = (state.cita.tiene_telefono === false);
+      state.data._pedir_cliente_tel = _pedirTel;
+      var _telWrap = qs('[data-field-wrap="cliente_telefono"]');
+      if (_telWrap) _telWrap.style.display = _pedirTel ? '' : 'none';
       var prepFromServer = res.prep || null;
       state.prevPrep = null;
       state.prevMeta = null;
