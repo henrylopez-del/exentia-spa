@@ -43,3 +43,6 @@ dist/
 .vscode/
 .idea/
 *.iml
+
+# ===== Material archivado (docs internos, experimentos, scripts sueltos) =====
+archivo/
