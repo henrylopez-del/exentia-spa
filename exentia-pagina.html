@@ -8285,7 +8285,7 @@ try {
             <input class="auth-input" type="text" id="auth-reg-firstname" placeholder="Tu nombre" required style="margin-bottom:8px;">
             <input class="auth-input" type="text" id="auth-reg-lastname" placeholder="Apellido (opcional)" style="margin-bottom:8px;">
             <input class="auth-input" type="tel" id="auth-reg-phone" placeholder="998 123 4567" inputmode="tel" required>
-            <div class="ex-field-hint" id="auth-reg-phone-hint">Para que la asesora pueda confirmarte por WhatsApp.</div>
+            <div class="ex-field-hint" id="auth-reg-phone-hint">Para que el equipo pueda confirmarte por WhatsApp.</div>
             <button type="submit" class="auth-btn-primary" id="auth-reg-submit">Crear cuenta y enviar código →</button>
             <a class="auth-back-link" onclick="resetAuthToEmail()">← Cambiar correo</a>
           </form>
@@ -13715,7 +13715,7 @@ try {
       } else {
         // No tenemos la tarifa de zona todavía → indicamos que se calcula después
         trasladoText = '<div class="gs-total-row"><span>Traslado a domicilio</span><span style="color:#9a8d75; font-style:italic; font-weight:500;">por calcular</span></div>';
-        trasladoNote = '<div class="gs-total-note">El costo de traslado se confirma según la zona de tu domicilio. Una asesora te lo pasa por WhatsApp.</div>';
+        trasladoNote = '<div class="gs-total-note">El costo de traslado se confirma según la zona de tu domicilio. El equipo te lo pasa por WhatsApp.</div>';
       }
     }
     var total = grandTotal + traslado;
@@ -14471,7 +14471,7 @@ try {
       html += '<div class="ck-total-row grand"><span>' + totalLabel + '</span><span>' + (total > 0 ? fmt2(total) : '—') + '</span></div>';
       if (hasUnp) html += '<div class="ck-total-note">* Algunos servicios se cotizan por separado y no se suman al total.</div>';
       if (trasladoNote) html += '<div class="ck-total-note">' + trasladoNote + '</div>';
-      if (n >= 4) html += '<div class="ck-total-note">Para grupos de 4+ personas, una asesora de Exentia revisa tu caso por WhatsApp y confirma cuántas terapeutas asignar.</div>';
+      if (n >= 4) html += '<div class="ck-total-note">Para grupos de 4+ personas, el equipo de Exentia revisa tu caso por WhatsApp y confirma cuántas terapeutas asignar.</div>';
       totalsEl.innerHTML = html;
     }
 
@@ -15682,7 +15682,7 @@ try {
       html += '<button type="button" class="ex-cuenta-pref-chip' + (gen===p[0]?' active':'') + '" data-pref="genero" data-val="' + p[0] + '">' + p[1] + '</button>';
     });
     html += '</div>';
-    html += '<p class="ex-cuenta-sub" style="margin-top:18px; font-style:italic;">Para cambiar una preferencia, contacta a tu asesora por WhatsApp. <a onclick="window.open(\'https://wa.me/' + YAZ_WHATSAPP + '?text=Hola%2C+quiero+actualizar+mis+preferencias.\', \'_blank\')" style="color:var(--brown); text-decoration:underline; cursor:pointer;">Abrir WhatsApp →</a></p>';
+    html += '<p class="ex-cuenta-sub" style="margin-top:18px; font-style:italic;">Para cambiar una preferencia, contacta a nuestro equipo por WhatsApp. <a onclick="window.open(\'https://wa.me/' + YAZ_WHATSAPP + '?text=Hola%2C+quiero+actualizar+mis+preferencias.\', \'_blank\')" style="color:var(--brown); text-decoration:underline; cursor:pointer;">Abrir WhatsApp →</a></p>';
     html += '</div>';
     main.innerHTML = html;
   }
@@ -15695,7 +15695,7 @@ try {
     html += '<div class="ex-cuenta-datos-row"><label>Correo electrónico</label><span>' + (sess.email||'—') + '</span></div>';
     html += '<div class="ex-cuenta-datos-row"><label>WhatsApp</label><span>' + (sess.phone||'—') + '</span></div>';
     html += '</div>';
-    html += '<p class="ex-cuenta-sub" style="font-style:italic;">Para cambiar tus datos, contacta a tu asesora. <a onclick="window.open(\'https://wa.me/' + YAZ_WHATSAPP + '?text=Hola%2C+quiero+actualizar+mis+datos.\', \'_blank\')" style="color:var(--brown); text-decoration:underline; cursor:pointer;">Abrir WhatsApp →</a></p>';
+    html += '<p class="ex-cuenta-sub" style="font-style:italic;">Para cambiar tus datos, contacta a nuestro equipo. <a onclick="window.open(\'https://wa.me/' + YAZ_WHATSAPP + '?text=Hola%2C+quiero+actualizar+mis+datos.\', \'_blank\')" style="color:var(--brown); text-decoration:underline; cursor:pointer;">Abrir WhatsApp →</a></p>';
     main.innerHTML = html;
   }
 
@@ -17450,14 +17450,13 @@ try {
     'Sin cargo de traslado': 'No travel fee',
     'Más popular': 'Most popular', 'Recomendado para grupos': 'Recommended for groups',
     'Te ayudamos por WhatsApp': 'We’ll help you on WhatsApp',
-    'Una asesora confirma tu cita y resuelve tus dudas': 'An advisor confirms your appointment and answers your questions',
     'Agenda aquí': 'Book here',
     'Elige fecha y hora en el calendario, listo en 1 minuto': 'Pick a date and time on the calendar — done in 1 minute',
     'Para agendar en línea necesitamos tu correo y WhatsApp. Si prefieres, continúa por WhatsApp y nosotros lo cerramos contigo.': 'To book online we need your email and WhatsApp. If you prefer, continue on WhatsApp and we’ll finish it with you.',
     'Si la disponibilidad del equipo cambia, te avisamos antes de confirmar la cita.': 'If team availability changes, we’ll let you know before confirming your appointment.',
     'Cargo mínimo por 1 terapeuta. Elige una opción arriba para ver el cargo exacto.': 'Minimum fee for 1 therapist. Choose an option above to see the exact fee.',
     'Cargo mínimo por 1 terapeuta. El equipo confirma el final según cuántas atiendan.': 'Minimum fee for 1 therapist. The team confirms the final fee based on how many therapists attend.',
-    'Para grupos de 4+ personas, una asesora de Exentia revisa tu caso por WhatsApp y confirma cuántas terapeutas asignar.': 'For groups of 4+, an Exentia advisor reviews your case on WhatsApp and confirms how many therapists to assign.',
+    'Para grupos de 4+ personas, el equipo de Exentia revisa tu caso por WhatsApp y confirma cuántas terapeutas asignar.': 'For groups of 4+, the Exentia team reviews your case on WhatsApp and confirms how many therapists to assign.',
     '* Algunos servicios se cotizan por separado y no se suman al total.': '* Some services are quoted separately and are not added to the total.',
     'a confirmar*': 'to be quoted*',
     // ── Categorías ──
