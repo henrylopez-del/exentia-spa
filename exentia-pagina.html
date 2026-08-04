@@ -8400,11 +8400,21 @@ try {
         <div class="ck-totals" id="ck-totals"></div>
       </div>
       <div class="choice-options">
-        <button class="choice-btn choice-pay" onclick="openPagoSimulador()" type="button">
+        <!-- Domicilio: paga para confirmar (compromiso de traslado del terapeuta). -->
+        <button class="choice-btn choice-pay" id="ck-btn-pagar" onclick="openPagoSimulador()" type="button" style="display:none;">
           <svg class="choice-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M6 16h4"/></svg>
           <div class="choice-text">
             <strong>Pagar</strong>
             <span>Reserva tu espacio con el pago de tu cita.</span>
+          </div>
+          <span class="choice-arrow" aria-hidden="true">→</span>
+        </button>
+        <!-- Sucursal: reserva sin pagar, el monto final se cobra en el spa. -->
+        <button class="choice-btn choice-pay" id="ck-btn-reservar" onclick="closeModal('modal-choice'); openModal('modal-agendar');" type="button" style="display:none;">
+          <svg class="choice-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-7"/></svg>
+          <div class="choice-text">
+            <strong>Reservar</strong>
+            <span>Confirma tu espacio. Pagas al llegar al spa.</span>
           </div>
           <span class="choice-arrow" aria-hidden="true">→</span>
         </button>
@@ -14493,6 +14503,13 @@ try {
       btn.disabled = false;
       btn.setAttribute('aria-disabled', 'false');
     });
+
+    // Domicilio paga para confirmar (compromiso de traslado); sucursal solo reserva,
+    // el monto final se desconoce hasta estar en el spa y se cobra ahí. Henry 2026-08-04.
+    var btnPagar = document.getElementById('ck-btn-pagar');
+    var btnReservar = document.getElementById('ck-btn-reservar');
+    if (btnPagar) btnPagar.style.display = calc.isHome ? '' : 'none';
+    if (btnReservar) btnReservar.style.display = calc.isHome ? 'none' : '';
   }
   window.renderCheckoutCart = renderCheckoutCart;
 
