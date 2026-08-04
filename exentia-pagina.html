@@ -15677,8 +15677,8 @@ try {
       html += '<button type="button" class="ex-cuenta-pref-chip' + (aro===p[0]?' active':'') + '" data-pref="aromas" data-val="' + p[0] + '">' + p[1] + '</button>';
     });
     html += '</div>';
-    html += '<div class="ex-cuenta-pref-label">GÉNERO DE LA TERAPEUTA</div><div class="ex-cuenta-pref-grid">';
-    [['mujer','Prefiero mujer'],['hombre','Prefiero hombre'],['cualquiera','Cualquiera']].forEach(function(p){
+    html += '<div class="ex-cuenta-pref-label">GÉNERO DEL TERAPEUTA</div><div class="ex-cuenta-pref-grid">';
+    [['mujer','Mujer'],['hombre','Hombre'],['cualquiera','Sin preferencia']].forEach(function(p){
       html += '<button type="button" class="ex-cuenta-pref-chip' + (gen===p[0]?' active':'') + '" data-pref="genero" data-val="' + p[0] + '">' + p[1] + '</button>';
     });
     html += '</div>';
