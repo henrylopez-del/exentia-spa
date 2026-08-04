@@ -8340,7 +8340,7 @@ try {
       </div>
       <span class="logo">exentia</span>
       <span class="sub">SPA & BEAUTY SALON</span>
-      <h2>¡Listo, <em id="choice-firstname">linda</em>!</h2>
+      <h2>¡Listo<span id="choice-firstname-wrap" style="display:none">, <em id="choice-firstname"></em></span>!</h2>
       <p>Revisa tu reserva y confírmala por WhatsApp.</p>
     </div>
     <div class="modal-body">
@@ -8685,7 +8685,7 @@ try {
     </div>
     <div class="cf-header">
       <h2>Tu reserva quedó <em>registrada</em></h2>
-      <p class="cf-greeting">Gracias, <span id="cf-firstname">linda</span>.</p>
+      <p class="cf-greeting">Gracias<span id="cf-firstname-wrap" style="display:none">, <span id="cf-firstname-greet"></span></span>.</p>
     </div>
     <div class="cf-body">
       <p class="cf-lead">Recibimos los detalles de tu cita y los compartimos con nuestro equipo de terapeutas.</p>
@@ -12195,8 +12195,15 @@ try {
     // Después de capturar la dirección va al calendario propio.
     // El modal-choice se abre después como resumen final.
     var nameSpan = document.getElementById('choice-firstname');
+    var nameWrap = document.getElementById('choice-firstname-wrap');
     var d = window._formUserData || {};
-    if (nameSpan && d.firstName) nameSpan.textContent = d.firstName;
+    if (d.firstName) {
+      if (nameSpan) nameSpan.textContent = d.firstName;
+      if (nameWrap) nameWrap.style.display = '';
+    } else {
+      if (nameSpan) nameSpan.textContent = '';
+      if (nameWrap) nameWrap.style.display = 'none';
+    }
     closeModal('modal-address');
     setTimeout(function(){
       if (typeof openCal2 === 'function') openCal2();
@@ -12374,7 +12381,14 @@ try {
     try { if (window.exentiaTrack) window.exentiaTrack('form_submit_intent', { has_email: !!email, has_phone: !!phone, source: 'custom_form' }); } catch(e){}
 
     var nameSpan = document.getElementById('choice-firstname');
-    if (nameSpan) nameSpan.textContent = firstName;
+    var nameWrap = document.getElementById('choice-firstname-wrap');
+    if (firstName) {
+      if (nameSpan) nameSpan.textContent = firstName;
+      if (nameWrap) nameWrap.style.display = '';
+    } else {
+      if (nameSpan) nameSpan.textContent = '';
+      if (nameWrap) nameWrap.style.display = 'none';
+    }
 
     // Bifurcación según ubicación elegida:
     //  - Sucursal → modal-choice directo
@@ -13519,8 +13533,15 @@ try {
 
   function showFinalConfirm() {
     var d = window._formUserData || {};
-    var first = document.getElementById('cf-firstname');
-    if (first) first.textContent = d.firstName || 'linda';
+    var first = document.getElementById('cf-firstname-greet');
+    var firstWrap = document.getElementById('cf-firstname-wrap');
+    if (d.firstName) {
+      if (first) first.textContent = d.firstName;
+      if (firstWrap) firstWrap.style.display = '';
+    } else {
+      if (first) first.textContent = '';
+      if (firstWrap) firstWrap.style.display = 'none';
+    }
     var waEl = document.getElementById('cf-meta-whatsapp');
     if (waEl) waEl.textContent = d.phone || '—';
     var fechaEl = document.getElementById('cf-meta-fecha');
@@ -17409,7 +17430,7 @@ try {
     'Fuera de estas zonas en Cancún: el equipo confirma el traslado.': 'Outside these Cancún zones: the team confirms the travel fee.',
     'Elige tu': 'Choose your', 'fecha y hora': 'date & time',
     'Selecciona el día y horario que mejor te acomode.': 'Select the day and time that suits you best.',
-    '¡Casi listo,': 'Almost there,', 'linda': 'dear',
+    '¡Casi listo,': 'Almost there,',
     'Revisa tu reserva y elige cómo cerrarla': 'Review your booking and choose how to finish it',
     'Tus servicios': 'Your services', '+ cambiar / agregar': '+ change / add',
     '¿Cómo prefieren recibir el servicio?': 'How would you like to receive the service?',
