@@ -7943,13 +7943,6 @@ try {
       <div id="mpf-google-map" class="mfa-google-map" aria-label="Mapa para fijar tu dirección"></div>
     </div>
 
-    <!-- Leyenda de zonas -->
-    <div class="mfa-zone-legend">
-      <span class="mfa-zone-dot" style="background:#3fa34d;"></span><span>Zona 1 · Centro · $250</span>
-      <span class="mfa-zone-dot" style="background:#d9a300;"></span><span>Zona 2 · Hotelera · $350</span>
-      <span class="mfa-zone-dot" style="background:#d9534f;"></span><span>Zona 3 · Lejana · $400</span>
-    </div>
-
     <!-- Feedback de zona detectada -->
     <div id="mpf-zone-feedback" class="mfa-zone-feedback" style="display:none;"></div>
 
@@ -8146,13 +8139,6 @@ try {
           <div class="cf-map-hint">
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
             <span>Tip: toca el mapa para mover el pin · arrástralo si necesitas ajustar · usa "Mi ubicación" si estás en tu casa</span>
-          </div>
-          <!-- Leyenda de zonas de cobertura a domicilio -->
-          <div class="cf-zone-legend" style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:6px;font-size:11.5px;color:#5c5c4a;">
-            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#3fa34d;opacity:.55;border:1px solid #2e8b40;"></span>Zona 1 · Centro / Puerto Cancún · $250</span>
-            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#d9a300;opacity:.55;border:1px solid #b8920a;"></span>Zona 2 · Z. Hotelera (km 0–12.5) · $350</span>
-            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:11px;height:11px;border-radius:3px;background:#d9534f;opacity:.55;border:1px solid #b5362a;"></span>Zona 3 · Z. Hotelera lejana / Aeropuerto · $400</span>
-            <span style="opacity:.8;">Fuera de estas zonas en Cancún: el equipo confirma el traslado.</span>
           </div>
           <!-- Resumen estilo Google Place card -->
           <div id="cf-address-summary" class="cf-address-summary" style="display:none;">
@@ -11134,9 +11120,10 @@ try {
     function ring2path(r){ return r.map(function(p){ return { lat: p[0], lng: p[1] }; }); }
     var polys = [];
     function addPolys(rings, stroke, fill, z){
+      // Internos: NO se pintan en el mapa (uso interno para tarifa de traslado, nunca visibles al cliente)
       rings.forEach(function(r){
         polys.push(new google.maps.Polygon({
-          map: map, paths: ring2path(r), zIndex: z,
+          map: null, paths: ring2path(r), zIndex: z,
           strokeColor: stroke, strokeOpacity: 0.85, strokeWeight: 1.5,
           fillColor: fill, fillOpacity: 0.18, clickable: false
         }));
@@ -11220,7 +11207,7 @@ try {
     box.style.display = 'block';
     box.innerHTML = '<div style="display:flex;gap:8px;align-items:flex-start;background:#f4f6ec;border:1px solid ' + z.color + ';border-radius:10px;padding:10px 12px;">'
       + '<span style="width:12px;height:12px;border-radius:50%;background:' + z.color + ';margin-top:3px;flex:0 0 auto;"></span>'
-      + '<div style="font-size:12.5px;color:#3d3d2e;line-height:1.45;"><b>' + z.nombre + '</b><br>Traslado <b>$' + z.costo + '</b> por terapeuta · el total depende del número de terapeutas.</div>'
+      + '<div style="font-size:12.5px;color:#3d3d2e;line-height:1.45;">Traslado <b>$' + z.costo + '</b> por terapeuta · el total depende del número de terapeutas.</div>'
       + '</div>';
   }
   window.updateZoneFeedback = updateZoneFeedback;
@@ -14943,7 +14930,7 @@ try {
     setBtn(true);
     box.className = 'mfa-zone-feedback ok';
     box.innerHTML = '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + z.color + ';margin-right:6px;vertical-align:middle;"></span>'
-      + '<b>' + z.nombre + '</b> · Traslado <b>$' + z.costo + '</b> por terapeuta. El total final depende de personas y modalidad.';
+      + 'Traslado <b>$' + z.costo + '</b> por terapeuta. El total final depende de personas y modalidad.';
   }
   window._mpfSetPin = _mpfSetPin;
 
