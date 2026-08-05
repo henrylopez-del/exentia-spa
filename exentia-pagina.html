@@ -7575,6 +7575,12 @@ try {
         </ul>
       </div>
       <div>
+        <h4>Legal</h4>
+        <ul>
+          <li onclick="openModal('modal-legal-cancelaciones')" style="cursor:pointer">Cancelaciones y reembolsos</li>
+        </ul>
+      </div>
+      <div>
         <h4>Contacto</h4>
         <ul>
           <li>+52 998 480 3595</li>
@@ -7582,12 +7588,6 @@ try {
           <li>Plaza Hive</li>
           <li>Cancún, Q. Roo</li>
           <li>Lun-Sáb 9AM-6PM</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Legal</h4>
-        <ul>
-          <li onclick="openModal('modal-legal-cancelaciones')" style="cursor:pointer">Cancelaciones y reembolsos</li>
         </ul>
       </div>
     </div>
@@ -18164,7 +18164,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v222-legal-cancelaciones', stamp: '2026-08-05 11:47' };
+  var EX_BUILD = { version: 'v223-legal-reorder-footer', stamp: '2026-08-05 12:05' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
