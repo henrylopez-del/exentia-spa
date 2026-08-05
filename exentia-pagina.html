@@ -7390,6 +7390,52 @@ try {
   <!-- Content rendered by JS -->
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     LEGAL VIEW · Cancelaciones y reembolsos (URL propia, SEO)
+═══════════════════════════════════════════════════════════════════ -->
+<div id="legal-view" class="view hidden">
+  <section class="full-bleed" style="background:#faf7ee; padding:80px 0 60px;">
+    <div class="container" style="max-width:760px;">
+      <nav aria-label="breadcrumb" style="font-size:13px; color:#7a6e5a; margin-bottom:14px;">
+        <a href="#" onclick="location.hash=''; return false;" style="color:#7a6e5a; text-decoration:none;">Inicio</a>
+        <span style="margin:0 6px;">›</span>
+        <span>Legal</span>
+        <span style="margin:0 6px;">›</span>
+        <span style="color:#5c3a1e;">Cancelaciones y reembolsos</span>
+      </nav>
+      <h1 style="font-family:'Playfair Display', serif; font-size:38px; color:#3a2f22; margin:0 0 6px;">
+        Cancelaciones y <em style="color:#5c3a1e;">reembolsos</em>
+      </h1>
+      <p style="font-size:13px; color:#7a6e5a; margin:0 0 32px;">Última actualización: 5 de agosto de 2026</p>
+
+      <div style="font-family:'Inter', sans-serif; color:#3a2f22; line-height:1.7; font-size:15px;">
+        <p>Sabemos que a veces los planes cambian. Estas son nuestras reglas para cancelar una cita y recibir tu reembolso, calculadas sobre el anticipo pagado en línea.</p>
+
+        <h2 style="margin-top:32px; font-size:20px; color:#5c3a1e; font-family:'Playfair Display', serif;">¿Cuánto se reembolsa?</h2>
+        <p>Depende de cuánto tiempo antes de tu cita nos avises:</p>
+        <ul style="padding-left:20px; margin:12px 0;">
+          <li><strong>Más de 24 horas antes:</strong> se reembolsa el <strong>100%</strong> de lo pagado.</li>
+          <li><strong>Entre 6 y 24 horas antes:</strong> se reembolsa el <strong>60%</strong>.</li>
+          <li><strong>Entre 3 y 6 horas antes:</strong> se reembolsa el <strong>40%</strong>.</li>
+          <li><strong>Menos de 3 horas antes o no asistir:</strong> no hay reembolso.</li>
+        </ul>
+
+        <h2 style="margin-top:32px; font-size:20px; color:#5c3a1e; font-family:'Playfair Display', serif;">¿Cómo cancelo mi cita?</h2>
+        <p>Escríbenos por WhatsApp al <a href="https://wa.me/529984803595" target="_blank" rel="noopener" style="color:#5c3a1e; text-decoration:underline;">+52 998 480 3595</a> indicando tu <strong>nombre completo</strong> y la <strong>fecha de tu reserva</strong>. Con esos datos localizamos tu cita y procesamos la cancelación.</p>
+
+        <h2 style="margin-top:32px; font-size:20px; color:#5c3a1e; font-family:'Playfair Display', serif;">¿Cuándo recibo el dinero?</h2>
+        <p>El reembolso se procesa a través de Stripe (nuestra plataforma de pagos) a la <strong>misma tarjeta con la que pagaste</strong>. Suele reflejarse en tu estado de cuenta entre <strong>5 y 10 días hábiles</strong>, dependiendo de tu banco.</p>
+
+        <p style="margin-top:32px; font-size:13px; color:#7a6e5a;">Si tienes cualquier duda sobre una cancelación, escríbenos por WhatsApp y con gusto te ayudamos.</p>
+
+        <div style="margin-top:40px; text-align:center;">
+          <a href="#" onclick="location.hash=''; return false;" class="btn" style="min-width:200px;">← Volver al inicio</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
 <!-- (select view is now a modal, not a SPA view) -->
 
 </main>
@@ -7577,7 +7623,7 @@ try {
       <div>
         <h4>Legal</h4>
         <ul>
-          <li onclick="openModal('modal-legal-cancelaciones')" style="cursor:pointer">Cancelaciones y reembolsos</li>
+          <li onclick="location.hash = '#legal/cancelaciones'" style="cursor:pointer">Cancelaciones y reembolsos</li>
         </ul>
       </div>
       <div>
@@ -7598,48 +7644,6 @@ try {
 </footer>
 
 <!-- cart-badge y cart-panel eliminados: ahora todo el flujo de carrito vive dentro del pop-up. -->
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     MODAL LEGAL · Cancelaciones y reembolsos
-     Se abre desde el link "Legal" del footer.
-═══════════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="modal-legal-cancelaciones">
-  <div class="modal-box" style="max-width:640px;">
-    <div class="modal-close" onclick="closeModal('modal-legal-cancelaciones')" aria-label="Cerrar">&#10005;</div>
-    <div class="modal-header" style="margin-bottom:18px;">
-      <div class="ornament" aria-hidden="true">
-        <svg width="56" height="14" viewBox="0 0 56 14" fill="none">
-          <path d="M0 7 L20 7" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
-          <path d="M22 7 Q26 4 28 7 Q30 10 28 7 M24 7 Q22 5 20 6 M30 7 Q32 5 34 6" stroke="currentColor" stroke-width="0.8" fill="none"/>
-          <circle cx="28" cy="7" r="1.6" fill="currentColor"/>
-          <path d="M36 7 L56 7" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
-        </svg>
-      </div>
-      <h2>Cancelaciones y <em>reembolsos</em></h2>
-      <p style="font-size:13px; opacity:0.75;">Última actualización: 5 de agosto de 2026</p>
-    </div>
-    <div class="modal-body" style="font-family:'Inter', sans-serif; color:#3a2f22; line-height:1.6; font-size:14.5px;">
-      <p>Sabemos que a veces los planes cambian. Estas son nuestras reglas para cancelar una cita y recibir tu reembolso, calculadas sobre el anticipo pagado en línea.</p>
-
-      <h3 style="margin-top:22px; font-size:15.5px; color:#5c3a1e;">¿Cuánto se reembolsa?</h3>
-      <p>Depende de cuánto tiempo antes de tu cita nos avises:</p>
-      <ul style="padding-left:20px; margin:10px 0;">
-        <li><strong>Más de 24 horas antes:</strong> se reembolsa el <strong>100%</strong> de lo pagado.</li>
-        <li><strong>Entre 6 y 24 horas antes:</strong> se reembolsa el <strong>60%</strong>.</li>
-        <li><strong>Entre 3 y 6 horas antes:</strong> se reembolsa el <strong>40%</strong>.</li>
-        <li><strong>Menos de 3 horas antes o no asistir:</strong> no hay reembolso.</li>
-      </ul>
-
-      <h3 style="margin-top:22px; font-size:15.5px; color:#5c3a1e;">¿Cómo cancelo mi cita?</h3>
-      <p>Escríbenos por WhatsApp al <a href="https://wa.me/529984803595" target="_blank" rel="noopener" style="color:#5c3a1e; text-decoration:underline;">+52 998 480 3595</a> indicando tu <strong>nombre completo</strong> y la <strong>fecha de tu reserva</strong>. Con esos datos localizamos tu cita y procesamos la cancelación.</p>
-
-      <h3 style="margin-top:22px; font-size:15.5px; color:#5c3a1e;">¿Cuándo recibo el dinero?</h3>
-      <p>El reembolso se procesa a través de Stripe (nuestra plataforma de pagos) a la <strong>misma tarjeta con la que pagaste</strong>. Suele reflejarse en tu estado de cuenta entre <strong>5 y 10 días hábiles</strong>, dependiendo de tu banco.</p>
-
-      <p style="margin-top:22px; font-size:13px; opacity:0.75;">Si tienes cualquier duda sobre una cancelación, escríbenos por WhatsApp y con gusto te ayudamos.</p>
-    </div>
-  </div>
-</div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
      MODAL PLACE-FIRST · Sucursal / Domicilio
@@ -10587,15 +10591,19 @@ try {
   function showView(viewId) {
     const homeView = document.getElementById('home-view');
     const detailView = document.getElementById('service-detail-view');
+    const legalView = document.getElementById('legal-view');
 
     homeView.classList.add('hidden');
     detailView.classList.add('hidden');
+    if (legalView) legalView.classList.add('hidden');
     // Fallback para navegadores sin :has() — el CSS quita el border-bottom
     // del nav cuando body tiene esta clase, para no crear doble línea con .cat-tabs.
     document.body.classList.toggle('in-detail', viewId === 'service-detail-view');
 
     if (viewId === 'service-detail-view') {
       detailView.classList.remove('hidden');
+    } else if (viewId === 'legal-view' && legalView) {
+      legalView.classList.remove('hidden');
     } else {
       homeView.classList.remove('hidden');
     }
@@ -10634,6 +10642,7 @@ try {
   function handleRoute() {
     const hash = location.hash;
     const serviceMatch = hash.match(/^#servicio\/(.+)$/);
+    const legalMatch = hash.match(/^#legal\/(.+)$/);
 
     if (serviceMatch) {
       renderServiceDetail(serviceMatch[1]);
@@ -10642,6 +10651,10 @@ try {
       // Segundo scrollTo tras el primer paint: las imágenes del hero al cargar
       // desplazan el layout y el scroll quedaba ~40px abajo.
       setTimeout(function(){ window.scrollTo(0, 0); }, 80);
+    } else if (legalMatch) {
+      showView('legal-view');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.title = 'Cancelaciones y reembolsos · Exentia Spa';
     } else {
       showView('home-view');
       if (hash && hash !== '#' && hash !== '#home') {
@@ -18160,7 +18173,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v224-legal-cancelacion-whatsapp', stamp: '2026-08-05 12:15' };
+  var EX_BUILD = { version: 'v225-legal-view-dedicada', stamp: '2026-08-05 12:35' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
