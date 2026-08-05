@@ -5930,6 +5930,38 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .ck-totals { border-top: 1px dashed rgba(0,0,0,0.10); padding-top: 12px; display: flex; flex-direction: column; gap: 4px; }
   .ck-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #5c3a1e; }
   .ck-total-row.grand { font-size: 16px; font-weight: 700; padding-top: 6px; border-top: 1px solid rgba(0,0,0,0.08); margin-top: 6px; }
+  /* Payment framing (2026-08-05): cuando el cobro es anticipo, rebajamos
+     el "Total estimado" (deja de ser el ancla visual) y destacamos "Pagas ahora"
+     con un card olive prominente. Técnica usada por Klarna/Afterpay/Airbnb. */
+  #ck-totals.ck-totals-anticipo .ck-total-row.grand {
+    font-size: 12px; font-weight: 500; color: #a09e7a;
+    border-top: none; padding-top: 0; margin-top: 4px;
+    padding-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  #ck-totals.ck-totals-anticipo .ck-total-row.grand span:last-child {
+    font-weight: 500; color: #a09e7a;
+  }
+  .ck-anticipo-hero {
+    margin-top: 14px; padding: 18px 20px;
+    background: linear-gradient(180deg, #fdfbf4 0%, #f5ecd4 100%);
+    border: 1px solid rgba(154, 152, 84, 0.32);
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(92, 58, 30, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    font-family: 'Inter', sans-serif;
+  }
+  .ck-anticipo-hero .ah-eyebrow {
+    font-size: 10.5px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: #7d7c3f; font-weight: 700; margin-bottom: 4px;
+  }
+  .ck-anticipo-hero .ah-amount {
+    font-size: 34px; line-height: 1.1; font-weight: 700; color: #5c3a1e;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.5px;
+  }
+  .ck-anticipo-hero .ah-restante {
+    margin-top: 8px; font-size: 12.5px; color: #6a6551; line-height: 1.45;
+  }
+  .ck-anticipo-hero .ah-restante strong { color: #5c3a1e; font-weight: 600; }
   .ck-total-note { font-size: 11px; color: #a09e7a; font-style: italic; margin-top: 4px; line-height: 1.4; }
   .choice-btn:disabled { opacity: 0.45; cursor: not-allowed; }
   .choice-btn:disabled:hover { transform: none; }
@@ -8409,7 +8441,16 @@ try {
           </div>
           <span class="choice-arrow" aria-hidden="true">→</span>
         </button>
-        <!-- Sucursal: reserva sin pagar, el monto final se cobra en el spa. -->
+        <!-- Sucursal + productos con anticipo: paga solo el % por Stripe, resto al llegar. -->
+        <button class="choice-btn choice-pay" id="ck-btn-anticipo" onclick="openPagoSimulador()" type="button" style="display:none;">
+          <svg class="choice-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M6 16h4"/></svg>
+          <div class="choice-text">
+            <strong id="ck-btn-anticipo-title">Pagar anticipo</strong>
+            <span id="ck-btn-anticipo-sub">Los restantes los pagas al llegar al spa</span>
+          </div>
+          <span class="choice-arrow" aria-hidden="true">→</span>
+        </button>
+        <!-- Sucursal sin anticipo: reserva sin pagar, el monto final se cobra en el spa. -->
         <button class="choice-btn choice-pay" id="ck-btn-reservar" onclick="closeModal('modal-choice'); openModal('modal-agendar');" type="button" style="display:none;">
           <svg class="choice-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-7"/></svg>
           <div class="choice-text">
@@ -8418,9 +8459,9 @@ try {
           </div>
           <span class="choice-arrow" aria-hidden="true">→</span>
         </button>
-        <!-- Nota informativa para sucursal — visible solo cuando #ck-btn-reservar está visible. -->
+        <!-- Nota informativa para sucursal (visible cuando el pago final no es completo por Stripe). -->
         <p id="ck-suc-note" class="ck-suc-note" style="display:none;margin:12px 4px 0;font-size:12px;color:#6a6551;line-height:1.5;text-align:center;">
-          Tu cita se cobra directamente en <strong>Plaza Hive</strong> cuando llegues. Aceptamos efectivo, tarjeta y transferencia.
+          El resto se cobra directamente en <strong>Plaza Hive</strong> cuando llegues. Aceptamos efectivo, tarjeta y transferencia.
         </p>
       </div>
     </div>
@@ -8586,6 +8627,13 @@ try {
          desglose completo (servicios + traslado + total), así que no hay
          columna propia — todo el detalle vive en un solo lugar. -->
     <div id="stripe-grid" style="display:none;">
+      <!-- Banner informativo cuando el cobro es un ANTICIPO (sucursal + masaje).
+           Se llena dinámicamente en _pgStripeCheckout. En pago completo (domicilio)
+           queda oculto — Stripe ya muestra sus line items con el total real. -->
+      <div id="stripe-anticipo-banner" style="display:none;padding:14px 18px;margin:0 0 16px;background:#fdfbf4;border:1px solid #e0d9be;border-radius:10px;font-family:'Inter',sans-serif;">
+        <div style="font-size:15px;color:var(--brown,#5c3a1e);font-weight:600;margin-bottom:4px;">Pagar anticipo</div>
+        <div id="stripe-anticipo-sub" style="font-size:13px;color:#6a6551;line-height:1.5;"></div>
+      </div>
       <div id="stripe-checkout-container"></div>
     </div>
     <div id="stripe-confirm" style="display:none; padding:64px 24px; text-align:center; font-family:'Inter',sans-serif;">
@@ -9796,6 +9844,10 @@ try {
         // (Por default el JSON manda true; solo lo agregamos al treatment cuando es false
         // para no romper productos legacy que no lo traen.)
         if (p.tiene_extras === false) t.tieneExtras = false;
+        // Regla anticipo sucursal (2026-08-05): cuando la cita es en sucursal y este
+        // producto pide anticipo, Stripe cobra solo el %; el resto se paga al llegar.
+        // Ver window.EXENTIA_ANTICIPO_PCT + calcularCobroStripe().
+        if (p.requiere_anticipo === true) t.requiereAnticipo = true;
         if (p.is_paquete) {
           t.isPaquete = true;
           if (p.ahorro_mxn != null) t.ahorro = _catFmtPrice(p.ahorro_mxn);
@@ -9872,8 +9924,31 @@ try {
       SERVICES.faciales.addons = FACIAL_ADDONS;
       SERVICES.faciales.treatments.forEach(function(t){ t.hasAddons = (t.tieneExtras !== false); });
     }
+    // Regla anticipo sucursal — % configurable desde el JSON raíz del catálogo.
+    // Consumida por calcularCobroStripe() para decidir cuánto cobrar por Stripe
+    // cuando la cita es en sucursal y hay productos con requiereAnticipo.
+    if (remote.anticipo_pct_sucursal != null) {
+      window.EXENTIA_ANTICIPO_PCT = Number(remote.anticipo_pct_sucursal) || 30;
+    }
     return true;
   }
+
+  // Busca un producto en el catálogo (SERVICES) por su NOMBRE exacto.
+  // Sirve para leer flags como requiereAnticipo desde el cart, cuya key es el
+  // nombre visible del producto (con posibles sufijos "· 60 min · $X").
+  function _findCatalogProductByName(name) {
+    if (!name) return null;
+    var pure = String(name).split(' · ')[0].trim();
+    var slugs = Object.keys(SERVICES);
+    for (var i = 0; i < slugs.length; i++) {
+      var arr = (SERVICES[slugs[i]] && SERVICES[slugs[i]].treatments) || [];
+      for (var j = 0; j < arr.length; j++) {
+        if (arr[j].name === pure) return arr[j];
+      }
+    }
+    return null;
+  }
+  window._findCatalogProductByName = _findCatalogProductByName;
 
   // NETWORK-FIRST (v210). El cache-first anterior causaba que un cambio hecho en
   // el panel admin no se viera hasta la SEGUNDA recarga: la página pintaba el
@@ -12592,13 +12667,27 @@ try {
     // se abre la puerta a que su cálculo y el nuestro se separen. Con esto hay
     // una sola verdad: lo que el cliente ve es lo que Stripe cobra.
     // (El traslado NO va aquí — n8n lo agrega como línea aparte; ver _pgCobroDesglose.)
+    // Declaramos _desglose FUERA del try — lo usa también el banner de abajo.
+    var _desglose = null;
     try {
-      var _desglose = _pgCobroDesglose();
-      payload.stripe_line_items = _desglose.items.map(function(li){
+      _desglose = _pgCobroDesglose();
+      // Regla anticipo sucursal (2026-08-05): en sucursal con productos que piden
+      // anticipo, `itemsStripe` ya trae SOLO las líneas del % correspondiente y
+      // `montoStripe` es la suma real que cobrará Stripe (no el precio completo).
+      // En domicilio y en sucursal sin anticipo, `itemsStripe === items` completos.
+      payload.stripe_line_items = _desglose.itemsStripe.map(function(li){
         return { name: li.name, unit_amount: li.unit_amount, quantity: li.quantity };
       });
-      console.log('[stripe] a cobrar:', _desglose.total,
-                  '= servicios', _desglose.subtotal, '+ traslado', _desglose.traslado);
+      // El panel/admin necesita ver el precio total real, no solo lo cobrado.
+      payload.precio_total_mxn = _desglose.totalServicios;
+      // Meta para el modal de Stripe + para el webhook Stripe (cuando llegue el
+      // callback sabremos si fue anticipo o pago completo).
+      payload.pago_tipo_cobro = _desglose.tipoCobro;
+      payload.pago_anticipo_pct = _desglose.tipoCobro === 'sucursal_anticipo' ? _desglose.pctAnticipo : null;
+      payload.pago_restante_al_llegar_mxn = _desglose.restanteAlLlegar || 0;
+      console.log('[stripe] cobra $' + _desglose.montoStripe,
+                  '· tipo=' + _desglose.tipoCobro,
+                  '· resto al llegar $' + _desglose.restanteAlLlegar);
     } catch(err) {
       console.warn('[stripe] no se pudieron armar las líneas, n8n las reconstruirá:', err);
     }
@@ -12613,6 +12702,21 @@ try {
     if (statusEl) statusEl.style.display = '';
     if (container) container.innerHTML = '';
     if (confirmEl) confirmEl.style.display = 'none';
+
+    // Banner "Pagar anticipo" — solo cuando el cobro es sucursal_anticipo.
+    // El Stripe embedded no tiene header custom; este banner va arriba del widget.
+    var antBanner = document.getElementById('stripe-anticipo-banner');
+    var antSub = document.getElementById('stripe-anticipo-sub');
+    if (antBanner && antSub) {
+      if (payload.pago_tipo_cobro === 'sucursal_anticipo') {
+        var _mto = Math.round(Number(_desglose && _desglose.montoStripe || 0)).toLocaleString('en-US');
+        var _rest = Math.round(Number(_desglose && _desglose.restanteAlLlegar || 0)).toLocaleString('en-US');
+        antSub.textContent = 'Estás pagando $' + _mto + ' de anticipo. Los $' + _rest + ' restantes se cobran al llegar al spa.';
+        antBanner.style.display = '';
+      } else {
+        antBanner.style.display = 'none';
+      }
+    }
 
     try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_start', { booking_uuid: bookingUuid, total: payload.valor_ticket_mxn || payload.precio_total_mxn || 0 }); } catch(_){}
 
@@ -12968,13 +13072,17 @@ try {
       var precio = Number(s.precio_mxn) || 0;
       if (precio <= 0) return;               // los "a cotizar" no se cobran aquí
       var slug = s.slug || s.nombre || 'Servicio';
+      // Marcamos si este producto pide anticipo (2026-08-05, regla sucursal).
+      var cat = _findCatalogProductByName(slug);
+      var reqAnt = !!(cat && cat.requiereAnticipo);
       items.push({
         name: (label ? label + ' · ' : '') + slug,
         unit_amount: Math.round(precio * 100),
         quantity: 1,
         _persona: label || '',
         _slug: slug,
-        _precio: precio
+        _precio: precio,
+        _requiereAnticipo: reqAnt
       });
     }
     var personas = p.personas_servicios || [];
@@ -12987,13 +13095,60 @@ try {
     if (!items.length) {
       (p.servicios || []).forEach(function(s){ agregar('', s); });
     }
+    var esSucursal = (p.tipo_cita === 'sucursal');
     var traslado = (p.tipo_cita === 'domicilio') ? (parseFloat(p.costo_traslado_total) || 0) : 0;
     var subtotalCent = items.reduce(function(acc, li){ return acc + li.unit_amount * (li.quantity || 1); }, 0);
+    var totalServicios = (subtotalCent + Math.round(traslado * 100)) / 100;
+
+    // Reglas del 2026-08-05:
+    //  · Domicilio → Stripe cobra el TOTAL (servicios + traslado). Sin cambios.
+    //  · Sucursal + al menos un producto con requiereAnticipo → Stripe cobra el %
+    //    solo de esos productos; el resto se paga al llegar.
+    //  · Sucursal sin ningún producto con anticipo → NO abrir Stripe, es reserva
+    //    pura (comportamiento actual "Confirmar cita").
+    var pct = Number(window.EXENTIA_ANTICIPO_PCT || 30) || 30;
+    var itemsStripe = items;   // por default, línea a línea completa
+    var montoStripe = totalServicios;
+    var restanteAlLlegar = 0;
+    var tipoCobro = esSucursal ? 'sucursal_sin_anticipo' : 'domicilio_completo';
+
+    if (esSucursal) {
+      // Recalcular: solo los que piden anticipo se cobran (% del precio); el resto va al llegar.
+      var stripeCent = 0;
+      var restanteCent = 0;
+      itemsStripe = [];
+      items.forEach(function(li){
+        var precioCent = li.unit_amount * (li.quantity || 1);
+        if (li._requiereAnticipo) {
+          var antCent = Math.round(precioCent * pct / 100);
+          stripeCent += antCent;
+          restanteCent += (precioCent - antCent);
+          itemsStripe.push({
+            name: 'Anticipo (' + pct + '%) · ' + li._slug + (li._persona ? ' — ' + li._persona : ''),
+            unit_amount: antCent,
+            quantity: 1
+          });
+        } else {
+          restanteCent += precioCent;
+        }
+      });
+      montoStripe = stripeCent / 100;
+      restanteAlLlegar = restanteCent / 100;
+      tipoCobro = montoStripe > 0 ? 'sucursal_anticipo' : 'sucursal_sin_anticipo';
+    }
+
     return {
       items: items,
+      itemsStripe: itemsStripe,
       traslado: traslado,
       subtotal: subtotalCent / 100,
-      total: (subtotalCent + Math.round(traslado * 100)) / 100,   // = lo que cobra Stripe
+      totalServicios: totalServicios,   // precio real del servicio (siempre el completo)
+      total: montoStripe,                // = lo que Stripe cobrará (anticipo o completo)
+      montoStripe: montoStripe,          // alias para claridad
+      restanteAlLlegar: restanteAlLlegar,
+      pctAnticipo: pct,
+      tipoCobro: tipoCobro,              // 'domicilio_completo' | 'sucursal_anticipo' | 'sucursal_sin_anticipo'
+      esSucursal: esSucursal,
       payload: p
     };
   }
@@ -14520,12 +14675,62 @@ try {
 
     // Domicilio paga para confirmar (compromiso de traslado); sucursal solo reserva,
     // el monto final se desconoce hasta estar en el spa y se cobra ahí. Henry 2026-08-04.
+    // Regla anticipo sucursal (2026-08-05): 3 botones mutuamente excluyentes.
+    //  · Domicilio                          → Pagar (Stripe completo)
+    //  · Sucursal + productos con anticipo → Pagar anticipo (Stripe % + resto al llegar)
+    //  · Sucursal sin anticipo              → Confirmar cita (sin Stripe)
     var btnPagar = document.getElementById('ck-btn-pagar');
+    var btnAnticipo = document.getElementById('ck-btn-anticipo');
     var btnReservar = document.getElementById('ck-btn-reservar');
     var sucNote = document.getElementById('ck-suc-note');
-    if (btnPagar) btnPagar.style.display = calc.isHome ? '' : 'none';
-    if (btnReservar) btnReservar.style.display = calc.isHome ? 'none' : '';
-    if (sucNote) sucNote.style.display = calc.isHome ? 'none' : '';
+    // Ocultar todos por default y luego prender uno solo.
+    if (btnPagar) btnPagar.style.display = 'none';
+    if (btnAnticipo) btnAnticipo.style.display = 'none';
+    if (btnReservar) btnReservar.style.display = 'none';
+    if (sucNote) sucNote.style.display = 'none';
+
+    // Calcular escenario. _pgCobroDesglose devuelve tipoCobro/montoStripe/restanteAlLlegar.
+    var cobro = null;
+    try { cobro = (typeof _pgCobroDesglose === 'function') ? _pgCobroDesglose() : null; } catch(_) { cobro = null; }
+
+    if (calc.isHome) {
+      if (btnPagar) btnPagar.style.display = '';
+    } else if (cobro && cobro.tipoCobro === 'sucursal_anticipo') {
+      if (btnAnticipo) {
+        btnAnticipo.style.display = '';
+        var tit = document.getElementById('ck-btn-anticipo-title');
+        var sub = document.getElementById('ck-btn-anticipo-sub');
+        if (tit) tit.textContent = 'Pagar anticipo $' + Math.round(cobro.montoStripe).toLocaleString('en-US');
+        if (sub) sub.textContent = 'Los $' + Math.round(cobro.restanteAlLlegar).toLocaleString('en-US') + ' restantes los pagas al llegar al spa';
+      }
+      if (sucNote) sucNote.style.display = '';
+    } else {
+      if (btnReservar) btnReservar.style.display = '';
+      if (sucNote) sucNote.style.display = '';
+    }
+
+    // Payment framing (2026-08-05): jerarquía visual invertida cuando hay anticipo.
+    // Klarna/Afterpay/Airbnb: el monto que sale del bolsillo AHORA es el ancla,
+    // no el total. Reduce fricción psicológica sin ocultar el precio real.
+    var totalsEl2 = document.getElementById('ck-totals');
+    if (totalsEl2) totalsEl2.classList.remove('ck-totals-anticipo');
+    if (totalsEl2 && cobro && cobro.tipoCobro === 'sucursal_anticipo') {
+      // 1) Rebajamos el "Total estimado" (ya renderizado arriba en esta función)
+      //    → CSS via .ck-totals-anticipo lo hace 12px gris.
+      totalsEl2.classList.add('ck-totals-anticipo');
+      // 2) Insertamos el HERO con "Pagas ahora $X" como protagonista visual.
+      var _mto = Math.round(cobro.montoStripe).toLocaleString('en-US');
+      var _rest = Math.round(cobro.restanteAlLlegar).toLocaleString('en-US');
+      var hero = '<div class="ck-anticipo-hero">'
+        +   '<div class="ah-eyebrow">Pagas ahora</div>'
+        +   '<div class="ah-amount">$' + _mto + '</div>'
+        +   '<div class="ah-restante">Los <strong>$' + _rest + '</strong> restantes los pagas al llegar al spa.</div>'
+        + '</div>';
+      totalsEl2.insertAdjacentHTML('beforeend', hero);
+    } else if (totalsEl2 && cobro && cobro.tipoCobro === 'sucursal_sin_anticipo') {
+      var extra2 = '<div class="ck-total-row"><span>Pagas al llegar al spa</span><span>$' + Math.round(cobro.totalServicios).toLocaleString('en-US') + '</span></div>';
+      totalsEl2.insertAdjacentHTML('beforeend', extra2);
+    }
   }
   window.renderCheckoutCart = renderCheckoutCart;
 
@@ -17907,7 +18112,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v219-pr14-sucursal-sin-pago-payload', stamp: '2026-08-04 16:02' };
+  var EX_BUILD = { version: 'v221-anticipo-payment-framing', stamp: '2026-08-05 11:15' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
