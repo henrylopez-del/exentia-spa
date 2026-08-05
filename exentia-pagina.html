@@ -7584,6 +7584,12 @@ try {
           <li>Lun-Sáb 9AM-6PM</li>
         </ul>
       </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li onclick="openModal('modal-legal-cancelaciones')" style="cursor:pointer">Cancelaciones y reembolsos</li>
+        </ul>
+      </div>
     </div>
     <div class="footer-bottom">
       © 2026 EXENTIA SPA &amp; BEAUTY SALON · TODOS LOS DERECHOS RESERVADOS
@@ -7592,6 +7598,52 @@ try {
 </footer>
 
 <!-- cart-badge y cart-panel eliminados: ahora todo el flujo de carrito vive dentro del pop-up. -->
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODAL LEGAL · Cancelaciones y reembolsos
+     Se abre desde el link "Legal" del footer.
+═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-legal-cancelaciones">
+  <div class="modal-box" style="max-width:640px;">
+    <div class="modal-close" onclick="closeModal('modal-legal-cancelaciones')" aria-label="Cerrar">&#10005;</div>
+    <div class="modal-header" style="margin-bottom:18px;">
+      <div class="ornament" aria-hidden="true">
+        <svg width="56" height="14" viewBox="0 0 56 14" fill="none">
+          <path d="M0 7 L20 7" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+          <path d="M22 7 Q26 4 28 7 Q30 10 28 7 M24 7 Q22 5 20 6 M30 7 Q32 5 34 6" stroke="currentColor" stroke-width="0.8" fill="none"/>
+          <circle cx="28" cy="7" r="1.6" fill="currentColor"/>
+          <path d="M36 7 L56 7" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+        </svg>
+      </div>
+      <h2>Cancelaciones y <em>reembolsos</em></h2>
+      <p style="font-size:13px; opacity:0.75;">Última actualización: 5 de agosto de 2026</p>
+    </div>
+    <div class="modal-body" style="font-family:'Inter', sans-serif; color:#3a2f22; line-height:1.6; font-size:14.5px;">
+      <p>Sabemos que a veces los planes cambian. Estas son nuestras reglas para cancelar una cita y recibir tu reembolso, calculadas sobre el anticipo pagado en línea.</p>
+
+      <h3 style="margin-top:22px; font-size:15.5px; color:#5c3a1e;">¿Cuánto se reembolsa?</h3>
+      <p>Depende de cuánto tiempo antes de tu cita nos avises:</p>
+      <ul style="padding-left:20px; margin:10px 0;">
+        <li><strong>Más de 24 horas antes:</strong> se reembolsa el <strong>100%</strong> de lo pagado.</li>
+        <li><strong>Entre 6 y 24 horas antes:</strong> se reembolsa el <strong>60%</strong>.</li>
+        <li><strong>Entre 3 y 6 horas antes:</strong> se reembolsa el <strong>40%</strong>.</li>
+        <li><strong>Menos de 3 horas antes o no asistir:</strong> no hay reembolso.</li>
+      </ul>
+
+      <h3 style="margin-top:22px; font-size:15.5px; color:#5c3a1e;">¿Cómo cancelo mi cita?</h3>
+      <p>Puedes cancelar de dos formas:</p>
+      <ul style="padding-left:20px; margin:10px 0;">
+        <li>Desde la sección <strong>Mi cuenta</strong> de esta página, entrando con el teléfono de tu reserva.</li>
+        <li>Escribiéndonos por WhatsApp al <a href="https://wa.me/529984803595" target="_blank" rel="noopener" style="color:#5c3a1e; text-decoration:underline;">+52 998 480 3595</a>.</li>
+      </ul>
+
+      <h3 style="margin-top:22px; font-size:15.5px; color:#5c3a1e;">¿Cuándo recibo el dinero?</h3>
+      <p>El reembolso se procesa a través de Stripe (nuestra plataforma de pagos) a la <strong>misma tarjeta con la que pagaste</strong>. Suele reflejarse en tu estado de cuenta entre <strong>5 y 10 días hábiles</strong>, dependiendo de tu banco.</p>
+
+      <p style="margin-top:22px; font-size:13px; opacity:0.75;">Si tienes cualquier duda sobre una cancelación, escríbenos por WhatsApp y con gusto te ayudamos.</p>
+    </div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
      MODAL PLACE-FIRST · Sucursal / Domicilio
@@ -18112,7 +18164,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v221-anticipo-payment-framing', stamp: '2026-08-05 11:15' };
+  var EX_BUILD = { version: 'v222-legal-cancelaciones', stamp: '2026-08-05 11:47' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
