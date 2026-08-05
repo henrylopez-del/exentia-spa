@@ -10654,8 +10654,10 @@ try {
     } else if (legalMatch) {
       showView('legal-view');
       window.scrollTo({ top: 0, behavior: 'instant' });
+      if (!window._exOriginalTitle) window._exOriginalTitle = document.title;
       document.title = 'Cancelaciones y reembolsos · Exentia Spa';
     } else {
+      if (window._exOriginalTitle) { document.title = window._exOriginalTitle; }
       showView('home-view');
       if (hash && hash !== '#' && hash !== '#home') {
         setTimeout(() => {
@@ -10940,7 +10942,9 @@ try {
       el.addEventListener('click', (e) => {
         e.preventDefault();
         const scrollTarget = el.dataset.scroll;
-        if (location.hash.startsWith('#servicio/')) {
+        // Si estamos en cualquier ruta que no sea home (servicio/legal/otras vistas),
+        // navegar a home primero y luego hacer scroll.
+        if (location.hash.startsWith('#servicio/') || location.hash.startsWith('#legal/')) {
           location.hash = '';
           if (scrollTarget) {
             setTimeout(() => {
@@ -18173,7 +18177,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v226-legal-nombre-cita', stamp: '2026-08-05 12:45' };
+  var EX_BUILD = { version: 'v227-fix-nav-legal-view', stamp: '2026-08-05 13:00' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
