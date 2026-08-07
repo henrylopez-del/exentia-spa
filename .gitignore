@@ -46,3 +46,12 @@ dist/
 
 # ===== Material archivado (docs internos, experimentos, scripts sueltos) =====
 archivo/
+
+# ===== Carpetas con credenciales embebidas (verificado 2026-08-07) =====
+# Escaneo encontró PIT tokens de GHL / llaves Stripe / JWTs de Supabase dentro.
+respaldos/          # backups .html y exports n8n con llaves hardcodeadas
+n8n/                # exports de workflows con credenciales
+panel/              # panel del masajista — vive en su propio repo exentia-panel, y trae tokens
+
+# ===== Backups puntuales de la página =====
+exentia-pagina.BACKUP-*.html

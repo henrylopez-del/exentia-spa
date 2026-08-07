@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- intl-tel-input v23: banderitas + código de país (jsdelivr) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.4.0/build/css/intlTelInput.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.4.0/build/js/intlTelInput.min.js"></script>
 <style>
   :root {
     --olive:#9a9854;
@@ -35,17 +38,50 @@
   }
 
   * { box-sizing:border-box; margin:0; padding:0; }
-  html, body { min-height:100%; }
+
+  /* ===== GHL NUCLEAR ESCAPE — neutraliza wrappers de Custom Code (.c-section/.c-row/.inner)
+     que dejan espacio blanco al servir por dominio custom (exentiaspabeauty.com/preparacion). ===== */
+  html, body {
+    margin:0 !important; padding:0 !important;
+    background:transparent !important;
+    overflow-x:hidden !important;
+    min-height:100%;
+  }
+  body { overflow:hidden !important; }
+  #prep-root {
+    position:fixed !important;
+    top:0 !important; left:0 !important;
+    width:100vw !important; height:100vh !important;
+    z-index:2147483647 !important;
+    overflow-y:auto !important;
+    background:var(--off-white);
+    color:var(--brown);
+    font-family:'Inter', system-ui, -apple-system, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .c-section .inner, .c-row .inner, .c-column .inner, .inner, .vertical.inner {
+    max-width:100vw !important; width:100vw !important;
+    padding:0 !important; margin:0 !important;
+  }
+  .c-section, .c-row, .c-column, .c-wrapper, .c-custom-code, .fullSection,
+  [id^="section-"], [id^="row-"], [id^="col-"], [id^="custom-code-"],
+  [class*="c-section"], [class*="c-row"], [class*="c-column"], [class*="c-wrapper"], [class*="c-custom-code"] {
+    max-width:100vw !important; width:100vw !important;
+    padding:0 !important; margin:0 !important;
+    background:transparent !important; border:none !important;
+    overflow:visible !important;
+  }
+  .row-align-center { max-width:100vw !important; width:100vw !important; }
 
   body {
     font-family:'Inter', system-ui, -apple-system, sans-serif;
     color:var(--brown);
     background:var(--off-white);
     line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .app {
@@ -347,6 +383,9 @@
     line-height:1.5;
   }
 
+  /* intl-tel-input: solo ancho 100% del contenedor; el resto lo maneja la CSS del CDN */
+  .iti { width:100%; display:block; }
+
   /* Conditional group */
   .sub-group {
     max-height:0;
@@ -584,14 +623,54 @@
   }
   .icon-step svg { width:20px; height:20px; }
 
+  /* Mobile compacto — reduce scroll para que cada paso quepa en pantalla */
+  @media (max-width:640px) {
+    .app { padding:12px 14px 20px; }
+    .brand { padding:6px 0 10px; }
+    .brand-name { font-size:26px; letter-spacing:1.5px; }
+    .brand-sub { font-size:8px; letter-spacing:3px; margin-top:2px; }
+    .progress { margin-bottom:14px; }
+    .progress-label { font-size:10px; margin-top:4px; }
+    .title { font-size:22px; margin-bottom:8px; line-height:1.15; }
+    .subtitle { font-size:13px; margin-bottom:14px; line-height:1.45; }
+    .card { padding:12px 14px; margin-bottom:10px; }
+    .cita-summary { padding:14px 16px; }
+    .cita-summary .row { padding:4px 0; font-size:13px; }
+    .cita-summary .row-label { font-size:11px; }
+    .cita-summary .dir { padding:8px 0 2px; font-size:12px; }
+    .question { font-size:16px; margin-bottom:10px; line-height:1.3; }
+    .question-sub { font-size:12px; margin-bottom:10px; }
+    .toggle-row { gap:10px; margin-bottom:14px; }
+    .toggle-btn { padding:12px 10px; min-height:48px; font-size:14px; }
+    .pill-row { gap:8px; margin-bottom:14px; }
+    .pill-btn { padding:10px 14px; min-height:44px; font-size:14px; }
+    .field { margin-bottom:12px; }
+    .field-label { font-size:12px; margin-bottom:4px; }
+    input[type="text"], input[type="tel"], textarea { padding:10px 12px; }
+    textarea { min-height:60px; }
+    .sub-group-inner { padding:10px 14px; margin-bottom:14px; }
+    .sub-group.show { margin-top:4px; }
+    .banner { padding:10px 12px; margin-bottom:14px; font-size:12px; }
+    .banner-mini { padding:8px 12px; margin-bottom:12px; }
+    .actions { padding-top:16px; gap:8px; }
+    .btn { padding:12px 14px; min-height:48px; font-size:14px; }
+    .btn-secondary { min-width:80px; }
+    .btn-shortcut { padding:14px 14px; margin-bottom:10px; font-size:15px; }
+    .divider-o { margin:12px 0; font-size:11px; }
+    .icon-step { width:32px; height:32px; margin-bottom:10px; }
+    .final-title { font-size:32px; }
+  }
   @media (max-width:400px) {
-    .app { padding:16px 16px 24px; }
-    .title { font-size:26px; }
-    .final-title { font-size:36px; }
+    .app { padding:10px 12px 18px; }
+    .brand-name { font-size:24px; }
+    .title { font-size:20px; }
+    .toggle-btn { padding:10px 8px; min-height:44px; font-size:13px; }
+    .pill-btn { padding:10px 12px; min-height:42px; }
   }
 </style>
 </head>
 <body>
+<div id="prep-root">
 <div class="app" id="app">
 
   <!-- Header + Progress -->
@@ -805,27 +884,35 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
     </div>
     <div class="question">¿Quién recibirá a nuestro equipo?<span class="req-asterisk" data-req-for="receptor_grupo">*</span></div>
-    <button type="button" class="btn-shortcut" id="btn-yo-recibo">
-      Yo mismo recibiré al equipo
-      <span class="btn-shortcut-sub" id="yo-recibo-sub">Usaremos tus datos de contacto</span>
-    </button>
-    <div class="divider-o">o</div>
-    <div class="field" data-field-wrap="receptor_nombre">
-      <label class="field-label" for="receptor_nombre">Otra persona · nombre<span class="req-asterisk" data-req-for="receptor_nombre">*</span></label>
-      <input type="text" id="receptor_nombre" data-field="receptor_nombre" autocomplete="off" placeholder="Ej. Ana Pérez">
-      <div class="prefill-tag hidden" data-prefill-for="receptor_nombre">Confirmado de tu visita anterior</div>
-    </div>
-    <div class="field" data-field-wrap="receptor_telefono">
-      <label class="field-label" for="receptor_telefono">WhatsApp o teléfono<span class="req-asterisk" data-req-for="receptor_telefono">*</span></label>
-      <input type="tel" id="receptor_telefono" data-field="receptor_telefono" inputmode="tel" autocomplete="off" placeholder="Ej. 998 123 4567">
-      <div class="prefill-tag hidden" data-prefill-for="receptor_telefono">Confirmado de tu visita anterior</div>
+
+    <!-- Opción A: yo mismo -->
+    <div id="opt-yo-wrap">
+      <button type="button" class="btn-shortcut" id="btn-yo-recibo">
+        Yo mismo recibiré al equipo
+        <span class="btn-shortcut-sub" id="yo-recibo-sub">Usaremos tus datos de contacto</span>
+      </button>
+      <!-- Follow-up inline: solo cuando el sistema NO tiene el teléfono del cliente -->
+      <div class="field" data-field-wrap="cliente_telefono" style="margin-top:14px; display:none;">
+        <label class="field-label" for="cliente_telefono">Confírmanos tu WhatsApp<span class="req-asterisk" data-req-for="cliente_telefono">*</span></label>
+        <input type="tel" id="cliente_telefono" data-field="cliente_telefono" inputmode="tel" autocomplete="tel" placeholder="998 123 4567">
+        <div class="prefill-tag hidden" data-prefill-for="cliente_telefono">Confirmado de tu visita anterior</div>
+      </div>
     </div>
 
-    <!-- Solo se muestra cuando el sistema NO tiene el teléfono del cliente registrado (ver boot) -->
-    <div class="field" data-field-wrap="cliente_telefono" style="margin-top:18px; display:none;">
-      <label class="field-label" for="cliente_telefono">Tu número de teléfono<span class="req-asterisk" data-req-for="cliente_telefono">*</span></label>
-      <input type="tel" id="cliente_telefono" data-field="cliente_telefono" inputmode="tel" autocomplete="tel" placeholder="Ej. 998 123 4567">
-      <div class="prefill-tag hidden" data-prefill-for="cliente_telefono">Confirmado de tu visita anterior</div>
+    <div class="divider-o">o</div>
+
+    <!-- Opción B: otra persona -->
+    <div id="opt-otra-wrap">
+      <div class="field" data-field-wrap="receptor_nombre">
+        <label class="field-label" for="receptor_nombre">Otra persona · nombre<span class="req-asterisk" data-req-for="receptor_nombre">*</span></label>
+        <input type="text" id="receptor_nombre" data-field="receptor_nombre" autocomplete="off" placeholder="Ej. Ana Pérez">
+        <div class="prefill-tag hidden" data-prefill-for="receptor_nombre">Confirmado de tu visita anterior</div>
+      </div>
+      <div class="field" data-field-wrap="receptor_telefono">
+        <label class="field-label" for="receptor_telefono">WhatsApp o teléfono<span class="req-asterisk" data-req-for="receptor_telefono">*</span></label>
+        <input type="tel" id="receptor_telefono" data-field="receptor_telefono" inputmode="tel" autocomplete="off" placeholder="998 123 4567">
+        <div class="prefill-tag hidden" data-prefill-for="receptor_telefono">Confirmado de tu visita anterior</div>
+      </div>
     </div>
 
     <div class="field-error-msg" id="err-step-5">Elige "Yo mismo recibiré" o llena nombre y teléfono de quien recibirá al equipo.</div>
@@ -846,6 +933,56 @@
     <div class="question-sub">Opcional, pero útil. Ej. "portón negro, timbre no sirve, avisar al llegar."</div>
     <div class="field">
       <textarea id="observaciones" data-field="observaciones" placeholder="Comparte lo que quieras..." style="min-height:120px;"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" data-action="back">Atrás</button>
+      <button class="btn btn-primary" data-action="next">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- Paso 7: Preferencias del servicio -->
+  <div class="screen" id="screen-7">
+    <div class="banner-mini" id="banner-mini-7"></div>
+    <div class="icon-step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+    <div class="question">Tus preferencias para el servicio</div>
+    <div class="question-sub">Nos ayuda a preparar la experiencia como más te gusta. Todo es opcional.</div>
+
+    <div class="field">
+      <label class="field-label">Presión preferida</label>
+      <div class="pill-row" data-field="pref_presion">
+        <button type="button" class="pill-btn" data-value="suave">Suave</button>
+        <button type="button" class="pill-btn" data-value="media">Media</button>
+        <button type="button" class="pill-btn" data-value="fuerte">Fuerte</button>
+      </div>
+      <div class="prefill-tag hidden" data-prefill-for="pref_presion">Confirmado de tu visita anterior</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Aromas</label>
+      <div class="pill-row" data-field="pref_aromas">
+        <button type="button" class="pill-btn" data-value="sin">Sin aromas</button>
+        <button type="button" class="pill-btn" data-value="suaves">Aromas suaves</button>
+        <button type="button" class="pill-btn" data-value="cualquiera">Cualquier aroma</button>
+      </div>
+      <div class="prefill-tag hidden" data-prefill-for="pref_aromas">Confirmado de tu visita anterior</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Género del terapeuta</label>
+      <div class="pill-row" data-field="pref_genero_terapeuta">
+        <button type="button" class="pill-btn" data-value="mujer">Mujer</button>
+        <button type="button" class="pill-btn" data-value="hombre">Hombre</button>
+        <button type="button" class="pill-btn" data-value="sin_preferencia">Sin preferencia</button>
+      </div>
+      <div class="prefill-tag hidden" data-prefill-for="pref_genero_terapeuta">Confirmado de tu visita anterior</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="pref_notas">Otras notas (opcional)</label>
+      <textarea id="pref_notas" data-field="pref_notas" placeholder="Ej. lesión en hombro izquierdo, sin aceite en cara, música tranquila..." style="min-height:80px;"></textarea>
     </div>
 
     <div class="actions">
@@ -875,6 +1012,18 @@
 
 </div>
 
+<!-- Build tag (para verificar versión desplegada) -->
+<div id="prep-build" style="position:fixed;bottom:6px;right:8px;font:500 10px/1 'Inter',sans-serif;color:#a99f8c;opacity:.65;pointer-events:none;z-index:9999;letter-spacing:.5px;">
+  v2.1 · <span id="prep-build-sha">local</span>
+</div>
+<script>
+  // Se actualiza al pushear a GitHub — ver script deploy o edit manual del commit hash
+  (function(){
+    var el = document.getElementById('prep-build-sha');
+    if (el) el.textContent = 'a6aebe4';
+  })();
+</script>
+
 <script>
 (function(){
   'use strict';
@@ -888,21 +1037,23 @@
     complete: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-prep-complete'
   };
 
-  var TOTAL_STEPS = 6;
+  var TOTAL_STEPS = 7;
   var STEP_FIELDS = {
     1: ['tiene_caseta','requiere_registro','codigo_acceso','instrucciones_acceso'],
     2: ['tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento'],
     3: ['espacio_camillas_ok','piso','tiene_elevador','hay_escaleras'],
     4: ['tiene_aire_acondicionado','hay_mascotas','mascotas_detalle','condiciones_especiales'],
     5: ['receptor_nombre','receptor_telefono','receptor_es_cliente','cliente_telefono'],
-    6: ['observaciones']
+    6: ['observaciones'],
+    7: ['pref_presion','pref_aromas','pref_genero_terapeuta','pref_notas']
   };
   var PREFILLABLE = new Set([
     'tiene_caseta','requiere_registro','codigo_acceso','instrucciones_acceso',
     'tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento',
     'espacio_camillas_ok','piso','tiene_elevador','hay_escaleras',
     'tiene_aire_acondicionado','hay_mascotas','mascotas_detalle',
-    'receptor_nombre','receptor_telefono','receptor_es_cliente','cliente_telefono'
+    'receptor_nombre','receptor_telefono','receptor_es_cliente','cliente_telefono',
+    'pref_presion','pref_aromas','pref_genero_terapeuta','pref_notas'
   ]);
   // Field -> child fields to clear when the parent toggles off
   var CLEAR_ON_TOGGLE_OFF = {
@@ -940,11 +1091,11 @@
       // Si NO eligió "yo mismo recibiré", nombre y teléfono son requeridos
       { field:'receptor_nombre',   when:{ receptor_es_cliente:'!=true' } },
       { field:'receptor_telefono', when:{ receptor_es_cliente:'!=true' } },
-      // Teléfono del cliente: requerido solo cuando el sistema no lo tiene registrado
-      // (_pedir_cliente_tel lo setea boot() según lookup.tiene_telefono)
-      { field:'cliente_telefono',  when:{ _pedir_cliente_tel:true } }
+      // Teléfono del cliente: requerido SOLO cuando eligió "yo mismo" Y no lo tenemos
+      { field:'cliente_telefono',  when:{ receptor_es_cliente:true, _pedir_cliente_tel:true } }
     ],
-    6: []
+    6: [],
+    7: []  // preferencias todas opcionales
   };
 
   function whenMet(when){
@@ -1324,13 +1475,50 @@
       state.touched.receptor_es_cliente = true;
       state.touched.receptor_nombre = true;
       state.touched.receptor_telefono = true;
-      // limpia posibles errores previos del paso 5
       clearErrors(5);
+      togglePaso5Sections();
       saveLocal();
       applyStateToDom();
+      // Si necesitamos el teléfono del cliente, NO avanzamos: revelamos el input inline.
+      if (state.data._pedir_cliente_tel === true) {
+        var telInp = qs('#cliente_telefono');
+        // Re-init intl-tel-input ahora que el input es visible (evita layout de dropdown inline colapsado)
+        if (typeof window.__initTel === 'function') window.__initTel('cliente_telefono');
+        if (telInp) setTimeout(function(){ telInp.focus(); }, 100);
+        return;
+      }
       saveStep(5).catch(function(){}).then(function(){ goNext(); });
     });
+
+    // Si el usuario empieza a escribir en "otra persona", desactiva el modo "yo mismo"
+    ['receptor_nombre','receptor_telefono'].forEach(function(id){
+      var inp = qs('#'+id);
+      if (!inp) return;
+      inp.addEventListener('focus', function(){
+        if (state.data.receptor_es_cliente === true) {
+          state.data.receptor_es_cliente = false;
+          state.data.cliente_telefono = null;
+          togglePaso5Sections();
+          saveLocal();
+        }
+      });
+    });
   }
+
+  // Muestra/oculta las 2 opciones del paso 5 según receptor_es_cliente
+  function togglePaso5Sections(){
+    var isYo = state.data.receptor_es_cliente === true;
+    var pedirTel = state.data._pedir_cliente_tel === true;
+    var yoBtn = qs('#btn-yo-recibo');
+    var telWrap = qs('[data-field-wrap="cliente_telefono"]');
+    var otraWrap = qs('#opt-otra-wrap');
+    var divisor = qs('#screen-5 .divider-o');
+    if (yoBtn) yoBtn.classList.toggle('selected', isYo);
+    if (telWrap) telWrap.style.display = (isYo && pedirTel) ? '' : 'none';
+    if (otraWrap) otraWrap.style.display = isYo ? 'none' : '';
+    if (divisor) divisor.style.display = isYo ? 'none' : '';
+  }
+  window.togglePaso5Sections = togglePaso5Sections;
 
   // ============================
   // Navigation
@@ -1354,6 +1542,7 @@
     showScreen('screen-' + step);
     updateProgress(step);
     applyStateToDom();
+    if (step === 5 && typeof togglePaso5Sections === 'function') togglePaso5Sections();
     saveLocal();
   }
 
@@ -1530,12 +1719,9 @@
         return;
       }
       state.cita = res.cita || {};
-      // Teléfono del cliente: solo se pide (y se muestra el campo) cuando el
-      // sistema NO lo tiene registrado. tiene_telefono viene del lookup.
-      var _pedirTel = (state.cita.tiene_telefono === false);
-      state.data._pedir_cliente_tel = _pedirTel;
-      var _telWrap = qs('[data-field-wrap="cliente_telefono"]');
-      if (_telWrap) _telWrap.style.display = _pedirTel ? '' : 'none';
+      // Teléfono del cliente: se pide solo cuando el sistema NO lo tiene registrado
+      // y solo se muestra al hacer click en "Yo mismo recibiré" (togglePaso5Sections).
+      state.data._pedir_cliente_tel = (state.cita.tiene_telefono === false);
       var prepFromServer = res.prep || null;
       state.prevPrep = null;
       state.prevMeta = null;
@@ -1598,7 +1784,41 @@
 
   bindHandlers();
   boot();
+  // Init intl-tel-input en los dos teléfonos (idempotente)
+  function initTel(id){
+    var inp = document.getElementById(id);
+    if (!inp || inp.dataset.itiInit === '1') return null;
+    if (typeof window.intlTelInput !== 'function') return null;
+    // Solo iniciar cuando el input es visible; si no, iti-inline-dropdown queda mal renderizado
+    if (inp.offsetParent === null) return null;
+    var iti = window.intlTelInput(inp, {
+      initialCountry: 'mx',
+      preferredCountries: ['mx','us'],
+      separateDialCode: true,
+      autoPlaceholder: 'aggressive',
+      dropdownContainer: document.body,
+      utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@23.4.0/build/js/utils.js'
+    });
+    inp.dataset.itiInit = '1';
+    // Al perder foco, guarda E.164 en state.data si es válido
+    inp.addEventListener('blur', function(){
+      var e164 = (typeof iti.getNumber === 'function') ? iti.getNumber() : inp.value;
+      if (e164) { state.data[id] = e164; saveLocal(); }
+    });
+    return iti;
+  }
+  function tryInitTels(){
+    initTel('cliente_telefono');
+    initTel('receptor_telefono');
+  }
+  window.__initTel = initTel;
+  if (document.readyState === 'complete') tryInitTels();
+  else window.addEventListener('load', tryInitTels);
+  // Re-intento suave a los 400ms por si el CDN de intl-tel-input aún no cargó
+  setTimeout(tryInitTels, 400);
 })();
 </script>
+
+</div><!-- /#prep-root -->
 </body>
 </html>

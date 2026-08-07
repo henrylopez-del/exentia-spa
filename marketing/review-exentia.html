@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>¿Cómo fue tu experiencia? · Exentia Spa</title>
+<meta name="description" content="Cuéntanos cómo fue tu experiencia en Exentia. Solo te tomará un minuto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --olive: #9a9854;
+    --olive-dark: #7d7c3f;
+    --cream: #f3e4c7;
+    --cream-soft: #fdfbf4;
+    --brown: #5c3a1e;
+    --brown-soft: #6b4a30;
+    --gray-soft: #a99f8c;
+    --star-off: #e6dbc3;
+    --star-on: #d4a12a;
+    --success: #2e7d32;
+    --danger: #a12626;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100vh; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: linear-gradient(180deg, #fdfbf4 0%, #f7ecd8 100%);
+    color: var(--brown);
+    line-height: 1.55;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(92,58,30,0.10), 0 2px 8px rgba(92,58,30,0.06);
+    max-width: 540px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ============ LANGUAGE TOGGLE (ES/EN) ============ */
+  .lang-toggle {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: inline-flex;
+    align-items: center;
+    background: rgba(154,152,84,0.10);
+    border: 1px solid rgba(154,152,84,0.35);
+    border-radius: 100px;
+    padding: 3px;
+    gap: 2px;
+    z-index: 5;
+  }
+  .lang-toggle button {
+    border: none;
+    background: transparent;
+    font: 700 11px 'Inter', sans-serif;
+    letter-spacing: 1px;
+    color: var(--olive-dark);
+    padding: 5px 10px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all .18s ease;
+  }
+  .lang-toggle button.active {
+    background: var(--olive);
+    color: #fff;
+  }
+  .lang-toggle button:not(.active):hover { background: rgba(154,152,84,0.18); }
+  @media (max-width: 480px) {
+    .lang-toggle { top: 12px; right: 12px; }
+    .lang-toggle button { padding: 4px 8px; font-size: 10px; }
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, var(--cream), var(--olive), var(--olive-dark), var(--olive), var(--cream));
+  }
+
+  /* Header con branding */
+  .brand {
+    padding: 28px 32px 0;
+    text-align: center;
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    color: var(--olive-dark);
+    text-transform: uppercase;
+  }
+  .brand-tagline {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gray-soft);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: var(--cream);
+    margin: 20px auto 0;
+    position: relative;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    position: absolute; top: -2px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--olive);
+  }
+  .divider::before { left: -8px; }
+  .divider::after { right: -8px; }
+
+  /* Screens */
+  section { padding: 24px 32px 32px; }
+  .hidden { display: none !important; }
+
+  h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--brown);
+    text-align: center;
+    margin: 22px 0 8px;
+    letter-spacing: -0.3px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--olive-dark);
+    font-weight: 500;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--brown-soft);
+    font-size: 14px;
+    max-width: 380px;
+    margin: 0 auto 26px;
+    opacity: 0.9;
+  }
+
+  /* Estrellas grandes (pantalla principal) */
+  .stars-main {
+    display: flex; justify-content: center; gap: 6px;
+    padding: 8px 0 6px;
+  }
+  .star-btn {
+    background: none; border: none; cursor: pointer;
+    padding: 4px;
+    line-height: 0;
+    transition: transform 0.15s cubic-bezier(.34,1.56,.64,1);
+  }
+  .star-btn svg {
+    width: 44px; height: 44px;
+    fill: var(--star-off);
+    stroke: var(--star-off); stroke-width: 1;
+    transition: fill 0.18s ease, stroke 0.18s ease, transform 0.18s ease;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.04));
+  }
+  .star-btn:hover svg,
+  .star-btn:focus-visible svg { transform: scale(1.06); }
+  .star-btn:focus-visible { outline: none; }
+  /* Cuando pasa el mouse sobre un rating, se pintan todas las anteriores */
+  .stars-main:hover .star-btn svg { fill: var(--star-off); stroke: var(--star-off); }
+  .stars-main .star-btn:hover ~ .star-btn svg { fill: var(--star-off); stroke: var(--star-off); }
+  .stars-main:hover .star-btn:hover svg,
+  .stars-main:hover .star-btn:hover ~ .star-btn:not(:hover) ~ .star-btn:not(:hover) svg { }
+  /* Truco: pintar todas las estrellas anteriores al hover usando dir:rtl */
+  .stars-main {
+    direction: rtl;
+  }
+  .stars-main .star-btn:hover,
+  .stars-main .star-btn:hover ~ .star-btn {
+    /* ya no aplica el ~ por dir rtl */
+  }
+  .stars-main .star-btn:hover svg,
+  .stars-main .star-btn:hover ~ .star-btn svg {
+    fill: var(--star-on);
+    stroke: var(--star-on);
+  }
+  .star-label {
+    text-align: center;
+    height: 20px;
+    font-size: 13px;
+    color: var(--olive-dark);
+    font-weight: 500;
+    margin-top: 4px;
+    transition: opacity 0.15s ease;
+    min-height: 20px;
+    letter-spacing: 0.3px;
+  }
+  .star-label.empty { opacity: 0.35; }
+
+  /* Preguntas cortas — mini estrellas */
+  .questions {
+    margin-top: 20px;
+    padding: 18px 20px;
+    background: var(--cream-soft);
+    border-radius: 12px;
+    border: 1px solid var(--cream);
+  }
+  .questions-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: var(--olive-dark);
+    text-align: center;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  .q-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(154, 152, 84, 0.2);
+    gap: 12px;
+  }
+  .q-row:last-child { border-bottom: none; }
+  .q-label {
+    font-size: 13px;
+    color: var(--brown);
+  }
+  .q-stars {
+    display: flex; gap: 3px;
+    direction: rtl;
+  }
+  .q-star {
+    background: none; border: none; cursor: pointer; padding: 2px;
+    line-height: 0;
+  }
+  .q-star svg {
+    width: 20px; height: 20px;
+    fill: var(--star-off);
+    stroke: var(--star-off); stroke-width: 1;
+    transition: fill 0.15s ease;
+  }
+  .q-star:hover svg,
+  .q-star:hover ~ .q-star svg,
+  .q-star.selected svg,
+  .q-star.selected ~ .q-star svg {
+    fill: var(--star-on);
+    stroke: var(--star-on);
+  }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 14px;
+    margin-top: 14px;
+    border: 1px solid var(--cream);
+    border-radius: 10px;
+    font: 14px 'Inter', sans-serif;
+    color: var(--brown);
+    background: var(--cream-soft);
+    resize: vertical;
+    transition: border-color 0.15s ease;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--olive);
+    background: #fff;
+  }
+
+  /* Botones */
+  .actions {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: 22px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font: 500 14px 'Inter', sans-serif;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    border: 1px solid transparent;
+  }
+  .btn-primary {
+    background: var(--olive-dark);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(125, 124, 63, 0.25);
+  }
+  .btn-primary:hover {
+    background: var(--brown);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(92, 58, 30, 0.3);
+  }
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-google {
+    background: #fff;
+    color: var(--brown);
+    border-color: var(--cream);
+  }
+  .btn-google:hover {
+    background: var(--cream-soft);
+    border-color: var(--olive);
+  }
+  .btn-google svg { flex-shrink: 0; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--brown-soft);
+    padding: 12px 20px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    font-size: 13px;
+  }
+  .btn-secondary:hover {
+    color: var(--brown);
+    text-decoration: underline;
+  }
+
+  /* Iconos decorativos */
+  .decor-icon {
+    width: 60px; height: 60px;
+    margin: 8px auto 0;
+    display: block;
+    color: var(--olive);
+  }
+
+  /* Estado "gracias" / envío ok */
+  .thanks-title { font-size: 26px; }
+  .thanks-msg {
+    text-align: center;
+    color: var(--brown-soft);
+    font-size: 14px;
+    margin: 12px 0 20px;
+    max-width: 380px;
+    margin-left: auto; margin-right: auto;
+  }
+
+  /* Error */
+  .err {
+    background: #fdecec;
+    color: var(--danger);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  /* Footer */
+  .card-foot {
+    padding: 18px 32px;
+    background: var(--cream-soft);
+    text-align: center;
+    font-size: 11px;
+    color: var(--gray-soft);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-top: 1px solid var(--cream);
+  }
+
+  /* Móvil */
+  @media (max-width: 480px) {
+    body { padding: 12px; }
+    .card { border-radius: 16px; }
+    section { padding: 20px 22px 26px; }
+    h1 { font-size: 26px; }
+    .star-btn svg { width: 38px; height: 38px; }
+    .questions { padding: 16px; }
+    .q-label { font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <!-- Language toggle -->
+  <div class="lang-toggle" role="group" aria-label="Idioma">
+    <button type="button" id="lang-es" class="active" onclick="setLang('es')">ES</button>
+    <button type="button" id="lang-en" onclick="setLang('en')">EN</button>
+  </div>
+
+  <!-- Header branding -->
+  <div class="brand">
+    <div class="brand-name">Exentia</div>
+    <div class="brand-tagline" data-i18n="tagline">Realzamos la belleza de tu esencia</div>
+    <div class="divider"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- Pantalla 1: pregunta principal -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="scr-rating">
+    <h1 data-i18n-html="rating_title">¿Cómo fue tu <em>experiencia</em>?</h1>
+    <p class="subtitle" data-i18n="rating_subtitle">Tu opinión nos ayuda a seguir mejorando. Solo te tomará un minuto.</p>
+    <div class="stars-main" id="stars-main">
+      <!-- rendered rtl for hover cascade -->
+      <button type="button" class="star-btn" data-rating="5" aria-label="5 estrellas">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </button>
+      <button type="button" class="star-btn" data-rating="4" aria-label="4 estrellas">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </button>
+      <button type="button" class="star-btn" data-rating="3" aria-label="3 estrellas">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </button>
+      <button type="button" class="star-btn" data-rating="2" aria-label="2 estrellas">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </button>
+      <button type="button" class="star-btn" data-rating="1" aria-label="1 estrella">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </button>
+    </div>
+    <div class="star-label empty" id="star-label" data-i18n="tap_stars">Toca las estrellas</div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- Pantalla 2A: rating 4-5 (positivo) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="scr-high" class="hidden">
+    <svg class="decor-icon" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="30" cy="30" r="24" fill="currentColor" opacity="0.15"/>
+      <circle cx="30" cy="30" r="24"/>
+      <circle cx="22" cy="25" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="38" cy="25" r="1.8" fill="currentColor" stroke="none"/>
+      <path d="M20 35c2.5 4.5 6.5 7 10 7s7.5-2.5 10-7" stroke-width="2.2"/>
+    </svg>
+    <h1 data-i18n-html="high_title">Gracias por tu <em>calificación</em></h1>
+    <p class="subtitle" data-i18n="high_subtitle">Nos alegra saber que tu experiencia fue positiva. ¿Podrías contarnos un poco más?</p>
+
+    <div class="questions">
+      <div class="questions-title" data-i18n="questions_title">Cuéntanos qué tal…</div>
+      <div class="q-row"><div class="q-label" data-i18n="q_calidad">Calidad del servicio</div><div class="q-stars" data-q="calidad">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_puntualidad">Puntualidad</div><div class="q-stars" data-q="puntualidad">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_atencion">Atención de tu masajista</div><div class="q-stars" data-q="atencion">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_experiencia">Experiencia general</div><div class="q-stars" data-q="experiencia">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_recomendacion">¿Nos recomendarías?</div><div class="q-stars" data-q="recomendacion">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+    </div>
+
+    <div class="actions">
+      <a class="btn btn-google" href="https://search.google.com/local/writereview?placeid=ChIJJaUrkTMrTI8RGiZLJ1VMn7w" target="_blank" rel="noopener" id="btn-google">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        <span data-i18n="btn_google">Dejar reseña en Google</span>
+      </a>
+      <button type="button" class="btn btn-secondary" id="btn-skip-google" data-i18n="btn_skip">Enviar sin dejar reseña</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- Pantalla 2B: rating 1-3 (negativo) -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="scr-low" class="hidden">
+    <svg class="decor-icon" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="30" cy="30" r="24" opacity="0.2"/>
+      <path d="M20 22c2-2 4-2 6 0M40 22c-2-2-4-2-6 0M22 40c2-3 5-4 8-4s6 1 8 4" opacity="0.6"/>
+    </svg>
+    <h1 data-i18n-html="low_title">Lamentamos que tu experiencia <em>no haya sido la mejor</em></h1>
+    <p class="subtitle" data-i18n="low_subtitle">Tu opinión honesta nos ayuda a mejorar. ¿Podrías contarnos qué salió mal?</p>
+
+    <div class="questions">
+      <div class="questions-title" data-i18n="questions_title">Cuéntanos qué tal…</div>
+      <div class="q-row"><div class="q-label" data-i18n="q_calidad">Calidad del servicio</div><div class="q-stars" data-q="calidad">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_puntualidad">Puntualidad</div><div class="q-stars" data-q="puntualidad">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_atencion">Atención de tu masajista</div><div class="q-stars" data-q="atencion">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_experiencia">Experiencia general</div><div class="q-stars" data-q="experiencia">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+      <div class="q-row"><div class="q-label" data-i18n="q_recomendacion">¿Nos recomendarías?</div><div class="q-stars" data-q="recomendacion">
+        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+      </div></div>
+    </div>
+
+    <textarea id="comentario" data-i18n-ph="comentario_ph" placeholder="Cuéntanos qué salió mal para que podamos mejorar (opcional)"></textarea>
+
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="btn-enviar" data-i18n="btn_enviar">Enviar comentario</button>
+      <div class="err hidden" id="err-msg"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- Pantalla 3: gracias final -->
+  <!-- ══════════════════════════════════════════ -->
+  <section id="scr-done" class="hidden">
+    <svg class="decor-icon" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="30" cy="30" r="24" opacity="0.15"/>
+      <path d="M18 30l8 8 16-18" stroke-width="2.5"/>
+    </svg>
+    <h1 class="thanks-title" data-i18n="thanks_title">¡Gracias!</h1>
+    <p class="thanks-msg" data-i18n="thanks_msg">Tu opinión es muy importante para nosotras. La tomaremos en cuenta para seguir cuidando cada detalle de tu experiencia.</p>
+    <p class="thanks-msg" style="font-style:italic; color:var(--olive-dark); margin-top: 6px;" data-i18n="thanks_sign">— Equipo Exentia</p>
+  </section>
+
+  <!-- Footer siempre visible -->
+  <div class="card-foot" data-i18n="footer">Exentia Spa &amp; Beauty Salón · Cancún</div>
+</div>
+
+<script>
+(function(){
+  var ENDPOINT = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-resena-form';
+  var state = { rating: 0, subratings: {}, comentario: '' };
+
+  // ═══════════════ i18n ═══════════════
+  var DICT = {
+    es: {
+      tagline: 'Realzamos la belleza de tu esencia',
+      rating_title: '¿Cómo fue tu <em>experiencia</em>?',
+      rating_subtitle: 'Tu opinión nos ayuda a seguir mejorando. Solo te tomará un minuto.',
+      tap_stars: 'Toca las estrellas',
+      high_title: 'Gracias por tu <em>calificación</em>',
+      high_subtitle: 'Nos alegra saber que tu experiencia fue positiva. ¿Podrías contarnos un poco más?',
+      low_title: 'Lamentamos que tu experiencia <em>no haya sido la mejor</em>',
+      low_subtitle: 'Tu opinión honesta nos ayuda a mejorar. ¿Podrías contarnos qué salió mal?',
+      questions_title: 'Cuéntanos qué tal…',
+      q_calidad: 'Calidad del servicio',
+      q_puntualidad: 'Puntualidad',
+      q_atencion: 'Atención de tu masajista',
+      q_experiencia: 'Experiencia general',
+      q_recomendacion: '¿Nos recomendarías?',
+      btn_google: 'Dejar reseña en Google',
+      btn_skip: 'Enviar sin dejar reseña',
+      btn_enviar: 'Enviar comentario',
+      btn_sending: 'Enviando…',
+      comentario_ph: 'Cuéntanos qué salió mal para que podamos mejorar (opcional)',
+      thanks_title: '¡Gracias!',
+      thanks_msg: 'Tu opinión es muy importante para nosotras. La tomaremos en cuenta para seguir cuidando cada detalle de tu experiencia.',
+      thanks_sign: '— Equipo Exentia',
+      footer: 'Exentia Spa & Beauty Salón · Cancún',
+      err_send: 'No pudimos enviar tu comentario. Intenta de nuevo.',
+      star_1: 'Mejorable', star_2: 'Regular', star_3: 'Buena', star_4: 'Muy buena', star_5: '¡Excelente!'
+    },
+    en: {
+      tagline: 'We enhance the beauty of your essence',
+      rating_title: 'How was your <em>experience</em>?',
+      rating_subtitle: 'Your feedback helps us keep improving. It only takes a minute.',
+      tap_stars: 'Tap the stars',
+      high_title: 'Thanks for your <em>rating</em>',
+      high_subtitle: 'We’re glad your experience was positive. Could you tell us a bit more?',
+      low_title: 'We’re sorry your experience <em>wasn’t the best</em>',
+      low_subtitle: 'Your honest opinion helps us improve. Could you tell us what went wrong?',
+      questions_title: 'Tell us how it went…',
+      q_calidad: 'Service quality',
+      q_puntualidad: 'Punctuality',
+      q_atencion: 'Your therapist’s attention',
+      q_experiencia: 'Overall experience',
+      q_recomendacion: 'Would you recommend us?',
+      btn_google: 'Leave a Google review',
+      btn_skip: 'Send without a review',
+      btn_enviar: 'Send comment',
+      btn_sending: 'Sending…',
+      comentario_ph: 'Tell us what went wrong so we can improve (optional)',
+      thanks_title: 'Thank you!',
+      thanks_msg: 'Your feedback is very important to us. We’ll take it into account to keep caring for every detail of your experience.',
+      thanks_sign: '— Exentia Team',
+      footer: 'Exentia Spa & Beauty Salón · Cancún',
+      err_send: 'We couldn’t send your comment. Please try again.',
+      star_1: 'Needs work', star_2: 'Fair', star_3: 'Good', star_4: 'Very good', star_5: 'Excellent!'
+    }
+  };
+  var lang = 'es';
+  try { var saved = localStorage.getItem('exentia_lang'); if (saved === 'es' || saved === 'en') lang = saved; } catch(e){}
+
+  function t(key) { return (DICT[lang] && DICT[lang][key]) || (DICT.es[key]) || ''; }
+
+  function applyLang() {
+    document.documentElement.setAttribute('lang', lang);
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n');
+      el.textContent = t(k);
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var k = el.getAttribute('data-i18n-html');
+      el.innerHTML = t(k);
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+      var k = el.getAttribute('data-i18n-ph');
+      el.setAttribute('placeholder', t(k));
+    });
+    var esBtn = document.getElementById('lang-es');
+    var enBtn = document.getElementById('lang-en');
+    if (esBtn) esBtn.classList.toggle('active', lang === 'es');
+    if (enBtn) enBtn.classList.toggle('active', lang === 'en');
+    // star label vivo
+    var sl = document.getElementById('star-label');
+    if (sl) {
+      if (!state.rating) { sl.textContent = t('tap_stars'); sl.classList.add('empty'); }
+      else { sl.textContent = t('star_' + state.rating); sl.classList.remove('empty'); }
+    }
+  }
+  window.setLang = function(l) {
+    if (l !== 'es' && l !== 'en') return;
+    lang = l;
+    try { localStorage.setItem('exentia_lang', l); } catch(e){}
+    applyLang();
+  };
+  // aplicar al cargar
+  applyLang();
+
+  var scr = {
+    rating: document.getElementById('scr-rating'),
+    high:   document.getElementById('scr-high'),
+    low:    document.getElementById('scr-low'),
+    done:   document.getElementById('scr-done')
+  };
+  function show(name) {
+    Object.keys(scr).forEach(function(k){ scr[k].classList.add('hidden'); });
+    scr[name].classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  // ═══ Estrellas principales
+  var starLabel = document.getElementById('star-label');
+  var mainStars = document.querySelectorAll('#stars-main .star-btn');
+  mainStars.forEach(function(b){
+    b.addEventListener('mouseenter', function(){
+      var r = +b.getAttribute('data-rating');
+      starLabel.textContent = t('star_' + r);
+      starLabel.classList.remove('empty');
+    });
+    b.addEventListener('mouseleave', function(){
+      if (!state.rating) { starLabel.textContent = t('tap_stars'); starLabel.classList.add('empty'); }
+      else { starLabel.textContent = t('star_' + state.rating); }
+    });
+    b.addEventListener('click', function(){
+      state.rating = +b.getAttribute('data-rating');
+      setTimeout(function(){
+        if (state.rating >= 4) show('high');
+        else show('low');
+      }, 220);
+    });
+  });
+
+  // ═══ Sub-preguntas (mini estrellas) — funcionan en ambas pantallas
+  document.querySelectorAll('.q-stars').forEach(function(row){
+    var q = row.getAttribute('data-q');
+    row.querySelectorAll('.q-star').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var v = +btn.getAttribute('data-val');
+        // Toggle: si es la misma posición, deselecciona todo
+        if (state.subratings[q] === v) {
+          state.subratings[q] = 0;
+          row.querySelectorAll('.q-star').forEach(function(x){ x.classList.remove('selected'); });
+          return;
+        }
+        state.subratings[q] = v;
+        row.querySelectorAll('.q-star').forEach(function(x){ x.classList.remove('selected'); });
+        // Al ser dir:rtl, marcar el clickeado + los siguientes (que son visualmente los anteriores)
+        var mark = false;
+        row.querySelectorAll('.q-star').forEach(function(x){
+          if (x === btn) mark = true;
+          if (mark) x.classList.add('selected');
+        });
+      });
+    });
+  });
+
+  // ═══ Envío
+  function sendReview(includeGoogle) {
+    var comentario = (document.getElementById('comentario') || {}).value || '';
+    var payload = {
+      rating: state.rating,
+      comentario: comentario.trim(),
+      subratings: state.subratings,
+      redirect_google: !!includeGoogle
+    };
+    return fetch(ENDPOINT, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+  }
+
+  // Botón enviar (pantalla baja calificación)
+  var btnEnviar = document.getElementById('btn-enviar');
+  if (btnEnviar) btnEnviar.addEventListener('click', function(){
+    var msg = document.getElementById('err-msg');
+    btnEnviar.disabled = true; btnEnviar.textContent = t('btn_sending');
+    msg.classList.add('hidden');
+    sendReview(false).then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      show('done');
+    }).catch(function(e){
+      btnEnviar.disabled = false; btnEnviar.textContent = t('btn_enviar');
+      msg.textContent = t('err_send');
+      msg.classList.remove('hidden');
+    });
+  });
+
+  // Botón skip google (pantalla alta calificación)
+  var btnSkip = document.getElementById('btn-skip-google');
+  if (btnSkip) btnSkip.addEventListener('click', function(){
+    btnSkip.disabled = true; btnSkip.textContent = t('btn_sending');
+    sendReview(false).finally(function(){ show('done'); });
+  });
+
+  // Botón google — también guarda la reseña internamente antes de redirigir
+  var btnGoogle = document.getElementById('btn-google');
+  if (btnGoogle) btnGoogle.addEventListener('click', function(){
+    sendReview(true).catch(function(){/*no bloquear*/});
+    // El link abre en nueva pestaña por target=_blank, mostramos gracias
+    setTimeout(function(){ show('done'); }, 500);
+  });
+})();
+</script>
+</body>
+</html>
