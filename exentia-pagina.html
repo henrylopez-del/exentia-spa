@@ -166,6 +166,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
      Usamos :has() (Chrome/Safari/Edge modernos) + fallback JS body.in-detail. */
   body:has(#service-detail-view:not(.hidden)) nav,
   body.in-detail nav { border-bottom: none; }
+  body.in-legal #agendar,
+  body.in-legal #ubicacion,
+  body.in-legal #faq { display: none !important; }
   nav.scrolled {
     box-shadow: 0 2px 24px var(--shadow);
   }
@@ -2632,9 +2635,25 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .ex-cuenta-cita-info .when { font-size: 12.5px; color: #5c4530; margin-top: 4px; }
   .ex-cuenta-cita-info .therapist { font-size: 11.5px; color: var(--text-light, #9a8672); margin-top: 2px; }
   .ex-cuenta-cita-info .therapist b { color: var(--brown, #826040); font-weight: 500; }
-  .ex-cuenta-cita-acts { display: flex; flex-direction: column; gap: 6px; }
+  .ex-cuenta-cita-acts { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
   .ex-cuenta-cita-acts a { font-size: 11.5px; color: var(--brown, #826040); text-decoration: underline; cursor: pointer; text-align: right; }
   .ex-cuenta-cita-acts a.danger { color: #a04a3c; }
+  /* Badges de estado de la cita (visión cliente) */
+  .ex-st {
+    display: inline-block; font: 600 10px 'Lato', sans-serif; letter-spacing: 0.8px;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 999px;
+    white-space: nowrap; border: 1px solid transparent;
+  }
+  .ex-st-pending { background: #fdf3dd; color: #8a6a1f; border-color: #ecd9a6; }
+  .ex-st-partial { background: #e9f0fb; color: #3c5b8a; border-color: #c5d7ef; }
+  .ex-st-ok      { background: #e6f2e6; color: #35672f; border-color: #c3e0c1; }
+  .ex-st-done    { background: #eeeae2; color: #6b5f4f; border-color: #ddd5c7; }
+  .ex-st-cancel  { background: #fbe9e7; color: #9c3d2f; border-color: #f0cbc4; }
+  .ex-st-noshow  { background: #f2ecec; color: #7d6560; border-color: #dfd2cf; }
+  .ex-cuenta-cita-info .st-hint { font-size: 11px; color: var(--text-light, #9a8672); margin-top: 3px; font-style: italic; }
+  .ex-cuenta-cita-card.is-inactive { opacity: 0.72; }
+  .ex-cuenta-cita-card.is-inactive .ex-cuenta-cita-date { filter: grayscale(0.5); }
+  .ex-cuenta-hist-info .ex-st { margin-left: 6px; vertical-align: middle; }
   .ex-cuenta-hist-row {
     display: grid; grid-template-columns: 60px 1fr auto;
     gap: 14px; padding: 14px 0; border-top: 1px solid #f1ead7; align-items: center;
@@ -6556,6 +6575,11 @@ window.EXENTIA_CONFIG = {
   WEBHOOK_RESERVA: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-reserva',
   WEBHOOK_TRACK: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-track',
   WEBHOOK_UPDATE_PHONE: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-update-phone',
+  WEBHOOK_UPDATE_NAME: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-update-name',
+  WEBHOOK_UPDATE_EMAIL: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-update-email',
+  WEBHOOK_UPDATE_PREFS: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-update-prefs',
+  WEBHOOK_CLIENTE_ME_V2: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-me-v2',
+  WEBHOOK_CANCELAR_CLIENTE: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cancelar-cliente',
   WEBHOOK_STRIPE_CHECKOUT: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-stripe-checkout',
   // ⚠ PRODUCCIÓN — cobros REALES. Tarjeta 4242 NO funciona aquí; cualquier tarjeta
   // que se capture cobra de verdad. Para volver a pruebas: cambiar esta pk_ por la
@@ -6955,7 +6979,7 @@ try {
         {
           "@type": "OpeningHoursSpecification",
           "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-          "opens": "10:00",
+          "opens": "09:00",
           "closes": "18:00"
         }
       ],
@@ -6981,7 +7005,7 @@ try {
       "mainEntity": [
         {"@type": "Question", "name": "¿Necesito hacer cita previa?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, te recomendamos agendar tu cita con anticipación para garantizar tu espacio. Puedes reservar desde nuestra página en pocos pasos o por WhatsApp."}},
         {"@type": "Question", "name": "¿Qué tipo de productos utilizan?", "acceptedAnswer": {"@type": "Answer", "text": "Trabajamos con productos orgánicos y naturales cuidadosamente seleccionados. Utilizamos ingredientes reales y fórmulas limpias que nutren y restauran."}},
-        {"@type": "Question", "name": "¿Cuál es su horario de atención?", "acceptedAnswer": {"@type": "Answer", "text": "Atendemos de lunes a sábado de 10:00 AM a 6:00 PM. Domingos permanecemos cerrados."}},
+        {"@type": "Question", "name": "¿Cuál es su horario de atención?", "acceptedAnswer": {"@type": "Answer", "text": "Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. Servicio a domicilio (Exentia At Home) de 7:00 AM a 8:00 PM. Domingos permanecemos cerrados."}},
         {"@type": "Question", "name": "¿Dónde están ubicados?", "acceptedAnswer": {"@type": "Answer", "text": "Nos encontramos en Plaza Hive, sobre Avenida Huayacán en Cancún, Quintana Roo."}},
         {"@type": "Question", "name": "¿Tienen servicios para niños?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, contamos con Spa Kids & Teens, experiencias completas de spa diseñadas para niños y adolescentes en un entorno cálido y seguro."}},
         {"@type": "Question", "name": "¿Ofrecen servicio a domicilio?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, a través de Exentia At Home llevamos experiencias de bienestar personalizadas a tu hogar, hotel o evento."}},
@@ -7494,7 +7518,7 @@ try {
             </div>
             <div class="text">
               <div class="label">Horario</div>
-              <div class="value">Lunes a Sábado<br>10:00 AM - 6:00 PM</div>
+              <div class="value">Lunes a Sábado<br>Sucursal: 9:00 AM – 6:00 PM<br>A domicilio: 7:00 AM – 8:00 PM</div>
             </div>
           </li>
         </ul>
@@ -7534,7 +7558,7 @@ try {
           <span>¿Cuál es su horario de atención?</span>
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer"><p>Atendemos de lunes a sábado de 10:00 AM a 6:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.</p></div>
+        <div class="faq-answer"><p>Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. A domicilio (Exentia At Home) de 7:00 AM a 8:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
@@ -7710,7 +7734,7 @@ try {
   <div class="modal-box" style="max-width:820px;">
     <div class="modal-close" onclick="closeModal('modal-modality')" aria-label="Cerrar">&#10005;</div>
     <div class="modal-nav">
-      <button class="modal-back" onclick="(window._modalityFrom === 'select' ? openSelectModal() : openPlaceFirstModal()); closeModal('modal-modality');">&#8592; Regresar</button>
+      <button class="modal-back" onclick="try{resetFlowState({personas:'wipe', svMode:null, clearPlace:true});}catch(_){}; openPlaceFirstModal(); closeModal('modal-modality');">&#8592; Regresar</button>
     </div>
     <div class="modal-header" style="margin-bottom:18px;">
       <span class="logo">exentia</span>
@@ -8108,7 +8132,7 @@ try {
           <div id="cal2-slots" class="cal2-slots"></div>
         </div>
         <!-- Aviso -->
-        <p class="cal2-note">Lun-Sáb · 10:00 AM - 6:00 PM · El equipo confirma por WhatsApp.</p>
+        <p class="cal2-note" id="cal2-note">Lun-Sáb · El equipo confirma por WhatsApp.</p>
       </div>
     </div>
     <div class="modal-footer-sticky" id="cal2-footer">
@@ -10599,6 +10623,7 @@ try {
     // Fallback para navegadores sin :has() — el CSS quita el border-bottom
     // del nav cuando body tiene esta clase, para no crear doble línea con .cat-tabs.
     document.body.classList.toggle('in-detail', viewId === 'service-detail-view');
+    document.body.classList.toggle('in-legal', viewId === 'legal-view');
 
     if (viewId === 'service-detail-view') {
       detailView.classList.remove('hidden');
@@ -13221,9 +13246,9 @@ try {
 
   function _pgBuildWaMessage() {
     var p = buildReservaPayload();
-    var prefLabel = { mujer: 'Mujer', hombre: 'Hombre', indistinto: 'Indiferente' };
+    var prefLabel = { mujer: 'Mujer', hombre: 'Hombre', indistinto: 'Sin preferencia' };
     var lines = [];
-    lines.push('Hola Exentia, acabo de pagar y quiero confirmar mi cita.');
+    lines.push('Hola Exentia, acabo de realizar mi reservación y deseo confirmar los detalles de mi cita.');
     if (window._bookingCode) {
       lines.push('');
       lines.push('*Código de reserva:* ' + window._bookingCode);
@@ -13650,7 +13675,7 @@ try {
     if (!sel || !btn) return;
     if (cal2.selectedDate && cal2.selectedTime) {
       sel.classList.remove('empty');
-      var d = new Date(cal2.selectedDate + 'T00:00:00');
+      var d = (window.parseLocalDate && window.parseLocalDate(cal2.selectedDate)) || new Date(cal2.selectedDate + 'T00:00:00');
       var fmt = d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
       sel.textContent = fmt.charAt(0).toUpperCase() + fmt.slice(1) + ' · ' + cal2.selectedTime;
       btn.disabled = false;
@@ -13671,6 +13696,14 @@ try {
       note.textContent = durMin > 0
         ? 'Tu cita dura aproximadamente ' + durMin + ' min · selecciona día y horario.'
         : 'Selecciona el día y horario que mejor te acomode.';
+    }
+    // Nota de horario según modalidad (sucursal 9-6 / domicilio 7-8 último inicio)
+    var hNote = document.getElementById('cal2-note');
+    if (hNote) {
+      var isDom = (typeof citaPlace !== 'undefined' && citaPlace && citaPlace.mode === 'domicilio');
+      hNote.textContent = isDom
+        ? 'Lun-Sáb · 7:00 AM – 8:00 PM · El equipo confirma por WhatsApp.'
+        : 'Lun-Sáb · 9:00 AM – 6:00 PM · El equipo confirma por WhatsApp.';
     }
     openModal('modal-calendar');
     renderCal2();
@@ -14623,7 +14656,7 @@ try {
       var PREF_OPTS = [
         { val: 'mujer', label: 'Mujer' },
         { val: 'hombre', label: 'Hombre' },
-        { val: 'indistinto', label: 'Indiferente' }
+        { val: 'indistinto', label: 'Sin preferencia' }
       ];
       // Personas reales (sin la pseudo-persona 0 del paquete de pareja).
       var prefIds = (typeof prefPersonasList === 'function') ? prefPersonasList() : [1];
@@ -15609,13 +15642,23 @@ try {
     return ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'][n] || '';
   }
   function fmtDay(d) { return ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][d] || ''; }
-  function fmtFecha(iso) {
+  // Parsea 'YYYY-MM-DD' como fecha local Cancún (evita el shift a UTC midnight
+  // que interpretaba el día anterior). Acepta también timestamps ISO completos.
+  function parseLocalDate(iso) {
+    if (!iso) return null;
+    var s = String(iso).slice(0, 10);
+    var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) { var d = new Date(iso); return isNaN(d) ? null : d; }
+    return new Date(+m[1], +m[2] - 1, +m[3]);
+  }
+  window.parseLocalDate = parseLocalDate;
+  function fmtFecha(iso, hora) {
     if (!iso) return '';
-    var dt = new Date(iso);
-    if (isNaN(dt)) return iso;
-    var hh = dt.getHours().toString().padStart(2,'0');
-    var mm = dt.getMinutes().toString().padStart(2,'0');
-    return fmtDay(dt.getDay()) + ' ' + dt.getDate() + ' ' + fmtMonth(dt.getMonth()).toLowerCase() + ' · ' + hh + ':' + mm;
+    var dt = parseLocalDate(iso);
+    if (!dt) return String(iso);
+    var out = fmtDay(dt.getDay()) + ' ' + dt.getDate() + ' ' + fmtMonth(dt.getMonth()).toLowerCase();
+    if (hora) out += ' · ' + String(hora).slice(0, 5);
+    return out;
   }
   function svcSummary(servicios) {
     try {
@@ -15684,16 +15727,24 @@ try {
     var sess = getClienteSession();
     if (!sess) return;
     try {
-      // Usar el triple-matching para encontrar bookings vinculados al cliente
-      // (incluso si fueron creados antes de tener cuenta).
-      var allBookings = (typeof fetchClienteBookings === 'function')
-        ? await fetchClienteBookings(sess)
-        : [];
+      // Fuente única: me-v2 (GHL + Supabase en vivo). Sin cache localStorage.
+      var me = (typeof fetchClienteMe === 'function') ? await fetchClienteMe() : null;
+      if (me && !me.unauthorized) {
+        _cuentaState.profile = me.profile;
+        _cuentaState.bookings = me.bookings;
+        _cuentaState.contactId = me.contactId;
+        _cuentaState.lastLoad = Date.now();
+      }
+      var allBookings = (me && me.bookings) ? me.bookings : [];
       var now = Date.now();
       var rows = allBookings.filter(function(b){
-        return b && b.fecha_agendada && new Date(b.fecha_agendada).getTime() > now;
+        var dt = b && b.fecha_agendada ? parseLocalDate(b.fecha_agendada) : null;
+        if (!dt || dt.getTime() <= now) return false;
+        // No anunciar como "próxima cita" algo cancelado o ya cerrado.
+        try { if (_estadoCita(b).inactive) return false; } catch(_){}
+        return true;
       }).sort(function(a, b){
-        return new Date(a.fecha_agendada) - new Date(b.fecha_agendada);
+        return parseLocalDate(a.fecha_agendada) - parseLocalDate(b.fecha_agendada);
       });
       // Si no hay próxima cita con fecha pero sí hay pendientes (sin fecha), mostramos la más reciente
       if (rows.length === 0) {
@@ -15708,7 +15759,7 @@ try {
             wrap.querySelector('.ex-userdrop-tag').textContent = 'PENDIENTE DE CONFIRMAR HORA';
             document.getElementById('ex-userdrop-cita-when').textContent = 'Falta confirmar día y hora';
             var what = svcSummary(b.servicios);
-            document.getElementById('ex-userdrop-cita-what').textContent = (what || 'Servicio') + ' · ' + (b.booking_code || '') + ' · ' + (b.modalidad === 'domicilio' ? 'Domicilio' : 'Sucursal');
+            document.getElementById('ex-userdrop-cita-what').textContent = (what || 'Servicio') + ' · ' + (b.booking_code || '') + ' · ' + (_esDomicilio(b) ? 'Domicilio' : 'Sucursal');
           }
           if (none) none.style.display = 'none';
           window._ultimaProxCita = b;
@@ -15721,10 +15772,10 @@ try {
         var b = rows[0];
         if (wrap) {
           wrap.style.display = '';
-          document.getElementById('ex-userdrop-cita-when').textContent = fmtFecha(b.fecha_agendada);
+          document.getElementById('ex-userdrop-cita-when').textContent = fmtFecha(b.fecha_agendada, b.hora_agendada);
           var what = svcSummary(b.servicios);
           var ter = b.terapeuta_asignada ? ' · ' + b.terapeuta_asignada : '';
-          document.getElementById('ex-userdrop-cita-what').textContent = (what || 'Servicio') + ' · ' + (b.modalidad === 'domicilio' ? 'Domicilio' : 'Sucursal') + ter;
+          document.getElementById('ex-userdrop-cita-what').textContent = (what || 'Servicio') + ' · ' + (_esDomicilio(b) ? 'Domicilio' : 'Sucursal') + ter;
         }
         if (none) none.style.display = 'none';
         window._ultimaProxCita = b;
@@ -15756,7 +15807,7 @@ try {
     if (!b) return;
     var sess = getClienteSession() || {};
     var nombre = (sess.firstName || '') + ' ' + (sess.lastName || '');
-    var when = fmtFecha(b.fecha_agendada);
+    var when = fmtFecha(b.fecha_agendada, b.hora_agendada);
     var what = svcSummary(b.servicios);
     var msg = 'Hola, soy ' + nombre.trim() + '. Quiero cancelar mi cita de ' + what + ' del ' + when + ' (código ' + (b.booking_code || '') + ').';
     var url = 'https://wa.me/' + YAZ_WHATSAPP + '?text=' + encodeURIComponent(msg);
@@ -15770,7 +15821,7 @@ try {
     if (!b) return;
     var sess = getClienteSession() || {};
     var nombre = (sess.firstName || '') + ' ' + (sess.lastName || '');
-    var when = fmtFecha(b.fecha_agendada);
+    var when = fmtFecha(b.fecha_agendada, b.hora_agendada);
     var what = svcSummary(b.servicios);
     var msg = 'Hola, soy ' + nombre.trim() + '. Quiero reprogramar mi cita de ' + what + ' del ' + when + ' (código ' + (b.booking_code || '') + ').';
     window.open('https://wa.me/' + YAZ_WHATSAPP + '?text=' + encodeURIComponent(msg), '_blank');
@@ -15781,14 +15832,43 @@ try {
   // ═══════════════════════════════════════════════════════════════════
   // MODAL MI CUENTA (sidebar + tabs)
   // ═══════════════════════════════════════════════════════════════════
+  // Refresca me-v2 en Mi Cuenta y re-renderiza el tab actual. Cache en memoria
+  // 30 s: dentro de esa ventana reusa lo que hay; fuera, refetchea.
+  async function _refreshCuentaFromMe(opts) {
+    opts = opts || {};
+    var force = !!opts.force;
+    var main = document.getElementById('ex-cuenta-main');
+    var isStale = !_cuentaState.lastLoad || (Date.now() - _cuentaState.lastLoad) > 30000;
+    if (force || isStale || !_cuentaState.profile) {
+      if (main) main.innerHTML = '<div class="ex-cuenta-loading">Cargando…</div>';
+      var me = await fetchClienteMe();
+      if (!me) {
+        if (main) main.innerHTML = '<div class="ex-cuenta-empty">No pudimos cargar tus datos. <button type="button" onclick="_refreshCuentaFromMe({force:true})">Reintentar</button></div>';
+        return false;
+      }
+      if (me.unauthorized) {
+        closeModal('modal-cuenta');
+        if (typeof openAuthModal === 'function') openAuthModal();
+        return false;
+      }
+      _cuentaState.profile = me.profile;
+      _cuentaState.bookings = me.bookings;
+      _cuentaState.contactId = me.contactId;
+      _cuentaState.degraded = !!me.degraded;
+      _cuentaState.lastLoad = Date.now();
+    }
+    renderCuentaTab();
+    return true;
+  }
+  window._refreshCuentaFromMe = _refreshCuentaFromMe;
+
   async function openCuentaModal(tab) {
     var sess = getClienteSession();
     if (!sess) { openAuthModal(); return; }
     _cuentaState.tab = tab || 'inicio';
-    _cuentaState.profile = sess;
     closeUserDropdown();
     openModal('modal-cuenta');
-    // Activar tab en sidebar
+    // Activar tab en sidebar + wiring de click con refetch
     document.querySelectorAll('.ex-cuenta-side-item').forEach(function(el){
       el.classList.toggle('active', el.getAttribute('data-cuenta-tab') === _cuentaState.tab);
       if (!el._wired && el.getAttribute('data-cuenta-tab')) {
@@ -15798,50 +15878,113 @@ try {
           document.querySelectorAll('.ex-cuenta-side-item').forEach(function(s){
             s.classList.toggle('active', s.getAttribute('data-cuenta-tab') === _cuentaState.tab);
           });
-          renderCuentaTab();
+          _refreshCuentaFromMe();
         });
       }
     });
-    // Cargar bookings desde Supabase (una vez por apertura).
-    // Triple matching: ghl_contact_id (preciso) → email del JWT → teléfono del JWT.
-    // Esto cubre reservas viejas hechas antes de tener cuenta o con email distinto.
-    if (!_cuentaState.bookings.length || _cuentaState.lastLoad < Date.now() - 60000) {
-      var main = document.getElementById('ex-cuenta-main');
-      main.innerHTML = '<div class="ex-cuenta-loading">Cargando…</div>';
-      _cuentaState.bookings = await fetchClienteBookings(sess);
-      _cuentaState.lastLoad = Date.now();
-    }
-    renderCuentaTab();
+    // Siempre refetch al abrir (force) — regla del backend: reflejar cambios hechos en panel admin.
+    await _refreshCuentaFromMe({ force: true });
   }
 
-  async function fetchClienteBookings(sess) {
-    var headers = { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY };
-    var seen = {};
-    var all = [];
-    async function fetchOr(filter) {
-      try {
-        var url = SUPA_URL + '/rest/v1/exentia_bookings_dash?' + filter + '&order=fecha_agendada.desc.nullslast&limit=30';
-        var res = await fetch(url, { headers: headers });
-        var rows = await res.json();
-        if (Array.isArray(rows)) {
-          rows.forEach(function(b){
-            if (b && b.id && !seen[b.id]) { seen[b.id] = true; all.push(b); }
-          });
-        }
-      } catch(e) {}
-    }
-    // 1) Por contactId del JWT (más confiable)
-    if (sess.contactId) await fetchOr('ghl_contact_id=eq.' + encodeURIComponent(sess.contactId));
-    // 2) Por email del JWT (legado: bookings antes de tener tag o sin contactId vinculado)
-    if (sess.email) await fetchOr('cliente_email=eq.' + encodeURIComponent((sess.email || '').toLowerCase()));
-    // 3) Por teléfono normalizado (sin '+', solo dígitos) — algunos bookings legacy tienen el teléfono pero no el email
-    if (sess.phone) {
-      var phoneDigits = String(sess.phone).replace(/\D/g, '');
-      if (phoneDigits.length >= 10) await fetchOr('cliente_telefono=eq.' + phoneDigits);
-    }
-    return all;
+  // Normaliza el shape de un booking devuelto por me-v2 para que los renderers
+  // legacy (_citaCard, _splitBookings, dropdown) sigan funcionando sin cambios.
+  // Shape real me-v2: booking_id / code / fecha / hora / modalidad / precio_total / total_mxn / zona.
+  function _normalizeMeBooking(b) {
+    if (!b || typeof b !== 'object') return b;
+    return Object.assign({}, b, {
+      id: b.booking_id || b.id,
+      booking_code: b.code || b.booking_code,
+      fecha_agendada: b.fecha || b.fecha_agendada,
+      hora_agendada: b.hora || b.hora_agendada,
+      // `modalidad` = modo (individual|pareja|grupo). El LUGAR viene en `lugar`/`tipo_cita`.
+      modalidad: b.modalidad,
+      lugar: b.lugar || b.tipo_cita || null,
+      tipo_cita: b.tipo_cita || b.lugar || null,
+      valor_ticket_mxn: b.total_mxn != null ? b.total_mxn : (b.precio_total != null ? b.precio_total : b.valor_ticket_mxn),
+      precio_total_mxn: b.precio_total != null ? b.precio_total : b.precio_total_mxn,
+      zona_colonia: b.zona || b.zona_colonia,
+      terapeuta_asignada: b.terapeuta_nombre || b.terapeuta_asignada,
+      // Cierre canónico del servicio (vive en booking_slots, expuesto por la vista).
+      servicio_terminado_at: b.servicio_terminado_at || b.checkout_terapeuta_at || null
+    });
   }
-  window.fetchClienteBookings = fetchClienteBookings;
+
+  // Perfil mínimo reconstruido desde el JWT. Es el piso de degradación: mientras haya
+  // sesión válida, el cliente SIEMPRE debe ver su nombre/correo, aunque me-v2 falle.
+  // Las preferencias no viajan en el JWT — esas sí quedan vacías hasta que me-v2 responda.
+  function _meFromJWT() {
+    var sess = null;
+    try { sess = getClienteSession(); } catch(_){}
+    if (!sess) return null;
+    return {
+      profile: {
+        nombre: sess.firstName || '',
+        apellido: sess.lastName || '',
+        email: sess.email || '',
+        telefono: sess.phone || '',
+        preferencias: {}
+      },
+      contactId: sess.contactId || null,
+      bookings: [],
+      degraded: true
+    };
+  }
+
+  // Endpoint UNO: trae {cliente, citas:{proximas, historial}} en vivo desde GHL + Supabase.
+  // Sin cache localStorage (regla del backend). Cache en memoria mínimo (30 s) para no
+  // golpear al saltar entre tabs muy rápido.
+  async function fetchClienteMe() {
+    var jwt = null;
+    try { jwt = localStorage.getItem(CLIENTE_AUTH.JWT_KEY); } catch(_){}
+    if (!jwt) return null;
+    try {
+      var res = await fetch(window.EXENTIA_CONFIG.WEBHOOK_CLIENTE_ME_V2, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + jwt, 'Content-Type': 'application/json' },
+        body: '{}'
+      });
+      if (res.status === 401) {
+        try { localStorage.removeItem(CLIENTE_AUTH.JWT_KEY); } catch(_){}
+        try { refreshUserBtnState(); } catch(_){}
+        return { unauthorized: true };
+      }
+      if (!res.ok) return _meFromJWT();
+      var txt = await res.text();
+      // Cuerpo vacío con 200: pasa cuando el cliente no tiene bookings — n8n no ejecuta
+      // los nodos posteriores si el nodo previo devolvió 0 items, así que 'Construir
+      // respuesta' (que arma cliente Y citas) nunca corre. El perfil no debe caerse por eso.
+      if (!txt || !txt.trim()) {
+        try { console.warn('[ex-me-v2] respuesta vacía (200 sin body) — usando datos del JWT'); } catch(_){}
+        return _meFromJWT();
+      }
+      var data = null;
+      try { data = JSON.parse(txt); } catch(_){}
+      // n8n "Respond to Webhook" devuelve los items como ARRAY: [{ok, cliente, citas, ...}].
+      // Desenvolver el primer elemento; tolerar también el shape objeto directo.
+      if (Array.isArray(data)) data = data[0] || null;
+      if (!data || data.ok === false) return _meFromJWT();
+      var prox = ((data.citas && data.citas.proximas) || []).map(_normalizeMeBooking);
+      var hist = ((data.citas && data.citas.historial) || []).map(_normalizeMeBooking);
+      var jwtFb = _meFromJWT() || { profile: {} };
+      var cli = data.cliente || {};
+      return {
+        // Merge con el JWT: si me-v2 manda el campo vacío, no borramos lo que ya sabíamos.
+        profile: {
+          nombre: cli.nombre || jwtFb.profile.nombre || '',
+          apellido: cli.apellido || jwtFb.profile.apellido || '',
+          email: cli.email || jwtFb.profile.email || '',
+          telefono: cli.telefono || jwtFb.profile.telefono || '',
+          preferencias: cli.preferencias || {}
+        },
+        contactId: data.contactId || jwtFb.contactId || null,
+        bookings: prox.concat(hist)
+      };
+    } catch(e) {
+      try { console.warn('[ex-me-v2] fetch falló', e); } catch(_){}
+      return _meFromJWT();
+    }
+  }
+  window.fetchClienteMe = fetchClienteMe;
   window.openCuentaModal = openCuentaModal;
 
   function renderCuentaTab() {
@@ -15854,29 +15997,99 @@ try {
     if (tab === 'datos') return renderTabDatos();
   }
 
+  // Estado de la cita en lenguaje de cliente. Deriva de `estado` + `estado_asignacion`
+  // + slots reclamados. Los estados internos del panel (pool, claimed…) no se muestran
+  // literales: se traducen a algo que el cliente entienda.
+  //   inactive: true  → la cita ya no admite acciones (cancelar/reprogramar).
+  // Estados reales confirmados con backend (2026-08-07):
+  //   bookings.estado (texto libre): reservo | pagado | cancelado | asistio | no_asistio
+  //   estado_asignacion (CHECK):     pool | claimed | release_window | confirmed | cancelled
+  //   Cierre canónico del servicio: servicio_terminado_at (timestamp), NO un string de estado.
+  // 'pagado' no es un estado de la cita sino del cobro: no cambia el badge, la cita
+  // sigue mostrando Reservada/Confirmada según su asignación.
+  function _estadoCita(b) {
+    var est  = String(b.estado || '').trim().toLowerCase();
+    var asig = String(b.estado_asignacion || '').trim().toLowerCase();
+    var claimed = Number(b.slots_claimed || 0);
+    var totalSlots = Number(b.slots_total || 0);
+    var terminado = b.servicio_terminado_at || b.checkout_terapeuta_at;
+    var dt = b.fecha_agendada ? parseLocalDate(b.fecha_agendada) : null;
+    var yaPaso = !!(dt && dt.getTime() < Date.now() - 86400000);
+
+    if (est === 'cancelado' || asig === 'cancelled' || b.cancelado_at) {
+      return { label: 'Cancelada', cls: 'ex-st-cancel', inactive: true };
+    }
+    if (est === 'no_asistio' || est === 'no_asistió') {
+      return { label: 'No asistida', cls: 'ex-st-noshow', inactive: true };
+    }
+    if (est === 'asistio' || est === 'asistió' || terminado) {
+      return { label: 'Finalizada', cls: 'ex-st-done', inactive: true };
+    }
+    if (yaPaso) {
+      return { label: 'Finalizada', cls: 'ex-st-done', inactive: true };
+    }
+    // Futuras / de hoy: el detalle viene de la asignación de terapeuta
+    if (asig === 'confirmed' || asig === 'claimed' || (totalSlots > 0 && claimed >= totalSlots)) {
+      return { label: 'Confirmada', cls: 'ex-st-ok', inactive: false };
+    }
+    if (asig === 'release_window') {
+      return { label: 'Reservada', cls: 'ex-st-pending', inactive: false,
+               hint: 'Estamos reasignando a tu terapeuta.' };
+    }
+    if (totalSlots > 0 && claimed > 0) {
+      return { label: 'Confirmación parcial', cls: 'ex-st-partial', inactive: false,
+               hint: 'Falta asignar ' + (totalSlots - claimed) + ' de ' + totalSlots + ' terapeutas.' };
+    }
+    return { label: 'Reservada', cls: 'ex-st-pending', inactive: false,
+             hint: 'Estamos asignando a tu terapeuta.' };
+  }
+  window._estadoCita = _estadoCita;
+
+  // Lugar de la cita (Sucursal vs Domicilio). me-v2 manda `lugar` ya derivado y
+  // `tipo_cita` crudo — cualquiera de los dos es canónico. `modalidad` NO sirve para
+  // esto: guarda el modo (individual | pareja | grupo). El fallback por dirección solo
+  // cubre bookings legacy anteriores a que la vista expusiera tipo_cita.
+  function _lugarCita(b) {
+    var v = String(b.lugar || b.tipo_cita || '').trim().toLowerCase();
+    if (v === 'domicilio') return 'Exentia At Home';
+    if (v === 'sucursal') return 'Sucursal Plaza Hive';
+    if (b.direccion_libre || b.direccion_maps_url || b.zona_colonia) return 'Exentia At Home';
+    return 'Sucursal Plaza Hive';
+  }
+  function _esDomicilio(b) { return _lugarCita(b) === 'Exentia At Home'; }
+  window._lugarCita = _lugarCita;
+
   function _splitBookings() {
     var now = Date.now();
     var up = [], hi = [], pe = [];
     _cuentaState.bookings.forEach(function(b){
-      if (!b.fecha_agendada) pe.push(b);
-      else if (new Date(b.fecha_agendada).getTime() > now) up.push(b);
-      else hi.push(b);
+      var st = _estadoCita(b);
+      // Canceladas / no asistidas siempre al historial, tengan la fecha que tengan.
+      if (st.inactive && (st.cls === 'ex-st-cancel' || st.cls === 'ex-st-noshow')) { hi.push(b); return; }
+      if (!b.fecha_agendada) { pe.push(b); return; }
+      var dt = parseLocalDate(b.fecha_agendada);
+      if (dt && dt.getTime() > now - 86400000 && !st.inactive) up.push(b); else hi.push(b);
     });
-    up.sort(function(a,b){ return new Date(a.fecha_agendada) - new Date(b.fecha_agendada); });
+    up.sort(function(a,b){ return parseLocalDate(a.fecha_agendada) - parseLocalDate(b.fecha_agendada); });
+    hi.sort(function(a,b){
+      var da = a.fecha_agendada ? parseLocalDate(a.fecha_agendada) : new Date(a.created_at || 0);
+      var db = b.fecha_agendada ? parseLocalDate(b.fecha_agendada) : new Date(b.created_at || 0);
+      return db - da;
+    });
     pe.sort(function(a,b){ return new Date(b.created_at || 0) - new Date(a.created_at || 0); });
     return { upcoming: up, history: hi, pending: pe };
   }
 
   function _citaCard(b, kind) {
-    var dt = b.fecha_agendada ? new Date(b.fecha_agendada) : null;
+    var dt = b.fecha_agendada ? parseLocalDate(b.fecha_agendada) : null;
     var pending = !dt;
     var d = dt ? dt.getDate() : '·';
     var m = dt ? fmtMonth(dt.getMonth()) : 'POR';
-    var hh = dt ? (dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0')) : 'Por confirmar';
+    var hh = b.hora_agendada ? String(b.hora_agendada).slice(0, 5) : 'Por confirmar';
     var dia = dt ? fmtDay(dt.getDay()) : '';
     var what = svcSummary(b.servicios) || 'Servicio Exentia';
     var ter = b.terapeuta_asignada ? '<div class="therapist">Con <b>' + b.terapeuta_asignada + '</b></div>' : '';
-    var modalidad = b.modalidad === 'domicilio' ? 'Exentia At Home' : 'Sucursal Plaza Hive';
+    var modalidad = _lugarCita(b);
     if (kind === 'pending') {
       var code = b.booking_code ? ' · <code style="font-size:11px;color:#9a8672;">' + b.booking_code + '</code>' : '';
       return '<div class="ex-cuenta-cita-card" style="background:#fff;border:1px dashed #d4d0ab;">'
@@ -15884,29 +16097,38 @@ try {
         + '<div class="ex-cuenta-cita-info">'
         +   '<h4>' + what + '</h4>'
         +   '<div class="when" style="color:#a04a3c;font-weight:500;">Falta confirmar día y hora' + code + '</div>'
-        +   '<div class="therapist">Se reservó en ' + (b.modalidad === 'domicilio' ? 'domicilio' : 'sucursal') + '. Contáctanos por WhatsApp para asignar fecha.</div>'
+        +   '<div class="therapist">Se reservó en ' + (_esDomicilio(b) ? 'domicilio' : 'sucursal') + '. Contáctanos por WhatsApp para asignar fecha.</div>'
         + '</div>'
         + '<div class="ex-cuenta-cita-acts">'
         +   '<a onclick="window.open(\'https://wa.me/' + YAZ_WHATSAPP + '?text=' + encodeURIComponent('Hola, quiero confirmar mi cita ' + (b.booking_code || '')) + '\', \'_blank\')">Confirmar por WhatsApp</a>'
         + '</div></div>';
     }
     if (kind === 'card') {
-      return '<div class="ex-cuenta-cita-card">'
+      var st = _estadoCita(b);
+      var payload = JSON.stringify(b).replace(/"/g,'&quot;');
+      var acts = st.inactive
+        ? '<a onclick="repetirBooking(\'' + (b.id||'') + '\')">Repetir reserva ↗</a>'
+        : '<a onclick="window._ultimaProxCita = ' + payload + '; reprogramarProxima()">Reprogramar</a>'
+          + '<a class="danger" onclick="window._ultimaProxCita = ' + payload + '; cancelarProximaWA()">Cancelar</a>';
+      return '<div class="ex-cuenta-cita-card' + (st.inactive ? ' is-inactive' : '') + '">'
         + '<div class="ex-cuenta-cita-date"><div class="d">' + d + '</div><div class="m">' + m + '</div></div>'
         + '<div class="ex-cuenta-cita-info">'
         +   '<h4>' + what + '</h4>'
         +   '<div class="when">' + dia + ' · ' + hh + ' · ' + modalidad + '</div>'
         +   ter
+        +   (st.hint ? '<div class="st-hint">' + st.hint + '</div>' : '')
         + '</div>'
         + '<div class="ex-cuenta-cita-acts">'
-        +   '<a onclick="window._ultimaProxCita = ' + JSON.stringify(b).replace(/"/g,'&quot;') + '; reprogramarProxima()">Reprogramar</a>'
-        +   '<a class="danger" onclick="window._ultimaProxCita = ' + JSON.stringify(b).replace(/"/g,'&quot;') + '; cancelarProximaWA()">Cancelar</a>'
+        +   '<span class="ex-st ' + st.cls + '">' + st.label + '</span>'
+        +   acts
         + '</div></div>';
     }
+    var stH = _estadoCita(b);
     var price = b.valor_ticket_mxn ? ' · $' + Number(b.valor_ticket_mxn).toLocaleString('es-MX') : '';
     return '<div class="ex-cuenta-hist-row">'
       + '<div class="ex-cuenta-hist-date"><div class="d">' + d + '</div><div class="m">' + m + '</div></div>'
-      + '<div class="ex-cuenta-hist-info"><h5>' + what + '</h5><p>' + dia + ' · ' + hh + (b.terapeuta_asignada ? ' · ' + b.terapeuta_asignada : '') + price + '</p></div>'
+      + '<div class="ex-cuenta-hist-info"><h5>' + what + '<span class="ex-st ' + stH.cls + '">' + stH.label + '</span></h5>'
+      +   '<p>' + dia + ' · ' + hh + (b.terapeuta_asignada ? ' · ' + b.terapeuta_asignada : '') + price + '</p></div>'
       + '<a class="ex-cuenta-hist-act" onclick="repetirBooking(\'' + (b.id||'') + '\')">Repetir reserva ↗</a>'
       + '</div>';
   }
@@ -15916,7 +16138,8 @@ try {
     var sp = _splitBookings();
     var prof = _cuentaState.profile || {};
     var total = _cuentaState.bookings.length;
-    var html = '<h2 class="ex-cuenta-h">Hola, <em>' + (prof.firstName || 'Cliente') + '</em></h2>';
+    var nombre = prof.nombre || prof.firstName || 'Cliente';
+    var html = '<h2 class="ex-cuenta-h">Hola, <em>' + nombre + '</em></h2>';
     html += '<p class="ex-cuenta-sub">Tienes ' + total + ' reserva' + (total === 1 ? '' : 's') + ' con Exentia.</p>';
     if (sp.upcoming.length > 0) {
       html += '<div class="ex-cuenta-block"><div class="ex-cuenta-block-h">TU PRÓXIMA CITA</div>' + _citaCard(sp.upcoming[0], 'card') + '</div>';
@@ -15930,7 +16153,7 @@ try {
       html += '<div class="ex-cuenta-block"><div class="ex-cuenta-block-h">PRÓXIMA CITA</div><div class="ex-cuenta-empty">No tienes citas agendadas.<br><button type="button" onclick="closeModal(\'modal-cuenta\'); smartAgendar()">Agendar ahora</button></div></div>';
     }
     if (sp.history.length > 0) {
-      html += '<div class="ex-cuenta-block"><div class="ex-cuenta-block-h">TUS ÚLTIMAS VISITAS</div>';
+      html += '<div class="ex-cuenta-block"><div class="ex-cuenta-block-h">CITAS ANTERIORES</div>';
       html += sp.history.slice(0,3).map(function(b){ return _citaCard(b, 'hist'); }).join('');
       html += '</div>';
     }
@@ -15955,19 +16178,105 @@ try {
         html += '</div>';
       }
       if (sp.history.length > 0) {
-        html += '<div class="ex-cuenta-block"><div class="ex-cuenta-block-h">HISTORIAL</div>';
+        html += '<div class="ex-cuenta-block"><div class="ex-cuenta-block-h">HISTORIAL Y CANCELADAS</div>';
         html += sp.history.map(function(b){ return _citaCard(b, 'hist'); }).join('');
         html += '</div>';
       }
     }
     main.innerHTML = html;
   }
+  // Mapea el valor que vive en GHL al slug de los chips. Los contactos tienen datos
+  // mixtos: algunos escritos por el flujo viejo en minúscula ("suave"/"suaves"/"mujer"),
+  // otros por update-prefs en capitalizado ("Suave"/"Aromas suaves"/"Sin preferencia").
+  // Las claves están en lowercase y la búsqueda normaliza, así ambos formatos leen bien.
+  var _PREF_VALUE_TO_SLUG = {
+    presion: { 'suave': 'suave', 'media': 'media', 'fuerte': 'fuerte' },
+    aromas:  {
+      'sin aromas': 'sin', 'sin': 'sin',
+      'aromas suaves': 'suaves', 'suaves': 'suaves',
+      'cualquier aroma': 'cualquiera', 'cualquiera': 'cualquiera'
+    },
+    genero:  {
+      'mujer': 'mujer', 'hombre': 'hombre',
+      'sin preferencia': 'cualquiera', 'cualquiera': 'cualquiera', 'indistinto': 'cualquiera'
+    }
+  };
+  function _prefValueToSlug(kind, val) {
+    if (!val) return '';
+    var key = String(val).trim().toLowerCase();
+    return (_PREF_VALUE_TO_SLUG[kind] && _PREF_VALUE_TO_SLUG[kind][key]) || key;
+  }
+  // Inverso: slug del chip -> valor canónico que se guarda en GHL/Supabase.
+  // Formato acordado con backend (2026-08-07): minúscula / forma corta, igual que
+  // el que ya escribe el flujo de reserva. NO capitalizar — el bot de WhatsApp, el
+  // panel del masajista y el sentiment leen estos strings tal cual. Si algún consumidor
+  // necesita el label largo, hace el mapping de su lado, no en la fuente.
+  //   presion: suave | media | fuerte
+  //   aromas:  sin | suaves | cualquiera
+  //   genero:  mujer | hombre | indistinto   <- ojo: el chip 'cualquiera' guarda 'indistinto'
+  var _PREF_SLUG_TO_VALUE = {
+    presion: { 'suave': 'suave', 'media': 'media', 'fuerte': 'fuerte' },
+    aromas:  { 'sin': 'sin', 'suaves': 'suaves', 'cualquiera': 'cualquiera' },
+    genero:  { 'mujer': 'mujer', 'hombre': 'hombre', 'cualquiera': 'indistinto' }
+  };
+  function _prefSlugToValue(kind, slug) {
+    return (_PREF_SLUG_TO_VALUE[kind] && _PREF_SLUG_TO_VALUE[kind][slug]) || '';
+  }
+
+  // Guarda una preferencia optimísticamente: pinta el chip activo, dispara POST,
+  // hace rollback si falla. Invalida cache me-v2 al éxito.
+  async function savePreferencia(kind, slugVal) {
+    var jwt = null;
+    try { jwt = localStorage.getItem(CLIENTE_AUTH.JWT_KEY); } catch(_){}
+    if (!jwt) { if (typeof openAuthModal === 'function') openAuthModal(); return; }
+    var backendVal = _prefSlugToValue(kind, slugVal);
+    if (!backendVal) return;
+    var prof = _cuentaState.profile || (_cuentaState.profile = {});
+    if (!prof.preferencias) prof.preferencias = {};
+    var oldVal = prof.preferencias[kind];
+    prof.preferencias[kind] = backendVal;
+    renderTabPreferencias();
+    var body = { prefs: {} };
+    body.prefs[kind] = backendVal;
+    try {
+      var res = await fetch(window.EXENTIA_CONFIG.WEBHOOK_UPDATE_PREFS, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + jwt, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (res.status === 401) {
+        prof.preferencias[kind] = oldVal;
+        renderTabPreferencias();
+        try { localStorage.removeItem(CLIENTE_AUTH.JWT_KEY); } catch(_){}
+        try { refreshUserBtnState(); } catch(_){}
+        closeModal('modal-cuenta');
+        if (typeof openAuthModal === 'function') openAuthModal();
+        return;
+      }
+      var data = await res.json().catch(function(){ return null; });
+      if (!res.ok || !data || data.ok === false) {
+        prof.preferencias[kind] = oldVal;
+        renderTabPreferencias();
+        if (typeof showFlowToast === 'function') showFlowToast('No pudimos guardar tu preferencia. Inténtalo de nuevo.', 'warn');
+        return;
+      }
+      _cuentaState.lastLoad = 0;
+      if (typeof showFlowToast === 'function') showFlowToast('Preferencia guardada.', 'success');
+    } catch(e) {
+      prof.preferencias[kind] = oldVal;
+      renderTabPreferencias();
+      if (typeof showFlowToast === 'function') showFlowToast('Error de conexión. Reintenta.', 'warn');
+    }
+  }
+  window.savePreferencia = savePreferencia;
+
   function renderTabPreferencias() {
     var main = document.getElementById('ex-cuenta-main');
-    var sess = _cuentaState.profile || {};
-    var pres = sess.pref_presion || '';
-    var aro = sess.pref_aromas || '';
-    var gen = sess.preferencia_sexo || sess.pref_genero || '';
+    var prof = _cuentaState.profile || {};
+    var prefs = prof.preferencias || {};
+    var pres = _prefValueToSlug('presion', prefs.presion);
+    var aro = _prefValueToSlug('aromas', prefs.aromas);
+    var gen = _prefValueToSlug('genero', prefs.genero);
     var html = '<h2 class="ex-cuenta-h">Mis <em>preferencias</em></h2><p class="ex-cuenta-sub">Las preferencias que selecciones serán consideradas por tu terapeuta antes de tu cita.</p>';
     html += '<div class="ex-cuenta-block">';
     html += '<div class="ex-cuenta-pref-label">PRESIÓN PREFERIDA</div><div class="ex-cuenta-pref-grid">';
@@ -15985,18 +16294,35 @@ try {
       html += '<button type="button" class="ex-cuenta-pref-chip' + (gen===p[0]?' active':'') + '" data-pref="genero" data-val="' + p[0] + '">' + p[1] + '</button>';
     });
     html += '</div>';
-    html += '<p class="ex-cuenta-sub" style="margin-top:18px; font-style:italic;">Para cambiar una preferencia, contacta a nuestro equipo por WhatsApp. <a onclick="window.open(\'https://wa.me/' + YAZ_WHATSAPP + '?text=Hola%2C+quiero+actualizar+mis+preferencias.\', \'_blank\')" style="color:var(--brown); text-decoration:underline; cursor:pointer;">Abrir WhatsApp →</a></p>';
+    if (_cuentaState.degraded) {
+      html += '<p class="ex-cuenta-sub" style="margin-top:18px; color:#a04a3c;">No pudimos cargar tus preferencias guardadas en este momento. '
+            + '<a onclick="_refreshCuentaFromMe({force:true})" style="color:var(--brown); text-decoration:underline; cursor:pointer;">Reintentar</a></p>';
+    } else {
+      html += '<p class="ex-cuenta-sub" style="margin-top:18px; font-style:italic;">Se guarda automáticamente al elegir. Tu terapeuta lo verá antes de tu próxima cita.</p>';
+    }
     html += '</div>';
     main.innerHTML = html;
+    // Wire clicks para editar en vivo
+    main.querySelectorAll('.ex-cuenta-pref-chip').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        var kind = this.getAttribute('data-pref');
+        var val = this.getAttribute('data-val');
+        if (kind && val) savePreferencia(kind, val);
+      });
+    });
   }
   function renderTabDatos() {
     var main = document.getElementById('ex-cuenta-main');
-    var sess = _cuentaState.profile || {};
+    var prof = _cuentaState.profile || {};
+    var nombre = prof.nombre || prof.firstName || '';
+    var apellido = prof.apellido || prof.lastName || '';
+    var email = prof.email || '—';
+    var tel = prof.telefono || prof.phone || '—';
     var html = '<h2 class="ex-cuenta-h">Mis <em>datos</em></h2><p class="ex-cuenta-sub">Información que usamos para confirmar tu cita.</p>';
     html += '<div class="ex-cuenta-block">';
-    html += '<div class="ex-cuenta-datos-row"><label>Nombre</label><span>' + (sess.firstName||'') + ' ' + (sess.lastName||'') + '</span></div>';
-    html += '<div class="ex-cuenta-datos-row"><label>Correo electrónico</label><span>' + (sess.email||'—') + '</span></div>';
-    html += '<div class="ex-cuenta-datos-row"><label>WhatsApp</label><span>' + (sess.phone||'—') + '</span></div>';
+    html += '<div class="ex-cuenta-datos-row"><label>Nombre</label><span>' + nombre + ' ' + apellido + '</span></div>';
+    html += '<div class="ex-cuenta-datos-row"><label>Correo electrónico</label><span>' + email + '</span></div>';
+    html += '<div class="ex-cuenta-datos-row"><label>WhatsApp</label><span>' + tel + '</span></div>';
     html += '</div>';
     html += '<p class="ex-cuenta-sub" style="font-style:italic;">Para cambiar tus datos, contacta a nuestro equipo. <a onclick="window.open(\'https://wa.me/' + YAZ_WHATSAPP + '?text=Hola%2C+quiero+actualizar+mis+datos.\', \'_blank\')" style="color:var(--brown); text-decoration:underline; cursor:pointer;">Abrir WhatsApp →</a></p>';
     main.innerHTML = html;
@@ -17681,7 +18007,7 @@ try {
     '¿Qué tipo de productos utilizan?': 'What kind of products do you use?',
     'Trabajamos con productos orgánicos y naturales cuidadosamente seleccionados. Creemos que lo que toca tu piel es tan importante como lo que sientes mientras te cuidan. Utilizamos ingredientes reales y fórmulas limpias que nutren y restauran.': 'We work with carefully selected organic, natural products. We believe what touches your skin matters as much as what you feel while being cared for. We use real ingredients and clean formulas that nourish and restore.',
     '¿Cuál es su horario de atención?': 'What are your opening hours?',
-    'Atendemos de lunes a sábado de 10:00 AM a 6:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.': 'We are open Monday to Saturday from 10:00 AM to 6:00 PM. We are closed on Sundays. We recommend booking in advance to secure your preferred time.',
+    'Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. A domicilio (Exentia At Home) de 7:00 AM a 8:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.': 'We are open Monday to Saturday. In-spa (Exentia Spa & Beauty Salon) from 9:00 AM to 6:00 PM. At-home service (Exentia At Home) from 7:00 AM to 8:00 PM. Closed on Sundays. We recommend booking in advance to secure your preferred time.',
     '¿Dónde están ubicados?': 'Where are you located?',
     'Nos encontramos en Plaza Hive, sobre Avenida Huayacán en Cancún, Quintana Roo. Un espacio diseñado para tu desconexión en una zona accesible y tranquila de la ciudad.': 'We are located at Plaza Hive, on Avenida Huayacán in Cancún, Quintana Roo. A space designed for your disconnection in an accessible, quiet part of the city.',
     '¿Tienen servicios para niños?': 'Do you have services for kids?',
@@ -17740,7 +18066,7 @@ try {
     'Tus servicios': 'Your services', '+ cambiar / agregar': '+ change / add',
     '¿Cómo prefieren recibir el servicio?': 'How would you like to receive the service?',
     '¿Quién prefieres que te atienda?': 'Who would you prefer to be treated by?',
-    'Mujer': 'Female', 'Hombre': 'Male', 'Indiferente': 'No preference',
+    'Mujer': 'Female', 'Hombre': 'Male', 'Sin preferencia': 'No preference',
     'Elige una opción': 'Choose an option',
     'Sí, al mismo tiempo': 'Yes, at the same time',
     'Varias terapeutas atienden a la vez · sesión más rápida': 'Several therapists at once · faster session',
@@ -18177,7 +18503,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v227-fix-nav-legal-view', stamp: '2026-08-05 13:00' };
+  var EX_BUILD = { version: 'v244-prefs-formato-canonico-minuscula', stamp: '2026-08-07 16:45' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
