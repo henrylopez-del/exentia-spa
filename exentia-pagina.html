@@ -12170,10 +12170,13 @@ try {
         +   '<div class="cf-place-summary-label">Pin guardado · Domicilio</div>'
         +   '<div class="cf-place-summary-mode">' + addrText + '</div>'
         +   '<div class="cf-place-summary-zone"><span class="cf-place-summary-zone-dot" style="background:' + zColor + ';"></span>' + zLabel + ' · $' + citaPlace.costoTraslado + '/terapeuta</div>'
-        + '</div>';
-        // Sin botón "Editar pin": llamaba a changeLocation(), que reinicia la elección de
-        // lugar y volvía a pedir una dirección que el cliente ya había guardado. Aquí el
-        // pin es solo lectura; para cambiarlo está "Cambiar" en la ubicación del checkout.
+        + '</div>'
+        // Va a editarPinUbicacion(), NO a changeLocation(): esta última regresaba al
+        // paso 1 y obligaba a reelegir lugar y dirección desde cero.
+        + '<button type="button" class="cf-place-summary-change" onclick="editarPinUbicacion()">'
+        +   '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+        +   'Editar pin'
+        + '</button>';
     } else if (summaryRow) {
       summaryRow.style.display = 'none';
     }
@@ -12205,6 +12208,27 @@ try {
     setTimeout(function(){ openPlaceFirstModal(); }, 220);
   }
   window.changeLocation = changeLocation;
+
+  // Editar SOLO el pin, sin salir del flujo. Distinto de changeLocation(), que vuelve
+  // al paso 1 y hace que el cliente reelija sucursal/domicilio y su dirección de cero.
+  // Aquí el destino es el mapa directo: openAddressModal() repuebla los campos y
+  // restaura el marker desde citaPlace, y su "Continuar" ya encadena al calendario.
+  function editarPinUbicacion() {
+    // Preservar lo que el cliente lleve escrito en el form: si edita el pin antes de
+    // dar Continuar, el nombre aún no se guardó y se perdería al cambiar de modal.
+    try {
+      var fn = (document.getElementById('cf-firstname') || {}).value || '';
+      var ln = (document.getElementById('cf-lastname') || {}).value || '';
+      window._formUserData = window._formUserData || {};
+      if (fn.trim()) window._formUserData.firstName = fn.trim();
+      if (ln.trim()) window._formUserData.lastName = ln.trim();
+    } catch(_){}
+    closeModal('modal-form');
+    setTimeout(function(){
+      if (typeof openAddressModal === 'function') openAddressModal();
+    }, 220);
+  }
+  window.editarPinUbicacion = editarPinUbicacion;
 
   // ═══════════════════════════════════════════════════════════════════
   // MODAL ADDRESS (F6) · paso extra solo para domicilio
@@ -18629,7 +18653,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v248-pagar-sin-sticky-y-sin-editar-pin', stamp: '2026-08-08 11:40' };
+  var EX_BUILD = { version: 'v249-editar-pin-va-a-maps', stamp: '2026-08-08 12:05' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
