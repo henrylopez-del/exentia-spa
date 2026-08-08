@@ -5698,8 +5698,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .exentia-form textarea { resize: vertical; min-height: 78px; line-height: 1.5; }
   /* intl-tel-input — banderitas + código de país en inputs de teléfono */
-  .exentia-form .iti { width: 100%; display: block; position: relative; }
-  .exentia-form .iti__country-container {
+  .exentia-form .iti, #pg-callme-box .iti { width: 100%; display: block; position: relative; }
+  .exentia-form .iti__country-container, #pg-callme-box .iti__country-container {
     position: absolute !important;
     top: 0 !important;
     bottom: 0 !important;
@@ -5708,7 +5708,7 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     z-index: 2;
     padding: 1px;
   }
-  .exentia-form .iti__selected-country {
+  .exentia-form .iti__selected-country, #pg-callme-box .iti__selected-country {
     height: 100%;
     background: transparent;
     border: none;
@@ -5721,15 +5721,15 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     cursor: pointer;
     transition: background .15s;
   }
-  .exentia-form .iti__selected-country:hover,
-  .exentia-form .iti__selected-country:focus,
-  .exentia-form .iti__selected-country[aria-expanded="true"] { background: rgba(154,152,84,0.10); }
-  .exentia-form .iti__selected-dial-code { color: var(--text); font-weight: 500; margin-left: 4px; }
-  .exentia-form .iti__arrow { border-top-color: var(--olive-dark, #7d7c3f); margin-left: 4px; }
-  .exentia-form .iti__arrow--up { border-bottom-color: var(--olive-dark, #7d7c3f); }
-  .exentia-form .iti__country-list { font-family: 'Lato', sans-serif; font-size: 14px; }
+  .exentia-form .iti__selected-country:hover, #pg-callme-box .iti__selected-country:hover,
+  .exentia-form .iti__selected-country:focus, #pg-callme-box .iti__selected-country:focus,
+  .exentia-form .iti__selected-country[aria-expanded="true"], #pg-callme-box .iti__selected-country[aria-expanded="true"] { background: rgba(154,152,84,0.10); }
+  .exentia-form .iti__selected-dial-code, #pg-callme-box .iti__selected-dial-code { color: var(--text); font-weight: 500; margin-left: 4px; }
+  .exentia-form .iti__arrow, #pg-callme-box .iti__arrow { border-top-color: var(--olive-dark, #7d7c3f); margin-left: 4px; }
+  .exentia-form .iti__arrow--up, #pg-callme-box .iti__arrow--up { border-bottom-color: var(--olive-dark, #7d7c3f); }
+  .exentia-form .iti__country-list, #pg-callme-box .iti__country-list { font-family: 'Lato', sans-serif; font-size: 14px; }
   /* Dropdown del selector de país: visible encima del modal */
-  .exentia-form .iti__dropdown-content {
+  .exentia-form .iti__dropdown-content, #pg-callme-box .iti__dropdown-content {
     position: absolute !important;
     top: 100% !important;
     left: 0 !important;
@@ -5746,8 +5746,8 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     overflow-y: auto !important;
   }
   /* Si la lista interna está oculta, ocultar el contenedor entero */
-  .exentia-form .iti__dropdown-content:has(.iti__country-list.iti__hide) { display: none !important; }
-  .exentia-form .iti__dropdown-content .iti__country-list {
+  .exentia-form .iti__dropdown-content:has(.iti__country-list.iti__hide), #pg-callme-box .iti__dropdown-content:has(.iti__country-list.iti__hide) { display: none !important; }
+  .exentia-form .iti__dropdown-content .iti__country-list, #pg-callme-box .iti__dropdown-content .iti__country-list {
     max-height: none !important;
     overflow: visible !important;
     width: 100% !important;
@@ -5755,21 +5755,21 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     padding: 4px 0;
     margin: 0;
   }
-  .exentia-form .iti__country {
+  .exentia-form .iti__country, #pg-callme-box .iti__country {
     padding: 10px 16px !important;
     display: flex !important;
     align-items: center !important;
     gap: 12px;
     cursor: pointer;
   }
-  .exentia-form .iti__country:hover { background: rgba(154,152,84,0.10) !important; }
-  .exentia-form .iti__country.iti__highlight,
-  .exentia-form .iti__country.iti__active { background: rgba(154,152,84,0.18) !important; }
-  .exentia-form .iti__country-name { color: var(--text, #4a3520); font-weight: 500; }
-  .exentia-form .iti__dial-code { color: var(--text-light, #9a8672); margin-left: auto; font-size: 13px; }
-  .exentia-form .iti__flag-box { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; }
-  .exentia-form .iti__divider { border-top: 1px solid rgba(154,152,84,0.18); margin: 4px 0; }
-  .exentia-form .iti__search-input {
+  .exentia-form .iti__country:hover, #pg-callme-box .iti__country:hover { background: rgba(154,152,84,0.10) !important; }
+  .exentia-form .iti__country.iti__highlight, #pg-callme-box .iti__country.iti__highlight,
+  .exentia-form .iti__country.iti__active, #pg-callme-box .iti__country.iti__active { background: rgba(154,152,84,0.18) !important; }
+  .exentia-form .iti__country-name, #pg-callme-box .iti__country-name { color: var(--text, #4a3520); font-weight: 500; }
+  .exentia-form .iti__dial-code, #pg-callme-box .iti__dial-code { color: var(--text-light, #9a8672); margin-left: auto; font-size: 13px; }
+  .exentia-form .iti__flag-box, #pg-callme-box .iti__flag-box { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; }
+  .exentia-form .iti__divider, #pg-callme-box .iti__divider { border-top: 1px solid rgba(154,152,84,0.18); margin: 4px 0; }
+  .exentia-form .iti__search-input, #pg-callme-box .iti__search-input {
     width: 100% !important;
     border: 1px solid rgba(154,152,84,0.22) !important;
     background: var(--off-white, #fdfbf4);
@@ -5781,16 +5781,16 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     width: calc(100% - 16px) !important;
     box-sizing: border-box;
   }
-  .exentia-form .iti__search-input:focus { outline: none; border-color: var(--olive, #B0A96F); }
+  .exentia-form .iti__search-input:focus, #pg-callme-box .iti__search-input:focus { outline: none; border-color: var(--olive, #B0A96F); }
   /* Ocultar el texto de accesibilidad que el plugin agrega al span dentro del flag */
-  .exentia-form .iti__a11y-text {
+  .exentia-form .iti__a11y-text, #pg-callme-box .iti__a11y-text {
     position: absolute !important;
     width: 1px; height: 1px; overflow: hidden;
     clip: rect(0 0 0 0); clip-path: inset(50%);
     white-space: nowrap;
   }
   /* Forzar padding-left correcto en el input para no chocar con el botón de país */
-  .exentia-form .iti input[type="tel"].iti__tel-input { padding-left: 90px !important; }
+  .exentia-form .iti input[type="tel"].iti__tel-input, #pg-callme-box .iti input[type="tel"].iti__tel-input { padding-left: 90px !important; }
   /* Estados de validación email/tel */
   .exentia-form input.ex-invalid {
     border-color: #c5564b !important;
@@ -13340,6 +13340,9 @@ try {
     var hidden = (box.style.display === 'none' || box.style.display === '');
     box.style.display = hidden ? 'block' : 'none';
     if (hidden) setTimeout(function(){
+      // El input nace sin selector de país: intl-tel-input necesita que el
+      // contenedor ya sea visible para medir, por eso se inicializa aquí y no al cargar.
+      try { initPhoneValidator('pg-callme-phone'); } catch(_){}
       var p = document.getElementById('pg-callme-phone');
       if (p) try { p.focus(); } catch(_){}
     }, 80);
@@ -13353,13 +13356,21 @@ try {
     var errEl = document.getElementById('pg-callme-error');
     var raw = ((phoneEl || {}).value || '').trim();
     var digits = raw.replace(/\D/g, '');
-    if (digits.length < 10) {
+    // Si el selector de país está activo, él manda: respeta la lada elegida.
+    // Sin él caemos a MX, que es el caso mayoritario.
+    var _cmIti = (window._itiInstances && window._itiInstances['pg-callme-phone']) || null;
+    var itiValido = _cmIti && _cmIti.isValidNumber ? _cmIti.isValidNumber() : null;
+    if (itiValido === false) {
+      if (errEl) { errEl.textContent = 'El número no es válido para el país seleccionado.'; errEl.style.display = 'block'; }
+      try { phoneEl.focus(); } catch(_){}
+      return;
+    }
+    if (itiValido === null && digits.length < 10) {
       if (errEl) { errEl.textContent = 'Necesitamos un WhatsApp válido (10 dígitos).'; errEl.style.display = 'block'; }
       try { phoneEl.focus(); } catch(_){}
       return;
     }
-    // Normalizar a formato E.164 (MX) — helper compartido
-    var e164 = toE164MX(digits);
+    var e164 = (_cmIti && _cmIti.getNumber && _cmIti.getNumber()) || toE164MX(digits);
     try {
       window._formUserData = window._formUserData || {};
       window._formUserData.phone = e164;
@@ -18494,6 +18505,87 @@ try {
 #ex-build-badge:hover { opacity: 1; }
 #ex-build-badge b { color: #b5b062; font-weight: 700; }
 #ex-build-badge .ex-build-ago { color: #b5b062; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   MÓVIL · densidad y CTAs visibles en los modales del flujo (2026-08-08)
+   Medido en 375px: se perdían 122px de 375 (33%) en paddings anidados
+   —modal-box 26 + modal-body 20 + wrap interno 14, por lado— y los CTAs
+   principales caían fuera de la primera vista. Solo cambia layout: ninguna
+   regla toca estado, handlers ni el payload que se envía.
+   Va al final de la hoja a propósito: gana por orden sin subir especificidad.
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+  /* ---- 1. Ancho útil: recortar los paddings anidados ---- */
+  .modal-box  { padding-left: 14px !important; padding-right: 14px !important; }
+  .modal-body { padding-left: 8px  !important; padding-right: 8px  !important; }
+
+  /* ---- 2. Calendario: los horarios se cortaban ----
+     6 columnas de 47px en 234px útiles ⇒ desbordaba 78px y partía 17:00/18:00.
+     Con 4 columnas sobre el ancho ya recuperado cada slot respira. */
+  #modal-calendar .cal2-wrap  { padding: 10px 8px; }
+  #modal-calendar .cal2-slots { grid-template-columns: repeat(4, 1fr) !important; gap: 7px; }
+  #modal-calendar .cal2-slot  { font-size: 13px; padding: 10px 4px; }
+  #modal-calendar .cal2-grid  { gap: 4px; }
+  #modal-calendar .cal2-day   { font-size: 13px; }
+  #modal-calendar .cal2-note  { font-size: 11.5px; line-height: 1.45; margin-top: 10px; }
+  #modal-calendar .cal2-month-label { font-size: 15px; }
+
+  /* ---- 3. Auth: que las tres vías (correo · Google · invitado) se vean ----
+     La columna de correo medía 481px y empujaba "Continuar como invitado"
+     a 679px de 812. Se recorta el relleno, no las opciones. */
+  #modal-auth .modal-header { padding-top: 14px !important; }
+  #modal-auth .modal-header h2 { font-size: 20px; }
+  #modal-auth .modal-header p  { font-size: 11.5px; line-height: 1.4; }
+  #modal-auth .auth-grid   { gap: 12px; }
+  #modal-auth .auth-col    { padding: 14px 14px !important; }
+  #modal-auth .auth-col-head { margin-bottom: 8px !important; padding-bottom: 6px !important; }
+  #modal-auth .auth-col-title { font-size: 16.5px; margin-bottom: 4px !important; }
+  #modal-auth .auth-col-desc  { font-size: 12px; line-height: 1.4; margin-bottom: 10px !important; }
+  #modal-auth .auth-divider   { margin: 9px 0 !important; }
+  /* Los perks ("historial a mano", "auto-llenado"…) son refuerzo, no acción.
+     En 375px sus 68px eran lo único que dejaba el botón de invitado en 805 de 812:
+     ocultarlos hace que las tres vías quepan de una. En desktop siguen intactos. */
+  #modal-auth .auth-perks { display: none; }
+  #modal-auth .modal-nav { padding-top: 4px; padding-bottom: 0; }
+
+  /* ---- 4. Checkout: el botón de pago no debe quedar bajo el pliegue ---- */
+  #modal-choice .choice-options {
+    position: sticky; bottom: 0; z-index: 5;
+    margin: 0 -8px -8px; padding: 10px 8px calc(8px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(253,251,244,0) 0%, var(--off-white, #fdfbf4) 22%);
+  }
+  #modal-choice .choice-btn { padding: 12px 14px; }
+  #modal-choice .choice-icon { width: 24px; height: 24px; flex: 0 0 24px; }
+  #modal-choice .choice-text strong { font-size: 15px; }
+  #modal-choice .choice-text span   { font-size: 11.5px; line-height: 1.35; }
+  #modal-choice .ck-section { margin-bottom: 12px; }
+  #modal-choice .ck-loc-sub { font-size: 11.5px; line-height: 1.35; }
+  /* El sticky flota sobre el contenido: reservarle sitio para que el total
+     no quede escondido detrás al llegar al final del scroll. */
+  #modal-choice .checkout-cart { padding-bottom: 8px; }
+  #modal-choice .ck-totals { margin-bottom: 4px; }
+  /* Tres chips de preferencia no caben en 375px: que bajen en vez de cortarse */
+  #modal-choice .ck-pref-rows { flex-wrap: wrap; gap: 6px; }
+  #modal-choice .ck-pref-rows > * { flex: 0 1 auto; }
+
+  /* ---- 5. Confirmación final: las dos vías de contacto a la vista ---- */
+  #modal-confirm-final .modal-box { padding: 18px 14px 16px !important; }
+  #modal-confirm-final .cf-icon-wrap { margin-bottom: 6px; }
+  #modal-confirm-final .cf-icon { width: 52px; height: 52px; }
+  #modal-confirm-final .cf-icon svg { width: 26px; height: 26px; }
+  #modal-confirm-final .cf-header h2 { font-size: 21px; line-height: 1.2; }
+  #modal-confirm-final .cf-lead { font-size: 12.5px; line-height: 1.45; margin: 8px 0; }
+  #modal-confirm-final .cf-card { padding: 10px 12px; }
+  #modal-confirm-final .cf-card-text { font-size: 12px; line-height: 1.4; }
+  #modal-confirm-final .cf-meta { margin-top: 10px; }
+  #modal-confirm-final .cf-meta-row { padding: 7px 0; font-size: 12.5px; }
+  #modal-confirm-final .cf-disclaimer { font-size: 11px; line-height: 1.4; }
+
+  /* El input de teléfono y su bandera comparten fila sin encimarse */
+  #pg-callme-box .pg-callme-row { gap: 8px; }
+  #pg-callme-box .iti { width: 100%; }
+}
 </style>
 <div id="ex-build-badge" title="Última edición del HTML (hora Cancún UTC-5)"></div>
 <script>
@@ -18503,7 +18595,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v244-prefs-formato-canonico-minuscula', stamp: '2026-08-07 16:45' };
+  var EX_BUILD = { version: 'v245-movil-modales-y-lada', stamp: '2026-08-08 09:30' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
