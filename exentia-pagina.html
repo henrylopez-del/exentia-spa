@@ -13387,8 +13387,12 @@ try {
     if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Enviando...'; }
     try {
       if (typeof submitAgendarForm === 'function') {
-        // El phone viene del input callme; el email puede faltar (invitado) → allowNoEmail
-        submitAgendarForm({ preventDefault: function(){} }, { allowNoEmail: true });
+        // El phone ya se validó arriba (con el selector de país de este panel) y quedó
+        // en _formUserData.phone. allowNoPhone evita que submitAgendarForm lo re-valide
+        // contra #ag-whatsapp — un input de otro modal que en el flujo de pago nunca se
+        // abrió, así que su validación fallaba y cortaba el submit con return false,
+        // dejando la reserva sin teléfono. allowNoEmail cubre al invitado sin correo.
+        submitAgendarForm({ preventDefault: function(){} }, { allowNoEmail: true, allowNoPhone: true });
       }
     } catch(err) { try { console.error('[ex-reserva] _pgFinishCallme error:', err); } catch(_){} }
     try { if (window.exentiaTrack) window.exentiaTrack('pago_finish_callme', { phone_e164: e164 }); } catch(_){}
@@ -13792,6 +13796,7 @@ try {
         // La reserva ya existe; si ahora tenemos teléfono (ej. botón "Que me contacten"),
         // actualizarla vía exentia-update-phone (matchea bookings por email).
         var _updPhone = ((window._formUserData || {}).phone || whatsapp || rawWa || '').toString();
+        try { console.log('[ex-reserva] update-phone →', _updPhone ? _updPhone : '(SIN TELÉFONO — no se llama)'); } catch(_){}
         if (_updPhone && window.fetch) {
           fetch(window.EXENTIA_CONFIG.WEBHOOK_UPDATE_PHONE, {
             method: 'POST',
@@ -18595,7 +18600,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v245-movil-modales-y-lada', stamp: '2026-08-08 09:30' };
+  var EX_BUILD = { version: 'v246-fix-telefono-post-pago', stamp: '2026-08-08 10:35' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
