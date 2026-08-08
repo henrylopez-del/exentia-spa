@@ -18590,6 +18590,32 @@ try {
   /* El input de teléfono y su bandera comparten fila sin encimarse */
   #pg-callme-box .pg-callme-row { gap: 8px; }
   #pg-callme-box .iti { width: 100%; }
+
+  /* ---- 6. Lista de países: se cortaba dentro del modal ----
+     El dropdown nace `absolute` dentro del .iti, y el modal-box tiene overflow-y:auto,
+     así que la lista quedaba recortada por el contenedor (se veía media Aruba y ya).
+     En móvil lo despegamos a `fixed` y lo presentamos como hoja inferior, que además
+     es el patrón que la gente ya conoce para elegir de una lista larga en el teléfono. */
+  .iti__dropdown-content {
+    position: fixed !important;
+    top: auto !important; bottom: 0 !important;
+    left: 0 !important; right: 0 !important;
+    width: 100% !important; max-width: 100% !important;
+    max-height: 68vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    box-shadow: 0 -10px 34px rgba(60, 40, 20, .30) !important;
+    z-index: 100000 !important;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .iti__country-list {
+    max-height: calc(68vh - 64px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* 16px evita el zoom automático de iOS al enfocar el buscador */
+  .iti__search-input { font-size: 16px !important; padding: 13px 14px !important; }
+  /* Filas más altas: son objetivos táctiles, no de mouse */
+  .iti__country { padding: 13px 14px !important; font-size: 14.5px !important; }
 }
 </style>
 <div id="ex-build-badge" title="Última edición del HTML (hora Cancún UTC-5)"></div>
@@ -18600,7 +18626,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v246-fix-telefono-post-pago', stamp: '2026-08-08 10:35' };
+  var EX_BUILD = { version: 'v247-dropdown-paises-movil', stamp: '2026-08-08 11:05' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
