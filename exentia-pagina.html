@@ -18596,26 +18596,34 @@ try {
      así que la lista quedaba recortada por el contenedor (se veía media Aruba y ya).
      En móvil lo despegamos a `fixed` y lo presentamos como hoja inferior, que además
      es el patrón que la gente ya conoce para elegir de una lista larga en el teléfono. */
-  .iti__dropdown-content {
+  /* Se repiten los selectores con ID/clase de origen porque el CSS base declara
+     `position: absolute !important` bajo `#pg-callme-box …` y `.exentia-form …`:
+     con menor especificidad la regla de abajo no ganaría aunque venga después. */
+  #pg-callme-box .iti__dropdown-content,
+  .exentia-form .iti__dropdown-content,
+  .iti--container .iti__dropdown-content {
     position: fixed !important;
     top: auto !important; bottom: 0 !important;
     left: 0 !important; right: 0 !important;
-    width: 100% !important; max-width: 100% !important;
+    width: 100vw !important; max-width: 100vw !important; min-width: 0 !important;
     max-height: 68vh !important;
     border-radius: 16px 16px 0 0 !important;
     box-shadow: 0 -10px 34px rgba(60, 40, 20, .30) !important;
     z-index: 100000 !important;
     padding-bottom: env(safe-area-inset-bottom);
   }
-  .iti__country-list {
+  #pg-callme-box .iti__country-list,
+  .exentia-form .iti__country-list {
     max-height: calc(68vh - 64px) !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
   }
   /* 16px evita el zoom automático de iOS al enfocar el buscador */
-  .iti__search-input { font-size: 16px !important; padding: 13px 14px !important; }
+  #pg-callme-box .iti__search-input,
+  .exentia-form .iti__search-input { font-size: 16px !important; padding: 13px 14px !important; }
   /* Filas más altas: son objetivos táctiles, no de mouse */
-  .iti__country { padding: 13px 14px !important; font-size: 14.5px !important; }
+  #pg-callme-box .iti__country,
+  .exentia-form .iti__country { padding: 13px 14px !important; font-size: 14.5px !important; }
 }
 </style>
 <div id="ex-build-badge" title="Última edición del HTML (hora Cancún UTC-5)"></div>
