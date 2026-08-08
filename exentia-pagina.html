@@ -12170,11 +12170,10 @@ try {
         +   '<div class="cf-place-summary-label">Pin guardado · Domicilio</div>'
         +   '<div class="cf-place-summary-mode">' + addrText + '</div>'
         +   '<div class="cf-place-summary-zone"><span class="cf-place-summary-zone-dot" style="background:' + zColor + ';"></span>' + zLabel + ' · $' + citaPlace.costoTraslado + '/terapeuta</div>'
-        + '</div>'
-        + '<button type="button" class="cf-place-summary-change" onclick="changeLocation()">'
-        +   '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
-        +   'Editar pin'
-        + '</button>';
+        + '</div>';
+        // Sin botón "Editar pin": llamaba a changeLocation(), que reinicia la elección de
+        // lugar y volvía a pedir una dirección que el cliente ya había guardado. Aquí el
+        // pin es solo lectura; para cambiarlo está "Cambiar" en la ubicación del checkout.
     } else if (summaryRow) {
       summaryRow.style.display = 'none';
     }
@@ -18554,20 +18553,16 @@ try {
   #modal-auth .auth-perks { display: none; }
   #modal-auth .modal-nav { padding-top: 4px; padding-bottom: 0; }
 
-  /* ---- 4. Checkout: el botón de pago no debe quedar bajo el pliegue ---- */
-  #modal-choice .choice-options {
-    position: sticky; bottom: 0; z-index: 5;
-    margin: 0 -8px -8px; padding: 10px 8px calc(8px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, rgba(253,251,244,0) 0%, var(--off-white, #fdfbf4) 22%);
-  }
+  /* ---- 4. Checkout ----
+     El botón de pago se queda al final del flujo, NO sticky: flotando tapaba la
+     preferencia de terapeuta y los totales, y el cliente podía pagar sin haber
+     revisado esa configuración. Que tenga que llegar hasta abajo es el punto. */
   #modal-choice .choice-btn { padding: 12px 14px; }
   #modal-choice .choice-icon { width: 24px; height: 24px; flex: 0 0 24px; }
   #modal-choice .choice-text strong { font-size: 15px; }
   #modal-choice .choice-text span   { font-size: 11.5px; line-height: 1.35; }
   #modal-choice .ck-section { margin-bottom: 12px; }
   #modal-choice .ck-loc-sub { font-size: 11.5px; line-height: 1.35; }
-  /* El sticky flota sobre el contenido: reservarle sitio para que el total
-     no quede escondido detrás al llegar al final del scroll. */
   #modal-choice .checkout-cart { padding-bottom: 8px; }
   #modal-choice .ck-totals { margin-bottom: 4px; }
   /* Tres chips de preferencia no caben en 375px: que bajen en vez de cortarse */
@@ -18634,7 +18629,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v247-dropdown-paises-movil', stamp: '2026-08-08 11:05' };
+  var EX_BUILD = { version: 'v248-pagar-sin-sticky-y-sin-editar-pin', stamp: '2026-08-08 11:40' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
