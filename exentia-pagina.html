@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -6,11 +6,13 @@
 <title>Exentia — Spa & Beauty Salon · Cancún</title>
 <meta name="description" content="Exentia Spa & Beauty Salon en Cancún · Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales. Reserva en minutos. Realzamos la belleza de tu esencia.">
 <meta name="keywords" content="spa cancún, salón de belleza cancún, masajes cancún, faciales orgánicos, uñas acrílicas cancún, spa kids cancún, wellness cancún, exentia, beauty salon huayacán">
+<link rel="canonical" href="https://0victorrodriguez0.github.io/exentia-spa/exentia-pagina.html">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Exentia — Spa & Beauty Salon · Cancún">
 <meta property="og:description" content="Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales. Reserva en minutos.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://0victorrodriguez0.github.io/exentia-spa/exentia-pagina.html">
 <meta property="og:image" content="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/a22e8109-6868-4457-a727-78ea66443c00.webp">
 <meta property="og:locale" content="es_MX">
 <meta property="og:site_name" content="Exentia Spa & Beauty Salon">
@@ -6587,7 +6589,18 @@ window.EXENTIA_CONFIG = {
   WEBHOOK_CATALOGO: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-catalogo',
   CATALOGO_MODE: 'remoto',  // 'remoto' (Supabase vía n8n, default) | 'local' (hardcodeado, fallback). Override con ?catalogo=local para forzar el hardcodeado.
   WA_PHONE: '529984803595',   // WhatsApp del negocio (Yaz)
-  USERS_TOTAL: 2              // Terapeutas disponibles hoy (capacidad para modalidad simultánea)
+  USERS_TOTAL: 2,             // Terapeutas disponibles hoy (capacidad para modalidad simultánea)
+  // Google Ads · IDs de conversión (Tools > Conversions en la cuenta de Google Ads).
+  // Se llenan DESPUÉS de crear cada acción de conversión en la UI — formato exacto
+  // 'AW-XXXXXXXXX/XxXxXxXxXxXxXxXxXx'. Mientras estén en null, gtag('event','conversion',...)
+  // no se dispara (guard en el código) — así no se manda un send_to inválido a Google Ads.
+  GOOGLE_ADS_CONVERSIONS: {
+    page_view: 'AW-18207180087/e9nNCKT53d4cELeK7ulD',
+    cart_created: 'AW-18207180087/hA81CP7l3t4cELeK7ulD',
+    checkout: 'AW-18207180087/vrb6CKDP3t4cELeK7ulD',
+    purchase: 'AW-18207180087/L6UxCJeJ4N4cELeK7ulD',
+    lead: null   // aún no creada — reserva confirmada SIN pago (sucursal). Distinta de "checkout".
+  }
 };
 // Override PAYMENT_MODE desde query param (test opt-in sin afectar producción)
 try {
@@ -6957,6 +6970,7 @@ try {
       "@type": "BeautySalon",
       "name": "Exentia Spa & Beauty Salon",
       "description": "Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales.",
+      "url": "https://0victorrodriguez0.github.io/exentia-spa/exentia-pagina.html",
       "telephone": "+529984803595",
       "image": "https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/7023fd56-34b8-4e5c-a04a-2afa092f12cb.webp",
       "priceRange": "$$",
@@ -8175,7 +8189,7 @@ try {
       <span class="sub">SPA & BEAUTY SALON</span>
       <h2 class="cf-title-default only-default">Cuéntanos tu <em>nombre</em></h2>
       <h2 class="cf-title-calendar only-calendar">Para agendar tu <em>cita</em></h2>
-      <p class="only-default">Con tu nombre nos basta. Te abrimos WhatsApp para terminar tu reserva.</p>
+      <p class="only-default">Con tu nombre y WhatsApp nos basta. Te abrimos WhatsApp para terminar tu reserva.</p>
       <p class="only-calendar">Necesitamos tu correo y WhatsApp para confirmar la cita en el calendario.</p>
     </div>
     <div class="modal-body">
@@ -8208,9 +8222,9 @@ try {
           <input type="email" id="cf-email" name="email" placeholder="tu@correo.com" autocomplete="email" inputmode="email">
           <div class="ex-field-hint" id="cf-email-hint">Escribe un correo válido (ej: tu@correo.com).</div>
         </div>
-        <div class="form-row only-calendar">
+        <div class="form-row">
           <label class="form-label" for="cf-phone">WhatsApp <span class="req">*</span></label>
-          <input type="tel" id="cf-phone" name="phone" placeholder="998 123 4567" autocomplete="tel" inputmode="tel">
+          <input type="tel" id="cf-phone" name="phone" placeholder="998 123 4567" autocomplete="tel" inputmode="tel" required>
           <div class="ex-field-hint" id="cf-phone-hint">El número debe tener al menos 10 dígitos.</div>
         </div>
 
@@ -8999,6 +9013,30 @@ try {
   //  - tipo_cita normalizado a `citaPlace.mode || null` (antes el
   //    pre-booking podía mandar undefined).
   // ============================================
+
+  // ============================================
+  // GOOGLE ADS · CONVERSIONES
+  // Dispara gtag('event','conversion', ...) SOLO si el label ya está configurado
+  // en EXENTIA_CONFIG.GOOGLE_ADS_CONVERSIONS (Tools > Conversions en Google Ads,
+  // ver nota junto al config). El gclid NO se pasa a mano: gtag.js ya guardó el
+  // cookie _gcl_aw en el primer pageview (si vino de un anuncio) y lo asocia solo.
+  // kind: 'purchase' | 'lead'. value en MXN, transaction_id evita doble conteo
+  // si el evento se dispara más de una vez para la misma reserva.
+  function fireGoogleAdsConversion(kind, value, transactionId) {
+    try {
+      var sendTo = window.EXENTIA_CONFIG && window.EXENTIA_CONFIG.GOOGLE_ADS_CONVERSIONS && window.EXENTIA_CONFIG.GOOGLE_ADS_CONVERSIONS[kind];
+      if (!sendTo || typeof window.gtag !== 'function') return;
+      window.gtag('event', 'conversion', {
+        send_to: sendTo,
+        value: Number(value) || 0,
+        currency: 'MXN',
+        transaction_id: transactionId || ''
+      });
+      console.log('[google-ads-conversion]', kind, value, transactionId);
+    } catch(e) { console.warn('[google-ads-conversion] error', e); }
+  }
+  window.fireGoogleAdsConversion = fireGoogleAdsConversion;
+  // ============================================
   function buildReservaPayload(extra) {
     var d = window._formUserData || {};
     var firstName = d.firstName || '';
@@ -9115,8 +9153,12 @@ try {
         ? (typeof place.enAreaCobertura === 'boolean' ? place.enAreaCobertura : null)
         : null,
       distancia_km: place.distKm || '',
+      // Google Place ID de la dirección elegida (Places Autocomplete). Vacío si el
+      // cliente movió el pin manualmente en el mapa en vez de elegir una sugerencia,
+      // o si la cita es en sucursal. Sirve para re-geocodificar sin ambigüedad.
+      google_place_id: place.googlePlaceId || '',
       cartMeta: (typeof cartMeta !== 'undefined' ? cartMeta.slice() : []),
-      ghl_contact_id: (sess && sess.contactId) || '',
+      ghl_contact_id: (sess && sess.contactId) || d.clienteId || '',
       cliente_autenticado: !!sess
     };
     return Object.assign({}, base, extra || {});
@@ -10802,11 +10844,16 @@ try {
   // Hook cart.push para mantener cartMeta sincronizado
   const _origCartPush = cart.push.bind(cart);
   cart.push = function() {
+    var wasEmpty = cart.length === 0;
     for (var i = 0; i < arguments.length; i++) {
       cartMeta.push({ personaId: currentPersonaId });
     }
     var r = _origCartPush.apply(cart, arguments);
     saveCartMeta();
+    if (wasEmpty && cart.length > 0 && !window._exCartCreatedFired) {
+      window._exCartCreatedFired = true;
+      try { if (typeof fireGoogleAdsConversion === 'function') fireGoogleAdsConversion('cart_created', 0, ''); } catch(_){}
+    }
     return r;
   };
   // Hook cart.splice
@@ -10947,6 +10994,7 @@ try {
     // Catálogo remoto ANTES del primer render (no-op si CATALOGO_MODE='local')
     try { await loadRemoteCatalog(); } catch(e) { console.warn('[catalogo]', e); }
     renderServicesGrid();
+    try { if (typeof fireGoogleAdsConversion === 'function') fireGoogleAdsConversion('page_view', 0, ''); } catch(_){}
     renderFooterServices();
     renderPromosSection();
     updateBadge();
@@ -11682,6 +11730,7 @@ try {
           headers: { 'X-Goog-Api-Key': window.GMAPS_API_KEY }
         }).then(function(r){ return r.json(); }).then(function(j){
           if (j && j.location) {
+            citaPlace.googlePlaceId = pid;
             setPinGoogle(j.location.latitude, j.location.longitude, false);
             // Llenar campos desde addressComponents (sobrescribe siempre porque acabamos de resetear flags)
             if (j.addressComponents) {
@@ -11876,6 +11925,15 @@ try {
         try {
           var savedEmail = localStorage.getItem('exentia_last_email');
           if (savedEmail) d.email = savedEmail;
+        } catch(_){}
+      }
+      // Igual para el contacto de GHL: si ya dio su teléfono antes en este
+      // navegador (panel "Tus datos"), no hace falta volver a pedírselo para
+      // reconocerlo — el contacto ya existe en GHL, solo recordamos su ID.
+      if (!d.clienteId) {
+        try {
+          var savedContactId = localStorage.getItem('exentia_ghl_contact_id');
+          if (savedContactId) d.clienteId = savedContactId;
         } catch(_){}
       }
     } catch(_){}
@@ -12453,14 +12511,13 @@ try {
 
     // Si hay instancia de intl-tel-input, usar el número en formato E.164 (+5219981234567)
     var _iti = (window._itiInstances && window._itiInstances['cf-phone']) || null;
+    // Teléfono se captura SIEMPRE (obligatorio en ambos modos desde esta tanda).
+    phone = _iti && _iti.getNumber ? (_iti.getNumber() || '').trim() : (document.getElementById('cf-phone').value || '').trim();
     if (isCalendar) {
-      phone = _iti && _iti.getNumber ? (_iti.getNumber() || '').trim() : (document.getElementById('cf-phone').value || '').trim();
       email = (document.getElementById('cf-email').value || '').trim();
     } else {
-      // En modo WhatsApp, capturar email/phone si el usuario los llenó (opcionales)
-      var phoneEl = document.getElementById('cf-phone');
+      // En modo WhatsApp, correo sigue siendo opcional — se captura si el usuario lo llenó.
       var emailEl = document.getElementById('cf-email');
-      if (phoneEl && phoneEl.value) phone = _iti && _iti.getNumber ? (_iti.getNumber() || '').trim() : phoneEl.value.trim();
       if (emailEl && emailEl.value) email = emailEl.value.trim();
     }
 
@@ -12469,21 +12526,21 @@ try {
       err.style.display = 'block';
       return false;
     }
+    if (!phone) {
+      err.textContent = 'Necesitamos tu WhatsApp para confirmar tu reserva.';
+      err.style.display = 'block';
+      try { document.getElementById('cf-phone').focus(); } catch(_){}
+      return false;
+    }
+    // Validar con intl-tel-input si está disponible, sino fallback a 10 dígitos
+    var phoneValid = _iti && _iti.isValidNumber ? _iti.isValidNumber() : (phone.replace(/\D/g, '').length >= 10);
+    if (!phoneValid) {
+      err.textContent = 'El número de WhatsApp no es válido para el país seleccionado.';
+      err.style.display = 'block';
+      try { document.getElementById('cf-phone').focus(); } catch(_){}
+      return false;
+    }
     if (isCalendar) {
-      if (!phone) {
-        err.textContent = 'Necesitamos tu WhatsApp para confirmar la cita.';
-        err.style.display = 'block';
-        try { document.getElementById('cf-phone').focus(); } catch(_){}
-        return false;
-      }
-      // Validar con intl-tel-input si está disponible, sino fallback a 10 dígitos
-      var phoneValid = _iti && _iti.isValidNumber ? _iti.isValidNumber() : (phone.replace(/\D/g, '').length >= 10);
-      if (!phoneValid) {
-        err.textContent = 'El número de WhatsApp no es válido para el país seleccionado.';
-        err.style.display = 'block';
-        try { document.getElementById('cf-phone').focus(); } catch(_){}
-        return false;
-      }
       if (!email) {
         err.textContent = 'Necesitamos tu correo para enviarte la confirmación.';
         err.style.display = 'block';
@@ -12575,16 +12632,22 @@ try {
     var btn = document.getElementById('cf-submit');
     if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
 
-    // POST best-effort a n8n exentia-reserva — SOLO en modo calendar (iframe GHL).
-    // En modo whatsapp/agendar custom el POST final lo hace submitAgendarForm con TODOS
-    // los datos (fecha, hora, duracion_total_min) — evita ghost bookings duplicados.
-    var shouldPost = !window._bookingCode && isCalendar;
-    if (shouldPost) {
-      // Payload + POST unificados (buildReservaPayload lee window._formUserData,
-      // que se acaba de setear arriba con los valores de este form).
+    // Crear/actualizar SOLO el contacto en GHL en cuanto tenemos nombre+teléfono —
+    // en ambos modos, sin crear reserva todavía (rama solo_contacto del webhook,
+    // ya lista del lado de n8n). El POST real de la reserva sigue pasando después
+    // (submitAgendarForm en modo whatsapp; flujo de calendario en modo calendar).
+    if (!window._exGhlContactSynced) {
       try {
-        sendReserva(buildReservaPayload({ mode: isCalendar ? 'calendar' : 'whatsapp' }));
-      } catch(ex) { try { console.error('[ex-reserva] error armando payload pre-booking:', ex); } catch(_){} }
+        var _contactPayload = Object.assign({}, buildReservaPayload({ mode: isCalendar ? 'calendar' : 'whatsapp' }), { solo_contacto: true });
+        sendReserva(_contactPayload, { skipState: true }).then(function(j){
+          if (j && j.ghl_contact_id) {
+            window._exGhlContactSynced = true;
+            window._formUserData = window._formUserData || {};
+            window._formUserData.clienteId = j.ghl_contact_id;
+            try { localStorage.setItem('exentia_ghl_contact_id', j.ghl_contact_id); } catch(_){}
+          }
+        });
+      } catch(ex) { try { console.error('[ex-reserva] error armando payload solo_contacto:', ex); } catch(_){} }
     }
 
     try { if (window.exentiaTrack) window.exentiaTrack('form_submit_intent', { has_email: !!email, has_phone: !!phone, source: 'custom_form' }); } catch(e){}
@@ -12829,6 +12892,7 @@ try {
     }
 
     try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_start', { booking_uuid: bookingUuid, total: payload.valor_ticket_mxn || payload.precio_total_mxn || 0 }); } catch(_){}
+    try { fireGoogleAdsConversion('checkout', payload.valor_ticket_mxn || payload.precio_total_mxn || 0, bookingUuid); } catch(_){}
 
     var CFG = window.EXENTIA_CONFIG || {};
     var stripe = Stripe(CFG.STRIPE_PUBLISHABLE_KEY);
@@ -12915,6 +12979,7 @@ try {
           try { if (typeof clearCart === 'function') clearCart(); } catch(_){}
           try { localStorage.removeItem('exentia_last_stripe_uuid'); } catch(_){}
           try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_success', { booking_uuid: bookingUuid }); } catch(_){}
+          try { fireGoogleAdsConversion('purchase', payload.pago_tipo_cobro && _desglose ? _desglose.montoStripe : (payload.valor_ticket_mxn || payload.precio_total_mxn || 0), bookingUuid); } catch(_){}
         }, 1500);
       }
     })
@@ -12966,6 +13031,7 @@ try {
     if (amt) amt.textContent = _pgFormatTotal();
     openModal('modal-pago-simulador');
     try { if (window.exentiaTrack) window.exentiaTrack('pago_simulador_open', { amount: _pgFormatTotal() }); } catch(_){}
+    try { fireGoogleAdsConversion('checkout', 0, ''); } catch(_){}
   }
   window.openPagoSimulador = openPagoSimulador;
 
@@ -13835,7 +13901,16 @@ try {
         // Payload + POST unificados. buildReservaPayload lee window._formUserData
         // (phone/email se acaban de refrescar arriba con los valores de este form)
         // y normaliza el teléfono con toE164MX.
-        sendReserva(buildReservaPayload({ origin: 'agendar_form' }));
+        var _agPayload = buildReservaPayload({ origin: 'agendar_form' });
+        sendReserva(_agPayload).then(function(_agResp){
+          // Conversión "lead": solo cuando la cita se confirma SIN pago (ej. sucursal sin
+          // anticipo). Si esto es un follow-up post-pago (WhatsApp/callme), _reservaPosted ya
+          // era true arriba y este branch no corre — evita contar 'purchase' + 'lead' doble.
+          // transaction_id sale de la respuesta real del webhook, no de window._bookingCode
+          // (que en este punto todavía puede no estar actualizado — era el bug).
+          var _leadTxId = (_agResp && _agResp.booking_code) || window._bookingCode || '';
+          try { fireGoogleAdsConversion('lead', _agPayload.valor_ticket_mxn || 0, _leadTxId); } catch(_){}
+        });
       }
     } catch(err) { try { console.error('[ex-reserva] error armando payload:', err); } catch(_){} }
     closeModal('modal-agendar');
@@ -15403,6 +15478,7 @@ try {
             }
           }).then(function(r){ return r.json(); }).then(function(d){
             if (!d.location) return;
+            citaPlace.googlePlaceId = pid;
             var addr = d.formattedAddress || item.querySelector('b').textContent;
             document.getElementById('mpf-address-input').value = addr;
             _mpfSetPin(d.location.latitude, d.location.longitude, addr);
@@ -18650,7 +18726,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v250-sin-urls-github-en-meta', stamp: '2026-08-08 13:40' };
+  var EX_BUILD = { version: 'v251-google-ads-conversions-telefono-obligatorio', stamp: '2026-08-09 20:26' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
