@@ -15291,6 +15291,11 @@ try {
     // Guardar
     citaPlace.lat = lat;
     citaPlace.lng = lng;
+    // URL de Google Maps con las coords — es lo que el panel del terapeuta muestra
+    // como "Abrir en Google Maps". Sin esto, la columna direccion_maps_url queda vacía.
+    try {
+      citaPlace.mapsUrl = 'https://www.google.com/maps?q=' + Number(lat).toFixed(7) + ',' + Number(lng).toFixed(7);
+    } catch(_){}
     if (address) citaPlace.address = address;
     // Detectar zona
     var z = classifyZone(lat, lng, citaPlace.zona || '');
@@ -18703,7 +18708,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v252-post-pago-solo-boton-whatsapp', stamp: '2026-08-10 15:15' };
+  var EX_BUILD = { version: 'v253-fix-maps-url-guardado-en-mpfSetPin', stamp: '2026-08-10 16:20' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
