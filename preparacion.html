@@ -1193,6 +1193,10 @@
     var el = qs('#' + id);
     if (el) el.classList.add('active');
     if (window.scrollTo) window.scrollTo({ top: 0, behavior:'smooth' });
+    // intl-tel-input solo se puede montar sobre un input VISIBLE. Los teléfonos
+    // viven en pantallas que arrancan ocultas, así que reintentamos en cada
+    // cambio de pantalla (initTel es idempotente: no re-monta lo ya montado).
+    if (typeof window.__initTels === 'function') setTimeout(window.__initTels, 0);
   }
 
   function updateProgress(step){
@@ -1517,6 +1521,9 @@
     if (telWrap) telWrap.style.display = (isYo && pedirTel) ? '' : 'none';
     if (otraWrap) otraWrap.style.display = isYo ? 'none' : '';
     if (divisor) divisor.style.display = isYo ? 'none' : '';
+    // Al revelar/ocultar bloques del paso 5 cambia la visibilidad de los teléfonos:
+    // reintentar el montaje del selector de país (idempotente).
+    if (typeof window.__initTels === 'function') setTimeout(window.__initTels, 0);
   }
   window.togglePaso5Sections = togglePaso5Sections;
 
@@ -1812,10 +1819,20 @@
     initTel('receptor_telefono');
   }
   window.__initTel = initTel;
+  window.__initTels = tryInitTels;
   if (document.readyState === 'complete') tryInitTels();
   else window.addEventListener('load', tryInitTels);
-  // Re-intento suave a los 400ms por si el CDN de intl-tel-input aún no cargó
-  setTimeout(tryInitTels, 400);
+  // Reintentos escalonados: cubren CDN lento + inputs que aún no eran visibles.
+  // initTel es idempotente, así que repetir no cuesta ni duplica el widget.
+  [200, 400, 800, 1500, 3000].forEach(function(ms){ setTimeout(tryInitTels, ms); });
+  // Red de seguridad: si el input se revela por una vía que no pasa por
+  // showScreen/togglePaso5Sections, el observer lo detecta y monta el selector.
+  try {
+    if (typeof MutationObserver === 'function') {
+      var mo = new MutationObserver(function(){ tryInitTels(); });
+      mo.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['style', 'class'] });
+    }
+  } catch (_) {}
 })();
 </script>
 
