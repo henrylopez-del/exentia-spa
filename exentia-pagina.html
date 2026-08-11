@@ -13001,6 +13001,8 @@ try {
               _pgShowResult('ok', '¡Cita confirmada!', 'Tu pago fue procesado y tu cita ya quedó guardada.', true);
             }
           } catch(err) { console.warn('[stripe] showFinalConfirm falló:', err); }
+          // Congelar ANTES de clearCart: el mensaje de WhatsApp se arma después.
+          try { _pgFreezePayload(); } catch(_){}
           try { if (typeof clearCart === 'function') clearCart(); } catch(_){}
           try { localStorage.removeItem('exentia_last_stripe_uuid'); } catch(_){}
           try { if (window.exentiaTrack) window.exentiaTrack('stripe_checkout_success', { booking_uuid: bookingUuid }); } catch(_){}
@@ -13106,6 +13108,9 @@ try {
     // Limpiar prep_token del intento previo para no mostrar el botón con datos viejos
     window._prepToken = null;
     window._prepTipoCita = null;
+    // Descartar la foto del payload de la reserva anterior — si no, el mensaje de
+    // WhatsApp de una reserva nueva saldría con los servicios de la pasada.
+    window._pgPayloadSnapshot = null;
     var _prepBtn = document.getElementById('pg-prep-btn');
     if (_prepBtn) _prepBtn.style.display = 'none';
   }
@@ -13237,6 +13242,9 @@ try {
         // que trae las 2 vías de confirmación (WhatsApp / que me contacten).
         _pgShowResult('ok', '¡Pago aceptado!', 'Registrando tu reserva…', true);
         try { if (window.exentiaTrack) window.exentiaTrack('pago_simulador_result', { kind: kind, outcome: 'ok' }); } catch(_){}
+        // Congelar el payload por si el flujo limpia el carrito antes de que el
+        // cliente abra WhatsApp desde el pop-up de confirmación.
+        try { _pgFreezePayload(); } catch(_){}
         setTimeout(function(){
           closeModal('modal-pago-simulador');
           try {
@@ -13355,8 +13363,18 @@ try {
   }
   window._pgCobroDesglose = _pgCobroDesglose;
 
+  // Congela una copia del payload en el momento del pago. Necesario porque tras
+  // un pago exitoso se llama a clearCart(), y el cliente aprieta "Continuar por
+  // WhatsApp" DESPUÉS: si el mensaje se armara en ese momento leería un carrito
+  // ya vacío y saldría sin servicios, sin total y sin horario.
+  function _pgFreezePayload() {
+    try { window._pgPayloadSnapshot = buildReservaPayload(); } catch(_){}
+  }
+  window._pgFreezePayload = _pgFreezePayload;
+
   function _pgBuildWaMessage() {
-    var p = buildReservaPayload();
+    // Usar la foto tomada al pagar; si no existe (flujo sin pago), armar en vivo.
+    var p = window._pgPayloadSnapshot || buildReservaPayload();
     var prefLabel = { mujer: 'Mujer', hombre: 'Hombre', indistinto: 'Sin preferencia' };
     var lines = [];
     lines.push('Hola Exentia, acabo de realizar mi reservación y deseo confirmar los detalles de mi cita.');
@@ -13365,7 +13383,7 @@ try {
       lines.push('*Código de reserva:* ' + window._bookingCode);
     }
     lines.push('');
-    lines.push('*Estado del pago:* ✅ Aceptado (simulador de pruebas)');
+    lines.push('*Estado del pago:* Aceptado');
     lines.push('*Total:* ' + fmtMXN(p.valor_ticket_mxn || 0));
     lines.push('');
     lines.push('*Mis datos:*');
@@ -13377,13 +13395,20 @@ try {
     var pers = p.personas_servicios || [];
     var esGrupo = p.num_personas > 1;
     lines.push('');
+    // El slug del servicio ya viene con la forma "Nombre · 60 min · $1,200",
+    // así que NO se le vuelve a pegar el precio (antes salía duplicado).
+    var svcLine = function(s) {
+      var txt = String(s.slug || '');
+      if (!/\$/.test(txt) && s.precio_mxn) txt += ' · ' + fmtMXN(s.precio_mxn);
+      return txt;
+    };
     if (esGrupo) {
       lines.push('*Servicios (' + p.num_personas + ' personas):*');
       pers.forEach(function(per){
         var pref = prefLabel[per.preferencia_sexo] || '';
         lines.push(per.label + (pref ? ' (' + pref.toLowerCase() + ')' : '') + ':');
         (per.servicios || []).forEach(function(s){
-          lines.push('  - ' + s.slug + (s.precio_mxn ? ' · ' + fmtMXN(s.precio_mxn) : ''));
+          lines.push('  - ' + svcLine(s));
         });
       });
       var modLabel = { simultaneo: 'Al mismo tiempo', turnos: 'Por turnos', economica: 'Opción económica' }[p.modalidad];
@@ -13391,7 +13416,7 @@ try {
     } else {
       lines.push('*Servicios:*');
       (p.servicios || []).forEach(function(s){
-        lines.push('- ' + s.slug + (s.precio_mxn ? ' · ' + fmtMXN(s.precio_mxn) : ''));
+        lines.push('- ' + svcLine(s));
       });
       var prefInd = pers[0] && prefLabel[pers[0].preferencia_sexo];
       if (prefInd) lines.push('*Preferencia de terapeuta:* ' + prefInd);
@@ -13547,6 +13572,8 @@ try {
           _pgShowResult('ok', '¡Cita confirmada!', 'Tu pago fue procesado y tu cita ya quedó guardada.', true);
         }
       } catch(err) { console.warn('[stripe] showFinalConfirm falló:', err); }
+      // Congelar ANTES de clearCart (mismo motivo que en el flujo embebido).
+      try { _pgFreezePayload(); } catch(_){}
       try { if (typeof clearCart === 'function') clearCart(); } catch(_){}
       try { localStorage.removeItem('exentia_last_stripe_uuid'); } catch(_){}
     } catch (err) {
@@ -18951,7 +18978,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v259-stripe-live', stamp: '2026-08-11 15:10' };
+  var EX_BUILD = { version: 'v260-wa-post-pago-datos-completos', stamp: '2026-08-11 16:00' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
