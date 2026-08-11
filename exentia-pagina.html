@@ -14877,7 +14877,7 @@ try {
         var trasladoText;
         if (traslado <= 0) trasladoText = '—';
         else if (modSelected) trasladoText = fmt2(traslado) + (trasladoDetail ? ' <span style="font-size:11px;color:#a09e7a;font-weight:500;">(' + trasladoDetail + ')</span>' : '');
-        else if (n === 1) trasladoText = fmt2(traslado);
+        else if (n === 1) trasladoText = fmt2(traslado) + (trasladoDetail ? ' <span style="font-size:11px;color:#a09e7a;font-weight:500;">(' + trasladoDetail + ')</span>' : '');
         else trasladoText = 'desde ' + fmt2(traslado);
         html += '<div class="ck-total-row"><span>Traslado</span><span>' + trasladoText + '</span></div>';
       }
@@ -15002,40 +15002,20 @@ try {
         if (perPersona[pp] > maxPersonaMin) { maxPersonaMin = perPersona[pp]; worstPid = pp; }
       });
       var over = maxPersonaMin > MAX_MIN_POR_PERSONA;
-
+      // Regla dura: si UNA persona pasa de 240 min, NO se puede pagar por la
+      // página. El cliente tiene que contactar al equipo por WhatsApp para que
+      // ellos evalúen si pueden aceptarla (2 terapeutas, ajuste de agenda, etc.).
       var notice = document.getElementById('ck-over240-notice');
       if (notice) {
         if (over) {
-          // Texto adaptable: individual, pareja/grupo, o paquete "para los 2".
           var hrs = (maxPersonaMin / 60).toFixed(1).replace(/\.0$/, '');
-          var quienTxt;
-          if (n === 1) quienTxt = 'Tu selección suma ' + hrs + ' h para una sola persona';
-          else if (itemsGlobal > 0 && realPids.length >= 2) quienTxt = 'El paquete "para los dos" suma ' + hrs + ' h por persona';
-          else quienTxt = 'La selección de ' + ((typeof personaLabel === 'function' && worstPid) ? personaLabel(worstPid) : ('la persona ' + worstPid)) + ' suma ' + hrs + ' h';
           var txtEl = document.getElementById('ck-o240-text');
-          if (txtEl) txtEl.textContent = 'Una sola terapeuta puede trabajar hasta 4 horas seguidas. ' + quienTxt + '. Podemos coordinarlo con más de una terapeuta o por WhatsApp.';
-
-          // CTA 1: agregar persona. Si es individual → pasar a pareja; si ya es pareja/grupo
-          // ocultamos ese botón (el problema es el paquete "para los 2" — la salida real
-          // es WhatsApp) o lo dejamos abrir modal-group para subir el contador.
+          if (txtEl) txtEl.textContent = 'Tu cita suma ' + hrs + ' h. Por ley y por bienestar de la terapeuta, una sola persona no puede atender más de 4 h seguidas, así que esta reserva no se puede completar en línea. Contáctanos por WhatsApp: el equipo revisa si es posible atenderla con dos terapeutas y te confirma.';
+          // Botón "Aceptar" queda oculto — la única salida es WhatsApp.
           var addBtn = document.getElementById('ck-o240-add');
-          if (addBtn) {
-            if (n === 1) {
-              addBtn.style.display = '';
-              addBtn.textContent = 'Reservar en pareja';
-              addBtn.onclick = function(){
-                closeModal('modal-choice');
-                setTimeout(function(){
-                  try { svMode = 'parejas'; } catch(_){}
-                  try { if (typeof _switchToParejas === 'function') _switchToParejas(); } catch(_){}
-                  try { if (typeof openSelectModal === 'function') openSelectModal(); } catch(_){}
-                }, 220);
-              };
-            } else {
-              addBtn.style.display = 'none';
-            }
-          }
-          // CTA 2: WhatsApp con mensaje pre-armado (nombres de servicios de la persona afectada).
+          if (addBtn) addBtn.style.display = 'none';
+          // Mensaje WhatsApp con TODO: servicios de la persona afectada, datos que
+          // ya llenó (nombre / teléfono / correo) y ubicación si aplica.
           var waBtn = document.getElementById('ck-o240-wa');
           if (waBtn) {
             var wa = (window.EXENTIA_CONFIG && window.EXENTIA_CONFIG.WA_PHONE) || '529984803595';
@@ -15043,14 +15023,36 @@ try {
             for (var j = 0; j < cart.length; j++) {
               var pj = (cartMeta && cartMeta[j]) ? cartMeta[j].personaId : 1;
               if (pj === worstPid || pj === 0) {
-                servs.push(String(cart[j]).split(' · ')[0]);
+                servs.push('- ' + String(cart[j]).split(' · ')[0]);
               }
             }
-            var msg = 'Hola Exentia, quiero coordinar una cita larga (' + hrs + ' h para una persona) que la página no me deja completar. Los servicios que elegí son: ' + servs.join(', ') + '. ¿Me pueden ayudar?';
-            waBtn.href = 'https://wa.me/' + wa + '?text=' + encodeURIComponent(msg);
+            var d = window._formUserData || {};
+            var nombreCli = ((d.firstName || '') + ' ' + (d.lastName || '')).trim();
+            var lineas = ['Hola Exentia, quiero reservar una cita que la página me pidió confirmar por ustedes porque supera 4 horas.', ''];
+            lineas.push('Duración total: ' + hrs + ' h');
+            lineas.push('Servicios:');
+            servs.forEach(function(s){ lineas.push(s); });
+            lineas.push('');
+            lineas.push('Mis datos:');
+            if (nombreCli) lineas.push('- Nombre: ' + nombreCli);
+            if (d.phone) lineas.push('- WhatsApp: ' + d.phone);
+            if (d.email) lineas.push('- Correo: ' + d.email);
+            if (calc.isHome) {
+              var addr = citaPlace.address || [citaPlace.calle, citaPlace.num_ext, citaPlace.zona].filter(Boolean).join(' ');
+              lineas.push('- Tipo: A domicilio' + (addr ? ' (' + addr + ')' : ''));
+              if (citaPlace.mapsUrl) lineas.push('- Ubicación: ' + citaPlace.mapsUrl);
+            } else {
+              lineas.push('- Tipo: En sucursal');
+            }
+            if (window._calChoice && window._calChoice.date) {
+              lineas.push('- Fecha propuesta: ' + window._calChoice.date + (window._calChoice.time ? ' a las ' + window._calChoice.time : ''));
+            }
+            lineas.push('');
+            lineas.push('¿Me pueden ayudar a coordinarla?');
+            waBtn.href = 'https://wa.me/' + wa + '?text=' + encodeURIComponent(lineas.join('\n'));
           }
           notice.style.display = '';
-          // Deshabilitar CTAs de pago mientras el aviso esté visible.
+          // Deshabilitar CTAs de pago mientras el aviso esté visible — sin excepción.
           ['ck-btn-pagar','ck-btn-anticipo','ck-btn-reservar'].forEach(function(id){
             var b = document.getElementById(id);
             if (b) { b.disabled = true; b.setAttribute('aria-disabled','true'); }
@@ -18851,7 +18853,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v256-bloqueo-240min-por-persona', stamp: '2026-08-11 12:00' };
+  var EX_BUILD = { version: 'v257-240min-solo-whatsapp', stamp: '2026-08-11 13:30' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
