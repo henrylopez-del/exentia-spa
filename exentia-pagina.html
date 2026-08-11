@@ -14572,6 +14572,74 @@ try {
     return { name: name, variant: variant, price: price, priceNum: priceNum, raw: line };
   }
 
+  // ══════════════════════════════════════════════════════════════════════
+  // CARGA POR TERAPEUTA (regla de 240 min)
+  // ══════════════════════════════════════════════════════════════════════
+  // Un "slot" en exentia.booking_slots = UNA terapeuta. Su duracion_min es la
+  // carga real de esa persona. El workflow exentia-crear-cita-ghl rechaza
+  // cualquier slot > 240 min (nodo "Validar input"), dejando el cupo tomado en
+  // Supabase pero sin cita en GHL/Google Calendar.
+  //
+  // Estas funciones replican el agrupamiento del trigger exentia.fn_autocreate_slots
+  // para saber ANTES de cobrar cuánto va a cargar cada terapeuta:
+  //   · simultaneo → 1 slot por persona   → carga = minutos de esa persona
+  //   · turnos     → ceil(N/M) personas por slot → carga = suma del grupo
+  //   · economica  → 1 solo slot          → carga = suma de TODAS las personas
+  var EXENTIA_MAX_MIN_POR_TERAPEUTA = 240;
+
+  // Minutos por persona (el paquete "para los 2" con personaId 0 se reparte a todas).
+  function _ckMinutosPorPersona() {
+    var perPersona = {}, globalMin = 0, itemsGlobal = 0, totalMin = 0;
+    for (var i = 0; i < cart.length; i++) {
+      var dm = (typeof _durMinForKey === 'function') ? (_durMinForKey(cart[i]) || 0) : 0;
+      if (!dm) continue;
+      totalMin += dm;
+      var pid = (cartMeta && cartMeta[i]) ? cartMeta[i].personaId : 1;
+      if (pid === 0) { globalMin += dm; itemsGlobal++; continue; }
+      perPersona[pid] = (perPersona[pid] || 0) + dm;
+    }
+    var reales = (typeof getPersonasInUse === 'function')
+      ? getPersonasInUse().filter(function(p){ return p !== 0; })
+      : [1];
+    if (!reales.length) reales = [1];
+    // El paquete compartido se suma a cada persona real (así lo hace el trigger).
+    if (globalMin > 0) reales.forEach(function(p){ perPersona[p] = (perPersona[p] || 0) + globalMin; });
+    reales.forEach(function(p){ if (perPersona[p] == null) perPersona[p] = 0; });
+    return { perPersona: perPersona, personas: reales, globalMin: globalMin,
+             itemsGlobal: itemsGlobal, totalMin: totalMin };
+  }
+  window._ckMinutosPorPersona = _ckMinutosPorPersona;
+
+  // Carga máxima de una terapeuta para una modalidad dada.
+  // nSlots = cuántas terapeutas atienden. Devuelve { max, detalle: [min por slot] }.
+  function _ckCargaPorSlot(modKey, nSlots) {
+    var info = _ckMinutosPorPersona();
+    var mins = info.personas.map(function(p){ return info.perPersona[p] || 0; });
+    if (!mins.length) mins = [info.totalMin];
+    if (modKey === 'simultaneo') {
+      // Una terapeuta por persona → cada slot carga los minutos de su persona.
+      return { max: Math.max.apply(null, mins), slots: mins };
+    }
+    if (modKey === 'economica') {
+      // Una sola terapeuta atiende a todas, una tras otra.
+      var suma = mins.reduce(function(a, b){ return a + b; }, 0);
+      return { max: suma, slots: [suma] };
+    }
+    // 'turnos': el trigger agrupa ceil(N/M) personas consecutivas por slot y suma.
+    var m = Math.max(1, nSlots || 1);
+    var perSlot = Math.max(1, Math.ceil(mins.length / m));
+    var slots = [];
+    for (var i = 0; i < mins.length; i += perSlot) {
+      slots.push(mins.slice(i, i + perSlot).reduce(function(a, b){ return a + b; }, 0));
+    }
+    if (!slots.length) slots = [0];
+    return { max: Math.max.apply(null, slots), slots: slots };
+  }
+  window._ckCargaPorSlot = _ckCargaPorSlot;
+
+  // Texto humano de una carga: "6 h" / "4.5 h"
+  function _ckHoras(min) { return (min / 60).toFixed(1).replace(/\.0$/, '') + ' h'; }
+
   // Calcula opciones de modalidad para grupos a domicilio.
   // Fórmula del simulador LPT (Exentia - Simulador test-calendarios):
   //   · Simultáneo: M = N (1 terapeuta por persona) — feasible solo si N ≤ usersTotal
@@ -14592,44 +14660,58 @@ try {
     var isHome = citaPlace && citaPlace.mode === 'domicilio';
     var usersTotal = parseInt(window.EXENTIA_USERS_TOTAL, 10) || window.EXENTIA_CONFIG.USERS_TOTAL || 2;
 
-    // Tiempo total acumulado del cart (suma de duraciones por item)
-    // → usado para "Opción económica" (1 terapeuta sola) — debe caber en una jornada saludable.
-    // Límites basados en estándares de industria (BLS, ClinicSense, Strivept):
-    //   · 5 h sostenidas = límite razonable de 1 terapeuta sin fatiga
-    //   · 8 h+ = inviable (riesgo de RSI)
-    var SOLO_MAX_MIN = parseInt(window.EXENTIA_SOLO_MAX_MIN, 10) || 300; // default 5 horas
-    var SOLO_HARD_MAX_MIN = parseInt(window.EXENTIA_SOLO_HARD_MAX_MIN, 10) || 480; // 8 horas - no negociable
+    // Tiempo total acumulado del cart (suma de duraciones por item).
+    // El tope operativo (240 min por terapeuta) se evalúa abajo con _ckCargaPorSlot,
+    // que replica el agrupamiento real de exentia.fn_autocreate_slots.
     var totalMin = 0;
     cart.forEach(function(c){
       var m = String(c).match(/(\d+)\s*min/);
       if (m) totalMin += parseInt(m[1], 10) || 0;
     });
-    var economicaFeasible = (totalMin <= SOLO_MAX_MIN);
-    var economicaReason = '';
-    if (!economicaFeasible) {
-      var hours = (totalMin / 60).toFixed(1);
-      if (totalMin > SOLO_HARD_MAX_MIN) {
-        economicaReason = 'No viable: ~' + hours + ' h de trabajo continuo (máximo seguro 5 h).';
-      } else {
-        economicaReason = 'Solo recomendable hasta 5 h. Hoy serían ~' + hours + ' h.';
-      }
-    }
-
     var nSim = n;
     var nTurnos = Math.max(1, Math.min(n, usersTotal));
+
+    // ── Factibilidad por CARGA POR TERAPEUTA (tope duro 240 min por slot) ──
+    // Se calcula con la misma agrupación que usa el trigger fn_autocreate_slots,
+    // así lo que ve el cliente coincide con los slots que se van a crear.
+    var MAXT = EXENTIA_MAX_MIN_POR_TERAPEUTA;
+    var cargaSim = _ckCargaPorSlot('simultaneo', nSim);
+    var cargaTur = _ckCargaPorSlot('turnos', nTurnos);
+    var cargaEco = _ckCargaPorSlot('economica', 1);
+
+    // Simultáneo: necesita 1 terapeuta por persona y que ninguna pase de 4 h.
     var simFeasible = (nSim <= usersTotal);
     var simReason = simFeasible ? '' :
       ('Requiere ' + nSim + ' terapeutas al mismo tiempo · solo hay ' + usersTotal + ' disponibles hoy.');
+    if (simFeasible && cargaSim.max > MAXT) {
+      simFeasible = false;
+      simReason = 'Una terapeuta trabajaría ' + _ckHoras(cargaSim.max) + ' seguidas · el máximo es 4 h.';
+    }
+
+    // Por turno: cada terapeuta atiende varias personas seguidas → suma sus minutos.
+    var turFeasible = true, turReason = '';
+    if (cargaTur.max > MAXT) {
+      turFeasible = false;
+      turReason = 'Con ' + nTurnos + ' terapeuta' + (nTurnos > 1 ? 's' : '') +
+                  ', cada una trabajaría hasta ' + _ckHoras(cargaTur.max) + ' seguidas · el máximo es 4 h.';
+    }
+
+    // Económica: una sola terapeuta hace todo → carga = suma total.
+    var economicaFeasible = (cargaEco.max <= MAXT);
+    var economicaReason = economicaFeasible ? '' :
+      ('Una sola terapeuta trabajaría ' + _ckHoras(cargaEco.max) + ' seguidas · el máximo es 4 h.');
+
     return {
       n: n,
       tarifa: tarifa,
       isHome: isHome,
       usersTotal: usersTotal,
       totalMin: totalMin,
-      soloMaxMin: SOLO_MAX_MIN,
-      simultaneo: { terapeutas: nSim,    costo: isHome ? nSim * tarifa    : 0, feasible: simFeasible, reason: simReason },
-      turnos:     { terapeutas: nTurnos, costo: isHome ? nTurnos * tarifa : 0, feasible: true, reason: '' },
-      economica:  { terapeutas: 1,       costo: isHome ? tarifa           : 0, feasible: economicaFeasible, reason: economicaReason }
+      maxPorTerapeuta: MAXT,
+      cargas: { simultaneo: cargaSim, turnos: cargaTur, economica: cargaEco },
+      simultaneo: { terapeutas: nSim,    costo: isHome ? nSim * tarifa    : 0, feasible: simFeasible,       reason: simReason,       carga: cargaSim.max },
+      turnos:     { terapeutas: nTurnos, costo: isHome ? nTurnos * tarifa : 0, feasible: turFeasible,       reason: turReason,       carga: cargaTur.max },
+      economica:  { terapeutas: 1,       costo: isHome ? tarifa           : 0, feasible: economicaFeasible, reason: economicaReason, carga: cargaEco.max }
     };
   }
 
@@ -14974,64 +15056,80 @@ try {
     // 2 salidas — agregar otra persona (que se resuelva con multi-slot) o hablar
     // por WhatsApp para coordinar manualmente.
     try {
-      var MAX_MIN_POR_PERSONA = 240;
-      // Duración por persona: sumar el minutaje de cada item según su personaId.
-      var perPersona = {};   // { pid: minutos }
-      var globalMin = 0;     // suma que se aplica a TODAS las personas (paquete "para los 2", pid=0)
-      var itemsGlobal = 0;
-      for (var i2 = 0; i2 < cart.length; i2++) {
-        var dm = (typeof _durMinForKey === 'function') ? (_durMinForKey(cart[i2]) || 0) : 0;
-        if (!dm) continue;
-        var pid = (cartMeta && cartMeta[i2]) ? cartMeta[i2].personaId : 1;
-        if (pid === 0) { globalMin += dm; itemsGlobal++; continue; }
-        perPersona[pid] = (perPersona[pid] || 0) + dm;
-      }
-      // Sumar el "global" (paquete pareja) a cada persona real. Si no hay ninguna,
-      // usar la lista de personas activas para no dejar el paquete fuera del cálculo.
-      var realPids = Object.keys(perPersona).map(function(k){ return +k; });
-      if (globalMin > 0) {
-        if (realPids.length === 0) {
-          (personas || [1]).forEach(function(pp){ perPersona[pp] = (perPersona[pp] || 0) + globalMin; });
-        } else {
-          realPids.forEach(function(pp){ perPersona[pp] += globalMin; });
-        }
-        realPids = Object.keys(perPersona).map(function(k){ return +k; });
-      }
-      var maxPersonaMin = 0, worstPid = null;
-      realPids.forEach(function(pp){
-        if (perPersona[pp] > maxPersonaMin) { maxPersonaMin = perPersona[pp]; worstPid = pp; }
-      });
-      var over = maxPersonaMin > MAX_MIN_POR_PERSONA;
-      // Regla dura: si UNA persona pasa de 240 min, NO se puede pagar por la
-      // página. El cliente tiene que contactar al equipo por WhatsApp para que
-      // ellos evalúen si pueden aceptarla (2 terapeutas, ajuste de agenda, etc.).
+      var MAXT = calc.maxPorTerapeuta || 240;
+      var infoMin = _ckMinutosPorPersona();
+
+      // ¿Hay alguna modalidad viable con la plantilla de hoy?
+      // En sucursal la "económica" no se ofrece → no cuenta como salida válida.
+      var opcionesPosibles = ['simultaneo', 'turnos'];
+      if (calc.isHome) opcionesPosibles.push('economica');
+      var hayAlgunaViable = opcionesPosibles.some(function(k){ return calc[k] && calc[k].feasible; });
+
+      // Modalidad efectiva:
+      //  · 1 persona → no hay selector; siempre es 1 terapeuta que hace todo seguido.
+      //  · ≥2 personas → la que eligió el cliente (si ya eligió).
+      var modEfectiva = (n === 1) ? 'economica' : (citaPlace && citaPlace.modalidad) || null;
+      var cargaEfectiva = modEfectiva ? (calc[modEfectiva] ? calc[modEfectiva].carga : 0) : 0;
+
+      // Bloqueamos si:
+      //  a) ninguna modalidad es viable (no importa lo que elija, siempre pasa de 4 h), o
+      //  b) el cliente ya eligió una modalidad y esa concreta pasa de 4 h por terapeuta.
+      var over = !hayAlgunaViable ||
+                 (!!modEfectiva && calc[modEfectiva] && calc[modEfectiva].feasible === false);
+
       var notice = document.getElementById('ck-over240-notice');
       if (notice) {
         if (over) {
-          var hrs = (maxPersonaMin / 60).toFixed(1).replace(/\.0$/, '');
+          // Carga a reportar: la de la modalidad elegida, o la menor posible si aún no elige.
+          var cargaReport = cargaEfectiva;
+          if (!modEfectiva) {
+            cargaReport = Math.min.apply(null, opcionesPosibles.map(function(k){
+              return (calc[k] && calc[k].carga) || Infinity;
+            }));
+          }
+          if (!isFinite(cargaReport) || !cargaReport) cargaReport = infoMin.totalMin;
+          var hrs = _ckHoras(cargaReport);
+
           var txtEl = document.getElementById('ck-o240-text');
-          if (txtEl) txtEl.textContent = 'Tu cita suma ' + hrs + ' h. Por ley y por bienestar de la terapeuta, una sola persona no puede atender más de 4 h seguidas, así que esta reserva no se puede completar en línea. Contáctanos por WhatsApp: el equipo revisa si es posible atenderla con dos terapeutas y te confirma.';
-          // Botón "Aceptar" queda oculto — la única salida es WhatsApp.
+          if (txtEl) {
+            var motivo;
+            if (n === 1) {
+              motivo = 'Tu cita suma ' + hrs + ' y la haría una sola terapeuta.';
+            } else {
+              motivo = 'Con las ' + calc.usersTotal + ' terapeutas disponibles hoy, alguna trabajaría ' +
+                       hrs + ' seguidas atendiendo a las ' + n + ' personas.';
+            }
+            txtEl.textContent = motivo + ' Por bienestar del equipo, una terapeuta no atiende más de 4 h seguidas, ' +
+              'así que esta reserva no se puede completar en línea. Escríbenos por WhatsApp: revisamos la agenda y te confirmamos si podemos acomodarla.';
+          }
+          // Botón "Aceptar" oculto — la única salida es WhatsApp.
           var addBtn = document.getElementById('ck-o240-add');
           if (addBtn) addBtn.style.display = 'none';
-          // Mensaje WhatsApp con TODO: servicios de la persona afectada, datos que
-          // ya llenó (nombre / teléfono / correo) y ubicación si aplica.
+
+          // Mensaje WhatsApp con TODO el contexto para que el equipo decida.
           var waBtn = document.getElementById('ck-o240-wa');
           if (waBtn) {
             var wa = (window.EXENTIA_CONFIG && window.EXENTIA_CONFIG.WA_PHONE) || '529984803595';
-            var servs = [];
-            for (var j = 0; j < cart.length; j++) {
-              var pj = (cartMeta && cartMeta[j]) ? cartMeta[j].personaId : 1;
-              if (pj === worstPid || pj === 0) {
-                servs.push('- ' + String(cart[j]).split(' · ')[0]);
-              }
-            }
             var d = window._formUserData || {};
             var nombreCli = ((d.firstName || '') + ' ' + (d.lastName || '')).trim();
-            var lineas = ['Hola Exentia, quiero reservar una cita que la página me pidió confirmar por ustedes porque supera 4 horas.', ''];
-            lineas.push('Duración total: ' + hrs + ' h');
+            var lineas = ['Hola Exentia, quiero reservar una cita que la página me pidió confirmar con ustedes porque una terapeuta pasaría de 4 horas.', ''];
+            lineas.push('Personas: ' + n);
+            lineas.push('Duración total: ' + _ckHoras(infoMin.totalMin));
+            lineas.push('');
             lineas.push('Servicios:');
-            servs.forEach(function(s){ lineas.push(s); });
+            if (n === 1) {
+              for (var j = 0; j < cart.length; j++) lineas.push('- ' + String(cart[j]).split(' · ')[0]);
+            } else {
+              // Desglose por persona, para que el equipo vea cómo repartir.
+              infoMin.personas.forEach(function(pid){
+                var lbl = (typeof personaLabel === 'function') ? personaLabel(pid) : ('Persona ' + pid);
+                lineas.push(lbl + ' (' + _ckHoras(infoMin.perPersona[pid] || 0) + '):');
+                for (var k2 = 0; k2 < cart.length; k2++) {
+                  var pk = (cartMeta && cartMeta[k2]) ? cartMeta[k2].personaId : 1;
+                  if (pk === pid || pk === 0) lineas.push('  - ' + String(cart[k2]).split(' · ')[0]);
+                }
+              });
+            }
             lineas.push('');
             lineas.push('Mis datos:');
             if (nombreCli) lineas.push('- Nombre: ' + nombreCli);
@@ -18853,7 +18951,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v257-240min-solo-whatsapp', stamp: '2026-08-11 13:30' };
+  var EX_BUILD = { version: 'v258-carga-240min-por-terapeuta', stamp: '2026-08-11 14:30' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
