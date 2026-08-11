@@ -6609,8 +6609,8 @@ window.EXENTIA_CONFIG = {
   WEBHOOK_STRIPE_CHECKOUT: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-stripe-checkout',
   // ⚠ PRODUCCIÓN — cobros REALES. Tarjeta 4242 NO funciona aquí; cualquier tarjeta
   // que se capture cobra de verdad. Para volver a pruebas: cambiar esta pk_ por la
-  // pk_test_ de exentia/.env.stripe (y también el sk_ + whsec_ en los dos workflows n8n).
-  STRIPE_PUBLISHABLE_KEY: 'pk_test_51TwOstA1ZmEhwrG8cZjdVSimnI1KfBwECHMREEjs9XTWEqjoNnoL9ojdCI4jOusXYAqXMZnEfeScyXAH7krriZBS00PRpuubCm',
+  // pk_live_ de exentia/.env.stripe (y también el sk_ + whsec_ en los dos workflows n8n).
+  STRIPE_PUBLISHABLE_KEY: 'pk_live_51TwOstA1ZmEhwrG8koPiHQxtGJgJQHybfMi9oAhgt7UaZ1tRTl3sBIfdg5ABrmTLCgOpxnqs0euhU4SxBPya4MLa003D5JpEml',
   PAYMENT_MODE: 'stripe',  // 'stripe' (default) | 'simulator'. Override en runtime con ?pago=simulator
   WEBHOOK_CATALOGO: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-catalogo',
   CATALOGO_MODE: 'remoto',  // 'remoto' (Supabase vía n8n, default) | 'local' (hardcodeado, fallback). Override con ?catalogo=local para forzar el hardcodeado.
@@ -18951,7 +18951,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v258-carga-240min-por-terapeuta', stamp: '2026-08-11 14:30' };
+  var EX_BUILD = { version: 'v259-stripe-live', stamp: '2026-08-11 15:10' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
