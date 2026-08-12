@@ -7058,6 +7058,27 @@ try {
         "https://www.facebook.com/exentiaspabeautysalon/",
         "https://linktr.ee/exentiaspabeautysalon"
       ],
+      "potentialAction": [
+        {
+          "@type": "ReserveAction",
+          "name": "Agendar cita en Exentia",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://exentiaspabeauty.com/#servicios",
+            "inLanguage": "es-MX",
+            "actionPlatform": [
+              "https://schema.org/DesktopWebPlatform",
+              "https://schema.org/MobileWebPlatform",
+              "https://schema.org/IOSPlatform",
+              "https://schema.org/AndroidPlatform"
+            ]
+          },
+          "result": {
+            "@type": "Reservation",
+            "name": "Reserva en Exentia Spa & Beauty Salon"
+          }
+        }
+      ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Servicios Exentia",
@@ -19031,7 +19052,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v263-nav-logo-revertido', stamp: '2026-08-12 09:30' };
+  var EX_BUILD = { version: 'v264-schema-reserveaction', stamp: '2026-08-12 10:00' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
