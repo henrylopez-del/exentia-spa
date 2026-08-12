@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# IAs generativas — permitir explícitamente para GEO (ChatGPT, Perplexity, etc.)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+Sitemap: https://exentiaspabeauty.com/sitemap.xml

@@ -4,14 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Exentia — Spa & Beauty Salon · Cancún</title>
-<meta name="description" content="Exentia Spa & Beauty Salon en Cancún · Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales. Reserva en minutos. Realzamos la belleza de tu esencia.">
-<meta name="keywords" content="spa cancún, salón de belleza cancún, masajes cancún, faciales orgánicos, uñas acrílicas cancún, spa kids cancún, wellness cancún, exentia, beauty salon huayacán">
+<meta name="description" content="Exentia Spa & Beauty Salon en Cancún · Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Servicio a domicilio (Exentia At Home) en toda la ciudad. Productos orgánicos y naturales. Reserva en minutos.">
+<meta name="keywords" content="spa cancún, salón de belleza cancún, masajes cancún, faciales orgánicos, uñas acrílicas cancún, spa kids cancún, wellness cancún, exentia, beauty salon huayacán, spa a domicilio cancún, masaje a domicilio cancún">
+<meta name="theme-color" content="#9a9854">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://exentiaspabeauty.com/">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Exentia — Spa & Beauty Salon · Cancún">
-<meta property="og:description" content="Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales. Reserva en minutos.">
+<meta property="og:description" content="Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Servicio en sucursal y a domicilio.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://exentiaspabeauty.com/">
 <meta property="og:image" content="https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/a22e8109-6868-4457-a727-78ea66443c00.webp">
+<meta property="og:image:alt" content="Exentia Spa & Beauty Salon en Cancún">
 <meta property="og:locale" content="es_MX">
 <meta property="og:site_name" content="Exentia Spa & Beauty Salon">
 
@@ -6994,16 +6999,27 @@ try {
   "@graph": [
     {
       "@type": "BeautySalon",
+      "@id": "https://exentiaspabeauty.com/#business",
       "name": "Exentia Spa & Beauty Salon",
-      "description": "Spa y salón de belleza en Cancún. Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales.",
+      "alternateName": ["Exentia", "Exentia Spa Cancún", "Exentia At Home"],
+      "description": "Spa y salón de belleza en Cancún con servicio en sucursal y a domicilio (Exentia At Home). Masajes, faciales orgánicos, uñas, cabello, maquillaje y Spa Kids. Productos orgánicos y naturales.",
+      "url": "https://exentiaspabeauty.com/",
       "telephone": "+529984803595",
-      "image": "https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/7023fd56-34b8-4e5c-a04a-2afa092f12cb.webp",
+      "email": "hola@exentiaspabeauty.com",
+      "image": [
+        "https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/7023fd56-34b8-4e5c-a04a-2afa092f12cb.webp",
+        "https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/a22e8109-6868-4457-a727-78ea66443c00.webp"
+      ],
+      "logo": "https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/aa3395ee-8e87-4e6b-8afb-7883b655e612.png",
       "priceRange": "$$",
+      "currenciesAccepted": "MXN",
+      "paymentAccepted": "Efectivo, Tarjeta de crédito, Tarjeta de débito, Transferencia",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Av. Huayacán, Plaza Hive",
         "addressLocality": "Cancún",
         "addressRegion": "Quintana Roo",
+        "postalCode": "77500",
         "addressCountry": "MX"
       },
       "geo": {
@@ -7011,30 +7027,67 @@ try {
         "latitude": 21.0959,
         "longitude": -86.8696
       },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Cancún",
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "Quintana Roo"
+          }
+        }
+      ],
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
+          "description": "Sucursal Exentia Spa & Beauty Salon (Plaza Hive)",
           "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
           "opens": "09:00",
           "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "description": "Exentia At Home · servicio a domicilio",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+          "opens": "07:00",
+          "closes": "20:00"
         }
       ],
       "sameAs": [
         "https://www.instagram.com/exentiaspabeautysalon/",
-        "https://www.facebook.com/exentiaspabeautysalon/"
+        "https://www.facebook.com/exentiaspabeautysalon/",
+        "https://linktr.ee/exentiaspabeautysalon"
       ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Servicios Exentia",
         "itemListElement": [
-          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Masajes", "description": "Masajes relajantes, piedras calientes, aromaterapia y descontracturante"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Faciales Orgánicos", "description": "Limpieza profunda, hidratante, antiedad y desintoxicante con productos naturales"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Uñas", "description": "Acrílicas, gel, dip powder, manicure y pedicure spa"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Cabello", "description": "Corte, color, keratina, nanoplastia y peinado"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Depilación & Maquillaje", "description": "Depilación con cera, diseño de cejas, lash lifting y maquillaje social"}},
-          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Spa Kids & Teens", "description": "Experiencias completas de spa diseñadas para niños y adolescentes"}}
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Masajes", "description": "Masajes relajantes, piedras calientes, aromaterapia y descontracturante", "areaServed": "Cancún"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Faciales Orgánicos", "description": "Limpieza profunda, hidratante, antiedad y desintoxicante con productos naturales", "areaServed": "Cancún"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Uñas", "description": "Acrílicas, gel, dip powder, manicure y pedicure spa", "areaServed": "Cancún"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Cabello", "description": "Corte, color, keratina, nanoplastia y peinado", "areaServed": "Cancún"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Depilación & Maquillaje", "description": "Depilación con cera, diseño de cejas, lash lifting y maquillaje social", "areaServed": "Cancún"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Spa Kids & Teens", "description": "Experiencias completas de spa diseñadas para niños y adolescentes", "areaServed": "Cancún"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Exentia At Home", "description": "Servicio de spa a domicilio en toda la ciudad de Cancún: masajes, faciales y experiencias de bienestar en tu hogar, hotel o evento.", "areaServed": "Cancún"}}
         ]
       }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://exentiaspabeauty.com/#website",
+      "url": "https://exentiaspabeauty.com/",
+      "name": "Exentia Spa & Beauty Salon",
+      "inLanguage": ["es-MX", "en"],
+      "publisher": { "@id": "https://exentiaspabeauty.com/#business" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://exentiaspabeauty.com/"},
+        {"@type": "ListItem", "position": 2, "name": "Servicios", "item": "https://exentiaspabeauty.com/#servicios"},
+        {"@type": "ListItem", "position": 3, "name": "Promociones", "item": "https://exentiaspabeauty.com/#promociones"},
+        {"@type": "ListItem", "position": 4, "name": "Contacto", "item": "https://exentiaspabeauty.com/#contacto"}
+      ]
     },
     {
       "@type": "FAQPage",
@@ -18978,7 +19031,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v260-wa-post-pago-datos-completos', stamp: '2026-08-11 16:00' };
+  var EX_BUILD = { version: 'v261-seo-bloque-A', stamp: '2026-08-11 17:00' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
