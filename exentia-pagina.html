@@ -6745,6 +6745,27 @@ try {
     setCookie(FIRST_KEY, JSON.stringify(utmFirst), FIRST_UTM_DAYS);
   }
 
+  // Expone la atribucion de esta visita a window: buildReservaPayload() vive en
+  // un <script> distinto (scope separado), no puede leer clickIds/utmLast/utmFirst
+  // directo. Mismos nombres de campo que las columnas de exentia.leads.
+  window._exAtribucion = {
+    gclid: clickIds.gclid,
+    gbraid: clickIds.gbraid,
+    wbraid: clickIds.wbraid,
+    fbclid: clickIds.fbclid,
+    msclkid: clickIds.msclkid,
+    utm_source: utmLast.utm_source,
+    utm_medium: utmLast.utm_medium,
+    utm_campaign: utmLast.utm_campaign,
+    utm_content: utmLast.utm_content,
+    utm_term: utmLast.utm_term,
+    utm_source_first: utmFirst.utm_source || null,
+    utm_medium_first: utmFirst.utm_medium || null,
+    utm_campaign_first: utmFirst.utm_campaign || null,
+    utm_content_first: utmFirst.utm_content || null,
+    utm_term_first: utmFirst.utm_term || null
+  };
+
   // === STATE ===
   var PAGE_LOAD_TS = Date.now();
   var MAX_SCROLL = 0;
@@ -9258,7 +9279,8 @@ try {
       google_place_id: place.googlePlaceId || '',
       cartMeta: (typeof cartMeta !== 'undefined' ? cartMeta.slice() : []),
       ghl_contact_id: (sess && sess.contactId) || d.clienteId || '',
-      cliente_autenticado: !!sess
+      cliente_autenticado: !!sess,
+      atribucion: (window._exAtribucion || {})
     };
     return Object.assign({}, base, extra || {});
   }
