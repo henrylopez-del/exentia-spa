@@ -1,0 +1,12 @@
+@font-face{
+  font-family:'Laisha';
+  src:url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/c61514ad-67e3-4dc5-9d1f-f0ff6a485462.woff') format('woff'),
+      url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/3bf3be22-fb7f-426f-b566-278bf4d24137.woff2') format('woff2'),
+      url('https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/1ee0c145-ebc5-4691-9c67-4ab80bec7906.ttf') format('truetype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@media screen{
+  .ex-display{font-family:'Laisha',Georgia,'Times New Roman',serif !important;}
+}

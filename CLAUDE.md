@@ -63,7 +63,7 @@ Cuando aparezca un bug reportado por Victor (ej. "no se manda la cita", "no func
 | 3 | **Bridge script** | Antes de `</body>`. Hookea `openModal`, postMessage de iframes GHL, cart events, CTAs Agendar. Page titles dinámicos al abrir modales |
 | 4 | **6 workflows n8n** | `exentia-track`, `-reserva`, `-checkin`, `-resena`, `-upload-conversions` (cron, scaffold), `-cita-creada` (NUEVO 2026-04-30) |
 | 5 | **Schema Supabase `exentia.*`** | 7 tablas + vistas + RLS + 2 storage buckets. `bookings.ghl_appointment_id` para idempotencia + `lead_ref`, `atribucion` JSONB, `valor_ticket_mxn` (migration 03, 2026-05-26) + index en `ghl_contact_id` |
-| 6 | **GHL Exentia (`0hGSRrhxkdywVQxCsNOi`)** | 27 custom fields `exentia_*` + 60 tags + Pipeline `Reservas` (9 stages) + form `ElRuF6DqgcwUiSyJaXoi` + calendar `VUbTtrop8lZFx8HRmJzV` + Workflow GHL "Appointment Created" → POST `/webhook/envio-exentia` |
+| 6 | **GHL Exentia (`0hGSRrhxkdywVQxCsNOi`)** | 27 custom fields `exentia_*` + 60 tags + Pipeline `Reservas` (9 stages) + form `ElRuF6DqgcwUiSyJaXoi` + calendar `N76UqRpy45sR2BDxoKFb` (Exentia · Citas) + Workflow GHL "Appointment Created" → POST `/webhook/envio-exentia` |
 | 7 | **Dashboard interno** | Standalone HTML en `monitoreo/dashboard-exentia.html` (iframe srcdoc para GHL Custom Menu). KPIs en vivo, tabs Hoy/Semana/Todas, búsqueda fuzzy, filtro temporal, **modal registrar pago**, **modal historial por cliente**, **export CSV** (1 servicio = 1 fila), event delegation (sin inline onclick). Auto-refresh 10s. Conecta a Supabase vía RPCs `exentia_marcar_asistio` y `exentia_registrar_pago` |
 | 8 | **GA4 instalado** | Property `Exentia` bajo account Arqalum. Measurement ID `G-LQ4YJQ2MZV` en `<head>` de la pagina. Eventos en español llegando con segmentación por traffic_source/device_type/came_from |
 | 9 | **Lifecycle verificado** | reservo → asistio → resenado end-to-end testeado, todos los webhooks responden. Fechas de citas guardandose correctamente desde 2026-04-30 |
@@ -478,7 +478,7 @@ GHL Form/Calendar iframes (cross-origin)
 | Item | ID |
 |---|---|
 | Location | `0hGSRrhxkdywVQxCsNOi` |
-| Calendar embed | `VUbTtrop8lZFx8HRmJzV` |
+| Calendar único (Exentia · Citas) | `N76UqRpy45sR2BDxoKFb` |
 | Form | `ElRuF6DqgcwUiSyJaXoi` |
 | Pipeline `Reservas` | `0yWVmwR1YLLZfwjPXRcw` |
 | CDN Base | `https://assets.cdn.filesafe.space/0hGSRrhxkdywVQxCsNOi/media/` |

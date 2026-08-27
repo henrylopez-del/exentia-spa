@@ -1,0 +1,2414 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Exentia · Manual del Panel del Administrador</title>
+<style>
+/* ══════════════ TOKENS ══════════════ */
+:root{
+  --ground:#fdfbf4; --surface:#ffffff; --surface-2:#fbf9f1;
+  --ink:#4a2f18; --ink-soft:#7a6a55; --ink-faint:#9a8d75;
+  --line:#e8dfc8; --line-soft:#f2ece0;
+  --accent:#7d7c3f; --accent-2:#9a9854; --cream:#f3e4c7;
+  --ok:#2e7d32; --warn:#b45309; --warn-bg:#fff7ec;
+  --danger:#c0392b; --info:#1e6fd9; --stripe:#5b5be8;
+  --hi:#e07a2f;
+  --sh:0 2px 14px rgba(74,47,24,.07);
+  --sh-lg:0 14px 40px rgba(74,47,24,.13);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#1a1713; --surface:#241f19; --surface-2:#2b251d;
+    --ink:#f1e8d8; --ink-soft:#bcac93; --ink-faint:#9b8c76;
+    --line:#3a3228; --line-soft:#332c23;
+    --accent:#cbc885; --accent-2:#b8b673; --cream:#3b3428;
+    --ok:#7bbd7f; --warn:#e0a75c; --warn-bg:#332a1d;
+    --danger:#e08787; --info:#7fa7ea; --stripe:#9a9aef;
+    --sh:0 2px 14px rgba(0,0,0,.4); --sh-lg:0 14px 40px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#1a1713; --surface:#241f19; --surface-2:#2b251d;
+  --ink:#f1e8d8; --ink-soft:#bcac93; --ink-faint:#9b8c76;
+  --line:#3a3228; --line-soft:#332c23;
+  --accent:#cbc885; --accent-2:#b8b673; --cream:#3b3428;
+  --ok:#7bbd7f; --warn:#e0a75c; --warn-bg:#332a1d;
+  --danger:#e08787; --info:#7fa7ea; --stripe:#9a9aef;
+  --sh:0 2px 14px rgba(0,0,0,.4); --sh-lg:0 14px 40px rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+.serif{font-family:Georgia,"Iowan Old Style","Times New Roman",serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,34px)}
+
+/* ══════════════ HERO ══════════════ */
+.hero{
+  background:#4a2f18; color:#f3e4c7; padding:clamp(46px,8vw,78px) 0 clamp(38px,6vw,58px);
+  text-align:center; border-bottom:4px solid var(--accent-2);
+}
+.hero .mark{font-family:Georgia,serif;font-size:clamp(26px,5vw,38px);letter-spacing:.42em;font-weight:400;color:#f3e4c7}
+.hero .mark-sub{font-size:10px;letter-spacing:.32em;color:rgba(243,228,199,.6);margin-top:7px}
+.hero .eyebrow{display:inline-block;margin-top:22px;font-size:10.5px;letter-spacing:.32em;color:rgba(243,228,199,.7);
+  border:1px solid rgba(243,228,199,.28);border-radius:99px;padding:5px 14px;text-transform:uppercase}
+.hero h1{
+  font-family:Georgia,serif;font-weight:400;font-size:clamp(30px,6.2vw,54px);
+  line-height:1.06;margin:clamp(14px,3vw,22px) 0 0;text-wrap:balance;color:#fff;
+}
+.hero h1 i{font-style:italic;color:#e6d3a8}
+.hero p{margin:14px auto 0;max-width:52ch;color:rgba(255,255,255,.72);font-size:clamp(14px,2vw,16px)}
+.linkcard{
+  margin:clamp(24px,4vw,32px) auto 0;max-width:560px;
+  background:rgba(255,255,255,.09);border:1px solid rgba(243,228,199,.28);
+  border-radius:14px;padding:18px 22px;
+}
+.linkcard .lbl{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(243,228,199,.62)}
+.linkcard .u{font-size:clamp(16px,3.4vw,23px);font-weight:700;color:#fff;margin-top:7px;word-break:break-word;
+  font-variant-numeric:tabular-nums}
+.linkcard .tip{font-size:12px;color:rgba(255,255,255,.55);margin-top:8px}
+
+/* ══════════════ ÍNDICE ══════════════ */
+.toc{
+  background:var(--surface);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:20;box-shadow:var(--sh);
+}
+.toc-in{display:flex;gap:3px;flex-wrap:nowrap;overflow-x:auto;justify-content:center;padding:8px 0;
+  scrollbar-width:none;-ms-overflow-style:none}
+.toc-in::-webkit-scrollbar{display:none}
+.toc a{
+  flex:none;font-size:11.5px;font-weight:600;color:var(--ink-soft);text-decoration:none;
+  padding:6px 10px;border-radius:99px;border:1px solid transparent;white-space:nowrap;
+}
+.toc a:hover,.toc a:focus-visible{background:var(--cream);color:var(--accent);border-color:var(--line)}
+.toc a:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+
+/* ══════════════ SECCIONES ══════════════ */
+.step{padding:clamp(40px,6vw,64px) 0;border-bottom:1px solid var(--line-soft)}
+.step:last-of-type{border-bottom:none}
+.step-head{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.num{
+  flex:none;width:46px;height:46px;border-radius:50%;background:var(--accent);color:#fff;
+  display:grid;place-items:center;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;
+}
+.step h2{font-family:Georgia,serif;font-weight:500;font-size:clamp(25px,4.4vw,36px);margin:0;text-wrap:balance}
+.lead{color:var(--ink-soft);font-size:clamp(14.5px,2vw,16.5px);margin:4px 0 26px 62px;max-width:66ch}
+@media (max-width:620px){ .lead{margin-left:0} }
+.sub-h{font-family:Georgia,serif;font-size:clamp(18px,3vw,22px);font-weight:600;margin:34px 0 10px;color:var(--ink)}
+
+.note,.warn,.info-box{border-radius:0 12px 12px 0;padding:15px 20px;font-size:14.5px;margin-top:22px;line-height:1.6}
+.note{background:var(--surface-2);border-left:4px solid var(--accent-2);color:var(--ink-soft)}
+.note b{color:var(--ink)}
+.warn{background:var(--warn-bg);border-left:4px solid var(--warn);color:var(--warn)}
+.warn b{color:var(--warn)}
+.info-box{background:rgba(30,111,217,.08);border-left:4px solid var(--info);color:var(--info)}
+.info-box b{color:var(--info)}
+
+/* mockups genéricos */
+.path{display:flex;align-items:flex-start;justify-content:center;gap:clamp(14px,3vw,30px);flex-wrap:wrap}
+.phone-unit{max-width:100%}
+.phone{background:#1c1a17;border-radius:32px;padding:8px;box-shadow:var(--sh-lg);margin:0 auto;max-width:100%}
+.screen{background:#fdfbf4;border-radius:25px;overflow:hidden;display:flex;flex-direction:column;color:#5c3a1e;min-height:520px}
+.notch{height:20px;display:grid;place-items:center;flex:none}
+.notch::after{content:'';width:72px;height:4px;border-radius:99px;background:rgba(92,58,30,.15)}
+
+.desk{background:#1c1a17;border-radius:14px;box-shadow:var(--sh-lg);margin:0 auto;max-width:100%;overflow:hidden}
+.desk-bar{background:#26221d;padding:10px 14px;display:flex;align-items:center;gap:8px}
+.desk-bar .dot{width:11px;height:11px;border-radius:50%;background:#4a4239;flex:none}
+.desk-bar .dot.r{background:#ee6a5f} .desk-bar .dot.y{background:#f4be4f} .desk-bar .dot.g{background:#61c554}
+.desk-url{flex:1;background:#3a332a;color:#c5b89f;font-size:11px;padding:4px 12px;border-radius:6px;
+  font-family:ui-monospace,monospace;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-left:12px}
+.desk-screen{background:#fdfbf4;color:#5c3a1e;overflow:hidden}
+
+.caption{text-align:center;font-size:13px;color:var(--ink-soft);margin:12px auto 0;max-width:400px;line-height:1.45}
+.caption b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+
+/* infografía */
+.info2{display:grid;grid-template-columns:minmax(280px,400px) minmax(0,1fr);gap:clamp(22px,4vw,44px);align-items:start}
+@media (max-width:900px){ .info2{grid-template-columns:1fr} }
+.info2.rev{grid-template-columns:minmax(0,1fr) minmax(280px,400px)}
+@media (max-width:900px){ .info2.rev{grid-template-columns:1fr} }
+.info-col h3,.info2 h3{font-family:Georgia,serif;font-size:21px;font-weight:600;margin:0 0 4px}
+.info2 .sub{font-size:13.5px;color:var(--ink-soft);margin:0 0 14px}
+.st-row{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--line-soft);font-size:14px}
+.st-row:last-child{border-bottom:none}
+.st-row i{width:15px;height:15px;border-radius:4px;flex:none;margin-top:4px}
+.st-row b{flex:0 0 128px}
+.st-row span{color:var(--ink-soft);font-size:13.2px;flex:1;line-height:1.5}
+
+/* mapa de botones */
+.bmap{display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:14px 22px;align-items:center;margin-top:14px}
+@media (max-width:560px){ .bmap{grid-template-columns:1fr;gap:6px 0} .bmap .tx{margin-bottom:14px} }
+.bmap .tx{font-size:14px;color:var(--ink-soft);line-height:1.5}
+.bmap .tx b{color:var(--ink);display:block;font-size:14.5px;margin-bottom:2px}
+.btn-sample{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border-radius:9px;
+  font-weight:700;font-size:12.5px;text-align:center;line-height:1.25}
+.bs-primary{background:var(--accent-2);color:#fff}
+.bs-danger{background:var(--danger);color:#fff}
+.bs-green{background:var(--ok);color:#fff}
+.bs-stripe{background:var(--stripe);color:#fff}
+.bs-ghost{background:var(--surface-2);color:var(--ink);border:1.5px solid var(--line)}
+.bs-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent-2)}
+
+/* ══ COMPONENTES VISUALES ══ */
+/* Anotación naranja que señala algo del mockup */
+.anot{display:inline-flex;align-items:center;gap:8px;background:var(--hi);color:#fff;border-radius:99px;
+  padding:7px 16px;font-size:12px;font-weight:800;box-shadow:0 3px 12px rgba(224,122,47,.28)}
+.anot-wrap{display:flex;justify-content:center;margin:0 0 12px}
+.anot-wrap.down{margin:12px 0 0}
+.hl{outline:3px solid var(--hi);outline-offset:4px;border-radius:12px;box-shadow:0 0 0 8px rgba(224,122,47,.12)}
+
+/* Ejemplo visual: el elemento real a la izquierda, qué hace a la derecha */
+.exlist{display:flex;flex-direction:column;gap:11px;margin-top:14px}
+.ex{display:grid;grid-template-columns:minmax(130px,185px) 1fr;gap:20px;align-items:center;
+  background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:15px 18px}
+.ex .demo{display:flex;justify-content:center;align-items:center}
+.ex .txt{font-size:13.5px;color:var(--ink-soft);line-height:1.55}
+.ex .txt b{display:block;font-size:15px;color:var(--ink);margin-bottom:3px}
+@media (max-width:620px){ .ex{grid-template-columns:1fr;gap:12px} .ex .demo{justify-content:flex-start} }
+
+/* Círculos de preferencia */
+.circ{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:16px;font-weight:800;flex:none}
+.circ-m{background:#f6d9e4;color:#8a3f5c}
+.circ-h{background:#d6e4f2;color:#2f5578}
+.circ-i{background:#e6e3d6;color:#6d6552}
+.circ-row{display:flex;gap:10px;align-items:center}
+
+/* Flujo horizontal de pasos */
+.flow{display:flex;align-items:stretch;flex-wrap:wrap;margin-top:16px;gap:0}
+.fstep{flex:1 1 150px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:15px 14px;text-align:center}
+.fstep .fn{width:28px;height:28px;border-radius:50%;background:var(--cream);color:var(--accent);display:grid;place-items:center;
+  font-size:12px;font-weight:800;margin:0 auto 9px}
+.fstep b{display:block;font-size:13.5px;color:var(--ink);margin-bottom:4px}
+.fstep span{font-size:12px;color:var(--ink-soft);line-height:1.5}
+.farrow{display:grid;place-items:center;padding:0 9px;color:var(--accent-2);font-size:20px;flex:none}
+@media (max-width:720px){ .farrow{width:100%;padding:6px 0;transform:rotate(90deg)} }
+
+/* Línea de tiempo de reembolso */
+.tl{margin-top:16px}
+.tlbar{display:flex;border-radius:10px;overflow:hidden;height:46px;border:1px solid var(--line)}
+.tlseg{flex:1;display:grid;place-items:center;font-size:15px;font-weight:800;color:#fff;font-family:Georgia,serif}
+.tl-100{background:#2e7d32} .tl-50{background:#7d9a3f} .tl-30{background:#c9922b} .tl-0{background:#b8493b}
+.tlx{display:flex;margin-top:8px}
+.tlx span{flex:1;text-align:center;font-size:11.5px;color:var(--ink-soft);line-height:1.4;padding:0 4px}
+.tlx span b{display:block;color:var(--ink);font-size:12.5px}
+.tl-note{text-align:center;font-size:12px;color:var(--ink-faint);margin-top:10px;font-style:italic}
+
+/* Comparación de dos cosas */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;position:relative}
+@media (max-width:700px){ .vs{grid-template-columns:1fr} }
+.vscard{border-radius:14px;padding:20px;border:2px solid var(--line);background:var(--surface)}
+.vscard.a{border-color:var(--danger)}
+.vscard.b{border-color:var(--stripe)}
+.vscard .vh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.vscard .vh b{font-family:Georgia,serif;font-size:19px;font-weight:600;color:var(--ink)}
+.vsrow{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--ink-soft);padding:6px 0;line-height:1.5}
+.vsrow i{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;margin-top:1px;font-style:normal}
+.i-yes{background:rgba(46,125,50,.16);color:#1b5e20}
+.i-no{background:rgba(192,57,43,.14);color:#a43023}
+
+/* Do / Don't */
+.dodont{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+@media (max-width:700px){ .dodont{grid-template-columns:1fr} }
+.dd{border-radius:14px;padding:20px;border:1px solid var(--line);background:var(--surface)}
+.dd.yes{background:rgba(46,125,50,.045);border-color:rgba(46,125,50,.25)}
+.dd.no{background:rgba(192,57,43,.04);border-color:rgba(192,57,43,.22)}
+.dd .h{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-family:Georgia,serif;font-size:18px;font-weight:600}
+.dd.yes .h{color:#1b5e20} .dd.no .h{color:#9c3025}
+.dd .h .mk{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:800;flex:none}
+.dd.yes .h .mk{background:rgba(46,125,50,.16);color:#1b5e20}
+.dd.no .h .mk{background:rgba(192,57,43,.14);color:#a43023}
+.dd li{list-style:none;font-size:13.5px;color:var(--ink-soft);padding:7px 0;line-height:1.5;border-bottom:1px solid var(--line-soft)}
+.dd li:last-child{border-bottom:none}
+.dd ul{margin:0;padding:0}
+.dd b{color:var(--ink)}
+
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.card .ic{font-family:Georgia,serif;font-size:26px;line-height:1;color:var(--accent);font-weight:600}
+.card h4{font-size:15.5px;margin:8px 0 5px}
+.card p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.55}
+
+/* lista numerada */
+.req-list{list-style:none;margin:0;padding:0}
+.req-list li{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line-soft);font-size:14.5px;line-height:1.55}
+.req-list li:last-child{border-bottom:none}
+.req-list .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--cream);color:var(--accent);
+  display:grid;place-items:center;font-size:12px;font-weight:800;margin-top:1px}
+.req-list b{color:var(--ink)}
+
+/* tabla */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+th{background:var(--cream);text-align:left;padding:11px 14px;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--accent);font-weight:700}
+td{padding:11px 14px;border-top:1px solid var(--line-soft);vertical-align:top}
+td b{color:var(--ink)}
+
+.foot{text-align:center;padding:46px 0 62px;color:var(--ink-soft);font-size:13px;line-height:1.8;
+  border-top:1px solid var(--line)}
+.foot .mk{font-family:Georgia,serif;font-size:23px;letter-spacing:.3em;color:var(--accent);margin-bottom:9px}
+
+/* ══════════════ RÉPLICA DEL PANEL (paleta fija, la app siempre es clara) ══════════════ */
+:root{
+  --olive:#9a9854; --olive-light:#b5b062; --olive-dark:#7d7c3f;
+  --cream-app:#f3e4c7; --cream-soft:#e8dfc0; --brown:#5c3a1e;
+  --off-white:#fdfbf4; --gray-soft:#9a8d75; --muted:#9a8672;
+  --green:#2e7d32; --red:#c0392b; --indigo:#5b5be8;
+  --cal2:#9a9854;      /* Calendario Dos */
+  --testv:#a3542f;     /* Test Victor */
+  --pool:#9a8d75;      /* pool sin asignar */
+}
+.screen,.desk-screen{--cream:var(--cream-app)}
+
+/* Login */
+.a-login{padding:32px 26px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center}
+.a-login .lg{font-family:Georgia,serif;font-size:29px;letter-spacing:.26em;color:var(--olive-dark)}
+.a-login .lgs{font-size:7.5px;letter-spacing:.24em;color:var(--muted);margin-top:3px}
+.a-login h4{font-family:Georgia,serif;font-size:24px;font-weight:500;margin:20px 0 0;color:var(--brown)}
+.a-login h4 em{font-style:italic;color:var(--olive-dark)}
+.a-login .desc{font-size:11.5px;color:var(--muted);margin:8px 0 0;line-height:1.5}
+.a-login .badge{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.16em;background:var(--brown);
+  color:#f3e4c7;padding:4px 12px;border-radius:99px;margin-top:14px;text-transform:uppercase}
+.f-label{display:block;text-align:left;font-size:10.5px;font-weight:600;color:var(--brown);margin:18px 0 6px;letter-spacing:.04em}
+.f-input{width:100%;padding:11px 12px;border:1.5px solid var(--cream-soft);border-radius:8px;background:#fff;
+  font-size:12.5px;color:var(--muted);text-align:left}
+.f-input.pw{letter-spacing:.35em;font-family:ui-monospace,monospace}
+.f-btn{width:100%;margin-top:12px;padding:12px;border-radius:8px;background:var(--olive);color:#fff;
+  font-size:13px;font-weight:700}
+.a-login .link{font-size:10.5px;color:var(--olive-dark);margin-top:14px;text-decoration:underline}
+
+/* Chrome del panel */
+.a-top{background:var(--olive);color:#fff;padding:12px 22px;display:flex;align-items:center;justify-content:space-between}
+.a-top .lg{font-family:Georgia,serif;font-size:20px;letter-spacing:.22em}
+.a-top .u{display:flex;align-items:center;gap:10px;font-size:12px}
+.a-top .u .av{width:28px;height:28px;border-radius:50%;background:#f3e4c7;color:var(--brown);display:grid;place-items:center;font-weight:800;font-size:11px}
+.a-top .out{font-size:10.5px;font-weight:700;background:rgba(255,255,255,.15);padding:5px 11px;border-radius:6px}
+.a-tabs{background:#fbf9f1;padding:0 22px;display:flex;border-bottom:1px solid var(--cream-soft);overflow-x:auto;scrollbar-width:none}
+.a-tabs::-webkit-scrollbar{display:none}
+.a-tab{padding:12px 18px;font-size:12.5px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.a-tab.active{color:var(--olive-dark);border-bottom-color:var(--olive)}
+.a-body{padding:20px}
+
+/* Encabezado de vista */
+.v-hd{margin-bottom:14px}
+.v-hd h3{font-family:Georgia,serif;font-size:25px;font-weight:500;color:var(--brown);margin:0}
+.v-hd h3 em{font-style:italic;color:var(--olive-dark)}
+.v-hd p{font-size:11.5px;color:var(--muted);margin:4px 0 0;max-width:62ch;line-height:1.5}
+.v-hd-row{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+/* ── RESUMEN ── */
+.dash-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.dash-bar h3{font-family:Georgia,serif;font-size:23px;font-weight:500;color:var(--brown);margin:0 8px 0 0}
+.dash-bar h3 em{font-style:italic;color:var(--olive-dark)}
+.dchip{padding:6px 13px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  background:#fff;border:1px solid var(--cream-soft);color:var(--muted);text-transform:uppercase}
+.dchip.on{background:var(--olive);color:#fff;border-color:var(--olive)}
+.dfield{background:#fff;border:1px solid var(--cream-soft);border-radius:8px;padding:6px 10px;font-size:10.5px;color:var(--brown);
+  display:inline-flex;align-items:center;gap:6px}
+.dfield::after{content:'▦';color:var(--muted);font-size:9px}
+.dsel{background:#fff;border:1px solid var(--cream-soft);border-radius:8px;padding:6px 22px 6px 10px;font-size:10.5px;color:var(--brown);position:relative}
+.dsel::after{content:'⌄';position:absolute;right:8px;top:2px;color:var(--muted)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px}
+@media (max-width:700px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+.kpi{background:#fff;border:1px solid var(--cream-soft);border-radius:12px;padding:12px 14px}
+.kpi.hero-k{background:var(--olive);border-color:var(--olive);color:#fff}
+.kpi .l{font-size:9px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--muted)}
+.kpi.hero-k .l{color:rgba(255,255,255,.82)}
+.kpi .v{font-family:Georgia,serif;font-size:23px;font-weight:600;color:var(--brown);margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi.hero-k .v{color:#fff}
+.kpi .d{font-size:10px;color:var(--muted);margin-top:2px}
+.kpi.hero-k .d{color:rgba(255,255,255,.8)}
+
+.dgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:12px}
+@media (max-width:880px){ .dgrid{grid-template-columns:1fr} }
+.dcard{background:#fff;border:1px solid var(--cream-soft);border-radius:12px;padding:14px 16px}
+.dcard .t{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:700;color:var(--brown);margin-bottom:12px}
+.dcard .t small{color:var(--muted);font-weight:400;font-size:10px}
+.tg{display:inline-flex;background:#f3f0e4;border-radius:99px;padding:2px}
+.tg span{padding:4px 11px;border-radius:99px;font-size:9px;font-weight:800;letter-spacing:.06em;color:var(--muted)}
+.tg span.on{background:var(--olive);color:#fff}
+
+.bars{display:flex;align-items:flex-end;gap:5px;height:150px;border-bottom:1px solid var(--cream-soft);padding:0 2px}
+.bars .b{flex:1;background:var(--olive);border-radius:3px 3px 0 0;min-height:1px}
+.bars .b.z{background:transparent}
+.bars-x{display:flex;gap:5px;padding:6px 2px 0;font-size:8.5px;color:var(--muted);font-weight:600}
+.bars-x span{flex:1;text-align:center}
+
+/* Proyección: tabla */
+.proj-tbl{width:100%;border-collapse:collapse;font-size:11px;min-width:0}
+.proj-tbl th{background:#fbf6e9;color:var(--olive-dark);font-size:8.5px;letter-spacing:.1em;padding:7px 10px;text-align:left}
+.proj-tbl th:not(:first-child){text-align:right}
+.proj-tbl td{padding:6.5px 10px;border-top:1px solid var(--line-soft);color:var(--brown);font-variant-numeric:tabular-nums}
+.proj-tbl td:not(:first-child){text-align:right}
+.proj-tbl td.pred{font-style:italic;color:var(--gray-soft)}
+.proj-tbl tr.tot td{background:#fbf6e9;font-weight:700;font-family:Georgia,serif;font-size:12.5px;border-top:2px solid var(--cream-soft)}
+.proj-note{font-size:9.5px;color:var(--muted);font-style:italic;margin-top:8px;text-align:center}
+
+/* Donut + top servicios */
+.dgrid2{display:grid;grid-template-columns:.85fr 1.15fr;gap:12px;margin-top:12px}
+@media (max-width:760px){ .dgrid2{grid-template-columns:1fr} }
+.donut-wrap{display:grid;place-items:center;padding:8px 0}
+.donut{width:130px;height:130px;border-radius:50%;
+  background:conic-gradient(var(--olive) 0 52%, #c9a961 52% 100%);
+  display:grid;place-items:center}
+.donut::after{content:'';width:74px;height:74px;border-radius:50%;background:#fff}
+.dleg{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:10.5px;color:var(--brown)}
+.dleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+.hbars{display:flex;flex-direction:column;gap:11px;padding-top:4px}
+.hb{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center;font-size:10px;color:var(--brown)}
+.hb .bar{height:14px;background:var(--olive);border-radius:2px}
+.hb-x{display:flex;justify-content:space-between;font-size:8.5px;color:var(--muted);margin-top:8px;padding-left:120px}
+
+/* ── CALENDARIO SEMANAL ── */
+.cal-hd h3{font-family:Georgia,serif;font-size:25px;font-weight:500;color:var(--brown);margin:0}
+.cal-hd h3 em{font-style:italic;color:var(--olive-dark)}
+.cal-hd p{font-size:11.5px;color:var(--muted);margin:4px 0 12px}
+.cal-tb{display:flex;align-items:center;gap:9px;background:#fff;border-radius:14px;padding:9px 14px;box-shadow:0 2px 8px rgba(92,58,30,.05);margin-bottom:10px}
+.cal-tb .nav{width:26px;height:26px;border-radius:50%;border:1px solid var(--cream-soft);color:var(--olive-dark);display:grid;place-items:center;font-size:13px;flex:none}
+.cal-tb .rng{font-family:Georgia,serif;font-size:14px;font-weight:600;color:var(--brown);padding:0 10px}
+.cal-tb .today{font-size:11px;font-weight:700;background:var(--olive);color:#fff;padding:6px 15px;border-radius:99px}
+.cal-tb .sp{flex:1}
+.cal-tb .dot{width:9px;height:9px;border-radius:50%;background:#3fae52}
+.cal-tb .rf{width:26px;height:26px;border-radius:50%;border:1px solid var(--cream-soft);color:var(--olive-dark);display:grid;place-items:center;font-size:12px;flex:none}
+.cal-leg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.cleg{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--cream-soft);border-radius:99px;
+  padding:6px 14px;font-size:11.5px;font-weight:700;color:var(--brown)}
+.cleg i{width:9px;height:9px;border-radius:50%;flex:none}
+
+.wk{display:grid;grid-template-columns:44px repeat(7,1fr);background:#fff;border-radius:12px;overflow:hidden;
+  border:1px solid var(--cream-soft)}
+.wk .dh{padding:9px 3px 11px;text-align:center;font-size:8.5px;font-weight:700;letter-spacing:.09em;color:var(--gray-soft);
+  border-bottom:1px solid var(--cream-soft)}
+.wk .dh b{display:block;font-family:Georgia,serif;font-size:17px;font-weight:600;color:var(--brown);margin-top:3px}
+.wk .dh.tdy b{width:26px;height:26px;line-height:26px;border-radius:50%;background:var(--olive);color:#fff;margin:3px auto 0}
+.wk .dh.sp{border-bottom:1px solid var(--cream-soft)}
+.wk .hr{font-size:8px;color:var(--gray-soft);text-align:right;padding:3px 5px 0 0;border-right:1px solid var(--line-soft);
+  font-variant-numeric:tabular-nums;min-height:46px}
+.wk .cl{border-right:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);min-height:46px;padding:2px;position:relative}
+.wk .cl.tdy{background:rgba(154,152,84,.045)}
+.ev{border-radius:6px;padding:5px 6px;font-size:8.5px;line-height:1.35;margin-bottom:2px;position:relative;
+  background:#f7f5ee;border-left:3px solid var(--pool)}
+.ev .h{font-weight:800;color:var(--brown);font-size:8.5px}
+.ev .n{font-weight:700;color:var(--brown);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev .c{font-family:ui-monospace,monospace;font-size:7px;color:var(--gray-soft);letter-spacing:-.02em}
+.ev .s{font-size:7.5px;color:var(--gray-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev .tag{display:inline-block;margin-top:4px;font-size:6.5px;font-weight:800;letter-spacing:.06em;
+  padding:2px 6px;border-radius:99px;background:var(--cream-app);color:var(--olive-dark)}
+.ev .tag.dom{background:#fdf1dc;color:#a05a12}
+.ev .av{position:absolute;top:5px;right:5px;width:13px;height:13px;border-radius:50%;display:grid;place-items:center;
+  font-size:6.5px;font-weight:800}
+.ev .av.m{background:#f6d9e4;color:#8a3f5c}
+.ev .av.i{background:#e6e3d6;color:#6d6552}
+.ev.pool{border-left-style:dashed;border-left-color:var(--pool);background:#f4f2ec}
+.ev.cal2{border-left-color:var(--cal2);background:rgba(154,152,84,.11)}
+.ev.testv{border-left-color:var(--testv);background:rgba(163,84,47,.10)}
+
+/* ── POP-UP DE CITA (réplica exacta) ── */
+.pp{background:#fff;border:1px solid var(--cream-soft);border-radius:14px;padding:16px;box-shadow:var(--sh)}
+.pp-sec{margin-top:14px}
+.pp-sec:first-child{margin-top:0}
+.pp-t{display:flex;align-items:center;gap:7px;font-size:8.5px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--olive-dark);margin-bottom:8px}
+.pp-t::before{content:'';width:3px;height:12px;background:var(--olive);border-radius:2px;flex:none}
+.pp-box{background:#fbf9f1;border:1px solid var(--cream-soft);border-radius:10px;padding:12px 14px}
+.pp-srv{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.pp-srv .n{font-size:13px;font-weight:700;color:var(--brown)}
+.pp-srv .r{font-size:11px;color:var(--gray-soft)}
+.pp-srv .r b{color:var(--olive-dark);font-size:13px;margin-left:5px}
+.pp-row{display:flex;justify-content:space-between;font-size:12px;color:var(--brown);padding:3px 0}
+.pp-row.tot{font-weight:700;font-size:13.5px;border-top:1px solid rgba(92,58,30,.12);margin-top:6px;padding-top:8px}
+.pp-badge{display:block;text-align:right;margin-top:10px}
+.pp-badge span{display:inline-block;font-size:8px;font-weight:800;letter-spacing:.07em;padding:5px 11px;border-radius:99px}
+.pg-pend{background:#fdf1dc;color:#8a5a17}
+.pg-ok{background:rgba(46,125,50,.14);color:#1b5e20}
+.pp-cta{display:block;width:100%;background:var(--olive);color:#fff;border-radius:9px;padding:11px;
+  text-align:center;font-size:12px;font-weight:700;margin-top:12px}
+.pp-empty{background:#f7f5ee;border-radius:9px;padding:14px;text-align:center;font-size:11px;color:var(--gray-soft);font-style:italic}
+.pp-dashed{display:block;width:100%;border:1.5px dashed var(--olive);border-radius:9px;padding:10px;text-align:center;
+  font-size:11px;font-weight:700;color:var(--olive-dark);margin-top:10px;background:#fff}
+.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.pp-f .l{font-size:8px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--gray-soft)}
+.pp-f .v{font-size:12px;color:var(--brown);margin-top:2px}
+.pp-f .v a,.pp-link{color:var(--olive-dark);text-decoration:underline;font-size:11.5px}
+.pp-btn-full{display:block;width:100%;text-align:center;border-radius:9px;padding:12px;font-size:12.5px;font-weight:700;margin-top:10px}
+.pb-olive{background:var(--olive);color:#fff}
+.pb-ghost{background:#f7f5ee;color:var(--brown);border:1px solid var(--cream-soft)}
+.pp-masaj{display:flex;align-items:center;gap:10px;background:#fbf9f1;border:1px solid var(--cream-soft);
+  border-radius:10px;padding:10px 12px;margin-top:10px}
+.pp-masaj .l{font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);flex:none}
+.pp-masaj .sel{flex:1;background:#fff;border:1px solid var(--cream-soft);border-radius:7px;padding:7px 10px;
+  font-size:11.5px;color:var(--brown);display:flex;justify-content:space-between;align-items:center}
+.pp-acts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.pp-acts > span{border-radius:9px;padding:11px 5px;text-align:center;font-size:11.5px;font-weight:700;line-height:1.25}
+.pa-olive{background:var(--olive);color:#fff}
+.pa-indigo{background:var(--indigo);color:#fff}
+.pa-red{background:var(--red);color:#fff}
+.pp-foot{font-size:10.5px;color:var(--gray-soft);font-style:italic;text-align:center;margin-top:11px}
+
+/* pill de estado en pop-up */
+.pp-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pbg{font-size:8px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;padding:4px 10px;border-radius:99px}
+.pbg-live{background:#d3f0d3;color:#1d6b2f}
+.pbg-fin{background:rgba(46,125,50,.15);color:#14481a}
+.pbg-show{background:#1b5e20;color:#fff}
+.pbg-tipo{background:var(--cream-app);color:var(--olive-dark)}
+.pbg-cal2{background:var(--cal2);color:#fff}
+.pbg-testv{background:var(--testv);color:#fff}
+.pbg-pool{background:#f0eee4;color:#6d6552}
+.pp-title{font-family:Georgia,serif;font-size:21px;font-weight:500;color:var(--brown);margin-top:2px}
+.pp-code{display:inline-block;font-family:ui-monospace,monospace;font-size:9.5px;color:var(--gray-soft);
+  background:#f7f5ee;border-radius:6px;padding:3px 9px;margin-top:5px}
+.pp-when{font-size:11px;color:var(--gray-soft);margin-top:6px}
+
+/* Banner show */
+.shb{border-radius:10px;padding:12px 14px;margin-top:12px;font-size:11.5px;line-height:1.55;
+  background:rgba(200,110,20,.10);color:#8a4b00;border-left:4px solid #c8621b}
+.shb .st{font-size:13px;font-weight:800;margin-bottom:3px}
+.shb.done{background:rgba(30,105,45,.15);color:#14481a;border-left-color:#1b5e20}
+.shbtn{display:inline-flex;align-items:center;gap:7px;background:#9e9e9e;color:#fff;font-size:11px;font-weight:700;
+  padding:8px 16px;border-radius:99px;margin-top:9px}
+.shbtn::before{content:'';width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.55)}
+.shbtn.on{background:#2e7d32}
+.shbtn.on::before{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+
+/* ── MODALES ── */
+.md{background:#fff;border-radius:14px;padding:20px;border:1px solid var(--cream-soft);box-shadow:var(--sh-lg);position:relative}
+.md .x{position:absolute;top:15px;right:16px;color:var(--gray-soft);font-size:17px}
+.md .eyebrow{font-size:9px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--olive-dark)}
+.md h5{font-family:Georgia,serif;font-size:22px;color:var(--brown);margin:9px 0 0;font-weight:500}
+.md .when{font-size:12.5px;color:var(--gray-soft);margin-top:5px}
+.md .scope{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:16px;background:#fbf9f1;
+  border:1px solid var(--cream-soft);border-radius:11px;padding:5px;gap:5px}
+.md .scope > div{border-radius:8px;padding:11px 12px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.md .scope > div small{display:block;font-size:10.5px;font-weight:400;margin-top:3px;line-height:1.4;opacity:.85}
+.md .scope > div.on{background:var(--olive);color:#fff}
+.md .scope > div.on small{color:rgba(255,255,255,.85)}
+.md .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.md .fl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);margin-bottom:5px}
+.md .fi{background:#fbf9f1;border:1.5px solid var(--cream-soft);border-radius:9px;padding:11px 12px;
+  font-size:13px;color:var(--brown);display:flex;justify-content:space-between;align-items:center}
+.md .fi .ic{color:var(--gray-soft);font-size:12px}
+.md .hint{background:#fbf9f1;border-left:3px solid var(--olive);border-radius:0 9px 9px 0;padding:12px 14px;
+  font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.55}
+.md .macts{display:flex;gap:10px;margin-top:18px}
+.md .macts > span{flex:1;border-radius:10px;padding:12px;text-align:center;font-size:13px;font-weight:700}
+.ma-sec{background:#f7f5ee;color:var(--brown)}
+.ma-pri{background:var(--olive);color:#fff}
+.ma-red{background:var(--red);color:#fff}
+
+/* Modal cancelar */
+.md.cnc{background:#fdfaf0;border-color:#e8d8b8}
+.dprev{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#fff;border-radius:10px;padding:13px 15px;margin-top:14px;
+  border:1px solid var(--cream-soft)}
+.dp .l{font-size:8.5px;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.dp .v{font-family:Georgia,serif;font-size:18px;color:var(--brown);font-weight:600;margin-top:3px}
+.dp .v.green{color:var(--green)} .dp .v.red{color:var(--red)}
+
+/* Modal refund */
+.md.rfd{background:#f7f8ff;border-color:#d3d6f8}
+.md.rfd h5{font-family:system-ui,sans-serif;font-size:18px;font-weight:600;color:#3838a8}
+.rf-hint{background:#eef0ff;border:1px solid #d3d6f8;color:#4444c4;font-size:11.5px;line-height:1.55;
+  padding:11px 13px;border-radius:9px;margin-top:12px}
+.rf-amt{background:#fff;border:1.5px solid #d3d6f8;border-radius:9px;padding:11px 14px;display:flex;align-items:center;gap:9px;margin-top:14px}
+.rf-amt .cur{color:var(--indigo);font-weight:700;font-size:14px}
+.rf-amt .val{font-family:Georgia,serif;font-size:21px;color:#3838a8;font-weight:600;flex:1;font-variant-numeric:tabular-nums}
+.rf-amt .mx{color:var(--indigo);font-size:11.5px;font-weight:700}
+.rf-max{font-size:10.5px;color:var(--indigo);margin-top:5px}
+
+/* ── CATÁLOGO ── */
+.cat-tg{display:inline-flex;background:#fff;border:1px solid var(--cream-soft);border-radius:99px;padding:4px;margin-bottom:12px}
+.cat-tg span{padding:7px 16px;border-radius:99px;font-size:11.5px;font-weight:700;color:var(--muted)}
+.cat-tg span.on{background:var(--olive);color:#fff}
+.cat-tg span small{font-weight:400;font-size:9.5px;opacity:.75;margin-left:4px}
+.cat-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.cchip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--cream-soft);border-radius:99px;
+  padding:7px 14px;font-size:11.5px;font-weight:600;color:var(--brown)}
+.cchip.on{background:var(--olive);color:#fff;border-color:var(--olive)}
+.cchip b{font-size:9.5px;font-weight:800;background:rgba(92,58,30,.09);border-radius:99px;padding:2px 7px;color:var(--muted)}
+.cchip.on b{background:rgba(255,255,255,.22);color:#fff}
+.cat-search{display:flex;align-items:center;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.cat-search .inp{flex:1;min-width:200px;background:#fff;border:1px solid var(--cream-soft);border-radius:9px;
+  padding:10px 14px;font-size:12px;color:var(--gray-soft)}
+.cat-search .ck{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted)}
+.cat-search .ck i{width:14px;height:14px;border:1.5px solid var(--cream-soft);border-radius:3px;background:#fff;flex:none}
+.cat-add{display:inline-flex;align-items:center;gap:8px;background:var(--olive);color:#fff;border-radius:99px;
+  padding:11px 20px;font-size:12.5px;font-weight:700;box-shadow:0 3px 12px rgba(154,152,84,.3)}
+.cat-add .p{width:19px;height:19px;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:12px}
+.crow{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--cream-soft);border-radius:11px;
+  padding:14px 18px;margin-bottom:9px}
+.crow .mid{flex:1;min-width:0}
+.crow .nom{font-size:14px;font-weight:700;color:var(--brown)}
+.crow .des{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.crow .pr{background:#f5f2e6;border-radius:99px;padding:7px 15px;font-size:11.5px;font-weight:700;color:var(--brown);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.crow .bt{border:1.5px solid var(--olive);color:var(--olive-dark);background:#fff;border-radius:99px;
+  padding:7px 17px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.crow .bt.gh{border-color:var(--cream-soft);color:var(--muted)}
+.crow.hidden{opacity:.55}
+
+/* Modal producto */
+.mp .fl2{font-size:11.5px;font-weight:700;color:var(--olive-dark);margin:14px 0 5px}
+.mp .fi2{background:#fbf9f1;border:1.5px solid var(--cream-soft);border-radius:9px;padding:11px 13px;
+  font-size:12.5px;color:var(--brown)}
+.mp .fi2.ph{color:var(--gray-soft)}
+.mp .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mp .radios{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:6px}
+.mp .rad{border:1.5px solid var(--cream-soft);border-radius:10px;padding:12px 13px;font-size:12.5px;font-weight:700;color:var(--brown);
+  display:flex;gap:9px;align-items:flex-start}
+.mp .rad.on{border-color:var(--olive);background:#fbf9f1}
+.mp .rad i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--cream-soft);flex:none;margin-top:2px}
+.mp .rad.on i{border-color:var(--olive);border-width:4px}
+.mp .rad small{display:block;font-weight:400;font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.mp .ckbox{display:flex;gap:11px;background:#fbf9f1;border-radius:10px;padding:13px 14px;margin-top:14px;align-items:flex-start}
+.mp .ckbox i{width:17px;height:17px;border-radius:4px;background:var(--olive);color:#fff;display:grid;place-items:center;
+  font-size:11px;font-weight:800;flex:none;margin-top:1px}
+.mp .ckbox i.off{background:#fff;border:1.5px solid var(--cream-soft)}
+.mp .ckbox b{font-size:12.5px;color:var(--brown)}
+.mp .ckbox p{font-size:11px;color:var(--muted);margin:4px 0 0;line-height:1.5}
+.mp .durhd{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0 8px}
+.mp .durhd .t{font-size:12px;font-weight:700;color:var(--olive-dark)}
+.mp .durhd .add{border:1.5px dashed var(--olive);border-radius:9px;padding:7px 14px;font-size:11px;font-weight:700;color:var(--olive-dark)}
+.mp .durhint{background:#fbf9f1;border-radius:9px;padding:11px 13px;font-size:11px;color:var(--muted);line-height:1.55}
+.mp .dur3{display:grid;grid-template-columns:1fr 1.1fr 1.2fr 34px;gap:9px;margin-top:11px;align-items:end}
+.mp .dur3 .h{font-size:8.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;line-height:1.3}
+.mp .dur3 .del{background:#fdeaea;color:#c0392b;border-radius:8px;height:38px;display:grid;place-items:center;font-size:13px}
+.mp .prev{background:linear-gradient(180deg,#fdf6e8,#faf0da);border-radius:12px;padding:16px;margin-top:8px}
+.mp .prevcard{background:#fff;border-radius:11px;padding:16px}
+.mp .prevcard .eyeb{font-size:9px;font-weight:800;letter-spacing:.14em;color:var(--olive-dark)}
+.mp .prevcard .nm{font-family:Georgia,serif;font-size:20px;color:var(--brown);margin-top:6px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.mp .prevcard .nm span{font-size:8.5px;font-weight:800;letter-spacing:.09em;background:#f0eee4;color:#6d6552;border-radius:99px;padding:4px 9px}
+.mp .prevcard .pz{text-align:right;font-family:Georgia,serif}
+.mp .prevcard .old{text-decoration:line-through;color:var(--gray-soft);font-size:14px;margin-right:7px}
+.mp .prevcard .new{font-size:23px;font-weight:700;color:var(--brown)}
+.mp .prevcard .mxn{font-size:9.5px;color:var(--muted);display:block;text-align:right}
+.mp .prevcard .dsc{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.5}
+.mp .prevcard .cta{background:var(--olive);color:#fff;border-radius:9px;padding:11px;text-align:center;font-size:12px;font-weight:700;margin-top:13px}
+.mp .mfoot{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.mp .mfoot .del{background:#c0392b;color:#fff;border-radius:8px;padding:11px 20px;font-size:12.5px;font-weight:700}
+.mp .mfoot .rr{display:flex;gap:10px;margin-left:auto}
+.mp .mfoot .cancel{background:#fff;border:1.5px solid var(--cream-soft);color:var(--brown);border-radius:8px;padding:11px 20px;font-size:12.5px;font-weight:700}
+.mp .mfoot .save{background:var(--olive);color:#fff;border-radius:8px;padding:11px 24px;font-size:12.5px;font-weight:700}
+
+/* ── COMISIONES ── */
+.com-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#fff;border:1px solid var(--cream-soft);
+  border-radius:12px;padding:11px 14px;margin-bottom:14px}
+.com-top .glb{display:flex;align-items:center;gap:9px}
+.com-top .glb .l{font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.com-top .glb .i{background:#fbf9f1;border:1.5px solid var(--cream-soft);border-radius:7px;padding:6px 12px;font-size:12.5px;
+  color:var(--brown);font-weight:700;font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+.com-top .glb .sv{background:#f0eee4;border:1px solid var(--cream-soft);border-radius:7px;padding:6px 13px;font-size:10.5px;font-weight:800;
+  letter-spacing:.06em;color:var(--brown)}
+.com-top .sp{flex:1;min-width:8px}
+.com-cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ccard{background:#fff;border:1px solid var(--cream-soft);border-radius:10px;padding:15px 20px;min-width:238px}
+.ccard .nm{font-size:15px;font-weight:600;color:var(--brown);padding-bottom:10px;border-bottom:1px solid var(--line-soft);margin-bottom:10px}
+.ccard .r{display:flex;justify-content:space-between;gap:30px;font-size:12px;padding:3.5px 0;color:var(--muted)}
+.ccard .r b{font-variant-numeric:tabular-nums;font-weight:700}
+.ccard .r.esp b{color:#4a5a7a}
+.ccard .r.pgb b{color:#b8860b}
+.ccard .r.pgd b{color:var(--green)}
+
+.com-grp{background:#fff;border:1px solid var(--cream-soft);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.com-gh{background:#fbf6e9;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.com-gh .l{font-size:13.5px;font-weight:700;color:var(--brown)}
+.com-gh .l small{font-weight:400;color:var(--muted);font-size:11px;margin-left:8px}
+.com-gh .r{font-size:11.5px;font-weight:700;color:var(--olive-dark);font-variant-numeric:tabular-nums}
+.com-th,.com-tr{display:grid;grid-template-columns:66px minmax(0,1.5fr) minmax(0,1.12fr) 84px 34px 80px minmax(0,1.1fr) 180px;
+  gap:9px;align-items:center;padding:12px 15px}
+.com-th{background:#fff;border-bottom:1px solid var(--cream-soft);font-size:8px;font-weight:700;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted)}
+.com-tr{border-bottom:1px solid var(--line-soft);font-size:11.5px;color:var(--brown)}
+.com-tr:last-child{border-bottom:none}
+.com-tr .cita b{font-weight:600;font-size:11.5px;font-family:inherit}
+.com-tr .cita small{display:block;color:var(--muted);font-size:9.5px;margin-top:3px;line-height:1.35}
+.com-tr .mny{font-variant-numeric:tabular-nums;white-space:nowrap}
+.com-tr .com{font-variant-numeric:tabular-nums;font-weight:700;font-size:12.5px;white-space:nowrap}
+.com-tr .cita,.com-tr > span:nth-child(3),.com-tr > span:nth-child(7){min-width:0}
+.cst{font-size:7.5px;font-weight:700;letter-spacing:.04em;padding:5px 9px;border-radius:99px;text-align:center;display:inline-block;
+  white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.cs-esp{background:#dde4f0;color:#41537a}
+.cs-pgb{background:#fbeecb;color:#8a6d1a}
+.cs-pgd{background:#dfe8e0;color:#2e6b34}
+.cs-anu{background:#fadfe2;color:#a3384a}
+.com-tr .acts{display:flex;gap:7px;justify-content:flex-start}
+.com-tr .acts span{border-radius:6px;padding:6px 13px;font-size:10.5px;font-weight:500;white-space:nowrap}
+.a-edit{background:#fff;border:1px solid #d8d3c4;color:#4a4a4a}
+.a-pay{background:#d9ecdb;color:#1f5f26;border:1px solid #b8ddbb}
+@media (max-width:900px){
+  .com-th{display:none}
+  .com-tr{grid-template-columns:1fr 1fr;gap:6px 10px;padding:12px 14px}
+  .com-tr .acts{grid-column:1/-1;justify-content:flex-start;margin-top:4px}
+}
+
+/* WhatsApp */
+.wa-phone{background:#1c1a17;border-radius:32px;padding:8px;margin:0 auto;box-shadow:var(--sh-lg);max-width:100%}
+.wa-screen{background:#e4ddd4;border-radius:25px;overflow:hidden}
+.wa-top{background:#075e54;color:#fff;padding:11px 14px;display:flex;align-items:center;gap:9px}
+.wa-av{width:30px;height:30px;border-radius:50%;background:#c8d6cd;display:grid;place-items:center;font-size:12px;color:#075e54;font-weight:700}
+.wa-top .n{font-size:13px;font-weight:600}
+.wa-top .s{font-size:9.5px;color:rgba(255,255,255,.7)}
+.wa-body{padding:12px 10px;display:flex;flex-direction:column;gap:9px;min-height:320px}
+.wa-msg{background:#fff;border-radius:8px 8px 8px 2px;padding:9px 11px;font-size:11px;line-height:1.55;
+  box-shadow:0 1px 1px rgba(0,0,0,.08);max-width:94%;color:#3a3a3a}
+.wa-msg.me{background:#dcf8c6;align-self:flex-end;border-radius:8px 8px 2px 8px}
+.wa-msg .hh{font-weight:700;color:#075e54;display:block;margin-bottom:2px}
+.wa-time{font-size:8.5px;color:#9aa39c;text-align:right;margin-top:3px}
+
+/* GHL */
+.ghl{background:#fff;border:1px solid var(--cream-soft);border-radius:11px;overflow:hidden}
+.ghl-hd{background:#18a24b;color:#fff;padding:10px 14px;font-size:11.5px;font-weight:700;letter-spacing:.04em}
+.ghl-b{padding:6px 14px}
+.ghl-r{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f2f2f2;font-size:12.5px}
+.ghl-r:last-child{border-bottom:none}
+.ghl-r .av{width:34px;height:34px;border-radius:50%;background:#e6f4ea;color:#18a24b;display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+.ghl-r .n{flex:1;font-weight:600;color:#333}
+.ghl-r .n small{display:block;color:#7d8b7d;font-weight:400;font-size:10.5px;margin-top:1px}
+.ghl-r .cn{background:#e6f4ea;color:#18a24b;padding:5px 10px;border-radius:6px;font-size:9.5px;font-weight:700;white-space:nowrap}
+.ghl-r .cn.no{background:#fef0f0;color:#c33}
+
+@media (max-width:760px){
+  .toc a{font-size:12.5px;padding:7px 13px}
+  .step{padding:34px 0}
+  .step-head{gap:12px}
+  .num{width:40px;height:40px;font-size:17px}
+  .lead{margin-bottom:20px}
+  .note,.warn,.info-box{padding:14px 16px;font-size:14px}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi .v{font-size:19px}
+  .wk{grid-template-columns:32px repeat(7,1fr)}
+  .wk .dh b{font-size:14px}
+  .ev{font-size:7.5px;padding:3px 4px}
+  .ev .n{font-size:8px}
+  .pp-acts{grid-template-columns:1fr}
+  .md .scope,.md .frow,.dprev,.mp .two,.mp .radios{grid-template-columns:1fr}
+  .mp .dur3{grid-template-columns:1fr 1fr;gap:8px}
+  .mp .dur3 .del{grid-column:1/-1;height:32px}
+}
+@media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+</style>
+
+<div class="hero">
+  <div class="mark">exentia</div>
+  <div class="mark-sub">SPA &amp; BEAUTY SALON</div>
+  <div class="eyebrow">Panel de administración</div>
+  <h1>Manual del<br><i>Administrador</i></h1>
+  <p>Guía para operar el negocio: resumen de ventas, calendario del equipo, cobros, reembolsos, catálogo, comisiones y cómo dar de alta a una masajista nueva.</p>
+  <div class="linkcard">
+    <div class="lbl">Dirección de acceso al panel</div>
+    <div class="u">exentiaspabeauty.com/panel</div>
+    <div class="tip">Se ve mejor en computadora, pero también funciona en celular</div>
+  </div>
+</div>
+
+<nav class="toc"><div class="wrap"><div class="toc-in">
+  <a href="#s1">1 Entrar</a>
+  <a href="#s2">2 Las 4 pestañas</a>
+  <a href="#s3">3 Resumen</a>
+  <a href="#s4">4 Calendarios</a>
+  <a href="#s5">5 Abrir una cita</a>
+  <a href="#s6">6 Cambiar horario</a>
+  <a href="#s7">7 Cancelar</a>
+  <a href="#s8">8 Reembolsar</a>
+  <a href="#s9">9 Validar Show</a>
+  <a href="#s10">10 Catálogo</a>
+  <a href="#s11">11 Comisiones</a>
+  <a href="#s12">12 Alta masajista</a>
+  <a href="#s13">13 Conectar Google</a>
+  <a href="#sr">Resumen</a>
+</div></div></nav>
+
+<div class="wrap">
+
+<!-- ══════════════ 1 · ENTRAR ══════════════ -->
+<div class="step" id="s1">
+  <div class="step-head"><div class="num">1</div><h2>Entrar al panel</h2></div>
+  <p class="lead">El acceso de administrador es distinto al del equipo. Se entra con correo y una contraseña propia. Las masajistas entran con un código que les llega por correo; tú entras con contraseña.</p>
+
+  <div class="path">
+    <div class="phone-unit" style="max-width:300px">
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="a-login">
+          <div class="lg">exentia</div>
+          <div class="lgs">SPA &amp; BEAUTY SALON</div>
+          <span class="badge">Administrador</span>
+          <h4>Panel de <em>administración</em></h4>
+          <p class="desc">Acceso exclusivo para la dueña.</p>
+          <label class="f-label">Correo</label>
+          <div class="f-input">yaz@exentiaspabeauty.com</div>
+          <label class="f-label">Contraseña</label>
+          <div class="f-input pw">•••••••••••</div>
+          <div class="f-btn">Entrar al panel</div>
+          <div class="link">¿Olvidaste tu contraseña?</div>
+        </div>
+      </div></div>
+      <p class="caption"><b>Formulario de acceso</b>Correo y contraseña.</p>
+    </div>
+
+    <div style="max-width:430px;align-self:center">
+      <ol class="req-list" style="margin-top:0">
+        <li><span class="n">1</span><div>Abre <b class="serif">exentiaspabeauty.com/panel</b> en el navegador. Recomendado: Chrome o Safari en la computadora.</div></li>
+        <li><span class="n">2</span><div>Escribe <b>tu correo</b> (el que registramos como administrador).</div></li>
+        <li><span class="n">3</span><div>Escribe <b>tu contraseña</b>.</div></li>
+        <li><span class="n">4</span><div>Presiona <b>Entrar al panel</b>. La sesión dura 8 horas.</div></li>
+      </ol>
+      <div class="note" style="margin-top:16px"><b>Guarda el acceso.</b> En la computadora dale <b>Marcar como favorito</b> (Cmd+D en Mac, Ctrl+D en Windows). En el celular ábrelo en Safari o Chrome y usa <b>Agregar a pantalla de inicio</b>.</div>
+    </div>
+  </div>
+
+  <div class="warn"><b>Nunca compartas la contraseña por WhatsApp.</b> Si necesitas darle acceso a alguien más, pídenos que le creemos su propia cuenta.</div>
+</div>
+
+<!-- ══════════════ 2 · LAS 4 PESTAÑAS ══════════════ -->
+<div class="step" id="s2">
+  <div class="step-head"><div class="num">2</div><h2>Las cuatro pestañas</h2></div>
+  <p class="lead">Al entrar ves cuatro pestañas arriba. La que se abre por defecto es <b>Calendarios</b>, porque es la que más se usa durante el día. Cambias de pestaña con un click; no pierdes lo que estabas viendo en la otra.</p>
+
+  <div class="desk"><div class="desk-bar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="desk-url">exentiaspabeauty.com/panel</span>
+  </div><div class="desk-screen">
+    <div class="a-top">
+      <div class="lg">exentia</div>
+      <div class="u"><span class="av">Y</span>Yazmín Agis<span class="out">Cerrar sesión</span></div>
+    </div>
+    <div class="a-tabs">
+      <div class="a-tab">Resumen</div>
+      <div class="a-tab active">Calendarios</div>
+      <div class="a-tab">Catálogo</div>
+      <div class="a-tab">Comisiones</div>
+    </div>
+    <div class="a-body" style="padding:26px 22px 32px;text-align:center;color:var(--muted);font-size:12px">
+      <p style="max-width:520px;margin:0 auto;line-height:1.65">Las cuatro vistas del panel. Todo lo que necesitas para operar el negocio está aquí adentro.</p>
+    </div>
+  </div></div>
+
+  <div class="cards" style="margin-top:22px">
+    <div class="card"><div class="ic">1</div><h4>Resumen</h4>
+      <p>Ventas del periodo, citas, ticket promedio, cancelaciones, ingresos por día, dónde se atiende, qué se vende más y la proyección anual.</p></div>
+    <div class="card"><div class="ic">2</div><h4>Calendarios</h4>
+      <p>Todas las citas del equipo en un solo calendario semanal, con un color por masajista. Desde aquí abres cada cita.</p></div>
+    <div class="card"><div class="ic">3</div><h4>Catálogo</h4>
+      <p>Los servicios y extras que aparecen en la página pública. Aquí cambias precios, ocultas o creas nuevos productos.</p></div>
+    <div class="card"><div class="ic">4</div><h4>Comisiones</h4>
+      <p>Cuánto le toca a cada masajista, en qué estado está cada movimiento y la descarga del reporte para pagar.</p></div>
+  </div>
+</div>
+
+<!-- ══════════════ 3 · RESUMEN ══════════════ -->
+<div class="step" id="s3">
+  <div class="step-head"><div class="num">3</div><h2>Resumen del negocio</h2></div>
+  <p class="lead">De un vistazo: cuánto vendiste, cuántas citas hubo, cuánto es el ticket promedio y qué porcentaje se canceló. Abajo, las gráficas de ingresos por día, dónde se atiende, qué se vende más y la proyección del año.</p>
+
+  <div class="desk"><div class="desk-bar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="desk-url">exentiaspabeauty.com/panel — Resumen</span>
+  </div><div class="desk-screen"><div class="a-body">
+    <div class="dash-bar">
+      <h3>Resumen del <em>negocio</em></h3>
+      <span class="dchip on">Mes</span><span class="dchip">Semana</span><span class="dchip">Hoy</span>
+      <span class="dchip">Mes ant.</span><span class="dchip">Libre</span>
+      <span class="dfield">01/08/2026</span><span class="dfield">31/08/2026</span>
+      <span class="dsel">Todos</span><span class="dsel">Todas</span>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi hero-k"><div class="l">Ventas del periodo</div><div class="v">$13,550</div><div class="d">Cobrado: $9,190</div></div>
+      <div class="kpi"><div class="l">Citas</div><div class="v">10</div><div class="d">0 completadas</div></div>
+      <div class="kpi"><div class="l">Ticket promedio</div><div class="v">$1,355</div><div class="d">por cita</div></div>
+      <div class="kpi"><div class="l">Cancelación</div><div class="v">40%</div><div class="d">4 canceladas</div></div>
+    </div>
+
+    <div class="dgrid">
+      <div class="dcard">
+        <div class="t">Ingresos por día
+          <span class="tg"><span class="on">Ingresos</span><span>Citas</span></span></div>
+        <div class="bars">
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b" style="height:50%"></div><div class="b" style="height:39%"></div>
+          <div class="b" style="height:78%"></div><div class="b z" style="height:1%"></div>
+          <div class="b" style="height:39%"></div><div class="b" style="height:100%"></div>
+          <div class="b" style="height:35%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div><div class="b z" style="height:1%"></div>
+          <div class="b z" style="height:1%"></div>
+        </div>
+        <div class="bars-x"><span>1/8</span><span>7/8</span><span>13/8</span><span>19/8</span><span>25/8</span><span>31/8</span></div>
+      </div>
+
+      <div class="dcard">
+        <div class="t">Proyección anual <small>vs. año anterior</small></div>
+        <div style="overflow-x:auto">
+        <table class="proj-tbl">
+          <thead><tr><th>Mes</th><th>2025</th><th>2026</th></tr></thead>
+          <tbody>
+            <tr><td>Junio</td><td>$0</td><td>$0</td></tr>
+            <tr><td>Julio</td><td>$0</td><td>$0</td></tr>
+            <tr><td><b>Agosto</b></td><td>$0</td><td><b>$13,550</b></td></tr>
+            <tr><td>Septiembre</td><td>$0</td><td class="pred">$0</td></tr>
+            <tr><td>Octubre</td><td>$0</td><td class="pred">$0</td></tr>
+            <tr><td>Noviembre</td><td>$0</td><td class="pred">$0</td></tr>
+            <tr><td>Diciembre</td><td>$0</td><td class="pred">$0</td></tr>
+            <tr class="tot"><td>Totales</td><td>$0</td><td>$13,550</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="proj-note">Los montos en gris itálica son predicción de los meses que faltan.</div>
+      </div>
+    </div>
+
+    <div class="dgrid2">
+      <div class="dcard">
+        <div class="t">Dónde se atiende</div>
+        <div class="donut-wrap"><div class="donut"></div></div>
+        <div class="dleg">
+          <span><i style="background:var(--olive)"></i>Sucursal</span>
+          <span><i style="background:#c9a961"></i>Domicilio</span>
+        </div>
+      </div>
+      <div class="dcard">
+        <div class="t">Qué se vende más <small>top 6 servicios</small></div>
+        <div class="hbars">
+          <div class="hb"><span>Masaje Exentia</span><span class="bar" style="width:100%"></span></div>
+          <div class="hb"><span>Masaje Tejido Profundo</span><span class="bar" style="width:33%"></span></div>
+          <div class="hb"><span>Masaje Relajante 90 min</span><span class="bar" style="width:33%"></span></div>
+          <div class="hb"><span>Facial Anti-edad 60 min</span><span class="bar" style="width:33%"></span></div>
+        </div>
+        <div class="hb-x"><span>0</span><span>1</span><span>2</span><span>3</span></div>
+      </div>
+    </div>
+  </div></div></div>
+
+  <div class="sub-h">Qué te dice cada número de arriba</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><div class="kpi hero-k" style="min-width:150px">
+        <div class="l">Ventas del periodo</div><div class="v">$13,550</div><div class="d">Cobrado: $9,190</div></div></div>
+      <div class="txt"><b>Lo que facturaste</b>El total del periodo. Abajo en pequeño dice <b>Cobrado</b>: cuánto de ese dinero ya entró de verdad. <b>La diferencia es lo que te falta cobrar.</b></div>
+    </div>
+    <div class="ex">
+      <div class="demo"><div class="kpi" style="min-width:150px">
+        <div class="l">Citas</div><div class="v">10</div><div class="d">0 completadas</div></div></div>
+      <div class="txt"><b>Cuántas hubo</b>El total de citas del periodo. Debajo, cuántas ya están <b>completadas</b> (terminadas y con Show validado).</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><div class="kpi" style="min-width:150px">
+        <div class="l">Ticket promedio</div><div class="v">$1,355</div><div class="d">por cita</div></div></div>
+      <div class="txt"><b>Cuánto gasta cada cliente</b>Si sube, los paquetes y extras están funcionando. Si baja, se están vendiendo más servicios sueltos.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><div class="kpi" style="min-width:150px">
+        <div class="l">Cancelación</div><div class="v">40%</div><div class="d">4 canceladas</div></div></div>
+      <div class="txt"><b>Cuántas se cayeron</b>El porcentaje que se canceló. Si sube mucho, revisa las canceladas del calendario para ver por qué.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">Los filtros de arriba</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo" style="gap:5px;flex-wrap:wrap">
+        <span class="dchip on" style="font-size:10px">Mes</span>
+        <span class="dchip" style="font-size:10px">Semana</span>
+        <span class="dchip" style="font-size:10px">Hoy</span>
+      </div>
+      <div class="txt"><b>Rangos rápidos</b>Mes, Semana, Hoy, Mes anterior. Al elegir uno se recalcula todo el tablero: los cuatro números y las cuatro gráficas.</div>
+    </div>
+    <div class="ex">
+      <div class="demo" style="gap:6px;flex-wrap:wrap">
+        <span class="dchip" style="font-size:10px">Libre</span>
+        <span class="dfield" style="font-size:10px">01/08/2026</span>
+      </div>
+      <div class="txt"><b>Rango libre</b>Activa los dos campos de fecha para que elijas tú el periodo exacto, por ejemplo del 5 al 20 de agosto.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="dsel" style="font-size:11px">Todos</span></div>
+      <div class="txt"><b>Tipo de cita</b>Deja solo sucursal o solo domicilio, para comparar cuál te está dejando más.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="dsel" style="font-size:11px">Todas</span></div>
+      <div class="txt"><b>Masajista</b>Deja los números de una sola persona del equipo.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">La proyección anual</div>
+  <p style="color:var(--ink-soft);font-size:14.5px;max-width:66ch;line-height:1.65;margin-top:0">
+    La tabla de la derecha compara mes a mes lo que llevas este año contra el mismo mes del año pasado. Los meses ya cerrados salen en negro; los que faltan salen en <b>gris itálica</b>, porque no son ventas reales sino la predicción que hace el sistema.
+  </p>
+  <div class="info-box"><b>Si nos das tus ventas históricas, la proyección se vuelve precisa.</b> Ahora mismo la columna de 2025 aparece en ceros porque el sistema no tiene con qué comparar. En cuanto captures (o nos pases) las ventas reales mes por mes de años anteriores, la predicción deja de ser una estimación genérica y empieza a considerar tu estacionalidad real: los meses fuertes de temporada alta, los meses bajos, las fechas especiales. Entre más historia tenga, mejor proyecta.</div>
+</div>
+
+<!-- ══════════════ 4 · CALENDARIOS ══════════════ -->
+<div class="step" id="s4">
+  <div class="step-head"><div class="num">4</div><h2>Calendarios del equipo</h2></div>
+  <p class="lead">Todas las citas del equipo en un solo calendario semanal. Cada masajista tiene su color; las citas que nadie ha tomado aparecen con borde punteado gris. Es la pestaña del día a día.</p>
+
+  <div class="anot-wrap"><span class="anot">Presiona cualquier bloque para abrir la cita <span class="arw">↓</span></span></div>
+
+  <div class="desk"><div class="desk-bar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="desk-url">exentiaspabeauty.com/panel — Calendarios</span>
+  </div><div class="desk-screen"><div class="a-body">
+    <div class="cal-hd">
+      <h3>Calendarios del <em>equipo</em></h3>
+      <p>Todas las citas del equipo en un solo calendario. Filtra por masajista con la leyenda de colores.</p>
+    </div>
+    <div class="cal-tb">
+      <span class="nav">‹</span><span class="rng">17–23 Ago 2026</span><span class="nav">›</span>
+      <span class="today">Hoy</span><span class="sp"></span>
+      <span class="dot"></span><span class="rf">↻</span>
+    </div>
+    <div class="cal-leg">
+      <span class="cleg"><i style="background:var(--cal2)"></i>Calendario Dos</span>
+      <span class="cleg"><i style="background:var(--testv)"></i>Test Victor</span>
+      <span class="cleg"><i style="background:var(--pool)"></i>Pool (sin asignar)</span>
+    </div>
+
+    <div class="wk">
+      <div class="dh sp"></div>
+      <div class="dh">LUN<b>17</b></div>
+      <div class="dh tdy">MAR<b>18</b></div>
+      <div class="dh">MIÉ<b>19</b></div>
+      <div class="dh">JUE<b>20</b></div>
+      <div class="dh">VIE<b>21</b></div>
+      <div class="dh">SÁB<b>22</b></div>
+      <div class="dh">DOM<b>23</b></div>
+
+      <div class="hr">10:00</div>
+      <div class="cl"></div><div class="cl tdy"></div><div class="cl"></div>
+      <div class="cl"></div><div class="cl"></div><div class="cl"></div><div class="cl"></div>
+
+      <div class="hr">11:00</div>
+      <div class="cl"></div><div class="cl tdy"></div>
+      <div class="cl"><div class="ev pool">
+        <span class="av i">I</span>
+        <div class="h">11:00 am</div>
+        <div class="n">Victor R. (demo 1)</div>
+        <div class="c">EX-DEMO6DD4</div>
+        <span class="tag">Sucursal</span>
+      </div></div>
+      <div class="cl"></div><div class="cl"></div><div class="cl"></div><div class="cl"></div>
+
+      <div class="hr">12:00</div>
+      <div class="cl"></div><div class="cl tdy"></div><div class="cl"></div>
+      <div class="cl"></div><div class="cl"></div><div class="cl"></div><div class="cl"></div>
+
+      <div class="hr">13:00</div>
+      <div class="cl"></div><div class="cl tdy"></div><div class="cl"></div>
+      <div class="cl"></div><div class="cl"></div><div class="cl"></div><div class="cl"></div>
+
+      <div class="hr">14:00</div>
+      <div class="cl"></div><div class="cl tdy"></div><div class="cl"></div>
+      <div class="cl" style="display:flex;gap:2px">
+        <div class="ev cal2" style="flex:1;min-width:0">
+          <span class="av m">M</span>
+          <div class="h">2:00 pm</div>
+          <div class="n">Victor R. …</div>
+          <div class="c">EX-DEMO3E…</div>
+          <div class="s">Masaje Re…</div>
+          <span class="tag dom">Domicilio</span>
+        </div>
+        <div class="ev pool" style="flex:1;min-width:0">
+          <span class="av i">I</span>
+          <div class="h">2:00 pm</div>
+          <div class="n">Victor R. …</div>
+          <div class="c">EX-DEMO3E…</div>
+          <div class="s">Masaje Re…</div>
+          <span class="tag dom">Domicilio</span>
+        </div>
+      </div>
+      <div class="cl"></div><div class="cl"></div><div class="cl"></div>
+
+      <div class="hr">15:00</div>
+      <div class="cl"></div><div class="cl tdy"></div><div class="cl"></div>
+      <div class="cl"></div><div class="cl"></div><div class="cl"></div><div class="cl"></div>
+
+      <div class="hr">16:00</div>
+      <div class="cl"></div><div class="cl tdy"></div><div class="cl"></div><div class="cl"></div>
+      <div class="cl"><div class="ev testv">
+        <span class="av m">M</span>
+        <div class="h">4:00 pm</div>
+        <div class="n">Victor R. (demo 3)</div>
+        <div class="c">EX-DEMO7442</div>
+        <span class="tag">Sucursal</span>
+      </div></div>
+      <div class="cl"></div><div class="cl"></div>
+
+      <div class="hr">17:00</div>
+      <div class="cl"></div><div class="cl tdy"></div><div class="cl"></div>
+      <div class="cl"></div><div class="cl"></div><div class="cl"></div><div class="cl"></div>
+    </div>
+  </div></div></div>
+
+  <div class="sub-h">El color del borde te dice quién la tiene</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><div class="ev cal2" style="width:150px;margin:0">
+        <div class="h">11:00 am</div><div class="n">María R.</div><div class="c">EX-8HR2NM4Q</div>
+      </div></div>
+      <div class="txt"><b>Verde olivo, línea sólida</b>La tomó <b>Calendario Dos</b>. Ya tiene dueña, ya está en su Google Calendar.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><div class="ev testv" style="width:150px;margin:0">
+        <div class="h">4:00 pm</div><div class="n">Sofía V.</div><div class="c">EX-2JQ4VP7L</div>
+      </div></div>
+      <div class="txt"><b>Terracota, línea sólida</b>La tomó <b>Test Victor</b>. Cada masajista tiene su propio color.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><div class="ev pool" style="width:150px;margin:0">
+        <div class="h">2:00 pm</div><div class="n">Laura P.</div><div class="c">EX-5DWQ2K88</div>
+      </div></div>
+      <div class="txt"><b>Gris, línea punteada</b>Está en el <b>pool</b>: nadie la ha tomado. Cualquiera del equipo la puede tomar desde su celular, o se la asignas tú.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">El círculo de la esquina: qué pidió el cliente</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span class="circ circ-m">M</span></div>
+      <div class="txt"><b>Mujer</b>El cliente pidió que lo atienda una <b>mujer</b>. Solo las masajistas mujeres ven esta cita en su pool.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="circ circ-h">H</span></div>
+      <div class="txt"><b>Hombre</b>El cliente pidió que lo atienda un <b>hombre</b>. Solo los masajistas hombres ven esta cita en su pool.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="circ circ-i">I</span></div>
+      <div class="txt"><b>Indistinto</b>Al cliente <b>le da igual</b>. La ve todo el equipo.</div>
+    </div>
+  </div>
+  <div class="note"><b>El filtro es automático.</b> Si una cita dice M, no le va a aparecer en el pool a un masajista hombre. No tienes que estar vigilándolo.</div>
+
+  <div class="sub-h">Lo demás que trae cada bloque</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span style="font-size:15px;font-weight:800;color:var(--brown)">11:00 am</span></div>
+      <div class="txt"><b>Hora de inicio</b>A qué hora empieza. La altura del bloque no representa la duración: para eso abre la cita.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span style="font-size:15px;font-weight:700;color:var(--brown)">Victor R.</span></div>
+      <div class="txt"><b>Cliente</b>Quién reservó.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="pp-code" style="margin:0">EX-DEMO6DD4</span></div>
+      <div class="txt"><b>Código de la cita</b>Su identificador. Si un cliente te escribe con este código, es la forma más rápida de encontrar su cita.</div>
+    </div>
+    <div class="ex">
+      <div class="demo" style="gap:8px">
+        <span class="tag" style="display:inline-block;font-size:8px;font-weight:800;letter-spacing:.06em;padding:4px 9px;border-radius:99px;background:var(--cream-app);color:var(--olive-dark)">Sucursal</span>
+        <span class="tag dom" style="display:inline-block;font-size:8px;font-weight:800;letter-spacing:.06em;padding:4px 9px;border-radius:99px;background:#fdf1dc;color:#a05a12">Domicilio</span>
+      </div>
+      <div class="txt"><b>Dónde es</b><b style="display:inline">Sucursal</b>: el cliente viene a Plaza Hive. <b style="display:inline">Domicilio</b>: la masajista va a su casa y se cobra traslado.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">La barra de navegación del calendario</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo" style="gap:9px">
+        <span style="width:28px;height:28px;border-radius:50%;border:1px solid var(--line);color:var(--accent);display:grid;place-items:center;background:var(--surface)">‹</span>
+        <span style="width:28px;height:28px;border-radius:50%;border:1px solid var(--line);color:var(--accent);display:grid;place-items:center;background:var(--surface)">›</span>
+      </div>
+      <div class="txt"><b>Flechas</b>Cambian de semana. Puedes ir hacia atrás para revisar lo que ya pasó, o adelante para ver lo que viene.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="btn-sample bs-primary" style="border-radius:99px;padding:8px 20px">Hoy</span></div>
+      <div class="txt"><b>Hoy</b>Te regresa a la semana actual sin importar en qué semana estés parada.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft)">
+        <span style="width:11px;height:11px;border-radius:50%;background:#3fae52"></span> en vivo
+      </span></div>
+      <div class="txt"><b>El punto verde</b>Estás recibiendo los cambios al instante. Si una masajista toma una cita desde su celular, la ves aparecer sola. <b>Si el punto se pone amarillo</b>, se perdió la conexión: presiona ↻.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span style="width:30px;height:30px;border-radius:50%;border:1px solid var(--line);color:var(--accent);display:grid;place-items:center;background:var(--surface);font-size:14px">↻</span></div>
+      <div class="txt"><b>Refrescar</b>Vuelve a pedir todos los datos. Normalmente no hace falta usarlo.</div>
+    </div>
+    <div class="ex">
+      <div class="demo" style="gap:6px;flex-wrap:wrap">
+        <span class="cleg" style="font-size:10px;padding:5px 11px"><i style="background:var(--cal2)"></i>Calendario Dos</span>
+      </div>
+      <div class="txt"><b>Los chips de la leyenda son filtros</b>Presiona uno y el calendario deja solo las citas de esa persona. Presiónalo otra vez para volver a ver a todo el equipo.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 5 · ABRIR UNA CITA ══════════════ -->
+<div class="step" id="s5">
+  <div class="step-head"><div class="num">5</div><h2>Abrir una cita</h2></div>
+  <p class="lead">Presiona cualquier bloque del calendario y se abre el detalle completo. Aquí está todo: lo que contrató el cliente, cuánto pagó, dónde es y los botones para operarla.</p>
+
+  <div class="info2">
+    <div>
+      <div class="anot-wrap"><span class="anot">Así se ve completo <span class="arw">↓</span></span></div>
+      <div class="pp">
+        <div class="pp-badges">
+          <span class="pbg pbg-pool">EN EL POOL</span>
+          <span class="pbg pbg-tipo">SUCURSAL</span>
+        </div>
+        <div class="pp-title">Victor R. (demo 1)</div>
+        <span class="pp-code">EX-DEMO6DD4</span>
+        <div class="pp-when">Miércoles 19 de agosto · 11:00 – 12:00</div>
+
+        <div class="pp-sec">
+          <div class="pp-t">Servicios contratados</div>
+          <div class="pp-box">
+            <div class="pp-srv"><span class="n">Masaje Exentia</span><span class="r">60 min · <b>$1,550</b></span></div>
+          </div>
+        </div>
+
+        <div class="pp-sec">
+          <div class="pp-t">Cobro del servicio</div>
+          <div class="pp-box">
+            <div class="pp-row"><span>Servicios</span><span>$1,550</span></div>
+            <div class="pp-row tot"><span>Total del servicio</span><span>$1,550</span></div>
+            <div class="pp-badge"><span class="pg-pend">PAGO PENDIENTE — COBRAR EN SUCURSAL</span></div>
+          </div>
+          <div class="pp-cta">Registrar cobro · falta $1,550</div>
+        </div>
+
+        <div class="pp-sec">
+          <div class="pp-t">Pagos extras</div>
+          <div class="pp-empty">Aún no hay pagos extras registrados.</div>
+          <div class="pp-dashed">+ Registrar pago extra</div>
+        </div>
+
+        <div class="pp-sec">
+          <div class="pp-t">Lugar de la cita</div>
+          <div class="pp-grid">
+            <div class="pp-f"><div class="l">Modalidad</div><div class="v">salon</div></div>
+            <div class="pp-f"><div class="l">Duración total</div><div class="v">60 min</div></div>
+          </div>
+          <div class="pp-f" style="margin-top:11px">
+            <div class="l">Dirección</div>
+            <div class="v">Plaza Hive — Av. Huayacán, Cancún</div>
+            <div style="margin-top:5px"><span class="pp-link">Abrir en Google Maps ↗</span></div>
+          </div>
+          <div class="pp-f" style="margin-top:11px"><div class="l">Zona</div><div class="v">—</div></div>
+        </div>
+
+        <div class="pp-btn-full pb-olive" style="margin-top:16px">Detalles del cliente</div>
+        <div class="pp-btn-full pb-ghost">Cerrar</div>
+
+        <div class="pp-masaj">
+          <span class="l">Masajista</span>
+          <span class="sel">Sin asignar (pool) <span style="color:var(--muted)">⌄</span></span>
+        </div>
+
+        <div class="pp-acts">
+          <span class="pa-olive">Cambiar horario</span>
+          <span class="pa-indigo">Reembolsar</span>
+          <span class="pa-red">Cancelar cita</span>
+        </div>
+        <div class="pp-foot">Cita en el pool — cualquier masajista puede tomarla.</div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Los bloques del pop-up, de arriba abajo</h3>
+      <div class="exlist" style="margin-top:12px">
+        <div class="ex">
+          <div class="demo" style="gap:5px;flex-wrap:wrap">
+            <span class="pbg pbg-pool">EN EL POOL</span>
+            <span class="pbg pbg-tipo">SUCURSAL</span>
+          </div>
+          <div class="txt"><b>Etiquetas de estado</b>En qué punto va la cita y si es en sucursal o a domicilio.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><div class="pp-box" style="padding:9px 12px;width:100%">
+            <div class="pp-srv"><span class="n" style="font-size:11.5px">Masaje Exentia</span><span class="r" style="font-size:10px">60 min · <b style="font-size:11.5px">$1,550</b></span></div>
+          </div></div>
+          <div class="txt"><b>Servicios contratados</b>Lo que compró el cliente, con su duración y precio.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span class="cst" style="background:#fdf1dc;color:#8a5a17;font-size:9px;padding:5px 11px;font-weight:800;letter-spacing:.06em;border-radius:99px">PAGO PENDIENTE</span></div>
+          <div class="txt"><b>Cobro del servicio</b>La suma de los servicios, el total y una etiqueta que te dice si <b>ya pagó</b> o si <b>falta cobrar en sucursal</b>.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span class="btn-sample bs-primary" style="font-size:11.5px">Registrar cobro · falta $1,550</span></div>
+          <div class="txt"><b>Registrar cobro</b>El botón te dice exactamente cuánto falta. Al presionarlo capturas el monto y el método: efectivo, tarjeta o transferencia.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span style="border:1.5px dashed var(--accent-2);border-radius:9px;padding:9px 16px;font-size:11.5px;font-weight:700;color:var(--accent);background:var(--surface)">+ Registrar pago extra</span></div>
+          <div class="txt"><b>Pagos extras</b>Propinas, productos o adicionales que se cobran aparte. <b>No cuentan</b> para el total del servicio y van 100% a la masajista.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span class="pp-link" style="font-size:12.5px">Abrir en Google Maps ↗</span></div>
+          <div class="txt"><b>Lugar de la cita</b>Modalidad, duración, dirección y el enlace directo a Maps si va a domicilio.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span class="btn-sample bs-primary" style="font-size:12px">Detalles del cliente</span></div>
+          <div class="txt"><b>Detalles del cliente</b>El formulario que llenó el cliente con <b>cómo llegar a su casa</b> y qué se va a encontrar la masajista al llegar. Ver abajo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-h">El botón "Detalles del cliente": cómo llegar a su casa</div>
+  <p style="color:var(--ink-soft);font-size:14.5px;line-height:1.65;margin-top:0;max-width:66ch">
+    Cuando la cita es a domicilio, al cliente le mandamos un formulario de preparación y lo que contesta se guarda aquí. Es lo que la masajista necesita saber <b>antes</b> de salir: si hay caseta, dónde estacionarse, si hay elevador, si hay perros sueltos.
+  </p>
+
+  <div style="max-width:520px;margin:0 auto">
+    <div>
+      <div class="anot-wrap"><span class="anot">Lo que llenó el cliente <span class="arw">↓</span></span></div>
+      <div class="pp">
+        <div style="font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--olive-dark)">Detalles del cliente</div>
+        <div class="pp-title" style="font-size:19px;margin-top:7px">Victor R. (demo 1)</div>
+        <div style="font-size:11px;color:var(--gray-soft);margin-top:3px">victor.rodriguez@ainnovation.com.mx</div>
+
+        <div class="pp-sec">
+          <div class="pp-t">Preparación del servicio</div>
+
+          <div style="font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--gray-soft);margin:12px 0 6px">Acceso</div>
+          <div class="pp-box" style="padding:10px 12px">
+            <div class="pp-row"><span style="color:var(--gray-soft)">Caseta</span><span>Sí</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Registro requerido</span><span>Sí</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Código de acceso</span><span><b>4471#</b></span></div>
+            <div class="pp-row" style="display:block"><span style="color:var(--gray-soft);display:block;margin-bottom:2px">Instrucciones</span>
+              <span style="font-size:11px;line-height:1.5">Decir que van a casa 45. La caseta pide INE.</span></div>
+          </div>
+
+          <div style="font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--gray-soft);margin:12px 0 6px">Llegada</div>
+          <div class="pp-box" style="padding:10px 12px">
+            <div class="pp-row"><span style="color:var(--gray-soft)">Estacionamiento</span><span>Sí</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Zona ascenso/descenso</span><span>Sí</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Distancia</span><span>Menos de 50 m</span></div>
+          </div>
+
+          <div style="font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--gray-soft);margin:12px 0 6px">Instalación</div>
+          <div class="pp-box" style="padding:10px 12px">
+            <div class="pp-row"><span style="color:var(--gray-soft)">Espacio para camillas</span><span>OK</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Piso</span><span>2do piso</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Elevador</span><span>No</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Escaleras</span><span>Sí</span></div>
+          </div>
+
+          <div style="font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--gray-soft);margin:12px 0 6px">Ambiente</div>
+          <div class="pp-box" style="padding:10px 12px">
+            <div class="pp-row"><span style="color:var(--gray-soft)">Aire acondicionado</span><span>Sí</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Mascotas</span><span>Sí</span></div>
+            <div class="pp-row"><span style="color:var(--gray-soft)">Detalle mascotas</span><span>Un labrador, se encierra</span></div>
+          </div>
+
+          <div style="font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--gray-soft);margin:12px 0 6px">Recibe</div>
+          <div class="pp-box" style="padding:10px 12px">
+            <div class="pp-row"><span style="color:var(--gray-soft)">Recibe</span><span>El cliente mismo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="info-box"><b>Si es la segunda vez que viene, ya viene prellenado.</b> El sistema hereda los datos de su cita anterior y te lo avisa con una nota. Se reemplazan solos en cuanto el cliente conteste el formulario de la cita nueva.</div>
+
+  <div class="sub-h">Los tres botones de hasta abajo</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span class="btn-sample bs-primary" style="padding:11px 20px">Cambiar horario</span></div>
+      <div class="txt"><b>Mueve la cita de día u hora</b>El cliente pidió reagendar. Ver la <a href="#s6" style="color:var(--accent);font-weight:700">sección 6</a>.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="btn-sample bs-stripe" style="padding:11px 20px">Reembolsar</span></div>
+      <div class="txt"><b>Devuelve dinero a su tarjeta</b>Total o parcial. Solo si pagó con tarjeta. Ver la <a href="#s8" style="color:var(--accent);font-weight:700">sección 8</a>.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="btn-sample bs-danger" style="padding:11px 20px">Cancelar cita</span></div>
+      <div class="txt"><b>Cancela y libera el horario</b>Avisa al cliente. <b>No devuelve el dinero.</b> Ver la <a href="#s7" style="color:var(--accent);font-weight:700">sección 7</a>.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">El selector de masajista</div>
+  <div class="info2 rev">
+    <div>
+      <p style="color:var(--ink-soft);font-size:14.5px;line-height:1.65;margin-top:0;max-width:64ch">
+        Abajo del todo, antes de los botones, hay un renglón que dice <b>MASAJISTA</b> con una lista desplegable. Ese es el único lugar del panel donde puedes cambiar a quién le toca la cita.
+      </p>
+      <ul class="req-list" style="margin-top:8px">
+        <li><span class="n">1</span><div>Si dice <b>Sin asignar (pool)</b>, nadie la ha tomado. Puedes dejarla así para que cualquiera del equipo la tome, o asignarla tú directamente.</div></li>
+        <li><span class="n">2</span><div>Abre la lista y elige a la persona. El cambio se aplica solo, no hay botón de guardar.</div></li>
+        <li><span class="n">3</span><div>Si la cita ya estaba tomada por alguien y eliges a otra persona, se reasigna: se le quita a la primera y se le da a la segunda. Las dos se enteran.</div></li>
+        <li><span class="n">4</span><div>También puedes devolverla al pool eligiendo <b>Sin asignar</b>.</div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="pp-masaj" style="margin-top:0">
+        <span class="l">Masajista</span>
+        <span class="sel">Sin asignar (pool) <span style="color:var(--muted)">⌄</span></span>
+      </div>
+      <div style="background:#fff;border:1px solid var(--cream-soft);border-radius:10px;margin-top:8px;overflow:hidden">
+        <div style="padding:11px 14px;font-size:12.5px;color:var(--brown);border-bottom:1px solid var(--line-soft);background:#fbf9f1">Sin asignar (pool)</div>
+        <div style="padding:11px 14px;font-size:12.5px;color:var(--brown);border-bottom:1px solid var(--line-soft)">Calendario Dos</div>
+        <div style="padding:11px 14px;font-size:12.5px;color:var(--brown)">Test Victor</div>
+      </div>
+      <p class="caption" style="margin-top:12px"><b>La lista desplegable</b>Aparecen solo las masajistas activas del equipo.</p>
+    </div>
+  </div>
+
+  <div class="note"><b>Los cambios se ven al instante.</b> Cierra el pop-up y el calendario ya está actualizado, sin recargar la página. La masajista también lo ve en su celular en segundos.</div>
+</div>
+
+<!-- ══════════════ 6 · CAMBIAR HORARIO ══════════════ -->
+<div class="step" id="s6">
+  <div class="step-head"><div class="num">6</div><h2>Cambiar horario</h2></div>
+  <p class="lead">Es el primer botón de los tres que están hasta abajo del pop-up. Se usa cuando el cliente pide mover su cita a otro día u otra hora.</p>
+
+  <div class="info2">
+    <div>
+      <div class="md">
+        <span class="x">×</span>
+        <div class="eyebrow">Reagendar cita</div>
+        <h5>Reagendar cita — Victor R. (demo 1)</h5>
+        <div class="when">Miércoles 19 ago · 11:00</div>
+
+        <div class="scope">
+          <div class="on">Toda la cita<small>Mueve todos los cupos (individual y grupal)</small></div>
+          <div>Solo este cupo<small>Solo mueve al masajista/servicio actual</small></div>
+        </div>
+
+        <div class="frow">
+          <div>
+            <div class="fl">Fecha</div>
+            <div class="fi">19/08/2026 <span class="ic">▦</span></div>
+          </div>
+          <div>
+            <div class="fl">Hora</div>
+            <div class="fi">11:00 A.M. <span class="ic">◷</span></div>
+          </div>
+        </div>
+
+        <div class="hint">Nueva ubicación temporal — el sistema recalcula los cupos automáticamente conservando la separación entre servicios.</div>
+
+        <div class="macts"><span class="ma-sec">Cancelar</span><span class="ma-pri">Guardar cambios</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Cuál de las dos opciones elijo</h3>
+      <div class="vs" style="grid-template-columns:1fr;gap:12px;margin-top:12px">
+        <div class="vscard" style="border-color:var(--accent-2)">
+          <div class="vh"><b>Toda la cita</b></div>
+          <div class="vsrow"><i class="i-yes">✓</i><div>Es una cita <b>individual</b></div></div>
+          <div class="vsrow"><i class="i-yes">✓</i><div>Es de pareja y <b>las dos</b> quieren cambiarse juntas</div></div>
+          <div style="font-size:12.5px;color:var(--ink-faint);margin-top:8px;font-style:italic">Es la que usas casi siempre.</div>
+        </div>
+        <div class="vscard">
+          <div class="vh"><b>Solo este cupo</b></div>
+          <div class="vsrow"><i class="i-yes">✓</i><div>Es de pareja o grupo y <b>solo una persona</b> avisó que no puede</div></div>
+          <div style="font-size:12.5px;color:var(--ink-faint);margin-top:8px;font-style:italic">Las demás conservan su horario original.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-h">Qué pasa cuando presionas Guardar</div>
+  <div class="flow">
+    <div class="fstep"><span class="fn">1</span><b>Borra la vieja</b><span>Del calendario y del Google de la masajista</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">2</span><b>Crea la nueva</b><span>En la fecha y hora que pusiste</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">3</span><b>Avisa al cliente</b><span>Correo y mensaje con el horario nuevo</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">4</span><b>Avisa al equipo</b><span>La masajista lo ve al momento</span></div>
+  </div>
+
+  <div class="note"><b>Aquí no cambias de masajista.</b> Este modal solo mueve el horario. Si además quieres que la atienda otra persona, ciérralo y usa el selector <b>MASAJISTA</b> del pop-up de la cita.</div>
+</div>
+
+<!-- ══════════════ 7 · CANCELAR ══════════════ -->
+<div class="step" id="s7">
+  <div class="step-head"><div class="num">7</div><h2>Cancelar una cita</h2></div>
+  <p class="lead">El botón rojo del pop-up. Cancela la cita, libera el horario y avisa al cliente. Antes de confirmar te muestra cuánto de reembolso le corresponde según la política, para que sepas qué le vas a devolver.</p>
+
+  <div class="info2">
+    <div>
+      <div class="md cnc">
+        <span class="x">×</span>
+        <div class="eyebrow" style="color:#8a3020">Cancelar cita</div>
+        <h5>Victor R. (demo 1)</h5>
+        <div class="when">EX-DEMO6DD4 · Miércoles 19 ago · 11:00 – 12:00</div>
+
+        <div class="dprev">
+          <div class="dp"><div class="l">Anticipación</div><div class="v">18 horas</div></div>
+          <div class="dp"><div class="l">Ventana de política</div><div class="v">2 a 24 h</div></div>
+          <div class="dp"><div class="l">Total pagado</div><div class="v">$1,550</div></div>
+          <div class="dp"><div class="l">Reembolso sugerido</div><div class="v green">$465</div></div>
+        </div>
+
+        <div class="hint" style="border-left-color:#c0392b">Cancelar <b>no</b> devuelve el dinero. Este cálculo es solo la referencia de cuánto deberías reembolsarle. El reembolso se hace aparte, con el botón <b>Reembolsar</b>.</div>
+
+        <div class="macts"><span class="ma-sec">Volver</span><span class="ma-red">Confirmar cancelación</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Qué hace el botón al confirmar</h3>
+      <div class="dodont" style="grid-template-columns:1fr;gap:12px">
+        <div class="dd yes">
+          <div class="h"><span class="mk">✓</span>Sí hace</div>
+          <ul>
+            <li>Marca la cita como <b>cancelada</b> y libera el horario.</li>
+            <li>Borra la cita de la <b>agenda de Google</b> de la masajista.</li>
+            <li>Manda <b>correo y mensaje</b> al cliente.</li>
+            <li>Ajusta las <b>comisiones</b> del equipo.</li>
+          </ul>
+        </div>
+        <div class="dd no">
+          <div class="h"><span class="mk">✗</span>No hace</div>
+          <ul>
+            <li><b>No devuelve el dinero.</b> Ese es un paso aparte, con el botón morado.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-h">Cuánto le corresponde según cuándo cancela</div>
+  <div class="tl">
+    <div class="tlbar">
+      <div class="tlseg tl-0">0%</div>
+      <div class="tlseg tl-30">30%</div>
+      <div class="tlseg tl-50">50%</div>
+      <div class="tlseg tl-100">100%</div>
+    </div>
+    <div class="tlx">
+      <span><b>Menos de 2 h</b>antes de la cita</span>
+      <span><b>De 2 a 24 h</b>antes</span>
+      <span><b>De 24 a 48 h</b>antes</span>
+      <span><b>Más de 48 h</b>antes</span>
+    </div>
+    <div class="tl-note">Entre más avisa el cliente, más se le devuelve. El sistema lo calcula solo y te lo muestra antes de confirmar.</div>
+  </div>
+
+  <div class="sub-h">Cancelar y reembolsar son dos botones distintos</div>
+  <div class="vs">
+    <div class="vscard a">
+      <div class="vh"><span class="btn-sample bs-danger">Cancelar cita</span></div>
+      <div class="vsrow"><i class="i-yes">✓</i><div>Libera el horario del calendario</div></div>
+      <div class="vsrow"><i class="i-yes">✓</i><div>Borra la cita del Google de la masajista</div></div>
+      <div class="vsrow"><i class="i-yes">✓</i><div>Le avisa al cliente por correo y mensaje</div></div>
+      <div class="vsrow"><i class="i-no">✗</i><div><b>No mueve dinero</b></div></div>
+    </div>
+    <div class="vscard b">
+      <div class="vh"><span class="btn-sample bs-stripe">Reembolsar</span></div>
+      <div class="vsrow"><i class="i-yes">✓</i><div>Le devuelve el dinero a su tarjeta</div></div>
+      <div class="vsrow"><i class="i-yes">✓</i><div>Puede ser total o parcial</div></div>
+      <div class="vsrow"><i class="i-yes">✓</i><div>Recalcula la comisión de la masajista</div></div>
+      <div class="vsrow"><i class="i-no">✗</i><div><b>No libera el horario</b></div></div>
+    </div>
+  </div>
+
+  <div class="note"><b>Los separamos a propósito.</b> Hay cancelaciones que no llevan devolución (canceló sobre la hora), y hay devoluciones sin cancelar (le cobraste de más, o el servicio salió mal y le abonas una parte). Al tenerlos aparte decides cada caso.</div>
+</div>
+
+<!-- ══════════════ 8 · REEMBOLSAR ══════════════ -->
+<div class="step" id="s8">
+  <div class="step-head"><div class="num">8</div><h2>Reembolsar</h2></div>
+  <p class="lead">El botón morado del pop-up. Devuelve el dinero a la tarjeta del cliente. Solo funciona si pagó con tarjeta por la página; si pagó en efectivo o transferencia, se lo devuelves por el mismo medio.</p>
+
+  <div class="info2">
+    <div>
+      <div class="md rfd">
+        <span class="x">×</span>
+        <h5>Reembolsar pago</h5>
+        <div style="font-size:11.5px;color:var(--indigo);margin-top:4px">Victor R. (demo 1) · EX-DEMO6DD4</div>
+
+        <div class="rf-hint">Los reembolsos tardan entre 5 y 10 días en aparecer en el estado de cuenta del cliente. Las tarifas del pago original no se devuelven, pero no hay cargos adicionales por el reembolso.</div>
+
+        <div style="margin-top:16px">
+          <div class="fl" style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--indigo);margin-bottom:5px">Reembolso</div>
+          <div class="rf-amt"><span class="cur">$</span><span class="val">465.00</span><span class="mx">MXN</span></div>
+          <div class="rf-max">Máximo reembolsable: <b>$1,550.00</b></div>
+        </div>
+
+        <div style="margin-top:16px">
+          <div class="fl" style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--indigo);margin-bottom:5px">Motivo</div>
+          <div class="fi" style="background:#fff;border-color:#d3d6f8">Solicitado por el cliente <span class="ic">⌄</span></div>
+        </div>
+
+        <div class="macts"><span class="ma-sec">Cancelar</span><span style="background:var(--indigo);color:#fff;flex:1;border-radius:10px;padding:12px;text-align:center;font-size:13px;font-weight:700">Emitir reembolso</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Cómo usarlo</h3>
+      <ol class="req-list" style="margin-top:8px">
+        <li><span class="n">1</span><div>Abre la cita y presiona <b>Reembolsar</b>.</div></li>
+        <li><span class="n">2</span><div>El monto viene <b>prellenado</b> con lo que sugiere la política, pero puedes cambiarlo. El tope es lo que el cliente pagó.</div></li>
+        <li><span class="n">3</span><div>Elige el <b>motivo</b>: solicitado por el cliente, duplicado, fraudulento u otro. Queda registrado.</div></li>
+        <li><span class="n">4</span><div>Presiona <b>Emitir reembolso</b>. El dinero sale de tu cuenta y llega a la tarjeta del cliente en 5 a 10 días.</div></li>
+      </ol>
+
+    </div>
+  </div>
+
+  <div class="sub-h">Cuatro cosas que conviene saber</div>
+  <div class="cards">
+    <div class="card" style="border-color:var(--stripe)">
+      <div class="ic" style="color:var(--stripe)">½</div><h4>Parcial o total</h4>
+      <p>Puedes devolver solo una parte. El sistema lleva la cuenta de cuánto queda disponible por reembolsar de esa cita.</p></div>
+    <div class="card" style="border-color:var(--warn)">
+      <div class="ic" style="color:var(--warn)">!</div><h4>No se deshace</h4>
+      <p>Una vez emitido, el reembolso ya no se cancela. Revisa bien el monto antes de confirmar.</p></div>
+    <div class="card" style="border-color:var(--danger)">
+      <div class="ic" style="color:var(--danger)">✕</div><h4>Sin tarjeta, sin botón</h4>
+      <p>Si pagó en efectivo o transferencia el botón no está disponible. Devuélvele por el mismo medio.</p></div>
+    <div class="card" style="border-color:var(--ok)">
+      <div class="ic" style="color:var(--ok)">↺</div><h4>Ajusta la comisión</h4>
+      <p>Al reembolsar, la comisión de esa cita se recalcula sola. No tienes que tocarla a mano.</p></div>
+  </div>
+</div>
+
+<!-- ══════════════ 9 · SHOW ══════════════ -->
+<div class="step" id="s9">
+  <div class="step-head"><div class="num">9</div><h2>Validar Show</h2></div>
+  <p class="lead">Cuando la cita termina, la masajista la marca como <b>Finalizada</b>. Pero su comisión sigue congelada hasta que tú valides el <b>Show</b>, que es tu confirmación de que el cliente sí asistió y de que todo salió bien. Sin eso, no cobra.</p>
+
+  <div class="info2">
+    <div>
+      <div class="pp">
+        <div class="pp-badges">
+          <span class="pbg pbg-fin">FIN</span>
+          <span class="pbg pbg-cal2">CALENDARIO DOS</span>
+          <span class="pbg pbg-tipo">SUCURSAL</span>
+        </div>
+        <div class="pp-title">Victor R. (demo 1)</div>
+        <span class="pp-code">EX-DEMO6DD4</span>
+        <div class="pp-when">Ayer · 11:00 – 12:00</div>
+
+        <div class="shb">
+          <div class="st">Falta validar Show</div>
+          Calendario Dos marcó la cita como terminada. Confirma que el cliente sí asistió para liberar su comisión.
+          <div><span class="shbtn">Marcar Show</span></div>
+        </div>
+
+        <div class="pp-sec">
+          <div class="pp-t">Cobro del servicio</div>
+          <div class="pp-box">
+            <div class="pp-row"><span>Servicios</span><span>$1,550</span></div>
+            <div class="pp-row tot"><span>Total del servicio</span><span>$1,550</span></div>
+            <div class="pp-badge"><span class="pg-ok">PAGADO COMPLETO</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pp" style="margin-top:16px">
+        <div class="pp-badges">
+          <span class="pbg pbg-show">SHOW</span>
+          <span class="pbg pbg-testv">TEST VICTOR</span>
+        </div>
+        <div class="pp-title">Victor R. (demo 3)</div>
+        <span class="pp-code">EX-DEMO7442</span>
+        <div class="shb done">
+          <div class="st">Show validado</div>
+          La comisión de Test Victor ya pasó a estado <b>Pagable</b> y aparece en el reporte de la semana.
+          <div><span class="shbtn on">Show validado</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Dónde aparece el banner</h3>
+      <p style="color:var(--ink-soft);font-size:14px;line-height:1.6;margin:0 0 18px">
+        Hasta arriba del pop-up, en naranja, en cuanto la masajista marca la cita como terminada. Es lo primero que ves al abrirla, no te lo puedes perder. Cuando validas, cambia a verde y ya no pide nada más.
+      </p>
+
+      <h3>El botón, antes y después</h3>
+      <div class="exlist">
+        <div class="ex">
+          <div class="demo"><span class="shbtn">Marcar Show</span></div>
+          <div class="txt"><b>Gris = falta validar</b>La comisión de esa cita está congelada.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span class="shbtn on">Show validado</span></div>
+          <div class="txt"><b>Verde = ya validaste</b>La comisión pasó a <b>Pagable</b> y entra al reporte de la semana.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-h">¿Marco Show o no?</div>
+  <div class="dodont">
+    <div class="dd yes">
+      <div class="h"><span class="mk">✓</span>Sí, márcalo</div>
+      <ul>
+        <li>El cliente <b>sí llegó</b> a su cita.</li>
+        <li>El servicio se <b>completó</b> normal.</li>
+        <li>Ya <b>pagó todo</b> lo que debía.</li>
+      </ul>
+    </div>
+    <div class="dd no">
+      <div class="h"><span class="mk">✗</span>No, todavía no</div>
+      <ul>
+        <li>El cliente <b>no llegó</b>. Ahí cancela la cita, no la marques.</li>
+        <li>El servicio se hizo <b>a medias</b> por algún problema.</li>
+        <li>Falta un <b>cobro pendiente</b> por resolver.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sub-h">El camino completo de una cita</div>
+  <div class="flow">
+    <div class="fstep"><span class="fn">1</span><b>Reservada</b><span>El cliente agenda desde la página</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">2</span><b>Tomada</b><span>Una masajista la toma del pool</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">3</span><b>Finalizada</b><span>Ella la marca al terminar</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep" style="border-color:var(--hi);border-width:2px"><span class="fn" style="background:rgba(224,122,47,.15);color:#a34d0f">4</span><b>Show</b><span><b>Tú validas</b> que sí asistió</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep" style="border-color:var(--ok);border-width:2px"><span class="fn" style="background:rgba(46,125,50,.14);color:#1b5e20">5</span><b>Pagable</b><span>Entra al reporte del miércoles</span></div>
+  </div>
+
+  <div class="warn"><b>Sin Show no hay comisión pagable.</b> La comisión se queda en <b>Esperando pago</b> hasta que valides. El reporte semanal solo trae las validadas, así que si se te pasa, esa masajista no cobra esa cita esa semana.</div>
+</div>
+
+<!-- ══════════════ 10 · CATÁLOGO ══════════════ -->
+<div class="step" id="s10">
+  <div class="step-head"><div class="num">10</div><h2>Catálogo de servicios</h2></div>
+  <p class="lead">Todo lo que ves aquí es lo que muestra la página pública de reservas. Cambias un precio aquí y ese es el precio que va a ver el próximo cliente que entre a la página. No hay que avisarnos ni esperar a nada.</p>
+
+  <div class="desk"><div class="desk-bar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="desk-url">exentiaspabeauty.com/panel — Catálogo</span>
+  </div><div class="desk-screen"><div class="a-body">
+    <div class="v-hd-row">
+      <div class="v-hd">
+        <h3>Catálogo de <em>servicios</em></h3>
+        <p>Lo que ves aquí es lo que muestra la página pública. Los cambios aparecen en la página en la siguiente visita de cada cliente.</p>
+      </div>
+      <span class="cat-add"><span class="p">+</span> Agregar producto</span>
+    </div>
+
+    <div class="cat-tg" style="margin-top:14px">
+      <span class="on">Productos</span>
+      <span>Extras <small>que ofrecemos al reservar</small></span>
+    </div>
+
+    <div class="cat-chips">
+      <span class="cchip on">Paquetes <b>4</b></span>
+      <span class="cchip">Masajes <b>18</b></span>
+      <span class="cchip">Faciales <b>5</b></span>
+      <span class="cchip">Manicura <b>33</b></span>
+      <span class="cchip">Pedicura <b>3</b></span>
+      <span class="cchip">Cabello <b>17</b></span>
+      <span class="cchip">Maquillaje <b>4</b></span>
+      <span class="cchip">Depilación <b>27</b></span>
+      <span class="cchip">SpaKids <b>2</b></span>
+      <span class="cchip">Lash &amp; Cejas <b>3</b></span>
+    </div>
+
+    <div class="cat-search">
+      <span class="inp">Buscar producto…</span>
+      <span class="ck"><i></i> Mostrar ocultos</span>
+    </div>
+
+    <div class="crow">
+      <div class="mid">
+        <div class="nom">Diva Spa</div>
+        <div class="des">Masaje Relajante + Facial Orgánico + Manicura con Gel + Pedicura con Gel.</div>
+      </div>
+      <span class="pr">240 min · $3,296</span>
+      <span class="bt">Editar</span><span class="bt gh">Ocultar</span>
+    </div>
+    <div class="crow">
+      <div class="mid">
+        <div class="nom">Ritual Exentia</div>
+        <div class="des">Masaje Exentia 60 min + Facial Orgánico 60 min. Disponible también a domicilio. · Domicilio</div>
+      </div>
+      <span class="pr">120 min · $2,180</span>
+      <span class="bt">Editar</span><span class="bt gh">Ocultar</span>
+    </div>
+    <div class="crow">
+      <div class="mid">
+        <div class="nom">Ritual Exentia Plus</div>
+        <div class="des">Masaje Exentia 90 min + Facial Orgánico. Versión extendida del ritual signature. · Domicilio</div>
+      </div>
+      <span class="pr">150 min · $2,580</span>
+      <span class="bt">Editar</span><span class="bt gh">Ocultar</span>
+    </div>
+    <div class="crow">
+      <div class="mid">
+        <div class="nom">Ritual Caballero</div>
+        <div class="des">Masaje terapéutico + Corte de cabello + Servicio de barbería completo.</div>
+      </div>
+      <span class="pr">125 min · $1,785</span>
+      <span class="bt">Editar</span><span class="bt gh">Ocultar</span>
+    </div>
+  </div></div></div>
+
+  <div class="sub-h">La barra de arriba</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span class="cat-add" style="font-size:11.5px;padding:9px 16px"><span class="p">+</span> Agregar producto</span></div>
+      <div class="txt"><b>Crear uno nuevo</b>Abre el formulario en blanco. Aparece en la página en cuanto lo guardas.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="cat-tg" style="margin:0"><span class="on" style="padding:6px 13px;font-size:10.5px">Productos</span><span style="padding:6px 13px;font-size:10.5px">Extras</span></span></div>
+      <div class="txt"><b>Productos vs. Extras</b><b style="display:inline">Productos</b>: los servicios que el cliente reserva y que <b>ocupan tiempo</b> en la agenda. <b style="display:inline">Extras</b>: los adicionales que le ofrecemos al reservar (aromas, aceites) y que <b>no reservan tiempo</b>.</div>
+    </div>
+    <div class="ex">
+      <div class="demo" style="gap:6px;flex-wrap:wrap">
+        <span class="cchip on" style="font-size:10.5px;padding:6px 12px">Paquetes <b>4</b></span>
+        <span class="cchip" style="font-size:10.5px;padding:6px 12px">Masajes <b>18</b></span>
+      </div>
+      <div class="txt"><b>Chips de categoría</b>Filtran por sección y traen el número de productos que hay. Es la misma división que ve el cliente en la página.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span style="background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 14px;font-size:12px;color:var(--ink-faint)">Buscar producto…</span></div>
+      <div class="txt"><b>Buscador</b>Escribe parte del nombre y la lista se filtra sobre la marcha. Necesario cuando tienes 33 productos en Manicura.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span style="display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft)">
+        <span style="width:15px;height:15px;border:1.5px solid var(--line);border-radius:3px;background:var(--surface)"></span> Mostrar ocultos</span></div>
+      <div class="txt"><b>Ver los ocultos</b>Lo que quitaste de la página no se borra, se oculta. Marca la casilla para verlos y poder reactivarlos.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">Editar un producto</div>
+  <div class="info2">
+    <div>
+      <div class="md mp">
+        <span class="x">×</span>
+        <h5 style="margin-top:0">Editar producto</h5>
+
+        <div class="fl2">Nombre del producto *</div>
+        <div class="fi2">Diva Spa</div>
+
+        <div class="two">
+          <div><div class="fl2">Sección *</div><div class="fi2">Paquetes ⌄</div></div>
+          <div><div class="fl2">Grupo (opcional)</div><div class="fi2">Sin grupo ⌄</div></div>
+        </div>
+
+        <div class="fl2">Descripción</div>
+        <div class="fi2">Masaje Relajante + Facial Orgánico + Manicura con Gel + Pedicura con Gel.</div>
+
+        <div class="fl2">¿Dónde se ofrece este servicio? *</div>
+        <div class="radios">
+          <div class="rad on"><i></i><div>Solo en sucursal<small>El cliente viene a Plaza Hive</small></div></div>
+          <div class="rad"><i></i><div>También a domicilio<small>Se ofrece en sucursal y a domicilio</small></div></div>
+        </div>
+
+        <div class="ckbox">
+          <i>✓</i>
+          <div>
+            <b>Requiere 30% de anticipo en sucursal</b>
+            <p>Marca esto si el servicio involucra masaje (masajes, faciales, paquetes con masaje, spa kids). Cuando el cliente reserve en sucursal, la página cobrará por adelantado el 30% del precio de este producto; el resto se paga al llegar.</p>
+          </div>
+        </div>
+
+        <div class="durhd">
+          <span class="t">Duraciones y precios *</span>
+          <span class="add">+ Agregar duración</span>
+        </div>
+        <div class="durhint">Escribe cuántos minutos dura, cuánto cuesta para una persona y, si aplica, el precio total cuando son dos personas juntas. El precio pareja es opcional: si lo dejas vacío, el servicio solo se ofrecerá para una persona.</div>
+        <div class="dur3">
+          <div><div class="h">Minutos</div><div class="fi2">240</div></div>
+          <div><div class="h">Precio $ (1 persona)</div><div class="fi2">3296</div></div>
+          <div><div class="h">Precio $ (pareja, opcional)</div><div class="fi2 ph">Dejar vacío</div></div>
+          <div class="del">×</div>
+        </div>
+
+        <div class="fl2" style="margin-top:18px">Datos de promoción (solo Promociones)</div>
+        <div class="two">
+          <div><div class="h" style="font-size:11px;color:var(--olive-dark);font-weight:700;margin-bottom:5px">Precio anterior (tachado)</div><div class="fi2">4120</div></div>
+          <div><div class="h" style="font-size:11px;color:var(--olive-dark);font-weight:700;margin-bottom:5px">Descuento %</div><div class="fi2">20</div></div>
+        </div>
+        <div class="two" style="margin-top:12px">
+          <div><div class="h" style="font-size:11px;color:var(--olive-dark);font-weight:700;margin-bottom:5px">Ahorro $</div><div class="fi2">824</div></div>
+          <div><div class="h" style="font-size:11px;color:var(--olive-dark);font-weight:700;margin-bottom:5px">Etiqueta superior</div><div class="fi2">PROMOCIÓN</div></div>
+        </div>
+
+        <div class="fl2">Qué incluye (texto de la card)</div>
+        <div class="fi2">Masaje Relajante + Facial Orgánico + Manicura con Gel + Pedicura con Gel. La experiencia completa de bienestar en un solo lugar.</div>
+
+        <div class="fl2" style="margin-top:18px">Vista previa</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Así se verá el producto en la página del cliente</div>
+        <div class="prev"><div class="prevcard">
+          <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start">
+            <div style="flex:1;min-width:0">
+              <div class="eyeb">PROMOCIÓN</div>
+              <div class="nm">Diva Spa <span>SUCURSAL</span></div>
+            </div>
+            <div class="pz">
+              <span class="old">$4,120</span><span class="new">$3,296</span>
+              <span class="mxn">MXN</span>
+            </div>
+          </div>
+          <div class="dsc">Masaje Relajante + Facial Orgánico + Manicura con Gel + Pedicura con Gel. La experiencia completa de bienestar en un solo lugar.</div>
+          <div class="cta">Reservar promoción</div>
+        </div></div>
+
+        <div class="mfoot">
+          <span class="del">Eliminar</span>
+          <span class="rr"><span class="cancel">Cancelar</span><span class="save">Guardar</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Campo por campo</h3>
+      <div class="st-row"><i style="background:var(--olive)"></i><b>Nombre</b><span>Es el título que ve el cliente. También es lo que aparece en el calendario y en los correos, así que escríbelo como quieres que se lea.</span></div>
+      <div class="st-row"><i style="background:var(--olive-light)"></i><b>Sección</b><span>A qué categoría pertenece: Paquetes, Masajes, Faciales, Manicura… Define en qué pestaña de la página aparece.</span></div>
+      <div class="st-row"><i style="background:var(--cream-app)"></i><b>Grupo</b><span>Opcional. Sirve para agrupar productos dentro de una misma sección (por ejemplo "Signature Exentia" dentro de Masajes).</span></div>
+      <div class="st-row"><i style="background:#f7f5ee"></i><b>Descripción</b><span>El texto corto que aparece debajo del nombre en la lista de la página.</span></div>
+      <div class="st-row"><i style="background:var(--olive)"></i><b>Dónde se ofrece</b><span><b>Solo en sucursal</b>: el cliente viene a Plaza Hive. <b>También a domicilio</b>: además se puede pedir a casa, y la página le suma el costo de traslado.</span></div>
+      <div class="st-row"><i style="background:var(--olive)"></i><b>Anticipo del 30%</b><span>Si lo marcas, la página le cobra al cliente el 30% por adelantado cuando reserva en sucursal, y el resto lo paga al llegar. Actívalo en todo lo que involucre masaje.</span></div>
+      <div class="st-row"><i style="background:#fbf9f1;border:1px solid var(--cream-soft)"></i><b>Duraciones y precios</b><span>Un renglón por cada duración que ofrezcas. Un mismo servicio puede tener 60, 90 y 120 min con precios distintos: usa <b>+ Agregar duración</b>.</span></div>
+      <div class="st-row"><i style="background:#fdf1dc"></i><b>Precio pareja</b><span>Opcional. Es el precio <b>total</b> cuando van dos personas juntas. Si lo dejas vacío, el servicio no aparece como opción de pareja en la página.</span></div>
+      <div class="st-row"><i style="background:#f5e2c8"></i><b>Datos de promoción</b><span>Solo se usan en la sección Promociones: precio tachado, porcentaje de descuento, cuánto se ahorra y la etiqueta que va arriba del nombre.</span></div>
+      <div class="st-row"><i style="background:#fdf6e8"></i><b>Vista previa</b><span>Se actualiza mientras escribes. Es exactamente la tarjeta que va a ver el cliente en la página, para que no haya sorpresas.</span></div>
+    </div>
+  </div>
+
+  <div class="sub-h">Crear un producto nuevo</div>
+  <div class="info2 rev">
+    <div>
+      <p style="color:var(--ink-soft);font-size:14.5px;line-height:1.65;margin-top:0;max-width:64ch">
+        Es el mismo formulario, en blanco. Solo son obligatorios los campos con asterisco: <b>nombre</b>, <b>sección</b>, <b>dónde se ofrece</b> y al menos una <b>duración con precio</b>. Todo lo demás lo puedes dejar vacío y agregarlo después.
+      </p>
+      <ol class="req-list" style="margin-top:12px">
+        <li><span class="n">1</span><div>Presiona <b>+ Agregar producto</b> arriba a la derecha.</div></li>
+        <li><span class="n">2</span><div>Escribe el nombre y elige la sección donde debe aparecer.</div></li>
+        <li><span class="n">3</span><div>Indica si es solo en sucursal o también a domicilio.</div></li>
+        <li><span class="n">4</span><div>Marca el anticipo del 30% si lleva masaje.</div></li>
+        <li><span class="n">5</span><div>Pon los minutos y el precio. Agrega más duraciones si el servicio tiene varias.</div></li>
+        <li><span class="n">6</span><div>Revisa la <b>vista previa</b> de abajo y presiona <b>Guardar</b>.</div></li>
+      </ol>
+      <div class="note" style="margin-top:14px"><b>Los cambios se aplican en la página pública.</b> No hay que publicar nada ni avisarnos. En cuanto guardas, el siguiente cliente que abra la página ve el producto nuevo, el precio nuevo o el que ocultaste, ya actualizado.</div>
+    </div>
+    <div>
+      <div class="md mp">
+        <span class="x">×</span>
+        <h5 style="margin-top:0">Nuevo producto</h5>
+        <div class="fl2">Nombre del producto *</div>
+        <div class="fi2 ph">Ej. Masaje Relajante</div>
+        <div class="two">
+          <div><div class="fl2">Sección *</div><div class="fi2">Paquetes ⌄</div></div>
+          <div><div class="fl2">Grupo (opcional)</div><div class="fi2">Sin grupo ⌄</div></div>
+        </div>
+        <div class="fl2">Descripción</div>
+        <div class="fi2 ph">Descripción corta que ve el cliente</div>
+        <div class="fl2">¿Dónde se ofrece este servicio? *</div>
+        <div class="radios">
+          <div class="rad on"><i></i><div>Solo en sucursal<small>El cliente viene a Plaza Hive</small></div></div>
+          <div class="rad"><i></i><div>También a domicilio<small>Se ofrece en sucursal y a domicilio</small></div></div>
+        </div>
+        <div class="ckbox">
+          <i class="off"></i>
+          <div><b>Requiere 30% de anticipo en sucursal</b>
+          <p>Marca esto si el servicio involucra masaje. La página cobrará por adelantado el 30%; el resto se paga al llegar.</p></div>
+        </div>
+        <div class="durhd"><span class="t">Duraciones y precios *</span><span class="add">+ Agregar duración</span></div>
+        <div class="dur3">
+          <div><div class="h">Minutos</div><div class="fi2 ph">Ej. 60</div></div>
+          <div><div class="h">Precio $ (1 persona)</div><div class="fi2 ph">Ej. 1550</div></div>
+          <div><div class="h">Precio $ (pareja, opcional)</div><div class="fi2 ph">Dejar vacío</div></div>
+          <div class="del">×</div>
+        </div>
+        <div class="fl2" style="margin-top:18px">Vista previa</div>
+        <div class="prev" style="background:linear-gradient(180deg,#fdf6e8,#faf0da)">
+          <div style="text-align:center;font-size:12px;color:var(--muted);font-style:italic;padding:22px 12px;line-height:1.6">
+            Empieza a rellenar el nombre y las duraciones para ver la vista previa.
+          </div>
+        </div>
+        <div class="mfoot"><span class="rr"><span class="cancel">Cancelar</span><span class="save">Guardar</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn"><b>Ocultar no es borrar.</b> Si un servicio deja de ofrecerse, usa <b>Ocultar</b>: desaparece de la página pero se conserva el historial de las citas que ya se hicieron con él, y las comisiones siguen cuadrando. <b>Eliminar</b> (el botón rojo dentro del editor) sí lo borra de verdad; úsalo solo si lo creaste por error.</div>
+</div>
+
+<!-- ══════════════ 11 · COMISIONES ══════════════ -->
+<div class="step" id="s11">
+  <div class="step-head"><div class="num">11</div><h2>Comisiones del equipo</h2></div>
+  <p class="lead">Los movimientos de comisión se crean solos: cada vez que se registra un pago o una cancelación, aparece un renglón aquí. Tú revisas, ajustas si hace falta, descargas el reporte de la semana y marcas como pagadas.</p>
+
+  <div class="desk"><div class="desk-bar">
+    <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="desk-url">exentiaspabeauty.com/panel — Comisiones</span>
+  </div><div class="desk-screen"><div class="a-body">
+    <div class="v-hd-row">
+      <div class="v-hd">
+        <h3>Comisiones del <em>equipo</em></h3>
+        <p>Movimientos que se crean solos cuando se registra un pago o una cancelación. Puedes editar el porcentaje o monto, marcar como pagadas, anular o crear movimientos manuales.</p>
+      </div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;flex:none">
+        <span style="background:#fdfbf4;border:1.5px solid #2b2419;border-radius:5px;padding:8px 15px;font-size:12px;font-weight:600;color:#2b2419;white-space:nowrap">↓ Descargar reporte</span>
+        <span style="background:var(--olive-dark);border:1.5px solid var(--olive-dark);border-radius:5px;padding:8px 15px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap">+ Movimiento manual</span>
+      </div>
+    </div>
+
+    <div class="com-top" style="margin-top:14px">
+      <div class="glb">
+        <span class="l">% Comisión global</span>
+        <span class="i">50</span>
+        <span class="sv">GUARDAR</span>
+      </div>
+      <span class="sp"></span>
+      <span class="dsel">Todas las masajistas</span>
+      <span class="dsel">Todos los estados</span>
+      <span class="dfield">dd/mm/aaaa</span>
+      <span class="dfield">dd/mm/aaaa</span>
+      <span style="width:26px;height:26px;border-radius:50%;border:1px solid var(--cream-soft);color:var(--muted);display:grid;place-items:center;font-size:12px;background:#fff">↻</span>
+    </div>
+
+    <div class="com-cards">
+      <div class="ccard">
+        <div class="nm">Calendario Dos</div>
+        <div class="r esp"><span>Esperando pago</span><b>$2,475.00</b></div>
+        <div class="r pgb"><span>Pagable</span><b>$1,845.00</b></div>
+        <div class="r pgd"><span>Pagada</span><b>$0.00</b></div>
+      </div>
+      <div class="ccard">
+        <div class="nm">Test Victor</div>
+        <div class="r esp"><span>Esperando pago</span><b>$700.00</b></div>
+        <div class="r pgb"><span>Pagable</span><b>$5,675.00</b></div>
+        <div class="r pgd"><span>Pagada</span><b>$0.00</b></div>
+      </div>
+    </div>
+
+    <div class="com-grp">
+      <div class="com-gh">
+        <span class="l">Calendario Dos <small>5 movimientos</small></span>
+        <span class="r">Subtotal activo: $4,320.00</span>
+      </div>
+      <div class="com-th">
+        <span>Fecha</span><span>Cita</span><span>Motivo</span><span>Base</span><span>%</span><span>Comisión</span><span>Estado</span><span></span>
+      </div>
+      <div class="com-tr">
+        <span>20 ago 26</span>
+        <span class="cita"><b>EX-DEMO3E0D · Victor R. (demo 2 · pareja)</b><small>Masaje Relajante 90 min · Masaje Relajante 90 min</small></span>
+        <span>Pago de cita</span>
+        <span class="mny">$1,850.00</span><span class="mny">50%</span>
+        <span class="com">$925.00</span>
+        <span><span class="cst cs-esp">ESPERANDO_PAGO_COMPLETO</span></span>
+        <span class="acts"><span class="a-edit">Editar</span></span>
+      </div>
+      <div class="com-tr">
+        <span>17 ago 26</span>
+        <span class="cita"><b>EX-DEMO003 · Sofía Cruz</b><small>Masaje Exentia · 60 min · $3,100</small></span>
+        <span>Pago de cita</span>
+        <span class="mny">$3,100.00</span><span class="mny">50%</span>
+        <span class="com">$1,550.00</span>
+        <span><span class="cst cs-esp">ESPERANDO_PAGO_COMPLETO</span></span>
+        <span class="acts"><span class="a-edit">Editar</span></span>
+      </div>
+      <div class="com-tr">
+        <span>12 ago 26</span>
+        <span class="cita"><b>EX-37J2T2HW · victor google</b><small>Masaje Exentia Plus Personalizado · Masaje Tejido Profundo</small></span>
+        <span>Retención por cancelación</span>
+        <span class="mny">$3,690.00</span><span class="mny">50%</span>
+        <span class="com">$1,845.00</span>
+        <span><span class="cst cs-pgb">PAGABLE</span></span>
+        <span class="acts"><span class="a-edit">Editar</span><span class="a-pay">Marcar pagada</span></span>
+      </div>
+      <div class="com-tr">
+        <span>12 ago 26</span>
+        <span class="cita"><b>EX-37J2T2HW · victor google</b><small>Masaje Exentia Plus Personalizado · Masaje Tejido Profundo</small></span>
+        <span>Pago de cita</span>
+        <span class="mny">$0.00</span><span class="mny">50%</span>
+        <span class="com">$0.00</span>
+        <span><span class="cst cs-anu">ANULADA</span></span>
+        <span class="acts"><span class="a-edit">Editar</span></span>
+      </div>
+      <div class="com-tr">
+        <span>12 ago 26</span>
+        <span class="cita"><b>EX-AS8NQ6GU · victor google</b><small>Masaje Exentia</small></span>
+        <span>Pago de cita</span>
+        <span class="mny">$0.00</span><span class="mny">50%</span>
+        <span class="com">$0.00</span>
+        <span><span class="cst cs-anu">ANULADA</span></span>
+        <span class="acts"><span class="a-edit">Editar</span></span>
+      </div>
+    </div>
+
+    <div class="com-grp">
+      <div class="com-gh">
+        <span class="l">Test Victor <small>5 movimientos</small></span>
+        <span class="r">Subtotal activo: $6,375.00</span>
+      </div>
+      <div class="com-th">
+        <span>Fecha</span><span>Cita</span><span>Motivo</span><span>Base</span><span>%</span><span>Comisión</span><span>Estado</span><span></span>
+      </div>
+      <div class="com-tr">
+        <span>21 ago 26</span>
+        <span class="cita"><b>EX-DEMO7442 · Victor R. (demo 3)</b><small>Facial Anti-edad 60 min</small></span>
+        <span>Pago de cita</span>
+        <span class="mny">$1,400.00</span><span class="mny">50%</span>
+        <span class="com">$700.00</span>
+        <span><span class="cst cs-esp">ESPERANDO_PAGO_COMPLETO</span></span>
+        <span class="acts"><span class="a-edit">Editar</span></span>
+      </div>
+      <div class="com-tr">
+        <span>12 ago 26</span>
+        <span class="cita"><b>EX-AS8NQ6GU · victor google</b><small>Masaje Exentia</small></span>
+        <span>Retención por cancelación</span>
+        <span class="mny">$1,550.00</span><span class="mny">50%</span>
+        <span class="com">$775.00</span>
+        <span><span class="cst cs-pgb">PAGABLE</span></span>
+        <span class="acts"><span class="a-edit">Editar</span><span class="a-pay">Marcar pagada</span></span>
+      </div>
+      <div class="com-tr">
+        <span>12 ago 26</span>
+        <span class="cita"><b>EX-AS8NQ6GU · victor google</b><small>Masaje Exentia</small></span>
+        <span>Pago de cita</span>
+        <span class="mny">$0.00</span><span class="mny">50%</span>
+        <span class="com">$0.00</span>
+        <span><span class="cst cs-anu">ANULADA</span></span>
+        <span class="acts"><span class="a-edit">Editar</span></span>
+      </div>
+      <div class="com-tr">
+        <span>12 ago 26</span>
+        <span class="cita"><b>EX-JPSBJQ99 · victor google</b><small>Masaje Terapéutico con Ventosas · Masaje Terapéutico de Piedras Calientes +2</small></span>
+        <span>Retención por cancelación</span>
+        <span class="mny">$9,800.00</span><span class="mny">50%</span>
+        <span class="com">$4,900.00</span>
+        <span><span class="cst cs-pgb">PAGABLE</span></span>
+        <span class="acts"><span class="a-edit">Editar</span><span class="a-pay">Marcar pagada</span></span>
+      </div>
+      <div class="com-tr">
+        <span>12 ago 26</span>
+        <span class="cita"><b>EX-JPSBJQ99 · victor google</b><small>Masaje Terapéutico con Ventosas · Masaje Terapéutico de Piedras Calientes +2</small></span>
+        <span>Pago de cita</span>
+        <span class="mny">$0.00</span><span class="mny">50%</span>
+        <span class="com">$0.00</span>
+        <span><span class="cst cs-anu">ANULADA</span></span>
+        <span class="acts"><span class="a-edit">Editar</span></span>
+      </div>
+    </div>
+  </div></div></div>
+
+  <div class="sub-h">Las tres cifras de cada tarjeta</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><div class="ccard" style="min-width:0;padding:11px 15px">
+        <div class="r esp" style="gap:14px"><span>Esperando pago</span><b>$2,475.00</b></div></div></div>
+      <div class="txt"><b>Todavía no se puede pagar</b>Falta algo: que el cliente termine de pagar, o que <b>tú valides el Show</b>. No entra en el reporte.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><div class="ccard" style="min-width:0;padding:11px 15px">
+        <div class="r pgb" style="gap:14px"><span>Pagable</span><b>$1,845.00</b></div></div></div>
+      <div class="txt"><b>Esto es lo que le debes hoy</b>El cliente ya pagó y tú ya validaste. Es el número que aparece en el reporte del miércoles.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><div class="ccard" style="min-width:0;padding:11px 15px">
+        <div class="r pgd" style="gap:14px"><span>Pagada</span><b>$4,500.00</b></div></div></div>
+      <div class="txt"><b>Ya se lo transferiste</b>Queda registrado en el historial para cualquier aclaración posterior.</div>
+    </div>
+  </div>
+
+  <div class="info-box"><b>Aquí ves qué citas te faltan por validar.</b> Si una masajista reclama que su comisión no aparece, filtra por su nombre y busca las que dicen <b>Esperando pago</b>. Casi siempre es porque falta marcarle el <b>Show</b> a esa cita, o porque el cliente todavía debe una parte. Lo resuelves y la comisión pasa sola a <b>Pagable</b>.</div>
+
+  <div class="sub-h">Los cuatro estados</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span class="cst cs-esp" style="font-size:10px;padding:6px 13px">ESPERANDO PAGO</span></div>
+      <div class="txt"><b>Congelada</b>Falta que el cliente pague todo o que valides el Show. No se puede pagar.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="cst cs-pgb" style="font-size:10px;padding:6px 13px">PAGABLE</span></div>
+      <div class="txt"><b>Lista para pagar</b>Al lado le aparece el botón verde <b>Marcar pagada</b>.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="cst cs-pgd" style="font-size:10px;padding:6px 13px">PAGADA</span></div>
+      <div class="txt"><b>Cerrada</b>Ya se la transferiste y la marcaste. Sale del pendiente.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="cst cs-anu" style="font-size:10px;padding:6px 13px">ANULADA</span></div>
+      <div class="txt"><b>Sin efecto</b>La cita se canceló y se reemplazó por otro movimiento, o la anulaste tú. Cuenta $0.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">Los dos botones de cada renglón</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span class="a-edit" style="border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;background:var(--surface);border:1px solid var(--line);color:var(--ink)">Editar</span></div>
+      <div class="txt"><b>Editar</b>Cambia el porcentaje o pon un monto fijo distinto solo para esa cita. También puedes anular el movimiento desde ahí. Sirve cuando hubo un acuerdo especial.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span style="border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;background:#d6ecd8;color:#1f5f26;border:1px solid #b8ddbb">Marcar pagada</span></div>
+      <div class="txt"><b>Marcar pagada</b>Solo sale en las <b>Pagables</b>. Presiónalo <u>después</u> de haberle transferido, no antes.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">Qué significa cada columna</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span style="font-family:ui-monospace,monospace;font-size:12px;font-weight:700;color:var(--ink)">EX-DEMO3E0D</span></div>
+      <div class="txt"><b>Cita</b>El código y el nombre del cliente. Abajo en gris, los servicios que se dieron.</div>
+    </div>
+    <div class="ex">
+      <div class="demo" style="flex-direction:column;gap:6px;align-items:flex-start">
+        <span style="font-size:12px;color:var(--ink)">Pago de cita</span>
+        <span style="font-size:12px;color:var(--ink)">Retención por cancelación</span>
+      </div>
+      <div class="txt"><b>Motivo</b><b style="display:inline">Pago de cita</b>: la comisión normal por atender. <b style="display:inline">Retención por cancelación</b>: la cita se canceló tarde y por política la masajista igual cobra una parte.</div>
+    </div>
+    <div class="ex">
+      <div class="demo" style="gap:10px;font-variant-numeric:tabular-nums">
+        <span style="font-size:14px;font-weight:700;color:var(--ink)">$1,850</span>
+        <span style="color:var(--ink-faint)">×</span>
+        <span style="font-size:14px;font-weight:700;color:var(--ink)">50%</span>
+        <span style="color:var(--ink-faint)">=</span>
+        <span style="font-size:16px;font-weight:800;color:var(--accent)">$925</span>
+      </div>
+      <div class="txt"><b>Base × % = Comisión</b>La <b>base</b> es el precio del servicio que le tocó a esa persona. El <b>%</b> es el global (50%), salvo que lo hayas cambiado en esa cita. La <b>comisión</b> es lo que se le paga.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">La barra de controles</div>
+  <div class="exlist">
+    <div class="ex">
+      <div class="demo"><span style="display:inline-flex;align-items:center;gap:8px">
+        <span style="background:var(--surface-2);border:1.5px solid var(--line);border-radius:7px;padding:6px 13px;font-size:13px;font-weight:700;color:var(--ink)">50</span>
+        <span style="background:var(--cream);border-radius:7px;padding:6px 12px;font-size:10.5px;font-weight:800;color:var(--accent)">GUARDAR</span>
+      </span></div>
+      <div class="txt"><b>Porcentaje global</b>El que se aplica por defecto a todas las comisiones nuevas. Si lo cambias y guardas, aplica de ahí en adelante: las que ya existen conservan el porcentaje con el que nacieron.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="btn-sample bs-ghost" style="font-size:12px">Todas las masajistas ⌄</span></div>
+      <div class="txt"><b>Filtro por persona</b>Es lo primero que usas cuando alguien pregunta por su pago.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="btn-sample bs-ghost" style="font-size:12px">Todos los estados ⌄</span></div>
+      <div class="txt"><b>Filtro por estado</b>Pon <b>Pagable</b> para ver qué transferir. Pon <b>Esperando pago</b> para ver qué te falta validar.</div>
+    </div>
+    <div class="ex">
+      <div class="demo" style="gap:7px">
+        <span class="btn-sample bs-ghost" style="font-size:11.5px">dd/mm/aaaa</span>
+        <span class="btn-sample bs-ghost" style="font-size:11.5px">dd/mm/aaaa</span>
+      </div>
+      <div class="txt"><b>Rango de fechas</b>Acota el periodo. <b>Es el que respeta el reporte al descargarse</b>, así que ponlo antes de bajarlo.</div>
+    </div>
+    <div class="ex">
+      <div class="demo"><span class="btn-sample bs-primary" style="font-size:12px">+ Movimiento manual</span></div>
+      <div class="txt"><b>Movimiento manual</b>Crea una comisión que no salió de una cita: un bono, un ajuste, un descuento acordado.</div>
+    </div>
+  </div>
+
+  <div class="sub-h">El miércoles: pagar al equipo</div>
+  <div class="flow">
+    <div class="fstep"><span class="fn">1</span><b>Pon el rango</b><span>Las fechas de la semana que vas a pagar</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">2</span><b>Descarga</b><span>Botón ↓ Descargar reporte</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">3</span><b>Transfiere</b><span>El total que trae el archivo</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep"><span class="fn">4</span><b>Sube comprobante</b><span>Al grupo del equipo</span></div>
+    <span class="farrow">→</span>
+    <div class="fstep" style="border-color:var(--ok);border-width:2px"><span class="fn" style="background:rgba(46,125,50,.14);color:#1b5e20">5</span><b>Marcar pagada</b><span>En cada renglón que pagaste</span></div>
+  </div>
+
+  <div class="warn"><b>Pon el rango de fechas antes de descargar.</b> El reporte respeta lo que tengas en los dos campos de fecha. Si los dejas vacíos te baja todo el historial y se vuelve ilegible. Pon la semana que vas a pagar y el archivo sale corto y cuadrado.</div>
+
+  <div class="sub-h">Cómo viene el archivo</div>
+  <div class="info2 rev">
+    <div>
+      <div class="exlist" style="margin-top:0">
+        <div class="ex">
+          <div class="demo"><span class="cst cs-pgb" style="font-size:10px;padding:6px 13px">PAGABLE</span></div>
+          <div class="txt"><b>Sí suman al total</b>Son las que le vas a transferir hoy.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span class="cst cs-pgd" style="font-size:10px;padding:6px 13px">PAGADA</span></div>
+          <div class="txt"><b>Vienen, pero no suman</b>Se incluyen para que tengas el contexto de la semana, pero el total las excluye.</div>
+        </div>
+        <div class="ex">
+          <div class="demo"><span style="font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--accent)">$7,520</span></div>
+          <div class="txt"><b>El total al final</b>Solo suma las pendientes. <b>Ese es el número que transfieres.</b></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh)">
+        <div style="background:#1e7a45;color:#fff;padding:11px 15px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:9px">
+          <span style="width:19px;height:19px;background:rgba(255,255,255,.22);border-radius:4px;display:grid;place-items:center;font-size:10px">▦</span>
+          comisiones_2026-08-17_a_2026-08-23.csv
+        </div>
+        <div style="padding:0;font-size:11px;overflow-x:auto">
+          <table style="min-width:420px;font-size:11px">
+            <thead><tr>
+              <th style="background:#e9f2ec;color:#1e7a45">Masajista</th>
+              <th style="background:#e9f2ec;color:#1e7a45">Cita</th>
+              <th style="background:#e9f2ec;color:#1e7a45">Comisión</th>
+              <th style="background:#e9f2ec;color:#1e7a45">Estado</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Calendario Dos</td><td>EX-37J2T2HW</td><td style="font-variant-numeric:tabular-nums">$1,845.00</td><td>Pagable</td></tr>
+              <tr><td>Test Victor</td><td>EX-JPSBJQ99</td><td style="font-variant-numeric:tabular-nums">$4,900.00</td><td>Pagable</td></tr>
+              <tr><td>Test Victor</td><td>EX-AS8NQ6GU</td><td style="font-variant-numeric:tabular-nums">$775.00</td><td>Pagable</td></tr>
+              <tr style="opacity:.6"><td>Calendario Dos</td><td>EX-5DWQ2K88</td><td style="font-variant-numeric:tabular-nums">$450.00</td><td>Pagada</td></tr>
+              <tr style="background:#f3f8f4;font-weight:700"><td colspan="2">TOTAL POR PAGAR</td><td style="font-variant-numeric:tabular-nums">$7,520.00</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="caption" style="margin-top:12px"><b>Así se ve el archivo</b>Un renglón por comisión, agrupadas por masajista, con el total al final sumando solo las pendientes.</p>
+    </div>
+  </div>
+
+  <div class="note"><b>Por qué va por semana.</b> Los pagos se hacen los miércoles con el corte de la semana anterior. Al acotar el rango, el archivo queda corto y cuadra con lo que transfieres. Y si alguien reclama algo después, vuelves a bajar exactamente ese mismo periodo y comparas.</div>
+</div>
+
+<!-- ══════════════ 12 · ALTA MASAJISTA ══════════════ -->
+<div class="step" id="s12">
+  <div class="step-head"><div class="num">12</div><h2>Dar de alta una masajista</h2></div>
+  <p class="lead">Cuando entra alguien nuevo al equipo, tú nos mandas sus datos por WhatsApp y nosotros la registramos. El mismo día queda lista y aparece en tu panel.</p>
+
+  <div class="info2">
+    <div>
+      <h3>Los datos que necesitamos</h3>
+      <ol class="req-list" style="margin-top:8px">
+        <li><span class="n">1</span><div><b>Nombre completo</b>, como quieras que aparezca en el calendario y en los correos al cliente.</div></li>
+        <li><span class="n">2</span><div><b>Correo de Google (Gmail)</b>. Tiene que ser el mismo que va a usar para su calendario.</div></li>
+        <li><span class="n">3</span><div><b>WhatsApp o celular</b> con lada +52. Para el acceso al panel y los avisos.</div></li>
+        <li><span class="n">4</span><div><b>Qué servicios hace</b>: masajes, uñas, faciales o todo. Así solo le llegan cupos de lo que sí puede atender.</div></li>
+        <li><span class="n">5</span><div><b>Si va a domicilio</b>: sí o no. Si va, hasta cuántos kilómetros.</div></li>
+        <li><span class="n">6</span><div><b>Fecha de nacimiento</b> (opcional). Para felicitarla en el grupo.</div></li>
+        <li><span class="n">7</span><div><b>Foto de perfil</b> (opcional, cuadrada). Aparece en el calendario.</div></li>
+      </ol>
+    </div>
+
+    <div>
+      <div class="wa-phone" style="max-width:300px;margin:0"><div class="wa-screen">
+        <div class="wa-top">
+          <span class="wa-av">AI</span>
+          <div><div class="n">Ainnovation · Exentia</div><div class="s">en línea</div></div>
+        </div>
+        <div class="wa-body">
+          <div class="wa-msg me">
+            <span class="hh">Yaz (Exentia)</span>
+            Hola, tenemos masajista nueva. Es Camila López.
+            <div class="wa-time">10:34</div>
+          </div>
+          <div class="wa-msg">
+            <span class="hh">Ainnovation</span>
+            Perfecto. ¿Me pasas su Gmail, WhatsApp y qué servicios hace?
+            <div class="wa-time">10:35</div>
+          </div>
+          <div class="wa-msg me">
+            <span class="hh">Yaz</span>
+            camila.lopez@gmail.com<br>998 987 6543<br>Masajes y faciales, no uñas.<br>Domicilio sí, hasta 10 km.
+            <div class="wa-time">10:36</div>
+          </div>
+          <div class="wa-msg">
+            <span class="hh">Ainnovation</span>
+            Listo, ya quedó registrada. Le mandé el correo para que conecte su Google Calendar. En cuanto lo haga aparece en tu panel.
+            <div class="wa-time">10:52</div>
+          </div>
+        </div>
+      </div></div>
+      <p class="caption"><b>Nosotros lo hacemos por ti</b>Solo mándanos los datos por WhatsApp.</p>
+    </div>
+  </div>
+
+  <div class="note"><b>Aparece en tu panel al momento.</b> Verás su nombre en la leyenda de colores de <b>Calendarios</b>, con un color propio asignado. Ya le puedes asignar cupos aunque todavía no conecte su Google: el sistema los guarda y se sincronizan cuando conecte.</div>
+</div>
+
+<!-- ══════════════ 13 · CONECTAR GOOGLE ══════════════ -->
+<div class="step" id="s13">
+  <div class="step-head"><div class="num">13</div><h2>Conectar su Google Calendar</h2></div>
+  <p class="lead">Este paso lo hace ella una sola vez. Sirve para dos cosas: que las citas que tome aparezcan solas en su Google Calendar personal, y que sus compromisos personales bloqueen ese horario en el panel para que nadie le agende encima.</p>
+
+  <div class="info2">
+    <div>
+      <div class="ghl">
+        <div class="ghl-hd">CRM · Estado de los calendarios</div>
+        <div class="ghl-b">
+          <div class="ghl-r"><div class="av">CL</div><div class="n">Camila López<small>camila.lopez@gmail.com</small></div><span class="cn no">Sin conectar</span></div>
+          <div class="ghl-r"><div class="av">CD</div><div class="n">Calendario Dos<small>ceprintdo@gmail.com</small></div><span class="cn">Conectado</span></div>
+          <div class="ghl-r"><div class="av">TV</div><div class="n">Test Victor<small>vrodriguezpoot98@gmail.com</small></div><span class="cn">Conectado</span></div>
+        </div>
+      </div>
+      <p class="caption" style="margin-top:12px"><b>Vista interna del CRM</b>Muestra quién ya conectó su Google y quién no. Si quieres saber el estado, pídenoslo.</p>
+    </div>
+
+    <div>
+      <h3>Los pasos que hace ella</h3>
+      <ol class="req-list" style="margin-top:8px">
+        <li><span class="n">1</span><div>Le llega un correo con el botón <b>Conectar mi calendario</b>. Debe abrirlo en el dispositivo donde tiene su cuenta de Google iniciada.</div></li>
+        <li><span class="n">2</span><div>Google le pide iniciar sesión con <b>el mismo Gmail</b> que nos diste en el paso anterior.</div></li>
+        <li><span class="n">3</span><div>Google le pregunta si autoriza el acceso al calendario. Debe presionar <b>Permitir</b> en todos los permisos que salgan.</div></li>
+        <li><span class="n">4</span><div>Regresa a una pantalla que dice <b>Calendario conectado</b>.</div></li>
+        <li><span class="n">5</span><div>Listo. De ahí en adelante todo se sincroniza solo.</div></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="warn"><b>Debe usar exactamente la misma cuenta.</b> Si por error entra con otro Gmail, el sistema no la reconoce y hay que empezar de cero. Recuérdaselo antes de que abra el correo.</div>
+
+  <div class="cards" style="margin-top:22px">
+    <div class="card"><div class="ic">↔</div><h4>Va en los dos sentidos</h4>
+      <p>Cita nueva en el panel → aparece en su Google en segundos. Compromiso personal en su Google → ese horario se bloquea en el panel.</p></div>
+    <div class="card"><div class="ic">◈</div><h4>Un solo calendario</h4>
+      <p>Todo Exentia comparte un calendario en el CRM. La separación entre masajistas se hace por su cuenta de Google, no por calendarios distintos. Por eso una no ve ni bloquea la agenda de la otra.</p></div>
+    <div class="card"><div class="ic">✕</div><h4>Si se desconecta</h4>
+      <p>Sus cupos siguen apareciendo en el panel, pero dejan de llegarle a Google. Se reconecta en dos minutos con el mismo correo.</p></div>
+    <div class="card"><div class="ic">→</div><h4>Cuando alguien se va</h4>
+      <p>Avísanos y la desactivamos. Sus citas históricas y comisiones se conservan; su Google queda desvinculado.</p></div>
+  </div>
+</div>
+
+<!-- ══════════════ RESUMEN ══════════════ -->
+<div class="step" id="sr">
+  <div class="step-head"><div class="num">R</div><h2>Resumen rápido</h2></div>
+  <p class="lead">Todo el manual en una sola tabla, por si prefieres guardar solo esta hoja.</p>
+
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th style="width:26%">Quiero…</th><th style="width:20%">Dónde</th><th>Cómo</th></tr></thead>
+      <tbody>
+        <tr><td><b>Ver la agenda del día</b></td><td>Calendarios</td><td>Presiona <b>Hoy</b>. Todas las citas del equipo aparecen en la columna de la fecha.</td></tr>
+        <tr><td><b>Ver solo a una masajista</b></td><td>Calendarios</td><td>Presiona su chip de color en la leyenda. Otra vez para quitar el filtro.</td></tr>
+        <tr><td><b>Abrir una cita</b></td><td>Calendarios</td><td>Click en cualquier bloque del calendario.</td></tr>
+        <tr><td><b>Asignar o cambiar de masajista</b></td><td>Pop-up de la cita</td><td>Selector <b>MASAJISTA</b>, hasta abajo. Se aplica solo.</td></tr>
+        <tr><td><b>Cobrar lo que falta</b></td><td>Pop-up de la cita</td><td>Botón <b>Registrar cobro · falta $X</b>. Captura monto y método.</td></tr>
+        <tr><td><b>Registrar una propina</b></td><td>Pop-up de la cita</td><td><b>+ Registrar pago extra</b>. Va 100% a la masajista, no cuenta al servicio.</td></tr>
+        <tr><td><b>Ver cómo llegar a su casa</b></td><td>Pop-up de la cita</td><td><b>Detalles del cliente</b>. Trae caseta, código de acceso, estacionamiento, piso, elevador y mascotas.</td></tr>
+        <tr><td><b>Mover una cita de horario</b></td><td>Pop-up · botón olivo</td><td><b>Cambiar horario</b>. Elige toda la cita o solo un cupo. El cliente recibe aviso.</td></tr>
+        <tr><td><b>Cancelar una cita</b></td><td>Pop-up · botón rojo</td><td><b>Cancelar cita</b>. Libera el horario y avisa al cliente. <b>No devuelve el dinero.</b></td></tr>
+        <tr><td><b>Devolver el dinero</b></td><td>Pop-up · botón morado</td><td><b>Reembolsar</b>. Solo si pagó con tarjeta. Monto y motivo, un click.</td></tr>
+        <tr><td><b>Liberar una comisión</b></td><td>Pop-up de cita terminada</td><td><b>Marcar Show</b> en el banner naranja de arriba.</td></tr>
+        <tr><td><b>Cambiar un precio</b></td><td>Catálogo</td><td><b>Editar</b> en la fila del producto. Se aplica en la página al guardar.</td></tr>
+        <tr><td><b>Quitar un servicio de la página</b></td><td>Catálogo</td><td><b>Ocultar</b>. No lo borra, conserva el historial.</td></tr>
+        <tr><td><b>Crear un servicio nuevo</b></td><td>Catálogo</td><td><b>+ Agregar producto</b>. Nombre, sección, dónde se ofrece, duración y precio.</td></tr>
+        <tr><td><b>Saber cuánto le debo a cada quien</b></td><td>Comisiones</td><td>Mira la cifra <b>Pagable</b> de su tarjeta.</td></tr>
+        <tr><td><b>Ver qué me falta validar</b></td><td>Comisiones</td><td>Filtra por estado <b>Esperando pago</b>. Casi siempre falta el Show.</td></tr>
+        <tr><td><b>Pagar al equipo (miércoles)</b></td><td>Comisiones</td><td>Pon el rango de la semana → <b>↓ Descargar reporte</b> → transfiere → <b>Marcar pagada</b> en cada fila.</td></tr>
+        <tr><td><b>Dar de alta a alguien</b></td><td>WhatsApp con Ainnovation</td><td>Manda: nombre, Gmail, WhatsApp, qué servicios hace, si va a domicilio.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cards" style="margin-top:26px">
+    <div class="card"><div class="ic">✉</div><h4>¿Dudas?</h4>
+      <p>Escríbenos por WhatsApp al equipo de Ainnovation. Respondemos el mismo día en horario de oficina.</p></div>
+    <div class="card"><div class="ic">◉</div><h4>El punto verde</h4>
+      <p>Confirma que estás recibiendo los cambios en vivo. Si se pone amarillo, presiona ↻ para refrescar.</p></div>
+    <div class="card"><div class="ic">▲</div><h4>Cierre de sesión</h4>
+      <p>Se cierra sola cada 8 horas. También puedes cerrarla con el botón de arriba a la derecha.</p></div>
+  </div>
+</div>
+
+</div>
+
+<div class="foot">
+  <div class="mk">exentia</div>
+  <div>Manual del Panel del Administrador · Agosto 2026</div>
+  <div style="margin-top:6px;color:var(--ink-faint);font-size:12px">Preparado por Ainnovation · <span class="serif">exentiaspabeauty.com/panel</span></div>
+</div>
