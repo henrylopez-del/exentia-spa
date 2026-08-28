@@ -6612,10 +6612,14 @@ window.EXENTIA_CONFIG = {
   WEBHOOK_CLIENTE_ME_V2: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cliente-me-v2',
   WEBHOOK_CANCELAR_CLIENTE: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-cancelar-cliente',
   WEBHOOK_STRIPE_CHECKOUT: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-stripe-checkout',
-  // ⚠ PRODUCCIÓN — cobros REALES. Tarjeta 4242 NO funciona aquí; cualquier tarjeta
-  // que se capture cobra de verdad. Para volver a pruebas: cambiar esta pk_ por la
-  // pk_live_ de exentia/.env.stripe (y también el sk_ + whsec_ en los dos workflows n8n).
-  STRIPE_PUBLISHABLE_KEY: 'pk_live_51TwOstA1ZmEhwrG8koPiHQxtGJgJQHybfMi9oAhgt7UaZ1tRTl3sBIfdg5ABrmTLCgOpxnqs0euhU4SxBPya4MLa003D5JpEml',
+  // 🧪 PRUEBAS — sandbox de Stripe, NO cobra dinero real. Usar la tarjeta de prueba
+  // 4242 4242 4242 4242 (cualquier fecha futura y cualquier CVC).
+  // Volver a producción son TRES cambios, no uno — los tres tienen que ir juntos:
+  //   1. esta pk_ → STRIPE_LIVE_PUBLISHABLE_KEY de exentia/.env.stripe
+  //   2. n8n `exentia-stripe-checkout` → nodo "Create Stripe Session" → sk_ live
+  //   3. n8n `exentia-stripe-webhook`  → nodo "HMAC-SHA256" → whsec_ live
+  // Con la pk_ en test y el sk_ en live (o al revés) el checkout falla de entrada.
+  STRIPE_PUBLISHABLE_KEY: 'pk_test_51TwOstA1ZmEhwrG8cZjdVSimnI1KfBwECHMREEjs9XTWEqjoNnoL9ojdCI4jOusXYAqXMZnEfeScyXAH7krriZBS00PRpuubCm',
   PAYMENT_MODE: 'stripe',  // 'stripe' (default) | 'simulator'. Override en runtime con ?pago=simulator
   WEBHOOK_CATALOGO: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-catalogo',
   CATALOGO_MODE: 'remoto',  // 'remoto' (Supabase vía n8n, default) | 'local' (hardcodeado, fallback). Override con ?catalogo=local para forzar el hardcodeado.
@@ -7071,7 +7075,7 @@ try {
           "description": "Exentia At Home · servicio a domicilio",
           "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
           "opens": "07:00",
-          "closes": "20:00"
+          "closes": "23:00"
         }
       ],
       "sameAs": [
@@ -7136,7 +7140,7 @@ try {
       "mainEntity": [
         {"@type": "Question", "name": "¿Necesito hacer cita previa?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, te recomendamos agendar tu cita con anticipación para garantizar tu espacio. Puedes reservar desde nuestra página en pocos pasos o por WhatsApp."}},
         {"@type": "Question", "name": "¿Qué tipo de productos utilizan?", "acceptedAnswer": {"@type": "Answer", "text": "Trabajamos con productos orgánicos y naturales cuidadosamente seleccionados. Utilizamos ingredientes reales y fórmulas limpias que nutren y restauran."}},
-        {"@type": "Question", "name": "¿Cuál es su horario de atención?", "acceptedAnswer": {"@type": "Answer", "text": "Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. Servicio a domicilio (Exentia At Home) de 7:00 AM a 8:00 PM. Domingos permanecemos cerrados."}},
+        {"@type": "Question", "name": "¿Cuál es su horario de atención?", "acceptedAnswer": {"@type": "Answer", "text": "Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. Servicio a domicilio (Exentia At Home) de 7:00 AM a 11:00 PM. Domingos permanecemos cerrados."}},
         {"@type": "Question", "name": "¿Dónde están ubicados?", "acceptedAnswer": {"@type": "Answer", "text": "Nos encontramos en Plaza Hive, sobre Avenida Huayacán en Cancún, Quintana Roo."}},
         {"@type": "Question", "name": "¿Tienen servicios para niños?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, contamos con Spa Kids & Teens, experiencias completas de spa diseñadas para niños y adolescentes en un entorno cálido y seguro."}},
         {"@type": "Question", "name": "¿Ofrecen servicio a domicilio?", "acceptedAnswer": {"@type": "Answer", "text": "Sí, a través de Exentia At Home llevamos experiencias de bienestar personalizadas a tu hogar, hotel o evento."}},
@@ -7649,7 +7653,7 @@ try {
             </div>
             <div class="text">
               <div class="label">Horario</div>
-              <div class="value">Lunes a Sábado<br>Sucursal: 9:00 AM – 6:00 PM<br>A domicilio: 7:00 AM – 8:00 PM</div>
+              <div class="value">Lunes a Sábado<br>Sucursal: 9:00 AM – 6:00 PM<br>A domicilio: 7:00 AM – 11:00 PM</div>
             </div>
           </li>
         </ul>
@@ -7689,7 +7693,7 @@ try {
           <span>¿Cuál es su horario de atención?</span>
           <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
-        <div class="faq-answer"><p>Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. A domicilio (Exentia At Home) de 7:00 AM a 8:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.</p></div>
+        <div class="faq-answer"><p>Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. A domicilio (Exentia At Home) de 7:00 AM a 11:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
@@ -8678,7 +8682,7 @@ try {
           <span class="choice-arrow" aria-hidden="true">→</span>
         </button>
         <!-- Sucursal sin anticipo: reserva sin pagar, el monto final se cobra en el spa. -->
-        <button class="choice-btn choice-pay" id="ck-btn-reservar" onclick="closeModal('modal-choice'); openModal('modal-agendar');" type="button" style="display:none;">
+        <button class="choice-btn choice-pay" id="ck-btn-reservar" onclick="closeModal('modal-choice'); openAgendarModal();" type="button" style="display:none;">
           <svg class="choice-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-7"/></svg>
           <div class="choice-text">
             <strong>Confirmar cita</strong>
@@ -9215,7 +9219,11 @@ try {
     }
     // Ticket total = suma de precios de servicios + traslado (si aplica)
     var subtotal = servicios.reduce(function(a, s){ return a + (parseFloat(s.precio_mxn) || 0); }, 0);
-    var traslado = parseFloat(place.costoTrasladoTotal || 0) || 0;
+    // Solo domicilio paga traslado. citaPlace se restaura completo desde localStorage,
+    // asi que una reserva anterior a domicilio dejaba costoTrasladoTotal pegado y la
+    // siguiente en sucursal lo sumaba al total. Mismo guard que usa el modal de
+    // confirmacion (_cfTraslado), para que ambos totales siempre coincidan.
+    var traslado = (place.mode === 'domicilio') ? (parseFloat(place.costoTrasladoTotal || 0) || 0) : 0;
     var leadRef = '';
     try { leadRef = localStorage.getItem('ex_lead_ref') || ''; } catch(_e){}
     // Notas: no hay campo de notas en la UI actual — leemos del estado por si
@@ -9235,9 +9243,12 @@ try {
       duracion_total_min: duracionTotal || null,
       num_personas: personas.length,
       personas_total: personas.length,
-      modalidad: place.modalidad || (personas.length === 1 ? 'individual' : 'simultaneo'),
-      num_terapeutas_estimado: place.numTerapeutasEstimado || '',
-      costo_traslado_total: place.costoTrasladoTotal || '',
+      // Una sola persona no puede llevar modalidad de grupo ni varias terapeutas.
+      // citaPlace se guarda en localStorage, asi que una reserva anterior de 2+ personas
+      // dejaba 'simultaneo' y 2 terapeutas pegados, y el aviso al equipo salia mal.
+      modalidad: personas.length === 1 ? 'individual' : (place.modalidad || 'simultaneo'),
+      num_terapeutas_estimado: personas.length === 1 ? 1 : (place.numTerapeutasEstimado || ''),
+      costo_traslado_total: (place.mode === 'domicilio') ? (place.costoTrasladoTotal || '') : '',
       personas_servicios: personasServicios,
       valor_ticket_mxn: subtotal + traslado,
       // Contrato con el panel/admin (2026-08-04):
@@ -12090,7 +12101,7 @@ try {
     var em = document.getElementById('cf-email');
     if (fn && d.firstName) fn.value = d.firstName;
     if (ln && d.lastName) ln.value = d.lastName;
-    if (ph && d.phone) ph.value = d.phone;
+    if (ph && d.phone) setPhoneInputValue('cf-phone', d.phone);
     if (em && d.email) em.value = d.email;
     // Si el cliente está logueado y tiene los 3 datos, mostrar la tarjeta de identidad
     // de 1 tap en vez del formulario.
@@ -12180,6 +12191,25 @@ try {
       flag.style.background = 'none';
     });
   }
+  // Escribe un telefono en un input de intl-tel-input sin duplicar el prefijo.
+  // Con separateDialCode:true el '+52' vive en el boton de pais, NO en el input.
+  // Asignar .value = '+529983463802' directo deja el prefijo visible en los dos
+  // lados: el usuario ve '+529983463802' en el campo Y '+52' en el boton, y tiene
+  // que borrarlo a mano. Pasaba solo al REGRESAR al formulario, porque en la
+  // primera apertura la libreria todavia no existia y parseaba bien el valor
+  // inicial; en la segunda ya hay instancia e initPhoneValidator sale temprano.
+  // setNumber() hace la separacion correcta.
+  function setPhoneInputValue(inputId, value) {
+    var el = document.getElementById(inputId);
+    if (!el || !value) return;
+    var iti = (window._itiInstances || {})[inputId];
+    if (iti && typeof iti.setNumber === 'function') {
+      try { iti.setNumber(value); return; } catch(_) {}
+    }
+    el.value = value;   // sin instancia aun: initPhoneValidator lo parsea al arrancar
+  }
+  window.setPhoneInputValue = setPhoneInputValue;
+
   function initPhoneValidator(inputId) {
     var input = document.getElementById(inputId);
     if (!input) return;
@@ -12620,8 +12650,6 @@ try {
   window.submitCustomForm = function(e) {
     if (e && e.preventDefault) e.preventDefault();
     if (_formSubmitting) return false;
-    var form = document.getElementById('custom-reserva-form');
-    var isCalendar = form && form.classList.contains('mode-calendar');
     var firstName = (document.getElementById('cf-firstname').value || '').trim();
     var lastName = (document.getElementById('cf-lastname').value || '').trim();
     var err = document.getElementById('cf-error');
@@ -12634,13 +12662,10 @@ try {
     var _iti = (window._itiInstances && window._itiInstances['cf-phone']) || null;
     // Teléfono se captura SIEMPRE (obligatorio en ambos modos desde esta tanda).
     phone = _iti && _iti.getNumber ? (_iti.getNumber() || '').trim() : (document.getElementById('cf-phone').value || '').trim();
-    if (isCalendar) {
-      email = (document.getElementById('cf-email').value || '').trim();
-    } else {
-      // En modo WhatsApp, correo sigue siendo opcional — se captura si el usuario lo llenó.
-      var emailEl = document.getElementById('cf-email');
-      if (emailEl && emailEl.value) email = emailEl.value.trim();
-    }
+    // Correo OPCIONAL en este paso (revertido 2026-08-27 a peticion de Victor).
+    // Quien no lo escriba aqui lo captura en el paso 3 (modal-agendar), que si lo exige.
+    var emailEl = document.getElementById('cf-email');
+    if (emailEl && emailEl.value) email = emailEl.value.trim();
 
     if (!firstName) {
       err.textContent = 'Por favor escribe tu nombre.';
@@ -12661,14 +12686,7 @@ try {
       try { document.getElementById('cf-phone').focus(); } catch(_){}
       return false;
     }
-    if (isCalendar) {
-      if (!email) {
-        err.textContent = 'Necesitamos tu correo para enviarte la confirmación.';
-        err.style.display = 'block';
-        try { document.getElementById('cf-email').focus(); } catch(_){}
-        return false;
-      }
-    }
+
 
     // Validación de email para AMBOS modos (si hay email capturado)
     if (email) {
@@ -12759,7 +12777,10 @@ try {
     // (submitAgendarForm en modo whatsapp; flujo de calendario en modo calendar).
     if (!window._exGhlContactSynced) {
       try {
-        var _contactPayload = Object.assign({}, buildReservaPayload({ mode: isCalendar ? 'calendar' : 'whatsapp' }), { solo_contacto: true });
+        // mode siempre fue 'whatsapp': el form nunca corre en 'mode-calendar'
+        // (openFormModal() jamás se llama con argumento), así que isCalendar era
+        // constante false. Se sustituye por el valor real y se elimina la variable.
+        var _contactPayload = Object.assign({}, buildReservaPayload({ mode: 'whatsapp' }), { solo_contacto: true });
         sendReserva(_contactPayload, { skipState: true }).then(function(j){
           if (j && j.ghl_contact_id) {
             window._exGhlContactSynced = true;
@@ -13540,7 +13561,7 @@ try {
     try {
       var d = window._formUserData || {};
       var agWa = document.getElementById('ag-whatsapp');
-      if (agWa && !agWa.value && d.phone) agWa.value = d.phone;
+      if (agWa && !agWa.value && d.phone) setPhoneInputValue('ag-whatsapp', d.phone);
       var agEmail = document.getElementById('ag-email');
       var pgEmail = document.getElementById('pg-email');
       if (agEmail && !agEmail.value) {
@@ -13781,34 +13802,133 @@ try {
     return total;
   }
 
+  // ─── Hora de Cancún ───
+  // Todos los cálculos de horario tienen que hacerse contra la hora local del negocio,
+  // no la del navegador del cliente. Cancún es UTC-5 fijo, sin horario de verano.
+  // Devuelve un Date cuyos getHours()/getDate() ya son los de Cancún, para que el
+  // resto del código pueda seguir comparando horas de pared entre sí.
+  function _ahoraCancun() {
+    try {
+      var partes = {};
+      new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Cancun',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      }).formatToParts(new Date()).forEach(function (p) { partes[p.type] = p.value; });
+      return new Date(
+        parseInt(partes.year, 10),
+        parseInt(partes.month, 10) - 1,
+        parseInt(partes.day, 10),
+        parseInt(partes.hour, 10) % 24,   // algunos navegadores devuelven "24" a medianoche
+        parseInt(partes.minute, 10),
+        parseInt(partes.second, 10)
+      );
+    } catch (e) {
+      return new Date();   // si Intl falla, al menos no rompe la página
+    }
+  }
+  window._ahoraCancun = _ahoraCancun;
+
+  // ─── Ventanas horarias ───
+  var NOTIF_OPEN_H = 6;      // desde qué hora se le puede avisar al equipo
+  var NOTIF_CLOSE_H = 22;    // hasta qué hora se le puede avisar al equipo
+  var CLIENTE_OPEN_H = 8;    // desde qué hora se le puede escribir al cliente
+  var ACEPTAR_MIN = 60;      // ventana que tiene el equipo para aceptar
+  var CORTE_ANTES_MIN = 60;  // margen de aviso al cliente antes de la cita
+
+  // Hasta qué hora se le puede escribir al cliente ese día. Los domingos se corta
+  // más temprano: nadie quiere recibir un domingo a las 10 de la noche el aviso de
+  // que su cita del lunes a las 7:00 am no se pudo cubrir.
+  function _clienteCloseH(fecha) {
+    return fecha.getDay() === 0 ? 18 : 22;
+  }
+
+  // Avanza `minutos` a partir de `desde`, contando solo el tiempo que cae dentro de
+  // la ventana de aviso al equipo. Si alguien reserva a las 11:00 pm, el conteo
+  // arranca hasta las 6:00 am del día siguiente.
+  function _addVentanaMin(desde, minutos) {
+    var cur = new Date(desde.getTime());
+    var restan = minutos;
+    var guard = 0;
+    while (restan > 0 && guard++ < 60) {
+      if (cur.getHours() < NOTIF_OPEN_H) {
+        cur.setHours(NOTIF_OPEN_H, 0, 0, 0);
+      } else if (cur.getHours() >= NOTIF_CLOSE_H) {
+        cur.setDate(cur.getDate() + 1);
+        cur.setHours(NOTIF_OPEN_H, 0, 0, 0);
+      }
+      var cierre = new Date(cur.getTime());
+      cierre.setHours(NOTIF_CLOSE_H, 0, 0, 0);
+      var disponibles = Math.floor((cierre.getTime() - cur.getTime()) / 60000);
+      if (disponibles >= restan) {
+        cur = new Date(cur.getTime() + restan * 60000);
+        restan = 0;
+      } else {
+        restan -= disponibles;
+        cur = cierre;
+      }
+    }
+    return cur;
+  }
+  window._addVentanaMin = _addVentanaMin;
+
+  // El corte: última hora a la que todavía se le puede avisar al cliente que su cita
+  // no se pudo cubrir. Normalmente es una hora antes de la cita; si eso cae fuera del
+  // horario de contacto, se recorre al cierre del día anterior.
+  function _corteEfectivo(citaDt) {
+    var c = new Date(citaDt.getTime() - CORTE_ANTES_MIN * 60000);
+    var hDec = c.getHours() + c.getMinutes() / 60;
+    if (hDec >= CLIENTE_OPEN_H && hDec <= _clienteCloseH(c)) return c;
+    var guard = 0;
+    while (guard++ < 8) {
+      c.setDate(c.getDate() - 1);
+      c.setHours(_clienteCloseH(c), 0, 0, 0);
+      if (c.getTime() < citaDt.getTime()) return c;
+    }
+    return c;
+  }
+  window._corteEfectivo = _corteEfectivo;
+
   function _cal2GenSlots(durMin, dateIso) {
-    // Horarios independientes por modalidad (requerimiento Henry 2026-08-04):
-    // - Sucursal (spa): Lun-Sáb 9:00-18:00, último INICIO = cierre menos duración del servicio.
-    // - Domicilio (At Home): Lun-Sáb 7:00-20:00, último INICIO de servicio = 20:00 fijo
-    //   (no se resta la duración: el terapeuta se desplaza, no "cierra" nada a esa hora).
-    //   + mínimo 2h de anticipación al servicio principal → filtrar slots < ahora+2h.
+    // Horarios independientes por modalidad (requerimiento Henry 2026-08-04,
+    // actualizado 2026-08-27 con el horario nocturno):
+    // - Sucursal (spa): Lun-Sáb 9:00-18:00.
+    // - Domicilio (At Home): Lun-Sáb 7:00-23:00. El tramo 20:00-23:00 es el nocturno.
+    // - En AMBAS modalidades el cierre es la hora en que el servicio TERMINA, así que
+    //   el último inicio posible es el cierre menos la duración del servicio.
+    //   (Antes domicilio no restaba la duración y permitía empezar a las 20:00 fijo.
+    //   Corregido el 2026-08-27: una cita de 1h en nocturno arranca 22:00, no 23:00.)
     // - Slots cada 60 minutos.
     var isDomicilio = (typeof citaPlace !== 'undefined' && citaPlace && citaPlace.mode === 'domicilio');
     var openH = isDomicilio ? 7 : 9;
-    var closeH = isDomicilio ? 20 : 18;
+    var closeH = isDomicilio ? 23 : 18;
     var STEP = 60;
-    var lastStart = isDomicilio ? (closeH * 60) : (closeH * 60 - durMin);
+    // El cierre es la hora en que el servicio TERMINA, en las dos modalidades.
+    var lastStart = closeH * 60 - durMin;
     var slots = [];
     var minStart = openH * 60;
-    if (dateIso) {
-      var today = new Date(); today.setHours(0,0,0,0);
-      var d = new Date(dateIso + 'T00:00:00');
-      if (d.getTime() === today.getTime()) {
-        var now = new Date();
-        var nowMin = now.getHours()*60 + now.getMinutes();
-        var earliest = isDomicilio ? (nowMin + 120) : nowMin;
-        // Redondear hacia arriba al múltiplo de STEP
-        earliest = Math.ceil(earliest / STEP) * STEP;
-        if (earliest > minStart) minStart = earliest;
+    if (dateIso && !isDomicilio) {
+      // Sucursal: sin búfer, solo no ofrecer horas que ya pasaron hoy.
+      var hoy0 = _ahoraCancun(); hoy0.setHours(0, 0, 0, 0);
+      var diaSel = new Date(dateIso + 'T00:00:00');
+      if (diaSel.getTime() === hoy0.getTime()) {
+        var ahora = _ahoraCancun();
+        var nowMin = ahora.getHours() * 60 + ahora.getMinutes();
+        nowMin = Math.ceil(nowMin / STEP) * STEP;
+        if (nowMin > minStart) minStart = nowMin;
       }
     }
+
+    // Momento en que el equipo ya habrá tenido su ventana para aceptar.
+    var listoDt = isDomicilio ? _addVentanaMin(_ahoraCancun(), ACEPTAR_MIN) : null;
+
     for (var m = minStart; m <= lastStart; m += STEP) {
       var h = Math.floor(m / 60), mm = m % 60;
+      if (isDomicilio && dateIso) {
+        var citaDt = new Date(dateIso + 'T00:00:00');
+        citaDt.setHours(h, mm, 0, 0);
+        if (listoDt.getTime() > _corteEfectivo(citaDt).getTime()) continue;
+      }
       slots.push((h<10?'0':'')+h+':'+(mm<10?'0':'')+mm);
     }
     return slots;
@@ -13824,7 +13944,7 @@ try {
   }
 
   function _cal2IsPast(y, m, d) {
-    var today = new Date(); today.setHours(0,0,0,0);
+    var today = _ahoraCancun(); today.setHours(0,0,0,0);
     var test = new Date(y, m, d);
     return test < today;
   }
@@ -13835,8 +13955,8 @@ try {
 
   function _cal2NoSlotsToday(y, m, d, durMin) {
     // Sólo bloquea HOY si ya no quedan slots válidos (sucursal: ningún slot abierto;
-    // domicilio: ningún slot con +2h de anticipación). Mañana siempre disponible.
-    var today = new Date(); today.setHours(0,0,0,0);
+    // domicilio: ningún slot cuyo corte alcance la ventana del equipo).
+    var today = _ahoraCancun(); today.setHours(0,0,0,0);
     var test = new Date(y, m, d); test.setHours(0,0,0,0);
     if (test.getTime() !== today.getTime()) return false;
     var iso = _cal2IsoDate(y, m, d);
@@ -13861,7 +13981,7 @@ try {
       if (_cal2IsPast(y, m, d) || _cal2IsSunday(y, m, d) || _cal2NoSlotsToday(y, m, d, durMin)) {
         cls.push('cal2-disabled'); disabled = true;
       }
-      var today = new Date();
+      var today = _ahoraCancun();
       if (today.getFullYear()===y && today.getMonth()===m && today.getDate()===d) cls.push('cal2-today');
       var iso = _cal2IsoDate(y, m, d);
       if (cal2.selectedDate === iso) cls.push('cal2-selected');
@@ -13870,7 +13990,7 @@ try {
     grid.innerHTML = html;
     // Botón mes anterior: bloqueado si vamos al mes pasado
     var prevBtn = document.getElementById('cal2-prev');
-    var now = new Date();
+    var now = _ahoraCancun();
     if (prevBtn) prevBtn.disabled = (y < now.getFullYear() || (y === now.getFullYear() && m <= now.getMonth()));
     // Wire days
     grid.querySelectorAll('.cal2-day[data-date]').forEach(function(el){
@@ -13936,7 +14056,7 @@ try {
   }
 
   function openCal2() {
-    var today = new Date();
+    var today = _ahoraCancun();
     if (cal2.viewYear === null) { cal2.viewYear = today.getFullYear(); cal2.viewMonth = today.getMonth(); }
     // Actualizar nota de duración
     var note = document.getElementById('cal-duration-note');
@@ -13951,7 +14071,7 @@ try {
     if (hNote) {
       var isDom = (typeof citaPlace !== 'undefined' && citaPlace && citaPlace.mode === 'domicilio');
       hNote.textContent = isDom
-        ? 'Lun-Sáb · 7:00 AM – 8:00 PM · El equipo confirma por WhatsApp.'
+        ? 'Lun-Sáb · 7:00 AM – 11:00 PM · El equipo confirma por WhatsApp.'
         : 'Lun-Sáb · 9:00 AM – 6:00 PM · El equipo confirma por WhatsApp.';
     }
     openModal('modal-calendar');
@@ -13969,7 +14089,7 @@ try {
     var wIn = document.getElementById('ag-whatsapp');
     var eIn = document.getElementById('ag-email');
     var errEl = document.getElementById('ag-error');
-    if (wIn && d.phone) wIn.value = d.phone;
+    if (wIn && d.phone) setPhoneInputValue('ag-whatsapp', d.phone);
     if (eIn && d.email) eIn.value = d.email;
     // Alternar tarjeta de identidad / form según sesión
     var idCard = document.getElementById('ag-identity-card');
@@ -13994,6 +14114,7 @@ try {
     try { if (window.exentiaTrack) window.exentiaTrack('agendar_modal_open', {}); } catch(_){}
   }
   window.openAgendarModal = openAgendarModal;
+
 
   function submitAgendarForm(e, opts) {
     if (e && e.preventDefault) e.preventDefault();
@@ -14625,7 +14746,7 @@ try {
   });
 
   document.addEventListener('DOMContentLoaded', function(){
-    var today = new Date();
+    var today = _ahoraCancun();
     cal2.viewYear = today.getFullYear();
     cal2.viewMonth = today.getMonth();
     var prevBtn = document.getElementById('cal2-prev');
@@ -15007,6 +15128,7 @@ try {
       var sessPref = (_prefSess && (_prefSess.preferencia_sexo || _prefSess.pref_genero)) || '';
       if (sessPref === 'cualquiera' || sessPref === 'indiferente') sessPref = 'indistinto';
       if (sessPref !== 'mujer' && sessPref !== 'hombre' && sessPref !== 'indistinto') sessPref = '';
+
       var prefHtml = '';
       prefIds.forEach(function(pid, idx){
         if (!personasMeta[pid]) personasMeta[pid] = { id: pid, label: 'Persona ' + pid };
@@ -18467,7 +18589,7 @@ try {
     '¿Qué tipo de productos utilizan?': 'What kind of products do you use?',
     'Trabajamos con productos orgánicos y naturales cuidadosamente seleccionados. Creemos que lo que toca tu piel es tan importante como lo que sientes mientras te cuidan. Utilizamos ingredientes reales y fórmulas limpias que nutren y restauran.': 'We work with carefully selected organic, natural products. We believe what touches your skin matters as much as what you feel while being cared for. We use real ingredients and clean formulas that nourish and restore.',
     '¿Cuál es su horario de atención?': 'What are your opening hours?',
-    'Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. A domicilio (Exentia At Home) de 7:00 AM a 8:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.': 'We are open Monday to Saturday. In-spa (Exentia Spa & Beauty Salon) from 9:00 AM to 6:00 PM. At-home service (Exentia At Home) from 7:00 AM to 8:00 PM. Closed on Sundays. We recommend booking in advance to secure your preferred time.',
+    'Atendemos de lunes a sábado. En sucursal (Exentia Spa & Beauty Salon) de 9:00 AM a 6:00 PM. A domicilio (Exentia At Home) de 7:00 AM a 11:00 PM. Domingos permanecemos cerrados. Te recomendamos agendar con anticipación para asegurar tu horario preferido.': 'We are open Monday to Saturday. In-spa (Exentia Spa & Beauty Salon) from 9:00 AM to 6:00 PM. At-home service (Exentia At Home) from 7:00 AM to 11:00 PM. Closed on Sundays. We recommend booking in advance to secure your preferred time.',
     '¿Dónde están ubicados?': 'Where are you located?',
     'Nos encontramos en Plaza Hive, sobre Avenida Huayacán en Cancún, Quintana Roo. Un espacio diseñado para tu desconexión en una zona accesible y tranquila de la ciudad.': 'We are located at Plaza Hive, on Avenida Huayacán in Cancún, Quintana Roo. A space designed for your disconnection in an accessible, quiet part of the city.',
     '¿Tienen servicios para niños?': 'Do you have services for kids?',
@@ -19074,7 +19196,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v264-schema-reserveaction', stamp: '2026-08-12 10:00' };
+  var EX_BUILD = { version: 'v274-fix-prefijo-telefono-duplicado', stamp: '2026-08-28 12:15' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
