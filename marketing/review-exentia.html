@@ -251,6 +251,29 @@
   }
 
   /* Textarea */
+  /* Campo de texto de una linea, con el mismo aspecto que el comentario */
+  .campo-label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    font: 500 12.5px 'Inter', sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--olive-dark);
+    text-align: left;
+  }
+  #atendio, #servicio, #pagado {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--cream);
+    border-radius: 10px;
+    font: 14px 'Inter', sans-serif;
+    color: var(--brown);
+    background: var(--cream-soft);
+    transition: border-color 0.15s ease;
+  }
+  #atendio:focus, #servicio:focus, #pagado:focus { outline: none; border-color: var(--olive); }
+
   textarea {
     width: 100%;
     min-height: 100px;
@@ -437,53 +460,13 @@
       <path d="M20 35c2.5 4.5 6.5 7 10 7s7.5-2.5 10-7" stroke-width="2.2"/>
     </svg>
     <h1 data-i18n-html="high_title">Gracias por tu <em>calificación</em></h1>
-    <p class="subtitle" data-i18n="high_subtitle">Nos alegra saber que tu experiencia fue positiva. ¿Podrías contarnos un poco más?</p>
-
-    <div class="questions">
-      <div class="questions-title" data-i18n="questions_title">Cuéntanos qué tal…</div>
-      <div class="q-row"><div class="q-label" data-i18n="q_calidad">Calidad del servicio</div><div class="q-stars" data-q="calidad">
-        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-      </div></div>
-      <div class="q-row"><div class="q-label" data-i18n="q_puntualidad">Puntualidad</div><div class="q-stars" data-q="puntualidad">
-        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-      </div></div>
-      <div class="q-row"><div class="q-label" data-i18n="q_atencion">Atención de tu masajista</div><div class="q-stars" data-q="atencion">
-        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-      </div></div>
-      <div class="q-row"><div class="q-label" data-i18n="q_experiencia">Experiencia general</div><div class="q-stars" data-q="experiencia">
-        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-      </div></div>
-      <div class="q-row"><div class="q-label" data-i18n="q_recomendacion">¿Nos recomendarías?</div><div class="q-stars" data-q="recomendacion">
-        <button type="button" class="q-star" data-val="5"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="4"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="3"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-        <button type="button" class="q-star" data-val="1"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
-      </div></div>
-    </div>
+    <p class="subtitle" data-i18n="high_subtitle">Te llevamos a Google para que dejes tu reseña.</p>
 
     <div class="actions">
-      <a class="btn btn-google" href="https://search.google.com/local/writereview?placeid=ChIJJaUrkTMrTI8RGiZLJ1VMn7w" target="_blank" rel="noopener" id="btn-google">
+      <a class="btn btn-google" href="https://search.google.com/local/writereview?placeid=ChIJJaUrkTMrTI8RGiZLJ1VMn7w" rel="noopener" id="btn-google">
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         <span data-i18n="btn_google">Dejar reseña en Google</span>
       </a>
-      <button type="button" class="btn btn-secondary" id="btn-skip-google" data-i18n="btn_skip">Enviar sin dejar reseña</button>
     </div>
   </section>
 
@@ -537,6 +520,21 @@
       </div></div>
     </div>
 
+    <label class="campo-label" for="atendio" data-i18n="atendio_label">¿Quién te atendió?</label>
+    <input type="text" id="atendio" data-i18n-ph="atendio_ph" placeholder="Nombre de quien te atendió (opcional)">
+
+    <label class="campo-label" for="servicio" data-i18n="servicio_label">¿Qué servicio recibiste?</label>
+    <input type="text" id="servicio" data-i18n-ph="servicio_ph" placeholder="Masaje, manicura, facial… (opcional)">
+
+    <label class="campo-label" for="pagado" data-i18n="pagado_label">¿Cuánto pagaste en total?</label>
+    <select id="pagado">
+      <option value="" data-i18n="pagado_0">Prefiero no decir</option>
+      <option value="menos_500" data-i18n="pagado_1">Menos de $500</option>
+      <option value="500_1000" data-i18n="pagado_2">Entre $500 y $1,000</option>
+      <option value="1000_2000" data-i18n="pagado_3">Entre $1,000 y $2,000</option>
+      <option value="mas_2000" data-i18n="pagado_4">Más de $2,000</option>
+    </select>
+
     <textarea id="comentario" data-i18n-ph="comentario_ph" placeholder="Cuéntanos qué salió mal para que podamos mejorar (opcional)"></textarea>
 
     <div class="actions">
@@ -565,6 +563,32 @@
 <script>
 (function(){
   var ENDPOINT = 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-resena-form';
+
+  // El enlace puede traer de quien es la reseña, de dos formas:
+  //   ?r=   token propio de la cita (el mas preciso)
+  //   ?ref= contacto del CRM, que es lo que GHL sabe insertar en un mensaje
+  // En cuanto se leen, se limpian de la barra de direcciones: el cliente no tiene por
+  // que ver un identificador, y asi tampoco lo comparte por accidente.
+  // Como la barra de direcciones se limpia, el dato no puede vivir solo en memoria:
+  // si el cliente recarga, o vuelve de Google con el boton de atras, la pagina
+  // arranca sin saber de quien es la reseña y se guarda sin dueño. Se conserva en la
+  // sesion del navegador, que sobrevive recargas y se borra al cerrar la pestaña.
+  var GUARDADO = 'exentia_resena_quien';
+  var TOKEN_CITA = '';
+  var CONTACTO_CRM = '';
+  try {
+    var q = new URLSearchParams(window.location.search);
+    TOKEN_CITA = (q.get('r') || '').trim();
+    CONTACTO_CRM = (q.get('ref') || q.get('c') || '').trim();
+    if (TOKEN_CITA || CONTACTO_CRM) {
+      try { sessionStorage.setItem(GUARDADO, JSON.stringify({ r: TOKEN_CITA, c: CONTACTO_CRM })); } catch (e2) {}
+      history.replaceState(null, '', window.location.pathname);
+    } else {
+      var previo = JSON.parse(sessionStorage.getItem(GUARDADO) || '{}');
+      TOKEN_CITA = (previo.r || '').trim();
+      CONTACTO_CRM = (previo.c || '').trim();
+    }
+  } catch (e) {}
   var state = { rating: 0, subratings: {}, comentario: '' };
 
   // ═══════════════ i18n ═══════════════
@@ -575,7 +599,7 @@
       rating_subtitle: 'Tu opinión nos ayuda a seguir mejorando. Solo te tomará un minuto.',
       tap_stars: 'Toca las estrellas',
       high_title: 'Gracias por tu <em>calificación</em>',
-      high_subtitle: 'Nos alegra saber que tu experiencia fue positiva. ¿Podrías contarnos un poco más?',
+      high_subtitle: 'Te llevamos a Google para que dejes tu reseña.',
       low_title: 'Lamentamos que tu experiencia <em>no haya sido la mejor</em>',
       low_subtitle: 'Tu opinión honesta nos ayuda a mejorar. ¿Podrías contarnos qué salió mal?',
       questions_title: 'Cuéntanos qué tal…',
@@ -588,6 +612,16 @@
       btn_skip: 'Enviar sin dejar reseña',
       btn_enviar: 'Enviar comentario',
       btn_sending: 'Enviando…',
+      atendio_label: '¿Quién te atendió?',
+      atendio_ph: 'Nombre de quien te atendió (opcional)',
+      servicio_label: '¿Qué servicio recibiste?',
+      servicio_ph: 'Masaje, manicura, facial… (opcional)',
+      pagado_label: '¿Cuánto pagaste en total?',
+      pagado_0: 'Prefiero no decir',
+      pagado_1: 'Menos de $500',
+      pagado_2: 'Entre $500 y $1,000',
+      pagado_3: 'Entre $1,000 y $2,000',
+      pagado_4: 'Más de $2,000',
       comentario_ph: 'Cuéntanos qué salió mal para que podamos mejorar (opcional)',
       thanks_title: '¡Gracias!',
       thanks_msg: 'Tu opinión es muy importante para nosotras. La tomaremos en cuenta para seguir cuidando cada detalle de tu experiencia.',
@@ -602,7 +636,7 @@
       rating_subtitle: 'Your feedback helps us keep improving. It only takes a minute.',
       tap_stars: 'Tap the stars',
       high_title: 'Thanks for your <em>rating</em>',
-      high_subtitle: 'We’re glad your experience was positive. Could you tell us a bit more?',
+      high_subtitle: 'Taking you to Google so you can leave your review.',
       low_title: 'We’re sorry your experience <em>wasn’t the best</em>',
       low_subtitle: 'Your honest opinion helps us improve. Could you tell us what went wrong?',
       questions_title: 'Tell us how it went…',
@@ -615,6 +649,16 @@
       btn_skip: 'Send without a review',
       btn_enviar: 'Send comment',
       btn_sending: 'Sending…',
+      atendio_label: 'Who took care of you?',
+      atendio_ph: 'Name of the person who attended you (optional)',
+      servicio_label: 'Which service did you get?',
+      servicio_ph: 'Massage, manicure, facial… (optional)',
+      pagado_label: 'How much did you pay in total?',
+      pagado_0: 'I’d rather not say',
+      pagado_1: 'Under $500',
+      pagado_2: 'Between $500 and $1,000',
+      pagado_3: 'Between $1,000 and $2,000',
+      pagado_4: 'Over $2,000',
       comentario_ph: 'Tell us what went wrong so we can improve (optional)',
       thanks_title: 'Thank you!',
       thanks_msg: 'Your feedback is very important to us. We’ll take it into account to keep caring for every detail of your experience.',
@@ -691,7 +735,10 @@
     b.addEventListener('click', function(){
       state.rating = +b.getAttribute('data-rating');
       setTimeout(function(){
-        if (state.rating >= 4) show('high');
+        // Con 5 estrellas no se pregunta nada mas: se guarda y se manda derecho a
+        // Google. Cualquier pantalla intermedia solo hace que la gente se caiga antes
+        // de dejar la resena. Con 4 o menos va al buzon interno.
+        if (state.rating === 5) irAGoogle();
         else show('low');
       }, 220);
     });
@@ -721,20 +768,52 @@
     });
   });
 
+  // ═══ Con 5 estrellas: guardar y salir a Google sin escalas
+  var GOOGLE_URL = 'https://search.google.com/local/writereview?placeid=ChIJJaUrkTMrTI8RGiZLJ1VMn7w';
+  function irAGoogle() {
+    show('high');   // pantalla de paso, por si la red tarda o falla el redirect
+    var salir = function () { window.location.href = GOOGLE_URL; };
+    var yaSalio = false;
+    var vamos = function () { if (!yaSalio) { yaSalio = true; salir(); } };
+    // Si vuelve de Google y le da otra vez, no se guarda una segunda reseña igual:
+    // solo se le manda de nuevo al enlace.
+    if (yaEnviada()) { salir(); return; }
+    // Se guarda primero, pero sin dejar al cliente esperando: a los 2 segundos sale igual.
+    setTimeout(vamos, 2000);
+    sendReview(true).then(vamos).catch(vamos);
+  }
+
+  // Marca de "ya se envio" por sesion, para no duplicar la misma reseña.
+  var ENVIADA = 'exentia_resena_enviada';
+  function yaEnviada() {
+    try { return sessionStorage.getItem(ENVIADA) === String(state.rating); } catch (e) { return false; }
+  }
+  function marcarEnviada() {
+    try { sessionStorage.setItem(ENVIADA, String(state.rating)); } catch (e) {}
+  }
+
   // ═══ Envío
   function sendReview(includeGoogle) {
     var comentario = (document.getElementById('comentario') || {}).value || '';
+    var atendio = (document.getElementById('atendio') || {}).value || '';
+    var servicio = (document.getElementById('servicio') || {}).value || '';
+    var pagado = (document.getElementById('pagado') || {}).value || '';
     var payload = {
       rating: state.rating,
       comentario: comentario.trim(),
+      atendio: atendio.trim(),
+      servicio: servicio.trim(),
+      rango_pagado: pagado,
       subratings: state.subratings,
-      redirect_google: !!includeGoogle
+      redirect_google: !!includeGoogle,
+      token: TOKEN_CITA,
+      contact_id: CONTACTO_CRM
     };
     return fetch(ENDPOINT, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
-    });
+    }).then(function (r) { if (r.ok) marcarEnviada(); return r; });
   }
 
   // Botón enviar (pantalla baja calificación)
@@ -753,20 +832,8 @@
     });
   });
 
-  // Botón skip google (pantalla alta calificación)
-  var btnSkip = document.getElementById('btn-skip-google');
-  if (btnSkip) btnSkip.addEventListener('click', function(){
-    btnSkip.disabled = true; btnSkip.textContent = t('btn_sending');
-    sendReview(false).finally(function(){ show('done'); });
-  });
-
-  // Botón google — también guarda la reseña internamente antes de redirigir
-  var btnGoogle = document.getElementById('btn-google');
-  if (btnGoogle) btnGoogle.addEventListener('click', function(){
-    sendReview(true).catch(function(){/*no bloquear*/});
-    // El link abre en nueva pestaña por target=_blank, mostramos gracias
-    setTimeout(function(){ show('done'); }, 500);
-  });
+  // El boton de Google es la salida manual, por si el redirect automatico no
+  // alcanza a correr. La reseña ya se guardo en irAGoogle(), aqui no se repite.
 })();
 </script>
 </body>
