@@ -667,6 +667,60 @@
     .toggle-btn { padding:10px 8px; min-height:44px; font-size:13px; }
     .pill-btn { padding:10px 12px; min-height:42px; }
   }
+
+  /* ===== v2: tarjeta de camilla + cierre por WhatsApp ===== */
+  .camilla-card {
+    background:var(--olive-soft);
+    border:1px solid var(--olive-light);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin:6px 0 18px;
+  }
+  .camilla-medida {
+    font-family:'Cormorant Garamond', serif;
+    font-size:26px;
+    font-weight:600;
+    color:var(--olive-dark);
+    line-height:1.1;
+  }
+  .camilla-nota {
+    font-size:13px;
+    color:var(--brown-soft);
+    margin-top:4px;
+    line-height:1.5;
+  }
+  .msg-preview {
+    font-size:13px;
+    line-height:1.65;
+    color:var(--brown-soft);
+    white-space:pre-wrap;
+  }
+  .wa-confirm {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    background:#25D366;
+    color:#fff;
+    border:none;
+    border-radius:var(--radius);
+    padding:16px;
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:var(--shadow-md);
+  }
+  .wa-confirm:hover { background:#1eb85a; }
+  .wa-confirm svg { width:22px; height:22px; fill:#fff; }
+  .wa-note {
+    font-size:13px;
+    color:var(--brown-soft);
+    text-align:center;
+    margin-top:12px;
+    line-height:1.5;
+  }
 </style>
 </head>
 <body>
@@ -719,13 +773,13 @@
     </div>
   </div>
 
-  <!-- Paso 1: Acceso -->
+  <!-- Paso 1: Entrada -->
   <div class="screen" id="screen-1">
     <div class="banner-mini" id="banner-mini-1"></div>
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14M10 12h.01M10 8h.01M14 12h.01M14 8h.01"/></svg>
     </div>
-    <div class="question">¿Existe caseta de seguridad en el lugar?<span class="req-asterisk" data-req-for="tiene_caseta">*</span></div>
+    <div class="question">¿Tu residencial tiene caseta de acceso?<span class="req-asterisk" data-req-for="tiene_caseta">*</span></div>
     <div class="toggle-row" data-field="tiene_caseta">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
@@ -733,23 +787,78 @@
 
     <div class="sub-group" id="sub-caseta">
       <div class="sub-group-inner">
-        <div class="question" style="font-size:16px; margin-bottom:14px;">Cuéntanos cómo entrar:</div>
-        <div class="field" data-field-wrap="requiere_registro">
-          <label class="field-label">¿Debemos registrarnos?<span class="req-asterisk" data-req-for="requiere_registro">*</span></label>
-          <div class="toggle-row" data-field="requiere_registro">
+        <div class="field" data-field-wrap="nombre_privada">
+          <label class="field-label" for="nombre_privada">Nombre de la privada o residencial<span class="req-asterisk" data-req-for="nombre_privada">*</span></label>
+          <input type="text" id="nombre_privada" data-field="nombre_privada" autocomplete="off" placeholder="Ej. Residencial Aqua">
+          <div class="prefill-tag hidden" data-prefill-for="nombre_privada">Confirmado de tu visita anterior</div>
+        </div>
+
+        <div class="field" data-field-wrap="segunda_caseta">
+          <label class="field-label">¿Hay una segunda caseta o filtro ya adentro?<span class="req-asterisk" data-req-for="segunda_caseta">*</span></label>
+          <div class="toggle-row" data-field="segunda_caseta">
             <button type="button" class="toggle-btn" data-value="true">Sí</button>
             <button type="button" class="toggle-btn" data-value="false">No</button>
           </div>
         </div>
-        <div class="field" data-field-wrap="codigo_acceso">
-          <label class="field-label" for="codigo_acceso">¿Existe algún código de acceso?</label>
-          <input type="text" id="codigo_acceso" data-field="codigo_acceso" autocomplete="off" placeholder="Ej. 1234">
-          <div class="prefill-tag hidden" data-prefill-for="codigo_acceso">Confirmado de tu visita anterior</div>
+
+        <div class="sub-group" id="sub-segunda">
+          <div class="sub-group-inner">
+            <div class="field" data-field-wrap="nombre_seccion">
+              <label class="field-label" for="nombre_seccion">Nombre de esa segunda privada o sección<span class="req-asterisk" data-req-for="nombre_seccion">*</span></label>
+              <input type="text" id="nombre_seccion" data-field="nombre_seccion" autocomplete="off" placeholder="Ej. Privada Coral, sección B">
+              <div class="prefill-tag hidden" data-prefill-for="nombre_seccion">Confirmado de tu visita anterior</div>
+            </div>
+          </div>
         </div>
-        <div class="field" data-field-wrap="instrucciones_acceso">
-          <label class="field-label" for="instrucciones_acceso">¿Cómo debe registrarse nuestro equipo?<span class="req-asterisk" data-req-for="instrucciones_acceso">*</span></label>
-          <textarea id="instrucciones_acceso" data-field="instrucciones_acceso" placeholder="Ej. Preguntar por la Sra. López, torre B"></textarea>
-          <div class="prefill-tag hidden" data-prefill-for="instrucciones_acceso">Confirmado de tu visita anterior</div>
+
+        <div class="field" data-field-wrap="calle">
+          <label class="field-label" for="calle">Calle<span class="req-asterisk" data-req-for="calle">*</span></label>
+          <input type="text" id="calle" data-field="calle" autocomplete="off" placeholder="Ej. Av. Palenque">
+          <div class="prefill-tag hidden" data-prefill-for="calle">Confirmado de tu visita anterior</div>
+        </div>
+
+        <div class="field" data-field-wrap="lote">
+          <label class="field-label" for="lote">Lote o número<span class="req-asterisk" data-req-for="lote">*</span></label>
+          <input type="text" id="lote" data-field="lote" autocomplete="off" placeholder="Ej. Lote 14, casa 3">
+          <div class="prefill-tag hidden" data-prefill-for="lote">Confirmado de tu visita anterior</div>
+        </div>
+
+        <div class="field" data-field-wrap="autoriza_nombre">
+          <label class="field-label" for="autoriza_nombre">¿A qué nombre preguntan en caseta para que los dejen pasar?<span class="req-asterisk" data-req-for="autoriza_nombre">*</span></label>
+          <input type="text" id="autoriza_nombre" data-field="autoriza_nombre" autocomplete="off" placeholder="Ej. Sra. López, casa 14">
+          <div class="prefill-tag hidden" data-prefill-for="autoriza_nombre">Confirmado de tu visita anterior</div>
+        </div>
+
+        <div class="field" data-field-wrap="que_decir">
+          <label class="field-label" for="que_decir">¿Qué deben decir exactamente en la caseta?</label>
+          <textarea id="que_decir" data-field="que_decir" placeholder="Ej. Vienen de Exentia Spa, cita a las 5, avisar por interfón"></textarea>
+          <div class="prefill-tag hidden" data-prefill-for="que_decir">Confirmado de tu visita anterior</div>
+        </div>
+
+        <div class="field" data-field-wrap="manda_qr">
+          <label class="field-label">¿Vas a mandar un QR o pase digital?<span class="req-asterisk" data-req-for="manda_qr">*</span></label>
+          <div class="toggle-row" data-field="manda_qr">
+            <button type="button" class="toggle-btn" data-value="true">Sí</button>
+            <button type="button" class="toggle-btn" data-value="false">No</button>
+          </div>
+        </div>
+
+        <div class="sub-group" id="sub-qr">
+          <div class="sub-group-inner">
+            <div class="banner banner-info" style="margin:0;">
+              Al terminar este formulario te sale un botón para mandarlo por WhatsApp al número oficial de Exentia. No salgas de aquí, lo hacemos al final.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-group" id="sub-sincaseta">
+      <div class="sub-group-inner">
+        <div class="field" data-field-wrap="referencias">
+          <label class="field-label" for="referencias">Referencias para ubicar la casa o departamento<span class="req-asterisk" data-req-for="referencias">*</span></label>
+          <textarea id="referencias" data-field="referencias" placeholder="Ej. portón negro, junto a la tienda de la esquina"></textarea>
+          <div class="prefill-tag hidden" data-prefill-for="referencias">Confirmado de tu visita anterior</div>
         </div>
       </div>
     </div>
@@ -762,31 +871,35 @@
     </div>
   </div>
 
-  <!-- Paso 2: Llegada -->
+  <!-- Paso 2: Estacionamiento -->
   <div class="screen" id="screen-2">
     <div class="banner-mini" id="banner-mini-2"></div>
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM23 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM2 12h20M2 12l3-7h14l3 7M6 12v5M18 12v5"/></svg>
     </div>
-    <div class="question">¿Existe estacionamiento?<span class="req-asterisk" data-req-for="tiene_estacionamiento">*</span></div>
+    <div class="question">¿Habrá lugar de estacionamiento para el equipo?<span class="req-asterisk" data-req-for="tiene_estacionamiento">*</span></div>
     <div class="toggle-row" data-field="tiene_estacionamiento">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Hay zona de ascenso y descenso?<span class="req-asterisk" data-req-for="zona_ascenso_descenso">*</span></div>
-    <div class="toggle-row" data-field="zona_ascenso_descenso">
-      <button type="button" class="toggle-btn" data-value="true">Sí</button>
-      <button type="button" class="toggle-btn" data-value="false">No</button>
-    </div>
-
     <div data-field-wrap="distancia_estacionamiento">
-      <div class="question" style="margin-top:12px;">¿Qué tan lejos queda del lugar del servicio?<span class="req-asterisk" data-req-for="distancia_estacionamiento">*</span></div>
+      <div class="question" style="margin-top:12px;">¿Qué tan lejos queda ese cajón del lugar del servicio?<span class="req-asterisk" data-req-for="distancia_estacionamiento">*</span></div>
       <div class="pill-row" data-field="distancia_estacionamiento">
         <button type="button" class="pill-btn" data-value="en_el_lugar">En el mismo lugar</button>
-        <button type="button" class="pill-btn" data-value="menos_50m">A menos de 50 m</button>
-        <button type="button" class="pill-btn" data-value="50_200m">Entre 50 y 200 m</button>
-        <button type="button" class="pill-btn" data-value="mas_200m">A más de 200 m</button>
+        <button type="button" class="pill-btn" data-value="mas_10m">Tendrán que caminar más de 10 m</button>
+      </div>
+    </div>
+
+    <div class="sub-group" id="sub-carga">
+      <div class="sub-group-inner">
+        <div class="field" data-field-wrap="carga_descarga">
+          <label class="field-label">¿Se pueden estacionar un momento enfrente para bajar el equipo (carga y descarga)?<span class="req-asterisk" data-req-for="carga_descarga">*</span></label>
+          <div class="toggle-row" data-field="carga_descarga">
+            <button type="button" class="toggle-btn" data-value="true">Sí</button>
+            <button type="button" class="toggle-btn" data-value="false">No</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -798,32 +911,68 @@
     </div>
   </div>
 
-  <!-- Paso 3: Instalación -->
+  <!-- Paso 3: Dónde se hace el servicio -->
   <div class="screen" id="screen-3">
     <div class="banner-mini" id="banner-mini-3"></div>
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 12v6h18v-6M6 12V8h12v4M9 12v-4M15 12v-4"/></svg>
     </div>
-    <div class="question" id="q3-camillas">¿Existe espacio para instalar una camilla?<span class="req-asterisk" data-req-for="espacio_camillas_ok">*</span></div>
-    <div class="toggle-row" data-field="espacio_camillas_ok">
-      <button type="button" class="toggle-btn" data-value="true">Sí</button>
-      <button type="button" class="toggle-btn" data-value="false">No</button>
+    <div class="question">¿Casa o departamento?<span class="req-asterisk" data-req-for="tipo_inmueble">*</span></div>
+    <div class="pill-row" data-field="tipo_inmueble">
+      <button type="button" class="pill-btn" data-value="casa">Casa</button>
+      <button type="button" class="pill-btn" data-value="depto">Departamento</button>
     </div>
 
-    <div class="field" style="margin-top:16px;" data-field-wrap="piso">
-      <label class="field-label" for="piso">¿En qué piso se realizará el servicio?<span class="req-asterisk" data-req-for="piso">*</span></label>
-      <input type="text" id="piso" data-field="piso" autocomplete="off" placeholder="Ej. PB, 3, 12" inputmode="numeric">
-      <div class="prefill-tag hidden" data-prefill-for="piso">Confirmado de tu visita anterior</div>
+    <div class="question" style="margin-top:12px;">¿En qué piso se hace el servicio?<span class="req-asterisk" data-req-for="piso">*</span></div>
+    <div class="pill-row" data-field="piso">
+      <button type="button" class="pill-btn" data-value="pb">Planta baja</button>
+      <button type="button" class="pill-btn" data-value="2">2do</button>
+      <button type="button" class="pill-btn" data-value="3">3ro</button>
+      <button type="button" class="pill-btn" data-value="4mas">4to o más</button>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Hay elevador?<span class="req-asterisk" data-req-for="tiene_elevador">*</span></div>
-    <div class="toggle-row" data-field="tiene_elevador">
-      <button type="button" class="toggle-btn" data-value="true">Sí</button>
-      <button type="button" class="toggle-btn" data-value="false">No</button>
+    <div class="sub-group" id="sub-elevador">
+      <div class="sub-group-inner">
+        <div class="field" data-field-wrap="tiene_elevador">
+          <label class="field-label">¿Hay elevador?<span class="req-asterisk" data-req-for="tiene_elevador">*</span></label>
+          <div class="toggle-row" data-field="tiene_elevador">
+            <button type="button" class="toggle-btn" data-value="true">Sí</button>
+            <button type="button" class="toggle-btn" data-value="false">No</button>
+          </div>
+        </div>
+        <div class="sub-group" id="sub-sin-elevador">
+          <div class="sub-group-inner">
+            <div class="banner banner-warn" style="margin:0 0 12px;">
+              Sin elevador el servicio se realiza en <b>planta baja</b>.
+            </div>
+            <div class="field" data-field-wrap="espacio_pb">
+              <label class="field-label">¿Hay espacio en planta baja para el servicio?<span class="req-asterisk" data-req-for="espacio_pb">*</span></label>
+              <div class="toggle-row" data-field="espacio_pb">
+                <button type="button" class="toggle-btn" data-value="true">Sí</button>
+                <button type="button" class="toggle-btn" data-value="false">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="question" style="margin-top:12px;">¿Hay que subir escaleras?<span class="req-asterisk" data-req-for="hay_escaleras">*</span></div>
-    <div class="toggle-row" data-field="hay_escaleras">
+    <div class="question" style="margin-top:12px;">¿En qué parte de tu casa se hará el servicio?<span class="req-asterisk" data-req-for="lugar_servicio">*</span></div>
+    <div class="pill-row" data-field="lugar_servicio">
+      <button type="button" class="pill-btn" data-value="recamara">Recámara</button>
+      <button type="button" class="pill-btn" data-value="sala">Sala</button>
+      <button type="button" class="pill-btn" data-value="terraza">Terraza o jardín</button>
+      <button type="button" class="pill-btn" data-value="otro">Otro</button>
+    </div>
+
+    <!-- TODO Exentia: confirmar la medida real de la camilla y el espacio de trabajo alrededor -->
+    <div class="camilla-card">
+      <div class="card-title">Nuestra camilla mide</div>
+      <div class="camilla-medida">1.90 &times; 0.70 m</div>
+      <div class="camilla-nota" id="camilla-nota">Asegúrate de tener espacio libre para la camilla y para que la masajista pueda moverse alrededor.</div>
+    </div>
+    <div class="question">¿Tienes ese espacio libre?<span class="req-asterisk" data-req-for="espacio_ok">*</span></div>
+    <div class="toggle-row" data-field="espacio_ok">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
     </div>
@@ -836,19 +985,13 @@
     </div>
   </div>
 
-  <!-- Paso 4: Ambiente -->
+  <!-- Paso 4: Detalles -->
   <div class="screen" id="screen-4">
     <div class="banner-mini" id="banner-mini-4"></div>
     <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
     </div>
-    <div class="question">¿Existe aire acondicionado?<span class="req-asterisk" data-req-for="tiene_aire_acondicionado">*</span></div>
-    <div class="toggle-row" data-field="tiene_aire_acondicionado">
-      <button type="button" class="toggle-btn" data-value="true">Sí</button>
-      <button type="button" class="toggle-btn" data-value="false">No</button>
-    </div>
-
-    <div class="question" style="margin-top:12px;">¿Hay mascotas?<span class="req-asterisk" data-req-for="hay_mascotas">*</span></div>
+    <div class="question">¿Hay mascotas?<span class="req-asterisk" data-req-for="hay_mascotas">*</span></div>
     <div class="toggle-row" data-field="hay_mascotas">
       <button type="button" class="toggle-btn" data-value="true">Sí</button>
       <button type="button" class="toggle-btn" data-value="false">No</button>
@@ -865,7 +1008,7 @@
     </div>
 
     <div class="field" style="margin-top:6px;">
-      <label class="field-label" for="condiciones_especiales">¿Hay alguna condición especial que debamos considerar?</label>
+      <label class="field-label" for="condiciones_especiales">¿Alguna condición especial que debamos considerar?</label>
       <textarea id="condiciones_especiales" data-field="condiciones_especiales" placeholder="Opcional"></textarea>
     </div>
 
@@ -877,112 +1020,15 @@
     </div>
   </div>
 
-  <!-- Paso 5: Contacto -->
+  <!-- Paso 5: Observaciones -->
   <div class="screen" id="screen-5">
     <div class="banner-mini" id="banner-mini-5"></div>
     <div class="icon-step">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2"/></svg>
-    </div>
-    <div class="question">¿Quién recibirá a nuestro equipo?<span class="req-asterisk" data-req-for="receptor_grupo">*</span></div>
-
-    <!-- Opción A: yo mismo -->
-    <div id="opt-yo-wrap">
-      <button type="button" class="btn-shortcut" id="btn-yo-recibo">
-        Yo mismo recibiré al equipo
-        <span class="btn-shortcut-sub" id="yo-recibo-sub">Usaremos tus datos de contacto</span>
-      </button>
-      <!-- Follow-up inline: solo cuando el sistema NO tiene el teléfono del cliente -->
-      <div class="field" data-field-wrap="cliente_telefono" style="margin-top:14px; display:none;">
-        <label class="field-label" for="cliente_telefono">Confírmanos tu WhatsApp<span class="req-asterisk" data-req-for="cliente_telefono">*</span></label>
-        <input type="tel" id="cliente_telefono" data-field="cliente_telefono" inputmode="tel" autocomplete="tel" placeholder="998 123 4567">
-        <div class="prefill-tag hidden" data-prefill-for="cliente_telefono">Confirmado de tu visita anterior</div>
-      </div>
-    </div>
-
-    <div class="divider-o">o</div>
-
-    <!-- Opción B: otra persona -->
-    <div id="opt-otra-wrap">
-      <div class="field" data-field-wrap="receptor_nombre">
-        <label class="field-label" for="receptor_nombre">Otra persona · nombre<span class="req-asterisk" data-req-for="receptor_nombre">*</span></label>
-        <input type="text" id="receptor_nombre" data-field="receptor_nombre" autocomplete="off" placeholder="Ej. Ana Pérez">
-        <div class="prefill-tag hidden" data-prefill-for="receptor_nombre">Confirmado de tu visita anterior</div>
-      </div>
-      <div class="field" data-field-wrap="receptor_telefono">
-        <label class="field-label" for="receptor_telefono">WhatsApp o teléfono<span class="req-asterisk" data-req-for="receptor_telefono">*</span></label>
-        <input type="tel" id="receptor_telefono" data-field="receptor_telefono" inputmode="tel" autocomplete="off" placeholder="998 123 4567">
-        <div class="prefill-tag hidden" data-prefill-for="receptor_telefono">Confirmado de tu visita anterior</div>
-      </div>
-    </div>
-
-    <div class="field-error-msg" id="err-step-5">Elige "Yo mismo recibiré" o llena nombre y teléfono de quien recibirá al equipo.</div>
-
-    <div class="actions">
-      <button class="btn btn-secondary" data-action="back">Atrás</button>
-      <button class="btn btn-primary" data-action="next">Siguiente</button>
-    </div>
-  </div>
-
-  <!-- Paso 6: Observaciones -->
-  <div class="screen" id="screen-6">
-    <div class="banner-mini" id="banner-mini-6"></div>
-    <div class="icon-step">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
     </div>
-    <div class="question">Cualquier información que facilite la llegada de nuestro equipo</div>
-    <div class="question-sub">Opcional, pero útil. Ej. "portón negro, timbre no sirve, avisar al llegar."</div>
+    <div class="question">Algo más que facilite la llegada de nuestro equipo</div>
     <div class="field">
       <textarea id="observaciones" data-field="observaciones" placeholder="Comparte lo que quieras..." style="min-height:120px;"></textarea>
-    </div>
-
-    <div class="actions">
-      <button class="btn btn-secondary" data-action="back">Atrás</button>
-      <button class="btn btn-primary" data-action="next">Siguiente</button>
-    </div>
-  </div>
-
-  <!-- Paso 7: Preferencias del servicio -->
-  <div class="screen" id="screen-7">
-    <div class="banner-mini" id="banner-mini-7"></div>
-    <div class="icon-step">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-    </div>
-    <div class="question">Tus preferencias para el servicio</div>
-    <div class="question-sub">Nos ayuda a preparar la experiencia como más te gusta. Todo es opcional.</div>
-
-    <div class="field">
-      <label class="field-label">Presión preferida</label>
-      <div class="pill-row" data-field="pref_presion">
-        <button type="button" class="pill-btn" data-value="suave">Suave</button>
-        <button type="button" class="pill-btn" data-value="media">Media</button>
-        <button type="button" class="pill-btn" data-value="fuerte">Fuerte</button>
-      </div>
-      <div class="prefill-tag hidden" data-prefill-for="pref_presion">Confirmado de tu visita anterior</div>
-    </div>
-
-    <div class="field">
-      <label class="field-label">Aromas</label>
-      <div class="pill-row" data-field="pref_aromas">
-        <button type="button" class="pill-btn" data-value="sin">Sin aromas</button>
-        <button type="button" class="pill-btn" data-value="suaves">Aromas suaves</button>
-        <button type="button" class="pill-btn" data-value="cualquiera">Cualquier aroma</button>
-      </div>
-      <div class="prefill-tag hidden" data-prefill-for="pref_aromas">Confirmado de tu visita anterior</div>
-    </div>
-
-    <div class="field">
-      <label class="field-label">Género del terapeuta</label>
-      <div class="pill-row" data-field="pref_genero_terapeuta">
-        <button type="button" class="pill-btn" data-value="mujer">Mujer</button>
-        <button type="button" class="pill-btn" data-value="hombre">Hombre</button>
-        <button type="button" class="pill-btn" data-value="sin_preferencia">Sin preferencia</button>
-      </div>
-      <div class="prefill-tag hidden" data-prefill-for="pref_genero_terapeuta">Confirmado de tu visita anterior</div>
-    </div>
-
-    <div class="field">
-      <label class="field-label" for="pref_notas">Otras notas (opcional)</label>
-      <textarea id="pref_notas" data-field="pref_notas" placeholder="Ej. lesión en hombro izquierdo, sin aceite en cara, música tranquila..." style="min-height:80px;"></textarea>
     </div>
 
     <div class="actions">
@@ -996,14 +1042,19 @@
     <div class="final-icon">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div class="final-title">Gracias.</div>
-    <div class="final-msg">Nuestro equipo ya cuenta con la información necesaria para preparar tu servicio.</div>
-    <div class="final-see-you">Nos vemos pronto.</div>
+    <div class="final-title">Falta un paso.</div>
+    <div class="final-msg">Tu cita no queda confirmada hasta que nos mandes este mensaje. Ahí mismo puedes adjuntar tu QR o pase de acceso.</div>
 
-    <div class="card cita-summary" style="margin-top:auto;">
-      <div class="card-title">Tu cita</div>
-      <div id="cita-details-final"></div>
+    <div class="card" style="text-align:left;">
+      <div class="card-title">Mensaje que vas a enviar</div>
+      <div class="msg-preview" id="msg-preview"></div>
     </div>
+
+    <button class="wa-confirm" type="button" id="btn-wa-confirm">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.09 3.2 5.07 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35zM12.04 2.5c-5.24 0-9.5 4.26-9.5 9.5 0 1.68.44 3.31 1.28 4.75L2.5 21.5l4.88-1.28a9.45 9.45 0 0 0 4.66 1.22h.004c5.23 0 9.49-4.26 9.49-9.5s-4.26-9.44-9.49-9.44z"/></svg>
+      Enviar y confirmar mi cita
+    </button>
+    <div class="wa-note">Sin este mensaje no confirmamos la llegada de las masajistas.</div>
 
     <div class="actions">
       <button class="btn btn-secondary" style="flex:1;" id="btn-edit">Editar mis respuestas</button>
@@ -1037,65 +1088,68 @@
     complete: 'https://n8n-ntcue-clone-u59578.vm.elestio.app/webhook/exentia-prep-complete'
   };
 
-  var TOTAL_STEPS = 7;
+  var TOTAL_STEPS = 5;
   var STEP_FIELDS = {
-    1: ['tiene_caseta','requiere_registro','codigo_acceso','instrucciones_acceso'],
-    2: ['tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento'],
-    3: ['espacio_camillas_ok','piso','tiene_elevador','hay_escaleras'],
-    4: ['tiene_aire_acondicionado','hay_mascotas','mascotas_detalle','condiciones_especiales'],
-    5: ['receptor_nombre','receptor_telefono','receptor_es_cliente','cliente_telefono'],
-    6: ['observaciones'],
-    7: ['pref_presion','pref_aromas','pref_genero_terapeuta','pref_notas']
+    1: ['tiene_caseta','nombre_privada','segunda_caseta','nombre_seccion','calle','lote',
+        'autoriza_nombre','que_decir','manda_qr','referencias'],
+    2: ['tiene_estacionamiento','distancia_estacionamiento','carga_descarga'],
+    3: ['tipo_inmueble','piso','tiene_elevador','espacio_pb','lugar_servicio','espacio_ok'],
+    4: ['hay_mascotas','mascotas_detalle','condiciones_especiales'],
+    5: ['observaciones']
   };
   var PREFILLABLE = new Set([
-    'tiene_caseta','requiere_registro','codigo_acceso','instrucciones_acceso',
-    'tiene_estacionamiento','zona_ascenso_descenso','distancia_estacionamiento',
-    'espacio_camillas_ok','piso','tiene_elevador','hay_escaleras',
-    'tiene_aire_acondicionado','hay_mascotas','mascotas_detalle',
-    'receptor_nombre','receptor_telefono','receptor_es_cliente','cliente_telefono',
-    'pref_presion','pref_aromas','pref_genero_terapeuta','pref_notas'
+    'tiene_caseta','nombre_privada','segunda_caseta','nombre_seccion','calle','lote',
+    'autoriza_nombre','que_decir','referencias',
+    'tiene_estacionamiento','distancia_estacionamiento','carga_descarga',
+    'tipo_inmueble','piso','tiene_elevador','espacio_pb','lugar_servicio','espacio_ok',
+    'hay_mascotas','mascotas_detalle'
   ]);
   // Field -> child fields to clear when the parent toggles off
   var CLEAR_ON_TOGGLE_OFF = {
-    tiene_caseta: ['requiere_registro','codigo_acceso','instrucciones_acceso'],
+    tiene_caseta: ['nombre_privada','segunda_caseta','nombre_seccion','calle','lote',
+                   'autoriza_nombre','que_decir','manda_qr'],
+    segunda_caseta: ['nombre_seccion'],
     hay_mascotas: ['mascotas_detalle']
   };
 
   // Reglas de campos requeridos (con lógica condicional por sugerencia de Luis)
   // when: opcional. Objeto { fieldA: valorEsperado } — todos deben coincidir.
   //   Valores especiales: '!=true' → el campo NO debe ser true
+  //                       '!=xxx'  → el campo NO debe valer 'xxx'
   //   Los booleans se comparan con state.data[k] === true / === false / ...
   var STEP_REQUIRED = {
     1: [
       { field:'tiene_caseta' },
-      { field:'requiere_registro',    when:{ tiene_caseta:true } },
-      { field:'instrucciones_acceso', when:{ tiene_caseta:true, requiere_registro:true } }
+      // Rama A — con caseta: el equipo necesita nombre de privada, domicilio exacto y a quién preguntar
+      { field:'nombre_privada',   when:{ tiene_caseta:true } },
+      { field:'segunda_caseta',   when:{ tiene_caseta:true } },
+      { field:'nombre_seccion',   when:{ tiene_caseta:true, segunda_caseta:true } },
+      { field:'calle',            when:{ tiene_caseta:true } },
+      { field:'lote',             when:{ tiene_caseta:true } },
+      { field:'autoriza_nombre',  when:{ tiene_caseta:true } },
+      { field:'manda_qr',         when:{ tiene_caseta:true } },
+      // Rama B — sin caseta: la dirección ya la tenemos de la reserva, solo faltan referencias
+      { field:'referencias',      when:{ tiene_caseta:false } }
     ],
     2: [
       { field:'tiene_estacionamiento' },
-      { field:'zona_ascenso_descenso' },
-      { field:'distancia_estacionamiento', when:{ tiene_estacionamiento:true } }
+      { field:'distancia_estacionamiento', when:{ tiene_estacionamiento:true } },
+      // Si el cajón queda lejos, el equipo necesita bajar camilla y equipo enfrente primero
+      { field:'carga_descarga',            when:{ distancia_estacionamiento:'mas_10m' } }
     ],
     3: [
-      { field:'espacio_camillas_ok' },
+      { field:'tipo_inmueble' },
       { field:'piso' },
-      { field:'tiene_elevador' },
-      { field:'hay_escaleras' }
+      { field:'tiene_elevador', when:{ piso:'!=pb' } },
+      { field:'espacio_pb',     when:{ piso:'!=pb', tiene_elevador:false } },
+      { field:'lugar_servicio' },
+      { field:'espacio_ok' }
     ],
     4: [
-      { field:'tiene_aire_acondicionado' },
       { field:'hay_mascotas' },
       { field:'mascotas_detalle', when:{ hay_mascotas:true } }
     ],
-    5: [
-      // Si NO eligió "yo mismo recibiré", nombre y teléfono son requeridos
-      { field:'receptor_nombre',   when:{ receptor_es_cliente:'!=true' } },
-      { field:'receptor_telefono', when:{ receptor_es_cliente:'!=true' } },
-      // Teléfono del cliente: requerido SOLO cuando eligió "yo mismo" Y no lo tenemos
-      { field:'cliente_telefono',  when:{ receptor_es_cliente:true, _pedir_cliente_tel:true } }
-    ],
-    6: [],
-    7: []  // preferencias todas opcionales
+    5: []
   };
 
   function whenMet(when){
@@ -1103,7 +1157,11 @@
     return Object.keys(when).every(function(k){
       var expected = when[k];
       var actual = state.data[k];
-      if (expected === '!=true') return !(actual === true || actual === 'true');
+      if (typeof expected === 'string' && expected.indexOf('!=') === 0) {
+        var neg = expected.slice(2);
+        if (neg === 'true') return !(actual === true || actual === 'true');
+        return String(actual) !== neg;
+      }
       if (expected === true)  return actual === true  || actual === 'true';
       if (expected === false) return actual === false || actual === 'false';
       return actual === expected || String(actual) === String(expected);
@@ -1357,36 +1415,35 @@
     });
     // Sub-groups expand
     updateSubGroups();
-    // Paso 3 pregunta camillas (adaptativa)
-    var q3 = qs('#q3-camillas');
-    if (q3 && state.cita){
+    // Paso 3: la nota de la camilla se adapta al número de camillas de la reserva
+    var camNota = qs('#camilla-nota');
+    if (camNota && state.cita){
       var np = +state.cita.num_personas || 1;
-      if (np === 2) q3.textContent = '¿Existe espacio para instalar dos camillas?';
-      else if (np >= 3) q3.textContent = '¿Existe un espacio amplio para instalar las camillas requeridas?';
-      else q3.textContent = '¿Existe espacio para instalar una camilla?';
-    }
-    // Paso 5: label "yo recibo" con nombre
-    var yoSub = qs('#yo-recibo-sub');
-    if (yoSub && state.cita && state.cita.cliente_nombre){
-      yoSub.textContent = 'Usaremos los datos de ' + state.cita.cliente_nombre;
+      var base = 'Asegúrate de tener espacio libre para la camilla y para que la masajista pueda moverse alrededor.';
+      if (np >= 2) base = 'Tu servicio lleva ' + np + ' camillas. Asegúrate de tener espacio libre para cada una y para que las masajistas puedan moverse alrededor.';
+      camNota.textContent = base;
     }
     // Actualiza asteriscos según lógica condicional
     syncRequiredMarks();
   }
 
   function updateSubGroups(){
-    // Caseta -> sub-caseta
-    var caseta = qs('#sub-caseta');
-    if (caseta) {
-      if (state.data.tiene_caseta === true || state.data.tiene_caseta === 'true') caseta.classList.add('show');
-      else caseta.classList.remove('show');
+    function isTrue(v){ return v === true || v === 'true'; }
+    function show(id, cond){
+      var el = qs('#' + id);
+      if (!el) return;
+      if (cond) el.classList.add('show'); else el.classList.remove('show');
     }
-    // Mascotas -> sub-mascotas
-    var mas = qs('#sub-mascotas');
-    if (mas) {
-      if (state.data.hay_mascotas === true || state.data.hay_mascotas === 'true') mas.classList.add('show');
-      else mas.classList.remove('show');
-    }
+    var d = state.data;
+    show('sub-caseta',      isTrue(d.tiene_caseta));
+    show('sub-sincaseta',   d.tiene_caseta === false || d.tiene_caseta === 'false');
+    show('sub-segunda',     isTrue(d.tiene_caseta) && isTrue(d.segunda_caseta));
+    show('sub-qr',          isTrue(d.tiene_caseta) && isTrue(d.manda_qr));
+    show('sub-carga',       d.distancia_estacionamiento === 'mas_10m');
+    // Elevador solo aplica cuando el servicio NO es en planta baja
+    show('sub-elevador',    !!d.piso && d.piso !== 'pb');
+    show('sub-sin-elevador', !!d.piso && d.piso !== 'pb' && (d.tiene_elevador === false || d.tiene_elevador === 'false'));
+    show('sub-mascotas',    isTrue(d.hay_mascotas));
   }
 
   // ============================
@@ -1471,60 +1528,16 @@
       goToStep(1);
     });
 
-    // Atajo yo recibo
-    qs('#btn-yo-recibo').addEventListener('click', function(){
-      state.data.receptor_es_cliente = true;
-      state.data.receptor_nombre = null;
-      state.data.receptor_telefono = null;
-      state.touched.receptor_es_cliente = true;
-      state.touched.receptor_nombre = true;
-      state.touched.receptor_telefono = true;
-      clearErrors(5);
-      togglePaso5Sections();
-      saveLocal();
-      applyStateToDom();
-      // Si necesitamos el teléfono del cliente, NO avanzamos: revelamos el input inline.
-      if (state.data._pedir_cliente_tel === true) {
-        var telInp = qs('#cliente_telefono');
-        // Re-init intl-tel-input ahora que el input es visible (evita layout de dropdown inline colapsado)
-        if (typeof window.__initTel === 'function') window.__initTel('cliente_telefono');
-        if (telInp) setTimeout(function(){ telInp.focus(); }, 100);
-        return;
-      }
-      saveStep(5).catch(function(){}).then(function(){ goNext(); });
-    });
-
-    // Si el usuario empieza a escribir en "otra persona", desactiva el modo "yo mismo"
-    ['receptor_nombre','receptor_telefono'].forEach(function(id){
-      var inp = qs('#'+id);
-      if (!inp) return;
-      inp.addEventListener('focus', function(){
-        if (state.data.receptor_es_cliente === true) {
-          state.data.receptor_es_cliente = false;
-          state.data.cliente_telefono = null;
-          togglePaso5Sections();
-          saveLocal();
-        }
-      });
+    // Cierre por WhatsApp: obligatorio para confirmar la cita
+    var waBtn = qs('#btn-wa-confirm');
+    if (waBtn) waBtn.addEventListener('click', function(){
+      window.open(buildWaUrl(), '_blank', 'noopener');
     });
   }
 
-  // Muestra/oculta las 2 opciones del paso 5 según receptor_es_cliente
-  function togglePaso5Sections(){
-    var isYo = state.data.receptor_es_cliente === true;
-    var pedirTel = state.data._pedir_cliente_tel === true;
-    var yoBtn = qs('#btn-yo-recibo');
-    var telWrap = qs('[data-field-wrap="cliente_telefono"]');
-    var otraWrap = qs('#opt-otra-wrap');
-    var divisor = qs('#screen-5 .divider-o');
-    if (yoBtn) yoBtn.classList.toggle('selected', isYo);
-    if (telWrap) telWrap.style.display = (isYo && pedirTel) ? '' : 'none';
-    if (otraWrap) otraWrap.style.display = isYo ? 'none' : '';
-    if (divisor) divisor.style.display = isYo ? 'none' : '';
-    // Al revelar/ocultar bloques del paso 5 cambia la visibilidad de los teléfonos:
-    // reintentar el montaje del selector de país (idempotente).
-    if (typeof window.__initTels === 'function') setTimeout(window.__initTels, 0);
-  }
+  // El paso de contacto se eliminó en v2: los datos del cliente ya vienen de la reserva.
+  // Se conserva el nombre de la función porque goToStep todavía la invoca.
+  function togglePaso5Sections(){}
   window.togglePaso5Sections = togglePaso5Sections;
 
   // ============================
@@ -1538,8 +1551,8 @@
       return;
     }
     if (step > TOTAL_STEPS){
-      // Final
-      renderCitaSummary(qs('#cita-details-final'));
+      // Final: el cierre real es mandar el mensaje por WhatsApp
+      renderWaPreview();
       showScreen('screen-final');
       updateProgress(TOTAL_STEPS);
       state.currentStep = TOTAL_STEPS;
@@ -1667,6 +1680,90 @@
       // Even if network fails, go to final so user isn't stuck
       goToStep(TOTAL_STEPS + 1);
     });
+  }
+
+  // ============================
+  // Cierre por WhatsApp
+  // ============================
+  // TODO Exentia: confirmar que este es el número oficial al que llegan los QR / pases de acceso.
+  var WA_NUMERO = '529984803595';
+
+  var WA_LABELS = {
+    distancia_estacionamiento: { en_el_lugar:'en el mismo lugar', mas_10m:'a más de 10 m' },
+    tipo_inmueble:  { casa:'Casa', depto:'Departamento' },
+    piso:           { pb:'planta baja', '2':'2do piso', '3':'3er piso', '4mas':'4to piso o más' },
+    lugar_servicio: { recamara:'recámara', sala:'sala', terraza:'terraza o jardín', otro:'otro espacio' }
+  };
+
+  function waLabel(field, value){
+    var m = WA_LABELS[field];
+    if (m && m[value] !== undefined) return m[value];
+    return value;
+  }
+
+  function buildWaMessage(){
+    var d = state.data || {};
+    var c = state.cita || {};
+    var L = [];
+    var cuando = [
+      c.fecha_agendada ? fmtFecha(c.fecha_agendada) : '',
+      c.hora_agendada  ? fmtHora(c.hora_agendada)   : ''
+    ].filter(Boolean).join(' a las ');
+    L.push('Hola Exentia, ya llené mi guía de acceso'
+           + (c.booking_code ? ' para la cita ' + c.booking_code : '')
+           + (cuando ? ' del ' + cuando : '') + '.');
+    L.push('');
+
+    if (d.tiene_caseta === true || d.tiene_caseta === 'true') {
+      var acc = [];
+      if (d.nombre_privada) acc.push(d.nombre_privada);
+      if (d.segunda_caseta === true || d.segunda_caseta === 'true') {
+        acc.push('segundo filtro: ' + (d.nombre_seccion || 'sí'));
+      }
+      if (d.calle) acc.push(d.calle);
+      if (d.lote) acc.push(d.lote);
+      L.push('Acceso: ' + acc.join(', ') + '.');
+      if (d.autoriza_nombre) L.push('Preguntar por: ' + d.autoriza_nombre + '.');
+      if (d.que_decir) L.push('Qué decir en caseta: ' + d.que_decir);
+      if (d.manda_qr === true || d.manda_qr === 'true') L.push('Adjunto mi QR o pase de acceso en este chat.');
+    } else {
+      L.push('Sin caseta.' + (d.referencias ? ' Referencias: ' + d.referencias : ''));
+    }
+    L.push('');
+
+    var est = (d.tiene_estacionamiento === true || d.tiene_estacionamiento === 'true')
+      ? 'Estacionamiento sí' + (d.distancia_estacionamiento ? ', ' + waLabel('distancia_estacionamiento', d.distancia_estacionamiento) : '')
+      : 'Sin estacionamiento';
+    if (d.carga_descarga !== undefined && d.carga_descarga !== null) {
+      est += '. Carga y descarga enfrente: ' + ((d.carga_descarga === true || d.carga_descarga === 'true') ? 'sí' : 'no');
+    }
+    L.push(est + '.');
+
+    var lug = [];
+    if (d.tipo_inmueble) lug.push(waLabel('tipo_inmueble', d.tipo_inmueble));
+    if (d.piso) lug.push(waLabel('piso', d.piso));
+    if (d.piso && d.piso !== 'pb') lug.push((d.tiene_elevador === true || d.tiene_elevador === 'true') ? 'con elevador' : 'sin elevador');
+    if (d.lugar_servicio) lug.push('servicio en ' + waLabel('lugar_servicio', d.lugar_servicio));
+    if (lug.length) L.push(lug.join(', ') + '.');
+    if (d.espacio_ok !== undefined && d.espacio_ok !== null) {
+      L.push('Espacio para la camilla: ' + ((d.espacio_ok === true || d.espacio_ok === 'true') ? 'sí' : 'no') + '.');
+    }
+    L.push('');
+
+    L.push('Mascotas: ' + ((d.hay_mascotas === true || d.hay_mascotas === 'true') ? (d.mascotas_detalle || 'sí') : 'no') + '.');
+    if (d.condiciones_especiales) L.push('Condición especial: ' + d.condiciones_especiales);
+    if (d.observaciones) L.push('Notas: ' + d.observaciones);
+
+    return L.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function buildWaUrl(){
+    return 'https://wa.me/' + WA_NUMERO + '?text=' + encodeURIComponent(buildWaMessage());
+  }
+
+  function renderWaPreview(){
+    var el = qs('#msg-preview');
+    if (el) el.textContent = buildWaMessage();
   }
 
   // ============================
