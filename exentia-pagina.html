@@ -6685,6 +6685,18 @@ try {
   if (_catParam === 'remoto' || _catParam === 'local') {
     window.EXENTIA_CONFIG.CATALOGO_MODE = _catParam;
   }
+  // Captura manual de Stripe: autoriza sin cobrar y el cobro se aplica cuando una
+  // terapeuta acepta. Si nadie la toma se cancela la retencion, que no cuesta
+  // comision (un reembolso si).
+  //
+  // ⚠ ACTIVO POR DEFECTO desde 2026-08-31. Mientras el panel no capture al
+  // aceptar (enganche pendiente en exentia-panel-claim sobre fully_claimed),
+  // una retencion que nadie captura se libera sola a los 7 dias y el negocio
+  // NO COBRA NADA. En pruebas es lo que queremos ver; en produccion no.
+  // El backend solo la activa si ademas la cita cae dentro de 6 dias.
+  // Para volver al cobro directo en una sesion: ?captura=off
+  var _capParam = new URLSearchParams(window.location.search).get('captura');
+  window.EXENTIA_CONFIG.CAPTURA_MANUAL = (_capParam !== 'off');
 } catch(_){}
 </script>
 <script>
@@ -13079,10 +13091,14 @@ try {
 
     // fetchClientSecret: callback que Stripe llama para obtener el client_secret
     var fetchClientSecret = function() {
+      // El backend solo activa la retencion si ademas la cita cae dentro de 6
+      // dias — mas lejos vencerria antes de la cita y no se podria cobrar.
+      var _pagoBody = Object.assign({}, payload,
+        CFG.CAPTURA_MANUAL ? { captura_manual: true } : {});
       return fetch(CFG.WEBHOOK_STRIPE_CHECKOUT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(_pagoBody)
       })
       .then(function(r){ return r.json(); })
       .then(function(body){
@@ -19290,7 +19306,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v278-toggle-cerrar-hora', stamp: '2026-08-31 11:44' };
+  var EX_BUILD = { version: 'v280-captura-manual-por-defecto', stamp: '2026-08-31 12:50' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
