@@ -4890,6 +4890,44 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     color: #fff;
     border-color: var(--olive, #9a9854);
   }
+  /* Segundo nivel: el :30 aparece EN LINEA, justo despues de su hora.
+     Los dos chips comparten fondo y borde para que se lea que son un par y que
+     el segundo salio de tocar el primero. */
+  .cal2-slot.cal2-hour-open {
+    border-color: var(--olive, #9a9854);
+    background: #f6f3e0;
+    box-shadow: 0 0 0 3px rgba(154,152,84,0.14);
+  }
+  /* El par hora+:30 ocupa dos columnas y viaja junto: sin esto, una hora al final
+     del renglon dejaba su :30 al inicio del siguiente y el conector apuntaba a nada. */
+  .cal2-pair {
+    grid-column: span 2;
+    display: flex;
+    gap: 8px;
+  }
+  .cal2-pair > .cal2-slot { flex: 1; min-width: 0; }
+  .cal2-subslot {
+    border-color: var(--olive, #9a9854);
+    background: #f6f3e0;
+    box-shadow: 0 0 0 3px rgba(154,152,84,0.14);
+    position: relative;
+    animation: cal2SubIn .16s ease-out;
+  }
+  /* Punto de union entre la hora y su :30 */
+  .cal2-subslot::before {
+    content: '';
+    position: absolute; left: -6px; top: 50%;
+    width: 6px; height: 1.5px;
+    background: var(--olive, #9a9854);
+    transform: translateY(-50%);
+  }
+  @keyframes cal2SubIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cal2-subslot { animation: none; }
+  }
   .cal2-slot.cal2-slot-disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -9010,7 +9048,7 @@ try {
         <button type="button" class="choice-btn choice-wa pg-cta" onclick="_pgFinishWhatsApp()">
           <svg class="choice-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/></svg>
           <div class="choice-text">
-            <strong>Continuar por WhatsApp</strong>
+            <strong>Confirma la cita por WhatsApp</strong>
             <span>Te abrimos el chat con el resumen y el estado del pago.</span>
           </div>
           <span class="choice-arrow" aria-hidden="true">→</span>
@@ -13778,7 +13816,7 @@ try {
   // Horario L-S 10:00-18:00, slot duration = duración total del cart.
   // Bloquea hoy + próximas 2h por anticipación.
   // ═══════════════════════════════════════════════════════════════════
-  var cal2 = { viewMonth: null, viewYear: null, selectedDate: null, selectedTime: null };
+  var cal2 = { viewMonth: null, viewYear: null, selectedDate: null, selectedTime: null, expandedHour: null };
 
   // Devuelve la duración estimada en minutos para un slug del cart, o null si no se infiere
   function _durMinForKey(key) {
@@ -13902,7 +13940,11 @@ try {
     var isDomicilio = (typeof citaPlace !== 'undefined' && citaPlace && citaPlace.mode === 'domicilio');
     var openH = isDomicilio ? 7 : 9;
     var closeH = isDomicilio ? 23 : 18;
-    var STEP = 60;
+    // Malla de 30 minutos (2026-08-31). Con 60 el redondeo empujaba al cliente
+    // hasta una hora entera mas alla del minimo real: pedir a las 9:05 mandaba a
+    // las 12:00 aunque las 11:05 ya cumplian. La UI agrupa estos slots por hora y
+    // solo despliega los :00/:30 al tocar cada hora, para no soltar 32 botones.
+    var STEP = 30;
     // El cierre es la hora en que el servicio TERMINA, en las dos modalidades.
     var lastStart = closeH * 60 - durMin;
     var slots = [];
@@ -14013,26 +14055,78 @@ try {
     wrap.style.display = '';
     var durMin = _cal2TotalDurationMin() || 60;
     var slots = _cal2GenSlots(durMin, cal2.selectedDate);
-    var html = '';
     if (!slots.length) {
       slotsEl.innerHTML = '<div style="font-size:13px; color:#a09e7a; padding:8px 4px;">No hay horarios disponibles este día. Prueba otro día.</div>';
       var labelEmpty = document.getElementById('cal2-slots-label');
       if (labelEmpty) labelEmpty.textContent = 'Horarios disponibles';
       return;
     }
+
+    // Los slots vienen cada 30 min, pero de entrada solo se muestran las horas en
+    // punto. Al tocar una, su :30 aparece EN LINEA justo despues, no en una caja
+    // aparte: el par comparte fondo y borde para que se vea que uno salio del otro.
+    // Tocar la hora ademas la selecciona — el caso comun es querer la hora exacta,
+    // asi que no tiene sentido cobrar dos clicks por ella.
+    // Si una hora solo tiene un horario libre (tipico en la primera hora ofrecida,
+    // donde el minimo de anticipacion ya se comio el :00) el chip muestra ese
+    // horario exacto y selecciona directo, sin desplegar nada.
+    var porHora = {};
+    var ordenHoras = [];
     slots.forEach(function(t){
+      var h = t.slice(0, 2);
+      if (!porHora[h]) { porHora[h] = []; ordenHoras.push(h); }
+      porHora[h].push(t);
+    });
+
+    var html = '';
+    ordenHoras.forEach(function(h){
+      var deLaHora = porHora[h];
+      var abierta = (cal2.expandedHour === h) && deLaHora.length > 1;
+
+      // Chip principal de la hora
+      var base = deLaHora[0];
       var cls = 'cal2-slot';
-      if (cal2.selectedTime === t) cls += ' cal2-slot-selected';
-      html += '<button type="button" class="'+cls+'" data-time="'+t+'">'+t+'</button>';
+      if (cal2.selectedTime === base) cls += ' cal2-slot-selected';
+      else if (abierta) cls += ' cal2-hour-open';
+      var chipHora = '<button type="button" class="' + cls + '" data-time="' + base
+                   + '" data-hour="' + h + '">' + base + '</button>';
+
+      if (!abierta) {
+        html += chipHora;
+      } else {
+        // Envueltos juntos para que el par no se parta entre dos renglones.
+        html += '<div class="cal2-pair">' + chipHora;
+        deLaHora.slice(1).forEach(function(t){
+          var c2 = 'cal2-slot cal2-subslot' + (cal2.selectedTime === t ? ' cal2-slot-selected' : '');
+          html += '<button type="button" class="' + c2 + '" data-time="' + t + '">' + t + '</button>';
+        });
+        html += '</div>';
+      }
     });
     slotsEl.innerHTML = html;
-    slotsEl.querySelectorAll('.cal2-slot').forEach(function(b){
+
+    slotsEl.querySelectorAll('[data-time]').forEach(function(b){
       b.onclick = function(){
-        cal2.selectedTime = this.getAttribute('data-time');
+        var t = this.getAttribute('data-time');
+        var h = this.getAttribute('data-hour');
+        if (h) {
+          // Chip de hora en punto. El primer toque lo selecciona y abre su :30 al
+          // lado; un segundo toque sobre la MISMA hora ya seleccionada la cierra.
+          // Sin este toggle la seccion quedaba abierta para siempre y solo se
+          // podia cerrar tocando otra hora.
+          var cerrar = (cal2.expandedHour === h) && (cal2.selectedTime === t);
+          cal2.selectedTime = t;
+          cal2.expandedHour = cerrar ? null : h;
+        } else {
+          // Sub-horario (:30): se selecciona y su hora se queda abierta.
+          cal2.selectedTime = t;
+          cal2.expandedHour = t.slice(0, 2);
+        }
         renderCal2Slots();
         updateCal2Selection();
       };
     });
+
     // Label dinámico con duración
     var label = document.getElementById('cal2-slots-label');
     if (label) label.textContent = 'Horarios disponibles · duración aprox. ' + durMin + ' min';
@@ -19196,7 +19290,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v274-fix-prefijo-telefono-duplicado', stamp: '2026-08-28 12:15' };
+  var EX_BUILD = { version: 'v278-toggle-cerrar-hora', stamp: '2026-08-31 11:44' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
