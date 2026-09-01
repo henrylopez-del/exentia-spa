@@ -17948,32 +17948,26 @@ try {
             rowEl.onclick = function(){
               var t = pkgs[parseInt(this.getAttribute('data-pkg-idx'), 10)].t;
               var d = getDurations(t)[parseInt(this.getAttribute('data-pkg-dur'), 10)];
-              // Selector de par: todas las combinaciones de 2 personas
-              var picker = document.getElementById('pkg-pair-picker');
-              var pairs = [];
-              for (var a = 1; a <= _qty; a++) for (var b = a + 1; b <= _qty; b++) pairs.push([a, b]);
-              var phh = '<div class="svask-sub" style="text-align:center; font-weight:700; color:var(--brown,#5c3a1e);">' + t.name + (d.min ? ' · ' + d.min + ' min' : '') + ' · ¿para quiénes?</div><div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:8px;">';
-              pairs.forEach(function(pr){
-                phh += '<button type="button" class="ck-pref-chip" data-pair="' + pr[0] + '-' + pr[1] + '" style="flex:0 0 auto;">Persona ' + pr[0] + ' + Persona ' + pr[1] + '</button>';
-              });
-              phh += '</div>';
-              picker.innerHTML = phh;
-              try { picker.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(_){}
-              picker.querySelectorAll('[data-pair]').forEach(function(pb){
-                pb.onclick = function(){
-                  var pp = this.getAttribute('data-pair').split('-').map(Number);
-                  var full = parsePriceMXN(d.priceCouple) || 0;
-                  var half = full / 2;
-                  var halfStr = '$' + (half % 1 === 0 ? half.toLocaleString('en-US') : half.toFixed(2));
-                  var key = t.name + (d.min ? ' · ' + d.min + ' min' : '') + ' · Paquete pareja · ' + halfStr;
-                  var prevPid = currentPersonaId;
-                  pp.forEach(function(p){ currentPersonaId = p; cart.push(key); });
-                  currentPersonaId = prevPid;
-                  window._svGroupView = null;
-                  if (typeof showFlowToast === 'function') showFlowToast('Paquete agregado para Persona ' + pp[0] + ' y Persona ' + pp[1] + '.');
-                  renderSelectView();
-                };
-              });
+              // Sin selector de par (Henry 2026-09-01): las personas son placeholders,
+              // en sitio se acomodan. El paquete va a las primeras 2 SIN servicio.
+              var libres = [];
+              for (var li = 1; li <= _qty && libres.length < 2; li++) {
+                if (getItemsForPersona(li).length === 0) libres.push(li);
+              }
+              if (libres.length < 2) {
+                if (typeof showFlowToast === 'function') showFlowToast('Ya no quedan 2 lugares libres para un paquete de pareja.', 'warn');
+                return;
+              }
+              var full = parsePriceMXN(d.priceCouple) || 0;
+              var half = full / 2;
+              var halfStr = '$' + (half % 1 === 0 ? half.toLocaleString('en-US') : half.toFixed(2));
+              var key = t.name + (d.min ? ' · ' + d.min + ' min' : '') + ' · Paquete pareja · ' + halfStr;
+              var prevPid = currentPersonaId;
+              libres.forEach(function(p){ currentPersonaId = p; cart.push(key); });
+              currentPersonaId = prevPid;
+              window._svGroupView = null;
+              if (typeof showFlowToast === 'function') showFlowToast('Paquete de pareja agregado (2 lugares del grupo).');
+              renderSelectView();
             };
           });
           updateSvBottom();
@@ -20358,7 +20352,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v290-sin-volver-gigante', stamp: '2026-09-01 03:26' };
+  var EX_BUILD = { version: 'v291-paquete-sin-selector-par', stamp: '2026-09-01 03:27' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
