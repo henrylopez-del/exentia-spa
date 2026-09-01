@@ -11315,14 +11315,11 @@ try {
           foundCat = window.SERVICES[catSlug];
           foundSvc = foundCat.treatments.find(t => t.name === svcName);
         }
-        // Caso A — abrir drawer de addons antes del flow
-        if (foundSvc && foundSvc.hasAddons && foundCat && foundCat.addons && typeof window.openAddonsDrawer === 'function') {
-          window._addonsFromLanding = true;
-          window._pendingPickCategory = catSlug || null;
-          window.openAddonsDrawer(foundSvc, foundCat);
-          return;
-        }
-        // Caso B — sin addons: flow directo
+        // (2026-09-01, Henry): el drawer de complementos YA NO se abre antes del
+        // flujo — mostraba extras (Facial Express, Craneofacial…) antes de saber
+        // siquiera si es sucursal/at-home o individual/pareja. Todo producto va
+        // directo al checkout; los complementos se eligen DENTRO del flujo.
+        // Flow directo para todos:
         if (typeof _resetFlowFromLanding === 'function') _resetFlowFromLanding();
         try { if (typeof svActiveCat !== 'undefined' && catSlug) svActiveCat = catSlug; } catch(_){}
         try { window._pendingPickService = svcName || null; } catch(_){}
@@ -13893,9 +13890,29 @@ try {
     if (!name) return;
     var row = document.querySelector('#modal-select .sv2-row[data-svc="' + name + '"]');
     if (!row) return;
-    // Si aún no está agregado, lo agregamos automáticamente (auto-add para Persona 1)
+    // Si aún no está agregado, lo agregamos automáticamente (auto-add para Persona 1).
+    // Para productos con complementos NO se dispara el click (abriría el drawer sin
+    // que nadie lo pida): se agrega la llave base con su duración por defecto y el
+    // cliente toca el producto si quiere personalizar extras.
     if (window._pendingAutoAdd && !row.classList.contains('on') && !row.classList.contains('disabled')) {
-      try { row.click(); } catch(_){}
+      var _added = false;
+      try {
+        var _tp = null;
+        for (var _k in SERVICES) {
+          _tp = (SERVICES[_k].treatments || []).find(function(x){ return x.name === name; });
+          if (_tp) break;
+        }
+        if (_tp && _tp.hasAddons) {
+          var _durs = (typeof getDurations === 'function') ? getDurations(_tp) : (_tp.durations || []);
+          var _key = (_durs.length > 1 && _durs[0] && _durs[0].min) ? (_tp.name + ' · ' + _durs[0].min + ' min') : _tp.name;
+          cart.push(_key);
+          _added = true;
+          if (typeof renderSelectView === 'function') renderSelectView();
+        }
+      } catch(_){}
+      if (!_added) { try { row.click(); } catch(_){} }
+      // renderSelectView pudo re-crear la fila: re-localizarla para el badge
+      row = document.querySelector('#modal-select .sv2-row[data-svc="' + name + '"]') || row;
     }
     // Inyectar badge "TU ELECCIÓN" estilo Exentia
     if (!row.querySelector('.sv2-pick-badge')) {
@@ -20237,7 +20254,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v287-cta-sticky-titulos-antiredundancia', stamp: '2026-09-01 03:08' };
+  var EX_BUILD = { version: 'v288-sin-drawer-prelujo', stamp: '2026-09-01 03:17' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
