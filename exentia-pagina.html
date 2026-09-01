@@ -17928,8 +17928,7 @@ try {
         // backend quedan exactos SIN tocar el modelo (solo entiende servicios por persona).
         if (window._svGroupView === 'pkg') {
           var pkgs = (typeof _ppGetTreatments === 'function') ? _ppGetTreatments('paquete') : [];
-          var ph = '<button type="button" class="svcats-backbar" data-pkg-back>‹ Volver</button>'
-            + '<h3 class="svask-title" style="text-align:center; font-size:20px; margin:6px 0 2px;">Paquetes de pareja</h3>'
+          var ph = '<h3 class="svask-title" style="text-align:center; font-size:20px; margin:6px 0 2px;">Paquetes de pareja</h3>'
             + '<p class="svask-sub" style="text-align:center;">Elige el paquete y luego a cuáles 2 personas se les aplica.</p>'
             + '<div class="sv2-list" style="margin-top:8px;">';
           pkgs.forEach(function(x, xi){
@@ -17945,7 +17944,6 @@ try {
           });
           ph += '</div><div id="pkg-pair-picker" style="margin-top:10px;"></div>';
           container.innerHTML = ph;
-          container.querySelector('[data-pkg-back]').onclick = function(){ window._svGroupView = null; renderSelectView(); };
           container.querySelectorAll('[data-pkg-idx]').forEach(function(rowEl){
             rowEl.onclick = function(){
               var t = pkgs[parseInt(this.getAttribute('data-pkg-idx'), 10)].t;
@@ -18776,6 +18774,8 @@ try {
   window._fillPairHeader = _fillPairHeader;
 
   function selectBackButton() {
+    // Vista de paquetes de pareja del grupo: regresar = volver a las opciones del grupo
+    if (svMode === 'grupo' && window._svGroupView === 'pkg') { window._svGroupView = null; renderSelectView(); return; }
     if (svMode === 'parejas' && window.svPairStep === 'p1') { ppGoTo('paquete'); return; }
     if (svMode === 'parejas' && window.svPairStep === 'p2') { ppGoTo('p1'); return; }
     if (svMode === 'grupo' && window.svGroupStep > 1) { openGroupPersona(window.svGroupStep - 1); return; }
@@ -20358,7 +20358,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v289-paquetes-pareja-en-grupo', stamp: '2026-09-01 03:25' };
+  var EX_BUILD = { version: 'v290-sin-volver-gigante', stamp: '2026-09-01 03:26' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
