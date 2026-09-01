@@ -7320,8 +7320,8 @@ try {
   <div class="ex-userdrop-inner">
     <!-- Estado NO LOGUEADO -->
     <div class="ex-userdrop-section ex-userdrop-anon" id="ex-userdrop-anon">
-      <h4 class="ex-userdrop-title">¿Ya eres cliente?</h4>
-      <p class="ex-userdrop-sub">Inicia sesión para ver tus citas y guardar tus preferencias.</p>
+      <h4 class="ex-userdrop-title">Hazte miembro Exentia</h4>
+      <p class="ex-userdrop-sub">Promociones y descuentos especiales, tus citas y tus preferencias en un solo lugar.</p>
       <button type="button" class="ex-userdrop-cta" onclick="openAuthModal(); closeUserDropdown();">Iniciar sesión →</button>
       <a class="ex-userdrop-foot" onclick="openAuthModal(); closeUserDropdown();">o crear una cuenta</a>
     </div>
@@ -8590,8 +8590,8 @@ try {
       <button class="modal-back" onclick="closeModal('modal-auth'); openSelectModal();">&#8592; Regresar</button>
     </div>
     <div class="modal-header">
-      <h2>¿Tienes <em>cuenta</em>?</h2>
-      <p>Inicia sesión para auto-llenar tus datos o continúa como invitado.</p>
+      <h2>Hazte <em>miembro Exentia</em></h2>
+      <p>Entérate antes que nadie de promociones, descuentos y eventos especiales. O continúa como invitado.</p>
     </div>
     <div class="modal-body">
       <div class="auth-grid" id="auth-grid-step1">
@@ -8601,7 +8601,7 @@ try {
             <span class="auth-eyebrow">★ Crear cuenta o iniciar sesión</span>
           </div>
           <h3 class="auth-col-title">Con tu correo</h3>
-          <p class="auth-col-desc">Te enviamos un código para entrar. Si es tu primera vez, <b style="color:var(--brown);">creamos tu cuenta automáticamente</b>.</p>
+          <p class="auth-col-desc"><b style="color:var(--brown);">Promociones y descuentos especiales solo para miembros.</b> Te enviamos un código para entrar; si es tu primera vez, creamos tu cuenta automáticamente.</p>
           <form id="auth-email-form" onsubmit="return submitAuthEmail(event)">
             <input class="auth-input" type="email" id="auth-email" placeholder="tucorreo@ejemplo.com" autocomplete="email" required>
             <div class="ex-field-hint" id="auth-email-hint">Escribe un correo válido (ej: tu@correo.com).</div>
@@ -8613,6 +8613,8 @@ try {
             <span>Crear cuenta o entrar con Google</span>
           </button>
           <ul class="auth-perks">
+            <li>Promociones y descuentos especiales</li>
+            <li>Invitaciones a eventos Exentia</li>
             <li>Tu historial de reservas a mano</li>
             <li>Auto-llenado de datos</li>
             <li>Tus preferencias guardadas</li>
@@ -18964,7 +18966,14 @@ try {
     'Ir al calendario': 'Go to calendar', 'No compartimos tus datos con nadie.': 'We never share your information.',
     'Tu': 'Your', 'dirección': 'address', 'a domicilio': 'at home',
     'Fija el pin en el mapa y completa los detalles para que tu terapeuta llegue fácil.': 'Drop the pin on the map and fill in the details so your therapist arrives easily.',
-    'Mi ubicación': 'My location', 'Usar mi ubicación': 'Use my location', 'Cargando mapa de Cancún…': 'Loading Cancún map…', 'Buscando…': 'Searching…',
+    'Mi ubicación': 'My location', 'Usar mi ubicación': 'Use my location',
+    'Hazte': 'Become an', 'miembro Exentia': 'Exentia member', 'Hazte miembro Exentia': 'Become an Exentia member',
+    'Entérate antes que nadie de promociones, descuentos y eventos especiales. O continúa como invitado.': 'Be the first to hear about promotions, discounts and special events. Or continue as a guest.',
+    'Promociones y descuentos especiales solo para miembros.': 'Members-only promotions and special discounts.',
+    'Te enviamos un código para entrar; si es tu primera vez, creamos tu cuenta automáticamente.': 'We send you a code to sign in; if it’s your first time, we create your account automatically.',
+    'Promociones y descuentos especiales': 'Members-only promotions and discounts',
+    'Invitaciones a eventos Exentia': 'Invitations to Exentia events',
+    'Promociones y descuentos especiales, tus citas y tus preferencias en un solo lugar.': 'Special promotions and discounts, your appointments and your preferences in one place.', 'Cargando mapa de Cancún…': 'Loading Cancún map…', 'Buscando…': 'Searching…',
     // ── Ajustes checkout 2026-09-01 ──
     'Tienes una reserva': 'You have an unfinished', 'a medias': 'booking',
     'Guardamos lo que habías elegido la última vez.': 'We saved what you had selected last time.',
@@ -19549,7 +19558,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v281-ajustes-checkout-olas-ABC', stamp: '2026-09-01 00:43' };
+  var EX_BUILD = { version: 'v281-ajustes-checkout-olas-ABC', stamp: '2026-09-01 00:46' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
