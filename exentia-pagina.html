@@ -8012,7 +8012,7 @@ try {
             <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.8"/><path d="M2 21c0-3.7 3.1-6.5 7-6.5s7 2.8 7 6.5"/><path d="M14.5 14.2c.7-.3 1.5-.5 2.5-.5 3.5 0 5 2.5 5 5"/></svg>
           </div>
           <div class="md-card-title">Pareja</div>
-          <div class="md-card-sub">Para 2 personas · paquetes y mix individual</div>
+          <div class="md-card-sub">Para 2 personas</div>
           <div class="md-card-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
         </button>
         <button type="button" class="md-card" data-mode="grupo" aria-pressed="false">
@@ -8020,7 +8020,7 @@ try {
             <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><circle cx="5" cy="10" r="2.5"/><path d="M2 21c0-3.5 1.5-6 4-6"/><path d="M5 21c0-3.5 2-6 6-6s6 2.5 6 6"/><path d="M17 15c2.5 0 4 2.5 4 6"/></svg>
           </div>
           <div class="md-card-title">Grupo</div>
-          <div class="md-card-sub">3 o más · armamos por persona</div>
+          <div class="md-card-sub">3 o más personas</div>
           <div class="md-card-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
         </button>
       </div>
@@ -19021,6 +19021,7 @@ try {
     'Mi ubicación': 'My location', 'Usar mi ubicación': 'Use my location',
     'Hazte': 'Become an', 'miembro Exentia': 'Exentia member', 'Hazte miembro Exentia': 'Become an Exentia member',
     '‹ Categorías': '‹ Categories', 'Categorías': 'Categories',
+    'Para 2 personas': 'For 2 people', '3 o más personas': '3 or more people',
     '✓ Agregado · ¿algo más? Sigue eligiendo o usa': '✓ Added · anything else? Keep browsing or tap',
     'Continuar a detalles →': 'Continue to details →', '← Volver al mapa': '← Back to the map',
     '← Volver a tu reserva': '← Back to your booking', 'Continuar al pago →': 'Continue to payment →',
@@ -19619,17 +19620,22 @@ try {
 ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 700px) {
   /* ── Marco full-frame para todos los modales del flujo ── */
+  /* Tarjeta CONTENIDA (pedido de Henry): marco visible con margen alrededor,
+     esquinas redondeadas y límites duros arriba/abajo — se siente pop-up
+     controlado, nunca "scroll suelto de página". El scroll, cuando existe,
+     vive DENTRO de la tarjeta. */
   #modal-resume-cart .modal-box, #modal-place-first .modal-box,
   #modal-modality .modal-box, #modal-group-size .modal-box,
   #modal-pair-paquete .pp-box, #modal-pair-p1 .pp-box, #modal-pair-p2 .pp-box,
   #modal-select .modal-box, #modal-form .modal-box, #modal-address.modal-overlay .mfa-box,
   #modal-calendar .modal-box, #modal-choice .modal-box, #modal-agendar .modal-box,
   #modal-auth .modal-box, #modal-confirm-final .modal-box, #modal-group-summary .modal-box {
-    width: 100vw !important; max-width: 100vw !important;
-    height: 100dvh !important; max-height: 100dvh !important;
-    margin: 0 !important; border-radius: 0 !important;
+    width: calc(100vw - 20px) !important; max-width: calc(100vw - 20px) !important;
+    height: calc(100dvh - 20px) !important; max-height: calc(100dvh - 20px) !important;
+    margin: 10px auto !important; border-radius: 18px !important;
     display: flex !important; flex-direction: column !important;
     overflow: hidden !important;
+    box-shadow: 0 18px 50px rgba(42,28,15,0.35) !important;
   }
   #modal-resume-cart.modal-overlay, #modal-place-first.modal-overlay,
   #modal-modality.modal-overlay, #modal-group-size.modal-overlay,
@@ -19637,7 +19643,7 @@ try {
   #modal-select.modal-overlay, #modal-form.modal-overlay, #modal-address.modal-overlay,
   #modal-calendar.modal-overlay, #modal-choice.modal-overlay, #modal-agendar.modal-overlay,
   #modal-auth.modal-overlay, #modal-confirm-final.modal-overlay, #modal-group-summary.modal-overlay {
-    padding: 0 !important; align-items: stretch !important; justify-content: stretch !important;
+    padding: 0 !important; align-items: center !important; justify-content: center !important;
   }
   /* El cuerpo central es la única zona flexible; scroll interno SOLO donde
      hay listas (catálogo, horarios). En los demás, el contenido se compacta
@@ -19795,6 +19801,43 @@ try {
   #modal-choice .ck-pref-chip {
     font-size: 11px; padding: 8px 6px; letter-spacing: 0; min-width: 0;
   }
+  /* Modality: división proporcional del espacio (header / opciones / CTA)
+     en tercios lógicos, no todo amontonado arriba */
+  #modal-modality .modal-body { justify-content: space-evenly !important; }
+  #modal-modality .md-options { margin: 0 !important; }
+}
+
+/* ── REGLA DE PROPORCIÓN Y NO-COLISIÓN (Henry, 2026-09-01, todos los viewports) ──
+   1) Ningún ícono/símbolo pisa texto: todo elemento absoluto (palomitas de
+      selección) tiene su espacio RESERVADO con padding en el contenedor.
+   2) Cards hermanas simétricas: título y subtítulo arrancan a la misma altura
+      en las 3 cards aunque el título tenga distinto largo. */
+.md-card {
+  padding-left: 40px !important; padding-right: 40px !important;
+  display: grid !important;
+  grid-template-rows: auto auto auto;
+  justify-items: center; align-content: start;
+  row-gap: 6px !important;
+  min-height: 150px;
+}
+.md-card .md-card-icon { grid-row: 1; margin-bottom: 2px !important; }
+.md-card .md-card-title { grid-row: 2; line-height: 1.15; }
+.md-card .md-card-sub { grid-row: 3; }
+.md-card .md-card-check { position: absolute; top: 10px; right: 10px; }
+@media (max-width: 600px) {
+  .md-card {
+    grid-template-columns: 44px 1fr !important;
+    grid-template-rows: auto auto !important;
+    column-gap: 14px !important; row-gap: 2px !important;
+    justify-items: start; align-items: center;
+    min-height: 0; padding: 14px 44px 14px 16px !important;
+    text-align: left;
+  }
+  .md-card .md-card-icon { grid-row: 1 / span 2; grid-column: 1; }
+  .md-card .md-card-title { grid-row: 1; grid-column: 2; }
+  .md-card .md-card-sub { grid-row: 2; grid-column: 2; padding: 0 !important; }
+  .md-card .md-card-check { top: 50%; transform: translateY(-50%); }
+  .md-card.active .md-card-check { transform: translateY(-50%) scale(1.08); }
 }
 
 /* Botones de navegación entre fragmentos (existen solo en móvil) */
@@ -19964,7 +20007,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v282-categorias-fix-duracion-iphone', stamp: '2026-09-01 01:35' };
+  var EX_BUILD = { version: 'v283-proporcion-geometria', stamp: '2026-09-01 01:42' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
