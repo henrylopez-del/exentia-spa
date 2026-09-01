@@ -3426,8 +3426,9 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   }
   .sv2-persona-badge {
     display: inline-flex; align-items: center; gap: 6px;
-    font: 700 11px 'Lato', sans-serif; letter-spacing: 1.6px;
-    padding: 6px 14px; border-radius: 99px; text-transform: uppercase;
+    /* 11px era ilegible — subido 2026-09-01 (item "Extras persona X diminuto") */
+    font: 700 13.5px 'Lato', sans-serif; letter-spacing: 1.6px;
+    padding: 8px 18px; border-radius: 99px; text-transform: uppercase;
   }
   .sv2-persona-badge-pair { background: #f4e8c8; color: #7d5f1e; }
   .sv2-persona-badge-p1   { background: #dde6c6; color: #4f5b23; }
@@ -3467,17 +3468,24 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .pp-dot.done:hover { transform: scale(1.06); }
   .pp-line { width: 42px; height: 2px; background: #eee5d3; }
   .pp-line.done { background: var(--olive-dark, #7d7c3f); }
+  /* Labels del stepper con jerarquía REAL (2026-09-01): los globos 1/2/3 se leían
+     como "personas" y confundían ("¿ya estoy eligiendo para la persona 2?").
+     Ahora el label textual es el protagonista y el número acompaña. */
   .pp-step-labels {
-    display: flex; justify-content: center; gap: 24px;
-    font-size: 10.5px; color: #8a8268;
+    display: flex; justify-content: center; gap: 22px;
+    font-size: 13px; color: #8a8268; font-weight: 600;
     letter-spacing: 0.4px; margin-bottom: 14px;
   }
-  .pp-step-labels span.active { color: var(--olive-dark, #7d7c3f); font-weight: 700; }
+  .pp-step-labels span.active {
+    color: var(--olive-dark, #7d7c3f); font-weight: 800;
+    border-bottom: 2px solid var(--olive, #9a9854); padding-bottom: 2px;
+  }
   .pp-badge-row { display: flex; justify-content: center; margin-bottom: 10px; }
   .pp-badge {
     display: inline-flex; align-items: center;
-    font: 700 11px 'Lato', sans-serif; letter-spacing: 1.6px;
-    padding: 7px 16px; border-radius: 99px; text-transform: uppercase;
+    /* 11px era ilegible ("Extras persona 1 está diminuto") — subido 2026-09-01 */
+    font: 700 13.5px 'Lato', sans-serif; letter-spacing: 1.6px;
+    padding: 9px 20px; border-radius: 99px; text-transform: uppercase;
   }
   .pp-badge-pair { background: #f4e8c8; color: #7d5f1e; }
   .pp-badge-p1   { background: #dde6c6; color: #4f5b23; }
@@ -4116,21 +4124,33 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 11px 14px;
-    background: #fdfbf4;
-    border: 1.5px solid #e8dfc0;
+    gap: 6px;
+    padding: 11px 16px;
+    /* Antes gris apagado — "no se lee" (feedback 2026-08-31). Ahora olive sólido
+       con pulso: es la vía de 1 tap para fijar la ubicación en tiempo real. */
+    background: var(--olive, #9a9854);
+    border: 1.5px solid var(--olive-dark, #7d7c3f);
     border-radius: 10px;
     font-family: inherit;
-    font-size: 12px;
-    font-weight: 500;
-    color: #7d7c3f;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #fdfbf4;
     cursor: pointer;
     transition: all 0.2s;
+    position: relative;
+    animation: mfaLocPulse 2s ease-out infinite;
   }
   .mfa-use-location-btn:hover {
-    background: #f3e4c7;
-    border-color: #c4b884;
+    background: var(--olive-dark, #7d7c3f);
+    animation: none;
+  }
+  @keyframes mfaLocPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(154,152,84,0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(154,152,84,0); }
+    100% { box-shadow: 0 0 0 0 rgba(154,152,84,0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mfa-use-location-btn { animation: none; }
   }
   .mfa-map-wrap {
     position: relative;
@@ -7858,6 +7878,41 @@ try {
      MODAL PLACE-FIRST · Sucursal / Domicilio
      Primer paso del flujo de reserva. Filtra el catálogo según la elección.
 ═══════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════════
+     MODAL RESUME-CART · aparece cuando hay un carrito persistido de una
+     visita anterior: continuar donde se quedó o empezar de cero.
+═══════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-resume-cart">
+  <div class="modal-box" style="max-width:520px;">
+    <div class="modal-close" onclick="closeModal('modal-resume-cart')" aria-label="Cerrar">&#10005;</div>
+    <div class="modal-header" style="margin-bottom:10px;">
+      <span class="logo">exentia</span>
+      <span class="sub">SPA & BEAUTY SALON</span>
+      <h2>Tienes una reserva <em>a medias</em></h2>
+      <p id="rc-subtitle">Guardamos lo que habías elegido la última vez.</p>
+    </div>
+    <div class="modal-body">
+      <div id="rc-cart-summary" style="background:#fdfbf4; border:1px solid rgba(154,152,84,0.22); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:13.5px; color:#5c3a1e; line-height:1.6;"></div>
+      <div class="choice-options">
+        <button type="button" class="choice-btn choice-cal" onclick="resumeCartContinue()">
+          <div class="choice-text">
+            <strong>Continuar donde me quedé</strong>
+            <span>Retomas tu selección tal como estaba.</span>
+          </div>
+          <span class="choice-arrow" aria-hidden="true">→</span>
+        </button>
+        <button type="button" class="choice-btn choice-cal" onclick="resumeCartFresh()">
+          <div class="choice-text">
+            <strong>Empezar de nuevo</strong>
+            <span>Se borra la selección anterior y arrancas desde cero.</span>
+          </div>
+          <span class="choice-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-place-first">
   <div class="modal-box" style="max-width:760px;">
     <div class="modal-close" onclick="closeModal('modal-place-first')" aria-label="Cerrar">&#10005;</div>
@@ -7898,6 +7953,7 @@ try {
             <div class="mpf-card-title">A domicilio · Exentia At Home</div>
             <div class="mpf-card-sub">Te visitamos donde estés</div>
             <div class="mpf-card-badge mpf-badge-home">Solo servicios disponibles a domicilio</div>
+            <div class="mpf-card-badge" style="margin-left:6px;">Se confirma con pago en línea</div>
           </div>
           <div class="mpf-card-check">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -8036,7 +8092,7 @@ try {
     <div class="pp-step-labels"><span>Para los 2</span><span class="active">Persona 1</span><span>Persona 2</span></div>
     <div class="pp-badge-row"><span class="pp-badge pp-badge-p1">PERSONA 1</span></div>
     <h2 class="pp-title">¿Algo extra para <em>Persona 1</em>?</h2>
-    <p class="pp-why">Servicios individuales solo para ella. Si no quiere extras, salta este paso.</p>
+    <p class="pp-why">Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes continuar sin elegir nada.</p>
     <div class="pp-body" id="pp-list-p1"></div>
     <div class="pp-running"><small>Subtotal Persona 1</small><span id="pp-sub-p1">$0</span></div>
     <div class="pp-foot">
@@ -8062,7 +8118,7 @@ try {
     <div class="pp-step-labels"><span>Para los 2</span><span>Persona 1</span><span class="active">Persona 2</span></div>
     <div class="pp-badge-row"><span class="pp-badge pp-badge-p2">PERSONA 2</span></div>
     <h2 class="pp-title">¿Algo extra para <em>Persona 2</em>?</h2>
-    <p class="pp-why">Servicios individuales solo para ella. Si no quiere extras, salta directo al resumen.</p>
+    <p class="pp-why">Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes ir directo al resumen sin elegir nada.</p>
     <div class="pp-body" id="pp-list-p2"></div>
     <div class="pp-running"><small>Subtotal Persona 2</small><span id="pp-sub-p2">$0</span></div>
     <div class="pp-foot">
@@ -8221,9 +8277,9 @@ try {
         <input type="text" id="mpf-address-input" autocomplete="off" placeholder="Escribe tu calle o pega link de Google Maps">
         <div id="mpf-address-suggestions" class="mpf-autocomplete-list" role="listbox"></div>
       </div>
-      <button type="button" id="mpf-use-location" class="mfa-use-location-btn">
+      <button type="button" id="mpf-use-location" class="mfa-use-location-btn" title="Fija tu ubicación actual en el mapa con un toque">
         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="22" y1="12" x2="19" y2="12"/><line x1="5" y1="12" x2="2" y2="12"/></svg>
-        <span>Mi ubicación</span>
+        <span>Usar mi ubicación</span>
       </button>
     </div>
 
@@ -8633,8 +8689,8 @@ try {
       </div>
       <span class="logo">exentia</span>
       <span class="sub">SPA & BEAUTY SALON</span>
-      <h2>¡Listo<span id="choice-firstname-wrap" style="display:none">, <em id="choice-firstname"></em></span>!</h2>
-      <p>Revisa tu reserva y confírmala por WhatsApp.</p>
+      <h2><span id="choice-title-text">¡Listo</span><span id="choice-firstname-wrap" style="display:none">, <em id="choice-firstname"></em></span><span id="choice-title-end">!</span></h2>
+      <p id="choice-subtitle">Revisa tu reserva y confírmala por WhatsApp.</p>
     </div>
     <div class="modal-body">
       <!-- ═══════ CHECKOUT CART · resumen final ═══════ -->
@@ -11019,6 +11075,21 @@ try {
       window._bookingCode = null;
       window._reservaPosted = false;
     }
+    // Limpieza de estado interno de los tratamientos (2026-09-01): _ppDur (duración
+    // elegida en modo pareja), _selDur y _selVar (individual) viven sobre los objetos
+    // de SERVICES y NUNCA se limpiaban al resetear el flujo — al cambiar pareja→individual
+    // el índice viejo sangraba y la UI mostraba precios/duraciones fantasma ($4,000 del
+    // paquete en pantalla individual). Se itera el objeto VIVO (applyCatalog reemplaza
+    // SERVICES in-place; los objetos del catálogo remoto nacen sin estos campos).
+    try {
+      if (typeof SERVICES === 'object') {
+        Object.keys(SERVICES).forEach(function(catKey){
+          ((SERVICES[catKey] && SERVICES[catKey].treatments) || []).forEach(function(t){
+            delete t._ppDur; delete t._selDur; delete t._selVar;
+          });
+        });
+      }
+    } catch(_){}
     try { if (typeof updateBadge === 'function') updateBadge(); } catch(_){}
   }
   window.resetFlowState = resetFlowState;
@@ -11032,6 +11103,10 @@ try {
     }
     var r = _origCartPush.apply(cart, arguments);
     saveCartMeta();
+    // Todo carrito que recibe items EN esta sesión es "fresco": el modal de
+    // "reserva a medias" (smartAgendar) solo debe aparecer con carritos que
+    // vienen persistidos de una visita anterior.
+    window._cartResumeChoice = window._cartResumeChoice || 'fresh';
     if (wasEmpty && cart.length > 0 && !window._exCartCreatedFired) {
       window._exCartCreatedFired = true;
       try { if (typeof fireGoogleAdsConversion === 'function') fireGoogleAdsConversion('cart_created', 0, ''); } catch(_){}
@@ -12683,6 +12758,18 @@ try {
   document.addEventListener('DOMContentLoaded', function(){
     var btn = document.getElementById('mfa-continue');
     if (btn) btn.addEventListener('click', function(){ _mfaValidateAndSubmit(); });
+    // Botón mudo (2026-09-01): con el botón disabled (sin pin en el mapa) el click
+    // moría sin explicar por qué. Los clicks sobre un botón disabled no disparan su
+    // listener, pero SÍ llegan al contenedor — se captura ahí y se muestra el mismo
+    // mensaje "Falta: …" que arma _mfaValidateAndSubmit.
+    var foot = btn ? btn.closest('.mfa-footer') : null;
+    if (foot) foot.addEventListener('click', function(e){
+      if (btn && btn.disabled) {
+        e.preventDefault();
+        _mfaValidateAndSubmit();
+        try { var eb = document.getElementById('mfa-error'); if (eb) eb.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(_){}
+      }
+    });
   });
 
   function filterServicesByPlace(place) {
@@ -14436,12 +14523,17 @@ try {
           + '</div>';
       }
     }
+    // ¿Hay paquete "Para los 2" en la orden? Cambia el copy de las personas vacías:
+    // "0 servicios" a secas se leía como "esta persona no recibe NADA", cuando el
+    // paquete ya la cubre — el masaje sí va, lo que no tiene son ADICIONALES.
+    var hasPaquete = false;
+    try { hasPaquete = cart.some(function(c, ci){ return cartMeta[ci] && cartMeta[ci].personaId === 0; }); } catch(_){}
     fullIds.forEach(function(pid){
       var items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
       var subtotal = items.reduce(function(s, it){ return s + _gsParsePrice(it.key || '', pid); }, 0);
       grandTotal += subtotal;
       var itemsHtml = items.length === 0
-        ? '<div class="gs-empty">Aún no eligió servicios</div>'
+        ? '<div class="gs-empty">' + (hasPaquete ? 'Sin servicios adicionales · el paquete ya la cubre' : 'Aún no eligió servicios') + '</div>'
         : items.map(function(it){
             var parts = String(it.key).split(' · ');
             var name = parts[0];
@@ -14459,7 +14551,7 @@ try {
       personasHtml += '<div class="gs-persona-card' + (items.length===0?' is-empty':'') + '">'
         + '<div class="gs-persona-head">'
         +   '<div class="gs-persona-badge">' + pid + '</div>'
-        +   '<div class="gs-persona-info"><div class="gs-persona-name">Persona ' + pid + '</div><div class="gs-persona-sub">' + items.length + ' servicio' + (items.length===1?'':'s') + '</div></div>'
+        +   '<div class="gs-persona-info"><div class="gs-persona-name">Persona ' + pid + '</div><div class="gs-persona-sub">' + items.length + ' servicio' + (items.length===1?'':'s') + (hasPaquete ? ' adicional' + (items.length===1?'':'es') : '') + '</div></div>'
         +   '<button type="button" class="gs-edit-btn" data-gs-edit="' + pid + '">' + ctaLabel + '</button>'
         + '</div>'
         + '<div class="gs-persona-services">' + itemsHtml + '</div>'
@@ -14819,10 +14911,38 @@ try {
     };
   });
 
+  // Una persona está "cubierta" si el paquete Para-los-2 (personaId 0) tiene items
+  // O si esa persona tiene servicios individuales propios. Los EXTRAS siguen siendo
+  // opcionales: esta regla solo exige que nadie llegue al resumen sin ningún servicio.
+  function _ppPersonaCubierta(pid) {
+    try {
+      var paq = (typeof getItemsForPersona === 'function') ? getItemsForPersona(0) : [];
+      if (paq.length > 0) return true;
+      var own = (typeof getItemsForPersona === 'function') ? getItemsForPersona(pid) : [];
+      return own.length > 0;
+    } catch(_) { return true; }
+  }
+  window._ppPersonaCubierta = _ppPersonaCubierta;
+
   function ppGoTo(target) {
     var current = ['modal-pair-paquete', 'modal-pair-p1', 'modal-pair-p2'].find(function(id){
       var m = document.getElementById(id); return m && m.classList.contains('open');
     });
+    // Validación de avance (2026-09-01): sin paquete, cada persona necesita al menos
+    // un servicio propio antes de avanzar. Regresar (paquete/p1) siempre está permitido.
+    // Choke point único: TODOS los caminos (CTA, "No, gracias", dots del stepper,
+    // selectMainContinue) pasan por aquí.
+    if (typeof svMode !== 'undefined' && svMode === 'parejas') {
+      if (target === 'p2' && !_ppPersonaCubierta(1)) {
+        if (typeof showFlowToast === 'function') showFlowToast('Aún no has seleccionado un servicio para la primera persona.', 'warn');
+        return;
+      }
+      if (target === 'resumen' && (!_ppPersonaCubierta(1) || !_ppPersonaCubierta(2))) {
+        var faltante = !_ppPersonaCubierta(1) ? 'primera' : 'segunda';
+        if (typeof showFlowToast === 'function') showFlowToast('Aún no has seleccionado un servicio para la ' + faltante + ' persona.', 'warn');
+        return;
+      }
+    }
     if (target === 'paquete') openPairPaquete();
     else if (target === 'p1') openPairP1();
     else if (target === 'p2') openPairP2();
@@ -14887,11 +15007,17 @@ try {
   // ═══════════════════════════════════════════════════════════════════
 
   // Parsea el string del cart ("Masaje Exentia · 60 min · $1,550") → {name, variant, price, priceNum}
-  function _ckParseLine(line) {
+  // personaId (opcional): dueño del item en cartMeta. 0 = "Para los 2" → usa priceCouple.
+  // Bug corregido (2026-09-01): el fallback de catálogo siempre devolvía durations[0].price
+  // e ignoraba la duración de la llave ("· 90 min") — el resumen mostraba el precio de 60 min
+  // para servicios de 90 min mientras Stripe (vía _gsParsePrice) cobraba bien. Ahora extrae
+  // la duración igual que _gsParsePrice y respeta pareja. Fallback intacto si no hay match.
+  function _ckParseLine(line, personaId) {
     var name = line;
     var variant = '';
     var price = null;
     var priceNum = null;
+    var durMin = null;
     var parts = String(line).split(' · ');
     if (parts.length > 1) {
       name = parts[0];
@@ -14906,6 +15032,12 @@ try {
         }
       }
       variant = rest.join(' · ');
+      try {
+        for (var r = 0; r < rest.length; r++) {
+          var dm = String(rest[r]).trim().match(/^(\d+)\s*min$/);
+          if (dm) { durMin = parseInt(dm[1], 10); break; }
+        }
+      } catch(_) { durMin = null; }
     }
     // Si no había precio en la línea, buscar en SERVICES por nombre exacto
     if (priceNum === null && typeof SERVICES === 'object') {
@@ -14915,8 +15047,17 @@ try {
         for (var j = 0; j < cat.treatments.length; j++) {
           var t = cat.treatments[j];
           if (t.name === name && t.durations && t.durations[0] && t.durations[0].price) {
-            price = t.durations[0].price;
-            priceNum = parseFloat(price.replace(/[^\d.]/g, '')) || null;
+            var dur = null;
+            try {
+              if (durMin != null) {
+                dur = t.durations.find(function(d){ return d.min === durMin; }) || null;
+              }
+            } catch(_) { dur = null; }
+            if (!dur) dur = t.durations[0];
+            var useCouple = (personaId === 0);
+            var priceStr = (useCouple && dur.priceCouple) ? dur.priceCouple : dur.price;
+            price = priceStr || t.durations[0].price;
+            priceNum = parseFloat(String(price).replace(/[^\d.]/g, '')) || null;
             break;
           }
         }
@@ -15084,7 +15225,7 @@ try {
         html = '<div class="ck-item" style="justify-content:center;color:#a09e7a;font-style:italic;">No has agregado servicios</div>';
       } else {
         for (var i = 0; i < cart.length; i++) {
-          var item = _ckParseLine(cart[i]);
+          var item = _ckParseLine(cart[i], (typeof cartMeta !== 'undefined' && cartMeta[i]) ? cartMeta[i].personaId : null);
           var personaLabel2 = '';
           if (n > 1 && typeof cartMeta !== 'undefined' && cartMeta[i]) {
             var pid = cartMeta[i].personaId;
@@ -15379,6 +15520,28 @@ try {
       if (btnReservar) btnReservar.style.display = '';
       if (sucNote) sucNote.style.display = '';
     }
+
+    // Título honesto (2026-09-01): "¡Listo!" antes de pagar hacía creer que la
+    // reserva ya estaba cerrada — el cliente abandonaba sin pagar. Cuando el CTA
+    // visible cobra en línea (domicilio o anticipo), el título dice explícito que
+    // falta el pago. Sucursal sin anticipo sí termina sin pago online → "¡Listo!" se queda.
+    try {
+      var pagaEnLinea = calc.isHome || (cobro && cobro.tipoCobro === 'sucursal_anticipo');
+      var tTxt = document.getElementById('choice-title-text');
+      var tEnd = document.getElementById('choice-title-end');
+      var tSub = document.getElementById('choice-subtitle');
+      if (tTxt && tEnd) {
+        if (pagaEnLinea) {
+          tTxt.textContent = 'Último paso';
+          tEnd.textContent = ': confirma con tu pago';
+          if (tSub) tSub.textContent = 'Tu cita se reserva al completar el pago.';
+        } else {
+          tTxt.textContent = '¡Listo';
+          tEnd.textContent = '!';
+          if (tSub) tSub.textContent = 'Revisa tu reserva y confírmala por WhatsApp.';
+        }
+      }
+    } catch(_){}
 
     // Payment framing (2026-08-05): jerarquía visual invertida cuando hay anticipo.
     // Klarna/Afterpay/Airbnb: el monto que sale del bolsillo AHORA es el ancla,
@@ -15754,7 +15917,7 @@ try {
   // Cierra TODOS los modales abiertos del flujo. Evita el bug de "el anterior queda detrás".
   // Muestra el spinner de transición — el próximo openModal lo oculta.
   function closeAllFlowModals() {
-    var ids = ['modal-place-first','modal-modality','modal-group-size','modal-pair-paquete','modal-pair-p1','modal-pair-p2','modal-select','modal-form','modal-address','modal-calendar','modal-choice','modal-agendar','modal-confirm-final','modal-group-summary'];
+    var ids = ['modal-resume-cart','modal-place-first','modal-modality','modal-group-size','modal-pair-paquete','modal-pair-p1','modal-pair-p2','modal-select','modal-form','modal-address','modal-calendar','modal-choice','modal-agendar','modal-confirm-final','modal-group-summary'];
     var anyOpen = ids.some(function(id){ var m = document.getElementById(id); return m && m.classList.contains('open'); });
     if (anyOpen && typeof showFlowLoader === 'function') showFlowLoader();
     ids.forEach(function(id){
@@ -15774,6 +15937,17 @@ try {
       openPlaceFirstModal();
       return;
     }
+    // Carrito persistido de una visita anterior (2026-09-01): antes se reanudaba DIRECTO
+    // a media captura (ej. "agregando persona 2") sin carrito visible ni salida — el
+    // cliente quedaba atorado. Ahora, UNA vez por sesión, se pregunta si continúa o
+    // empieza de nuevo. El flag vive en memoria (no en localStorage): recargar vuelve
+    // a preguntar, que es lo correcto. Los flujos del landing (reservarPaquete /
+    // data-pick-svc) ya vacían el carrito ANTES de llamar smartAgendar, así que este
+    // modal solo aparece en entradas "Agendar Cita" genéricas con carrito viejo.
+    if (!window._cartResumeChoice) {
+      openResumeCartModal();
+      return;
+    }
     if (!citaPlace || !citaPlace.mode) { openPlaceFirstModal(); return; }
     var validMode = (svMode === 'individual' || svMode === 'parejas' || svMode === 'grupo');
     if (!validMode) { openModalityModal(); return; }
@@ -15784,6 +15958,37 @@ try {
     openSelectModal();
   }
   window.smartAgendar = smartAgendar;
+
+  // ── Modal "reserva a medias" (2026-09-01) ──
+  // Solo aparece con carrito PERSISTIDO de otra visita (ver flag en cart.push y en
+  // smartAgendar). "Empezar de nuevo" limpia carrito/personas/lugar vía resetFlowState;
+  // NUNCA toca exentia_pending_reserva (cola offline de reservas pagadas) ni
+  // exentia_cliente_jwt (sesión) — resetFlowState no conoce esas llaves y así se queda.
+  function openResumeCartModal() {
+    var box = document.getElementById('rc-cart-summary');
+    if (box) {
+      var lines = (cart || []).slice(0, 5).map(function(c){
+        return '&bull; ' + String(c).split(' · ').slice(0, 2).join(' · ');
+      });
+      var extra = (cart.length > 5) ? ('<br>… y ' + (cart.length - 5) + ' más') : '';
+      box.innerHTML = '<b>' + cart.length + (cart.length === 1 ? ' servicio guardado' : ' servicios guardados') + ':</b><br>' + lines.join('<br>') + extra;
+    }
+    openModal('modal-resume-cart');
+  }
+  function resumeCartContinue() {
+    window._cartResumeChoice = 'continue';
+    closeModal('modal-resume-cart');
+    smartAgendar();
+  }
+  function resumeCartFresh() {
+    window._cartResumeChoice = 'fresh';
+    try { resetFlowState({ personas: 'wipe', svMode: null, clearPlace: true, clearBooking: true }); } catch(_){}
+    closeModal('modal-resume-cart');
+    smartAgendar();
+  }
+  window.openResumeCartModal = openResumeCartModal;
+  window.resumeCartContinue = resumeCartContinue;
+  window.resumeCartFresh = resumeCartFresh;
 
   // Reset del flujo cuando el cliente clickea "Reservar" en CUALQUIER lugar de la página
   // (paquetes, vista detalle, services-grid). Vacía el cart, modalidad e individual/pareja/grupo
@@ -18745,7 +18950,23 @@ try {
     'Ir al calendario': 'Go to calendar', 'No compartimos tus datos con nadie.': 'We never share your information.',
     'Tu': 'Your', 'dirección': 'address', 'a domicilio': 'at home',
     'Fija el pin en el mapa y completa los detalles para que tu terapeuta llegue fácil.': 'Drop the pin on the map and fill in the details so your therapist arrives easily.',
-    'Mi ubicación': 'My location', 'Cargando mapa de Cancún…': 'Loading Cancún map…', 'Buscando…': 'Searching…',
+    'Mi ubicación': 'My location', 'Usar mi ubicación': 'Use my location', 'Cargando mapa de Cancún…': 'Loading Cancún map…', 'Buscando…': 'Searching…',
+    // ── Ajustes checkout 2026-09-01 ──
+    'Tienes una reserva': 'You have an unfinished', 'a medias': 'booking',
+    'Guardamos lo que habías elegido la última vez.': 'We saved what you had selected last time.',
+    'Continuar donde me quedé': 'Continue where I left off',
+    'Retomas tu selección tal como estaba.': 'Pick up your selection exactly as it was.',
+    'Empezar de nuevo': 'Start over',
+    'Se borra la selección anterior y arrancas desde cero.': 'Your previous selection is cleared and you start fresh.',
+    'Último paso': 'Last step', ': confirma con tu pago': ': confirm with your payment',
+    'Tu cita se reserva al completar el pago.': 'Your appointment is booked once payment is completed.',
+    'Se confirma con pago en línea': 'Confirmed with online payment',
+    'Aún no has seleccionado un servicio para la primera persona.': 'You haven’t selected a service for the first person yet.',
+    'Aún no has seleccionado un servicio para la segunda persona.': 'You haven’t selected a service for the second person yet.',
+    'Sin servicios adicionales · el paquete ya la cubre': 'No additional services · the package already covers her',
+    'Aún no eligió servicios': 'No services selected yet',
+    'Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes continuar sin elegir nada.': 'This step is a 100% optional bonus: individual services just for her, on top of the package. You can continue without choosing anything.',
+    'Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes ir directo al resumen sin elegir nada.': 'This step is a 100% optional bonus: individual services just for her, on top of the package. You can go straight to the summary without choosing anything.',
     'Calle': 'Street', 'Núm. Ext.': 'Ext. No.', 'Núm. Int.': 'Int. No.',
     'Colonia / Zona': 'Neighborhood / Area', 'Referencias': 'References',
     'Necesitas fijar un pin en el mapa para continuar.': 'You need to drop a pin on the map to continue.',
@@ -18992,6 +19213,12 @@ try {
 
   // Frases dinámicas con variables (se aplican si no hubo match exacto)
   var PATTERNS = [
+    // Van ANTES de los genéricos de "servicios" para que "2 servicios adicionales"
+    // no quede a medias ("2 services adicionales"). Ajustes checkout 2026-09-01.
+    [/(\d+)\s+servicios adicionales\b/gi, '$1 additional services'],
+    [/(\d+)\s+servicio adicional\b/gi, '$1 additional service'],
+    [/(\d+)\s+servicios guardados\b/gi, '$1 saved services'],
+    [/(\d+)\s+servicio guardado\b/gi, '$1 saved service'],
     [/(\d+)\s+servicios?\s+elegidos?\b/gi, '$1 selected'],
     [/\bservicios elegidos\b/gi, 'services selected'],
     [/\bservicio elegido\b/gi, 'service selected'],
@@ -19306,7 +19533,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v280-captura-manual-por-defecto', stamp: '2026-08-31 12:50' };
+  var EX_BUILD = { version: 'v281-ajustes-checkout-olas-ABC', stamp: '2026-09-01 00:21' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
