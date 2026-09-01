@@ -13884,6 +13884,9 @@ try {
   });
 
   function openSelectModal() {
+    // Vista inicial: lista de CATEGORÍAS (2026-09-01). Con producto pre-elegido
+    // desde la landing, saltar directo a la lista de esa categoría.
+    window._svCatView = window._pendingPickService ? 'list' : 'cats';
     // Si entramos con un producto pre-seleccionado (desde la landing), saltamos al tab correcto
     if (window._pendingPickCategory && window.SERVICES && window.SERVICES[window._pendingPickCategory]) {
       try { svActiveCat = window._pendingPickCategory; } catch(_){}
@@ -17537,11 +17540,20 @@ try {
   }
 
   function svcBaseInfo(svc) {
-    // Resuelve precio/duración base: servicios con durations[] (masajes/faciales) o price plano (uñas)
-    var bd = (svc.durations && svc.durations[0]) ? svc.durations[0] : null;
-    var price = svc.price || (bd ? bd.price : '');
-    var dur = svc.duration || (bd && bd.min ? bd.min + ' min' : '');
-    return { price: price, dur: dur };
+    // Resuelve precio/duración base: servicios con durations[] (masajes/faciales) o price plano (uñas).
+    // BUG YAZ CORREGIDO (2026-09-01): siempre usaba durations[0] e ignoraba la duración
+    // que el cliente eligió en los chips (svc._selDur). Un Masaje Exentia de 90 min con
+    // extras entraba al carrito SIN los 90 min y TODO el sistema (resumen Y Stripe) lo
+    // cobraba como 60 min ($1,550 en vez de $2,000). Ahora respeta la duración elegida
+    // y la expone para que la llave del carrito la lleve.
+    var durs = svc.durations || null;
+    var idx = (durs && typeof svc._selDur === 'number' && durs[svc._selDur]) ? svc._selDur : 0;
+    var bd = durs ? durs[idx] : null;
+    var price = (bd ? bd.price : '') || svc.price || '';
+    var durMin = (bd && bd.min) ? bd.min : null;
+    var dur = durMin ? (durMin + ' min') : (svc.duration || '');
+    var multi = !!(durs && durs.length > 1);
+    return { price: price, dur: dur, durMin: durMin, multi: multi };
   }
   function totalAddons() {
     if (!axState) return 0;
@@ -17560,7 +17572,10 @@ try {
 
   function buildAddonsCartKey() {
     if (!axState) return '';
-    var parts = [axState.svc.name];
+    // La duración elegida VA en la llave (ver bug en svcBaseInfo): sin ella,
+    // los parsers de precio caen a durations[0] y se cobra la duración corta.
+    var _bi = svcBaseInfo(axState.svc);
+    var parts = [_bi.multi && _bi.durMin ? (axState.svc.name + ' · ' + _bi.durMin + ' min') : axState.svc.name];
     axState.addons.forEach(function(a){
       var s = axState.selections[a.key];
       if (a.type === 'bool' && s.active) parts.push(a.label);
@@ -17851,6 +17866,43 @@ try {
       return Object.assign({}, s, { treatments: _filterByMode(s.treatments) });
     }).filter(function(s){ return s.treatments.length > 0; });
 
+    // ── VISTA CATEGORÍAS PRIMERO (2026-09-01, pedido de Henry) ──
+    // El selector abre con la lista de categorías desglosada; tocar una abre SUS
+    // productos con "← Categorías" para volver. Reemplaza la barra de tabs como
+    // entrada. Solo presentación: mismo catálogo filtrado, mismos handlers.
+    if (window._svCatView !== 'list') {
+      var _pidCnt = ((svMode === 'grupo' || svMode === 'parejas') && typeof currentPersonaId !== 'undefined') ? currentPersonaId : null;
+      var catsHtml = '<div class="svcats-grid">';
+      cats.forEach(function(s){
+        var cnt = cart.filter(function(c, i){
+          var _m = s.treatments.some(function(t){ return c === t.name || c.indexOf(t.name + ' · ') === 0; });
+          var _sp = (_pidCnt === null) || (cartMeta[i] && cartMeta[i].personaId === _pidCnt);
+          return _m && _sp;
+        }).length;
+        catsHtml += '<button type="button" class="svcats-card" data-cat="' + s.slug + '">'
+          + '<span class="svcats-img" style="background-image:url(\'' + (s.heroImage || '') + '\')"></span>'
+          + '<span class="svcats-info">'
+          +   '<span class="svcats-name">' + s.name + (cnt > 0 ? ' <span class="svcats-dot">' + cnt + '</span>' : '') + '</span>'
+          +   '<span class="svcats-count">' + s.treatments.length + (s.treatments.length === 1 ? ' servicio' : ' servicios') + '</span>'
+          + '</span>'
+          + '<span class="svcats-arrow">›</span>'
+          + '</button>';
+      });
+      catsHtml += '</div>';
+      container.innerHTML = catsHtml;
+      container.querySelectorAll('.svcats-card').forEach(function(el){
+        el.onclick = function(){
+          svActiveCat = this.getAttribute('data-cat');
+          window._svCatView = 'list';
+          renderSelectView();
+          try { if (typeof _scrollSelectTop === 'function') _scrollSelectTop(); } catch(_){}
+        };
+      });
+      updateSvBottom();
+      _fillPairHeader();
+      return;
+    }
+
     // Si la categoría activa quedó vacía tras filtrar, saltar a la primera disponible
     var active = cats.find(function(s){ return s.slug === svActiveCat; }) || cats[0];
     if (!active) return;
@@ -17860,24 +17912,13 @@ try {
     // Si quiere cambiar, usa "Regresar" para volver a los modales de Sucursal/Domicilio.
     var modeBannerHtml = '';
 
-    // Tabs row (en grupo, solo cuenta los de la persona activa)
+    // Barra de regreso a categorías (2026-09-01): reemplaza la fila de tabs.
+    // El desglose por categoría vive en la vista svcats de arriba.
     var _pidRender = (svMode === 'grupo' && typeof currentPersonaId !== 'undefined') ? currentPersonaId : null;
-    var tabsHtml = '<div class="sv2-tabs" role="tablist">';
-    cats.forEach(function(s){
-      var count = cart.filter(function(c, i){
-        var _m = s.treatments.some(function(t){ return c === t.name || c.indexOf(t.name + ' · ') === 0; });
-        var _sp = (_pidRender === null) || (cartMeta[i] && cartMeta[i].personaId === _pidRender);
-        return _m && _sp;
-      }).length;
-      var isActive = s.slug === svActiveCat;
-      tabsHtml += '<button type="button" class="sv2-tab' + (isActive?' active':'') + (count>0?' has-selected':'') + '" data-tab="' + s.slug + '" role="tab" aria-selected="' + isActive + '">'
-        + '<span class="sv2-tab-name">' + s.name + '</span>'
-        + (count > 0 ? '<span class="sv2-tab-dot">' + count + '</span>' : '')
-        + '</button>';
-    });
-    tabsHtml += '</div>';
-    // Inyectar banner antes de las tabs
-    tabsHtml = modeBannerHtml + tabsHtml;
+    var tabsHtml = modeBannerHtml
+      + '<button type="button" class="svcats-backbar" data-back-cats>'
+      + '‹ Categorías <span class="svcats-backbar-sep">·</span> <b>' + active.name + '</b>'
+      + '</button>';
 
     // Hero estilo editorial: imagen circular + texto al lado
     var heroHtml = '<div class="sv2-hero">'
@@ -18118,6 +18159,14 @@ try {
       };
     }
 
+    // Wire barra "‹ Categorías"
+    container.querySelectorAll('[data-back-cats]').forEach(function(el){
+      el.onclick = function(){
+        window._svCatView = 'cats';
+        renderSelectView();
+        try { if (typeof _scrollSelectTop === 'function') _scrollSelectTop(); } catch(_){}
+      };
+    });
     // Wire tabs
     container.querySelectorAll('.sv2-tab').forEach(function(el){
       el.onclick = function(){
@@ -18971,6 +19020,8 @@ try {
     'Fija el pin en el mapa y completa los detalles para que tu terapeuta llegue fácil.': 'Drop the pin on the map and fill in the details so your therapist arrives easily.',
     'Mi ubicación': 'My location', 'Usar mi ubicación': 'Use my location',
     'Hazte': 'Become an', 'miembro Exentia': 'Exentia member', 'Hazte miembro Exentia': 'Become an Exentia member',
+    '‹ Categorías': '‹ Categories', 'Categorías': 'Categories',
+    '✓ Agregado · ¿algo más? Sigue eligiendo o usa': '✓ Added · anything else? Keep browsing or tap',
     'Continuar a detalles →': 'Continue to details →', '← Volver al mapa': '← Back to the map',
     '← Volver a tu reserva': '← Back to your booking', 'Continuar al pago →': 'Continue to payment →',
     '← Volver a preferencias': '← Back to preferences', '← Cambiar de día': '← Change day',
@@ -19666,6 +19717,86 @@ try {
   #modal-calendar .cal2-wrap { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
   #modal-calendar[data-cal-step="2"] #cal2-slots-wrap { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 }
+/* ── Selector CATEGORÍAS-PRIMERO (todos los viewports) ── */
+.svcats-grid { display: flex; flex-direction: column; gap: 10px; padding: 4px 0 12px; }
+@media (min-width: 701px) { .svcats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } }
+.svcats-card {
+  display: flex; align-items: center; gap: 14px;
+  background: #fff; border: 1.5px solid rgba(154,152,84,0.22); border-radius: 14px;
+  padding: 10px 14px 10px 10px; cursor: pointer; text-align: left;
+  font-family: inherit; transition: all .18s ease; width: 100%;
+}
+.svcats-card:hover { border-color: var(--olive, #9a9854); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(92,58,30,0.10); }
+.svcats-img {
+  width: 56px; height: 56px; border-radius: 10px; flex: 0 0 56px;
+  background-size: cover; background-position: center; background-color: var(--cream, #f3e4c7);
+}
+.svcats-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.svcats-name { font: 500 18px 'Playfair Display', serif; color: var(--brown, #5c3a1e); }
+.svcats-count { font: 500 11.5px 'Lato', sans-serif; color: #9a8d75; }
+.svcats-dot {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 99px;
+  background: var(--olive, #9a9854); color: #fff;
+  font: 800 11px 'Lato', sans-serif; vertical-align: middle; margin-left: 4px;
+}
+.svcats-arrow { font-size: 22px; color: var(--olive, #9a9854); flex: 0 0 auto; }
+.svcats-backbar {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  background: var(--cream-soft, #faf0dc); border: 1px solid rgba(154,152,84,0.25);
+  border-radius: 10px; padding: 11px 14px; margin-bottom: 10px; cursor: pointer;
+  font: 600 13.5px 'Lato', sans-serif; color: var(--olive-dark, #7d7c3f); text-align: left;
+}
+.svcats-backbar b { color: var(--brown, #5c3a1e); }
+.svcats-backbar-sep { opacity: 0.5; }
+
+/* Pop-up "producto agregado — ¿algo más?" (se quita solo al hacer scroll) */
+.ex-added-hint {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%);
+  background: var(--brown, #5c3a1e); color: #fff;
+  padding: 12px 18px; border-radius: 99px;
+  font: 600 13px 'Lato', sans-serif; z-index: 100002;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+  display: flex; align-items: center; gap: 8px; max-width: 90vw;
+  animation: exAddedIn .25s ease-out;
+}
+@keyframes exAddedIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+@media (max-width: 700px) {
+  /* Contenido CENTRADO verticalmente — antes todo amontonado en los 2/3 de arriba */
+  #modal-place-first .modal-body, #modal-modality .modal-body,
+  #modal-resume-cart .modal-body, #modal-agendar .modal-body {
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #modal-form .modal-body { display: flex; flex-direction: column; justify-content: center; }
+  #modal-place-first .modal-header, #modal-modality .modal-header, #modal-form .modal-header {
+    padding-top: 14px !important;
+  }
+  /* Badges del card Domicilio: apilados con aire, no amontonados */
+  .mpf-card-badge { display: block; width: fit-content; margin: 6px 0 0; }
+  .mpf-card-content .mpf-card-badge:first-of-type { margin-top: 8px; }
+  .mpf-card { align-items: flex-start; }
+  .mpf-options-grid { gap: 14px; }
+  /* Auth SIN scroll: fuera lo prescindible, márgenes mínimos */
+  #modal-auth .auth-guest-hint { display: none; }
+  #modal-auth .modal-header { margin-bottom: 4px; }
+  #modal-auth .modal-header h2 { font-size: 19px !important; }
+  #modal-auth .modal-header p { font-size: 11.5px !important; margin-top: 2px !important; }
+  #modal-auth .auth-col { padding: 12px 12px !important; }
+  #modal-auth .auth-col-head { margin-bottom: 6px !important; padding-bottom: 4px !important; }
+  #modal-auth .auth-col-title { font-size: 15px !important; margin-bottom: 2px !important; }
+  #modal-auth .auth-col-desc { font-size: 11.5px !important; margin-bottom: 8px !important; line-height: 1.35 !important; }
+  #modal-auth .auth-divider { margin: 7px 0 !important; }
+  #modal-auth .auth-input { padding: 10px 12px !important; }
+  #modal-auth .auth-btn-primary { padding: 11px 14px !important; margin-top: 6px !important; }
+  #modal-auth .auth-grid { gap: 10px !important; }
+  #modal-auth .modal-body { display: flex; flex-direction: column; justify-content: center; overflow-y: hidden; }
+  /* Chips de preferencia: que "Sin preferencia" quepa en su globo */
+  #modal-choice .ck-pref-chip {
+    font-size: 11px; padding: 8px 6px; letter-spacing: 0; min-width: 0;
+  }
+}
+
 /* Botones de navegación entre fragmentos (existen solo en móvil) */
 .ex-step-nav-btn {
   width: 100%; padding: 14px 18px; border: none; border-radius: 10px;
@@ -19705,6 +19836,33 @@ try {
       return _open.apply(this, arguments);
     };
   }
+
+  // Pop-up "Agregado ✓ ¿algo más?" tras sumar un producto al carrito.
+  // Se quita solo al hacer scroll o a los 4s. Solo aviso visual.
+  function _exShowAddedHint() {
+    try {
+      var old = document.querySelector('.ex-added-hint');
+      if (old) old.remove();
+      var el = document.createElement('div');
+      el.className = 'ex-added-hint';
+      el.innerHTML = '✓ Agregado · ¿algo más? Sigue eligiendo o usa <b>Continuar</b>';
+      document.body.appendChild(el);
+      var kill = function(){ try { el.remove(); } catch(_){} document.removeEventListener('scroll', kill, true); };
+      setTimeout(kill, 4000);
+      setTimeout(function(){ document.addEventListener('scroll', kill, true); }, 400);
+    } catch(_){}
+  }
+  // Disparo delegado: clicks de agregar en catálogo, paquetes pareja y drawer de extras.
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var addBtn = t.closest('.sv2-row-add, .pp-row-add, .ax-cta');
+    if (!addBtn) return;
+    var row = addBtn.closest('.sv2-row, .pp-row');
+    // En rows: solo si la acción fue AGREGAR (la row aún no estaba .on al hacer click)
+    if (row && row.classList.contains('on')) return;
+    setTimeout(_exShowAddedHint, 250);
+  }, true);
 
   document.addEventListener('DOMContentLoaded', function(){
     // ── modal-address: botón "Continuar a detalles" (paso 1) + volver (paso 2) ──
@@ -19806,7 +19964,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v281-slides-916-movil', stamp: '2026-09-01 00:57' };
+  var EX_BUILD = { version: 'v282-categorias-fix-duracion-iphone', stamp: '2026-09-01 01:35' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
