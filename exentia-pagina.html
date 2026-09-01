@@ -12780,6 +12780,9 @@ try {
     // mensaje "Falta: …" que arma _mfaValidateAndSubmit.
     var foot = btn ? btn.closest('.mfa-footer') : null;
     if (foot) foot.addEventListener('click', function(e){
+      // El botón "Continuar a detalles" del modo slides tiene su propio mensaje
+      // (solo pide el pin) — no dispararle encima la validación completa.
+      if (e.target && e.target.closest && e.target.closest('#mfa-next')) return;
       if (btn && btn.disabled) {
         e.preventDefault();
         _mfaValidateAndSubmit();
@@ -18968,6 +18971,10 @@ try {
     'Fija el pin en el mapa y completa los detalles para que tu terapeuta llegue fácil.': 'Drop the pin on the map and fill in the details so your therapist arrives easily.',
     'Mi ubicación': 'My location', 'Usar mi ubicación': 'Use my location',
     'Hazte': 'Become an', 'miembro Exentia': 'Exentia member', 'Hazte miembro Exentia': 'Become an Exentia member',
+    'Continuar a detalles →': 'Continue to details →', '← Volver al mapa': '← Back to the map',
+    '← Volver a tu reserva': '← Back to your booking', 'Continuar al pago →': 'Continue to payment →',
+    '← Volver a preferencias': '← Back to preferences', '← Cambiar de día': '← Change day',
+    'Falta: un pin válido en el mapa. Usa "Usar mi ubicación", busca tu calle o toca el mapa.': 'Missing: a valid pin on the map. Use "Use my location", search your street or tap the map.',
     'Entérate antes que nadie de promociones, descuentos y eventos especiales. O continúa como invitado.': 'Be the first to hear about promotions, discounts and special events. Or continue as a guest.',
     'Promociones y descuentos especiales solo para miembros.': 'Members-only promotions and special discounts.',
     'Te enviamos un código para entrar; si es tu primera vez, creamos tu cuenta automáticamente.': 'We send you a code to sign in; if it’s your first time, we create your account automatically.',
@@ -19550,6 +19557,247 @@ try {
   .exentia-form .iti__country { padding: 13px 14px !important; font-size: 14.5px !important; }
 }
 </style>
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   SLIDES 9:16 EN MÓVIL (2026-09-01, mandato de Henry)
+   Cada modal del flujo ocupa el cuadro completo del teléfono, SIN scroll
+   de página: header y CTA siempre visibles. Lo que no cabe se parte en
+   fragmentos internos con Continuar. Único scroll permitido: listas
+   largas de productos/horarios. Solo layout — cero cambios de estado,
+   payloads o lógica de negocio. Desktop queda intacto.
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  /* ── Marco full-frame para todos los modales del flujo ── */
+  #modal-resume-cart .modal-box, #modal-place-first .modal-box,
+  #modal-modality .modal-box, #modal-group-size .modal-box,
+  #modal-pair-paquete .pp-box, #modal-pair-p1 .pp-box, #modal-pair-p2 .pp-box,
+  #modal-select .modal-box, #modal-form .modal-box, #modal-address.modal-overlay .mfa-box,
+  #modal-calendar .modal-box, #modal-choice .modal-box, #modal-agendar .modal-box,
+  #modal-auth .modal-box, #modal-confirm-final .modal-box, #modal-group-summary .modal-box {
+    width: 100vw !important; max-width: 100vw !important;
+    height: 100dvh !important; max-height: 100dvh !important;
+    margin: 0 !important; border-radius: 0 !important;
+    display: flex !important; flex-direction: column !important;
+    overflow: hidden !important;
+  }
+  #modal-resume-cart.modal-overlay, #modal-place-first.modal-overlay,
+  #modal-modality.modal-overlay, #modal-group-size.modal-overlay,
+  #modal-pair-paquete.modal-overlay, #modal-pair-p1.modal-overlay, #modal-pair-p2.modal-overlay,
+  #modal-select.modal-overlay, #modal-form.modal-overlay, #modal-address.modal-overlay,
+  #modal-calendar.modal-overlay, #modal-choice.modal-overlay, #modal-agendar.modal-overlay,
+  #modal-auth.modal-overlay, #modal-confirm-final.modal-overlay, #modal-group-summary.modal-overlay {
+    padding: 0 !important; align-items: stretch !important; justify-content: stretch !important;
+  }
+  /* El cuerpo central es la única zona flexible; scroll interno SOLO donde
+     hay listas (catálogo, horarios). En los demás, el contenido se compacta
+     para caber — el overflow queda como red de seguridad, no como diseño. */
+  #modal-place-first .modal-body, #modal-modality .modal-body,
+  #modal-form .modal-body, #modal-choice .modal-body,
+  #modal-agendar .modal-body, #modal-auth .modal-body,
+  #modal-calendar .modal-body, #modal-resume-cart .modal-body {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  }
+  #modal-address.modal-overlay .mfa-box { padding: 14px 16px calc(10px + env(safe-area-inset-bottom)) !important; overflow-y: auto !important; }
+  .pp-box .pp-body { flex: 1 1 auto !important; min-height: 0 !important; max-height: none !important; overflow-y: auto !important; }
+  #modal-select .modal-body-scroll { flex: 1 1 auto; min-height: 0; }
+  #modal-group-summary .gs-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+
+  /* ── Compactación: que cada fragmento QUEPA en 9:16 ── */
+  .modal-header .ornament { display: none !important; }
+  .modal-header { padding-top: 6px !important; }
+  .modal-header h2 { font-size: 20px !important; }
+  .modal-nav { padding-top: 8px !important; }
+  .mfa-header { margin-bottom: 8px !important; }
+  .mfa-brand-name, .mfa-brand-sub, .mfa-divider { display: none !important; }
+  .mfa-title { font-size: 22px !important; margin-bottom: 4px !important; }
+  .mfa-subtitle { font-size: 12px !important; }
+  .mfa-map-wrap { height: 34dvh !important; margin-bottom: 8px !important; }
+  #modal-confirm-final .cf-icon { width: 44px !important; height: 44px !important; }
+
+  /* ── modal-address: 2 fragmentos (1=pin en mapa · 2=detalles) ── */
+  #modal-address[data-mfa-step="1"] .mfa-fields,
+  #modal-address[data-mfa-step="1"] #mfa-continue,
+  #modal-address[data-mfa-step="1"] .mfa-back-to-map { display: none !important; }
+  #modal-address[data-mfa-step="2"] .mfa-search-row,
+  #modal-address[data-mfa-step="2"] .mfa-map-wrap,
+  #modal-address[data-mfa-step="2"] #mpf-zone-feedback,
+  #modal-address[data-mfa-step="2"] .mfa-saved-address,
+  #modal-address[data-mfa-step="2"] #mfa-next { display: none !important; }
+  #modal-address .mfa-fields { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  #modal-address .mfa-footer { margin-top: auto !important; padding-top: 10px; }
+
+  /* ── modal-choice: 2 fragmentos (1=tu reserva · 2=preferencias y pago) ── */
+  #modal-choice[data-ck-step="1"] #ck-modalidad-section,
+  #modal-choice[data-ck-step="1"] #ck-pref-section,
+  #modal-choice[data-ck-step="1"] #ck-totals,
+  #modal-choice[data-ck-step="1"] .choice-options,
+  #modal-choice[data-ck-step="1"] .ck-next-step2,
+  #modal-choice[data-ck-step="1"] .ck-back-step2,
+  #modal-choice[data-ck-step="1"] .ck-back-step { display: none !important; }
+  #modal-choice[data-ck-step="2"] .ck-back-step2 { display: none !important; }
+  #modal-choice[data-ck-step="3"] .ck-next-step2 { display: none !important; }
+  #modal-choice[data-ck-step="2"] #ck-services-list,
+  #modal-choice[data-ck-step="2"] .ck-section:has(#ck-services-list),
+  #modal-choice[data-ck-step="2"] .ck-section:has(#ck-location),
+  #modal-choice[data-ck-step="2"] .ck-section:has(#ck-schedule),
+  #modal-choice[data-ck-step="2"] .ck-next-step,
+  #modal-choice[data-ck-step="2"] #ck-totals,
+  #modal-choice[data-ck-step="2"] .choice-options { display: none !important; }
+  #modal-choice[data-ck-step="3"] #ck-services-list,
+  #modal-choice[data-ck-step="3"] .ck-section:has(#ck-services-list),
+  #modal-choice[data-ck-step="3"] .ck-section:has(#ck-location),
+  #modal-choice[data-ck-step="3"] .ck-section:has(#ck-schedule),
+  #modal-choice[data-ck-step="3"] .ck-next-step,
+  #modal-choice[data-ck-step="3"] #ck-modalidad-section,
+  #modal-choice[data-ck-step="3"] #ck-pref-section,
+  #modal-choice[data-ck-step="3"] .ck-back-step { display: none !important; }
+  #modal-choice .ck-mod-card { padding: 10px 12px; }
+  #modal-choice .ck-mod-desc { font-size: 11px; }
+
+  /* ── modal-calendar: 2 fragmentos (1=día · 2=horarios) ── */
+  #modal-calendar[data-cal-step="1"] #cal2-slots-wrap,
+  #modal-calendar[data-cal-step="1"] #cal2-footer,
+  #modal-calendar[data-cal-step="1"] .cal2-back-day { display: none !important; }
+  #modal-calendar[data-cal-step="2"] .cal2-month-nav,
+  #modal-calendar[data-cal-step="2"] .cal2-dow,
+  #modal-calendar[data-cal-step="2"] #cal2-grid { display: none !important; }
+  #modal-calendar[data-cal-step="2"] #cal2-slots-wrap { border-top: none; margin-top: 0; padding-top: 0; }
+  #modal-calendar #cal2-slots { max-height: none; }
+  #modal-calendar .cal2-wrap { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  #modal-calendar[data-cal-step="2"] #cal2-slots-wrap { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+}
+/* Botones de navegación entre fragmentos (existen solo en móvil) */
+.ex-step-nav-btn {
+  width: 100%; padding: 14px 18px; border: none; border-radius: 10px;
+  background: var(--olive, #9a9854); color: #fff;
+  font: 700 13px 'Lato', sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+  cursor: pointer; margin-top: 10px;
+}
+.ex-step-nav-btn:disabled { opacity: 0.5; }
+.ex-step-back {
+  display: inline-block; background: none; border: none; cursor: pointer;
+  color: #8a8268; font: 600 12.5px 'Lato', sans-serif;
+  text-decoration: underline; text-underline-offset: 3px; padding: 8px 4px; margin-bottom: 4px;
+}
+@media (min-width: 701px) {
+  .ex-step-nav-btn, .ex-step-back { display: none !important; }
+}
+</style>
+<script>
+/* Fragmentación de modales en móvil (slides 9:16) — solo visibilidad de UI.
+   No toca payloads, localStorage ni lógica de negocio. */
+(function(){
+  function isMobile() { return window.matchMedia('(max-width: 700px)').matches; }
+
+  // Reset del fragmento al abrir cada modal (envuelve openModal ya envuelto por el bridge)
+  var _open = window.openModal;
+  if (typeof _open === 'function') {
+    window.openModal = function(id){
+      try {
+        if (id === 'modal-address') document.getElementById('modal-address').setAttribute('data-mfa-step', '1');
+        if (id === 'modal-choice') document.getElementById('modal-choice').setAttribute('data-ck-step', '1');
+        if (id === 'modal-calendar') {
+          var mc = document.getElementById('modal-calendar');
+          // Si ya hay día elegido (regresó a cambiar hora), abrir directo en horarios
+          mc.setAttribute('data-cal-step', (window.cal2 && cal2.selectedDate) ? '2' : '1');
+        }
+      } catch(_){}
+      return _open.apply(this, arguments);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    // ── modal-address: botón "Continuar a detalles" (paso 1) + volver (paso 2) ──
+    var mfaFoot = document.querySelector('#modal-address .mfa-footer');
+    var mfaModal = document.getElementById('modal-address');
+    if (mfaFoot && mfaModal && !document.getElementById('mfa-next')) {
+      var next = document.createElement('button');
+      next.type = 'button'; next.id = 'mfa-next'; next.className = 'ex-step-nav-btn';
+      next.textContent = 'Continuar a detalles →';
+      mfaFoot.insertBefore(next, mfaFoot.firstChild);
+      next.addEventListener('click', function(){
+        if (!window.citaPlace || !citaPlace.zonaNum) {
+          var eb = document.getElementById('mfa-error');
+          if (eb) { eb.textContent = 'Falta: un pin válido en el mapa. Usa "Usar mi ubicación", busca tu calle o toca el mapa.'; eb.style.display = 'block'; }
+          return;
+        }
+        var eb2 = document.getElementById('mfa-error'); if (eb2) eb2.style.display = 'none';
+        mfaModal.setAttribute('data-mfa-step', '2');
+        try { var c = document.getElementById('mfa-calle'); if (c && !c.value) c.focus(); } catch(_){}
+      });
+      var backMap = document.createElement('button');
+      backMap.type = 'button'; backMap.className = 'ex-step-back mfa-back-to-map';
+      backMap.textContent = '← Volver al mapa';
+      var fields = document.querySelector('#modal-address .mfa-fields');
+      if (fields) fields.parentNode.insertBefore(backMap, fields);
+      backMap.addEventListener('click', function(){ mfaModal.setAttribute('data-mfa-step', '1'); });
+    }
+
+    // ── modal-choice: "Continuar" (fragmento 1) + volver (fragmento 2) ──
+    var ckCart = document.getElementById('checkout-cart');
+    var ckModal = document.getElementById('modal-choice');
+    if (ckCart && ckModal && !ckModal.querySelector('.ck-next-step')) {
+      var ckNext = document.createElement('button');
+      ckNext.type = 'button'; ckNext.className = 'ex-step-nav-btn ck-next-step';
+      ckNext.textContent = 'Continuar →';
+      var schedSection = document.querySelector('#modal-choice .ck-section:has(#ck-schedule)');
+      if (schedSection) schedSection.parentNode.insertBefore(ckNext, schedSection.nextSibling);
+      else ckCart.appendChild(ckNext);
+      ckNext.addEventListener('click', function(){
+        ckModal.setAttribute('data-ck-step', '2');
+        try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
+      });
+      var ckBack = document.createElement('button');
+      ckBack.type = 'button'; ckBack.className = 'ex-step-back ck-back-step';
+      ckBack.textContent = '← Volver a tu reserva';
+      var modSection = document.getElementById('ck-modalidad-section');
+      if (modSection) modSection.parentNode.insertBefore(ckBack, modSection);
+      ckBack.addEventListener('click', function(){
+        ckModal.setAttribute('data-ck-step', '1');
+        try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
+      });
+      // Fragmento 2 → 3 (preferencias → totales y pago)
+      var ckNext2 = document.createElement('button');
+      ckNext2.type = 'button'; ckNext2.className = 'ex-step-nav-btn ck-next-step2';
+      ckNext2.textContent = 'Continuar al pago →';
+      var prefSection = document.getElementById('ck-pref-section');
+      if (prefSection) prefSection.parentNode.insertBefore(ckNext2, prefSection.nextSibling);
+      ckNext2.addEventListener('click', function(){
+        ckModal.setAttribute('data-ck-step', '3');
+        try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
+      });
+      var ckBack2 = document.createElement('button');
+      ckBack2.type = 'button'; ckBack2.className = 'ex-step-back ck-back-step2';
+      ckBack2.textContent = '← Volver a preferencias';
+      var totEl = document.getElementById('ck-totals');
+      if (totEl) totEl.parentNode.insertBefore(ckBack2, totEl);
+      ckBack2.addEventListener('click', function(){
+        ckModal.setAttribute('data-ck-step', '2');
+        try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
+      });
+    }
+
+    // ── modal-calendar: elegir día avanza a horarios; link para cambiar de día ──
+    var calGrid = document.getElementById('cal2-grid');
+    var calModal = document.getElementById('modal-calendar');
+    if (calGrid && calModal) {
+      calGrid.addEventListener('click', function(e){
+        if (!isMobile()) return;
+        var day = e.target.closest('.cal2-day[data-date]');
+        if (day) setTimeout(function(){ calModal.setAttribute('data-cal-step', '2'); }, 120);
+      });
+      var slotsWrap = document.getElementById('cal2-slots-wrap');
+      if (slotsWrap && !slotsWrap.querySelector('.cal2-back-day')) {
+        var backDay = document.createElement('button');
+        backDay.type = 'button'; backDay.className = 'ex-step-back cal2-back-day';
+        backDay.textContent = '← Cambiar de día';
+        slotsWrap.insertBefore(backDay, slotsWrap.firstChild);
+        backDay.addEventListener('click', function(){ calModal.setAttribute('data-cal-step', '1'); });
+      }
+    }
+  });
+})();
+</script>
 <div id="ex-build-badge" title="Última edición del HTML (hora Cancún UTC-5)"></div>
 <script>
 (function(){
@@ -19558,7 +19806,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v281-ajustes-checkout-olas-ABC', stamp: '2026-09-01 00:46' };
+  var EX_BUILD = { version: 'v281-slides-916-movil', stamp: '2026-09-01 00:57' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
