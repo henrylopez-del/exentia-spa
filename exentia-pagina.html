@@ -8320,7 +8320,8 @@ try {
         <label class="form-label">Colonia / Zona <span class="req">*</span></label>
         <input type="text" id="mfa-colonia" placeholder="Ej. SM 27, Bonampak">
       </div>
-      <div class="mfa-row">
+      <button type="button" class="mfa-ref-toggle" onclick="document.getElementById('modal-address').classList.add('show-ref'); setTimeout(function(){ try { document.getElementById('mfa-referencias').focus(); } catch(_){} }, 80);">＋ Agregar referencias (opcional)</button>
+      <div class="mfa-row mfa-row-referencias">
         <label class="form-label">Referencias <span class="opt">(opcional)</span></label>
         <textarea id="mfa-referencias" rows="2" placeholder="Ej. Casa color blanco, portón negro, frente al parque"></textarea>
       </div>
@@ -11327,7 +11328,7 @@ try {
         try { window._pendingPickService = svcName || null; } catch(_){}
         try { window._pendingPickCategory = catSlug || null; } catch(_){}
         try { window._pendingAutoAdd = true; } catch(_){}
-        smartAgendar();
+        window._suppressResumeAsk = true; smartAgendar();
         return;
       }
     });
@@ -15929,6 +15930,12 @@ try {
         // Grupo: primero preguntamos cuántas personas, luego abre vistas N
         openGroupSizeModal();
         closeModal('modal-modality');
+      } else if (svMode === 'individual' && cart && cart.length > 0) {
+        // Anti-redundancia (2026-09-01): el producto ya viene elegido desde la
+        // página — no re-mostrar el catálogo. Directo a datos; en el resumen
+        // final está "+ cambiar / agregar" si quiere sumar algo.
+        closeModal('modal-modality');
+        routeAfterServices();
       } else {
         openSelectModal();
         closeModal('modal-modality');
@@ -15960,14 +15967,13 @@ try {
       openPlaceFirstModal();
       return;
     }
-    // Carrito persistido de una visita anterior (2026-09-01): antes se reanudaba DIRECTO
-    // a media captura (ej. "agregando persona 2") sin carrito visible ni salida — el
-    // cliente quedaba atorado. Ahora, UNA vez por sesión, se pregunta si continúa o
-    // empieza de nuevo. El flag vive en memoria (no en localStorage): recargar vuelve
-    // a preguntar, que es lo correcto. Los flujos del landing (reservarPaquete /
-    // data-pick-svc) ya vacían el carrito ANTES de llamar smartAgendar, así que este
-    // modal solo aparece en entradas "Agendar Cita" genéricas con carrito viejo.
-    if (!window._cartResumeChoice) {
+    // Carrito con items al entrar por "Agendar Cita" (2026-09-01, regla de Henry):
+    // SIEMPRE preguntar continuar/empezar de nuevo — también a media sesión, no solo
+    // tras recargar. Los caminos internos (landing pick, repetir reserva, el propio
+    // "continuar" del modal) levantan _suppressResumeAsk para no auto-preguntarse.
+    var _suppress = window._suppressResumeAsk;
+    window._suppressResumeAsk = false;
+    if (!_suppress) {
       openResumeCartModal();
       return;
     }
@@ -16001,12 +16007,14 @@ try {
   function resumeCartContinue() {
     window._cartResumeChoice = 'continue';
     closeModal('modal-resume-cart');
+    window._suppressResumeAsk = true;
     smartAgendar();
   }
   function resumeCartFresh() {
     window._cartResumeChoice = 'fresh';
     try { resetFlowState({ personas: 'wipe', svMode: null, clearPlace: true, clearBooking: true }); } catch(_){}
     closeModal('modal-resume-cart');
+    window._suppressResumeAsk = true;
     smartAgendar();
   }
   window.openResumeCartModal = openResumeCartModal;
@@ -16031,7 +16039,7 @@ try {
     try { window._pendingPickService = svcName; } catch(_){}
     try { window._pendingPickCategory = catSlug || null; } catch(_){}
     try { window._pendingAutoAdd = true; } catch(_){}
-    smartAgendar();
+    window._suppressResumeAsk = true; smartAgendar();
   }
   window.reservarPaquete = reservarPaquete;
 
@@ -17260,7 +17268,7 @@ try {
         persistCart();
       }
     } catch(_){}
-    setTimeout(function(){ smartAgendar(); }, 200);
+    window._suppressResumeAsk = true; setTimeout(function(){ smartAgendar(); }, 200);
   }
   window.repetirBooking = repetirBooking;
 
@@ -17767,7 +17775,7 @@ try {
       window._pendingPickCategory = catSlug;
       window._pendingAutoAdd = false; // ya está en cart
       try { if (typeof svActiveCat !== 'undefined' && catSlug) svActiveCat = catSlug; } catch(_){}
-      smartAgendar();
+      window._suppressResumeAsk = true; smartAgendar();
       return;
     }
 
@@ -19101,6 +19109,14 @@ try {
     'Sí, ver servicios': 'Yes, show services', 'No, gracias · continuar': 'No, thanks · continue',
     'Cancelaciones y reembolsos: hasta 100% de devolución': 'Cancellations & refunds: up to 100% back',
     'Agregar o quitar': 'Add or remove',
+    'Revisa tu reserva': 'Review your booking',
+    'Confirma que todo esté correcto antes de seguir.': 'Make sure everything looks right before continuing.',
+    'Preferencias del servicio': 'Service preferences',
+    'Cómo prefieren ser atendidas.': 'How you prefer to be attended.',
+    ': realiza tu pago': ': complete your payment',
+    'Tu cita se confirma al completar el pago.': 'Your appointment is confirmed once payment is completed.',
+    'Elige cómo prefieren recibir el servicio para continuar.': 'Choose how you prefer to receive the service to continue.',
+    '＋ Agregar referencias (opcional)': '＋ Add references (optional)',
     'Sí, el mismo para todas': 'Yes, the same for everyone',
     'No, personalizar por persona': 'No, customize per person',
     '¿El mismo servicio para las 2 personas?': 'The same service for both people?',
@@ -19911,7 +19927,36 @@ try {
   #modal-choice .ck-mod-title { font-size: 13px !important; }
   #modal-choice .ck-mod-desc { font-size: 10.5px !important; }
   #modal-choice .ck-section-label { font-size: 10px !important; letter-spacing: 0.8px !important; }
+  /* CTA del fragmento SIEMPRE visible: pegado al fondo del cuadro aunque el
+     contenido scrollee (el scroll interno queda como red de seguridad, nunca
+     tapa el botón). */
+  #modal-choice .ck-next-step, #modal-choice .ck-next-step2 {
+    position: sticky; bottom: 0; z-index: 3;
+    box-shadow: 0 -8px 16px rgba(253,251,244,0.95);
+  }
+  #modal-choice .choice-options {
+    position: sticky; bottom: 0; z-index: 3;
+    background: var(--off-white, #fdfbf4);
+    padding-top: 6px;
+    box-shadow: 0 -8px 16px rgba(253,251,244,0.95);
+  }
+  #modal-choice .checkout-cart { padding-bottom: 4px; }
+  /* Dirección: campos compactos para ficha estática */
+  #modal-address .mfa-fields { gap: 8px !important; }
+  #modal-address .mfa-row input, #modal-address .mfa-row textarea { padding: 9px 12px !important; font-size: 14px !important; }
+  #modal-address .mfa-row .form-label { font-size: 10px !important; margin-bottom: 3px !important; }
+  #modal-address .mfa-title { font-size: 19px !important; }
+  #modal-address .mfa-subtitle { display: none !important; }
+  /* Referencias colapsadas: solo si el cliente las quiere agregar */
+  #modal-address:not(.show-ref) .mfa-row-referencias { display: none !important; }
+  #modal-address.show-ref .mfa-ref-toggle { display: none !important; }
 }
+.mfa-ref-toggle {
+  display: inline-block; background: none; border: 1px dashed rgba(154,152,84,0.45);
+  color: var(--olive-dark, #7d7c3f); border-radius: 10px; padding: 9px 14px;
+  font: 600 12px 'Lato', sans-serif; cursor: pointer; width: 100%;
+}
+@media (min-width: 701px) { .mfa-ref-toggle { display: none; } }
 /* Píldora "Agregado": si el texto envuelve, que sea tarjeta redondeada legible,
    nunca un círculo con letras apretadas */
 .ex-added-hint { border-radius: 16px; text-align: center; line-height: 1.4; flex-wrap: wrap; justify-content: center; }
@@ -20016,7 +20061,12 @@ try {
     window.openModal = function(id){
       try {
         if (id === 'modal-address') document.getElementById('modal-address').setAttribute('data-mfa-step', '1');
-        if (id === 'modal-choice') document.getElementById('modal-choice').setAttribute('data-ck-step', '1');
+        if (id === 'modal-choice') {
+          document.getElementById('modal-choice').setAttribute('data-ck-step', '1');
+          // El título del fragmento 1 se aplica DESPUÉS de que renderCheckoutCart
+          // ponga el suyo (corre dentro del open del bridge).
+          setTimeout(function(){ try { if (window._ckStepTitle) window._ckStepTitle(1); } catch(_){} }, 60);
+        }
         if (id === 'modal-calendar') {
           var mc = document.getElementById('modal-calendar');
           // Si ya hay día elegido (regresó a cambiar hora), abrir directo en horarios
@@ -20091,8 +20141,28 @@ try {
       var schedSection = document.querySelector('#modal-choice .ck-section:has(#ck-schedule)');
       if (schedSection) schedSection.parentNode.insertBefore(ckNext, schedSection.nextSibling);
       else ckCart.appendChild(ckNext);
+      // Títulos por fragmento (móvil): un solo "último paso", en el paso del pago.
+      function _ckStepTitle(step) {
+        if (!isMobile()) return;
+        var tTxt = document.getElementById('choice-title-text');
+        var tEnd = document.getElementById('choice-title-end');
+        var tSub = document.getElementById('choice-subtitle');
+        if (!tTxt || !tEnd) return;
+        if (step === 1) {
+          tTxt.textContent = 'Revisa tu reserva'; tEnd.textContent = '';
+          if (tSub) tSub.textContent = 'Confirma que todo esté correcto antes de seguir.';
+        } else if (step === 2) {
+          tTxt.textContent = 'Preferencias del servicio'; tEnd.textContent = '';
+          if (tSub) tSub.textContent = 'Cómo prefieren ser atendidas.';
+        } else {
+          tTxt.textContent = 'Último paso'; tEnd.textContent = ': realiza tu pago';
+          if (tSub) tSub.textContent = 'Tu cita se confirma al completar el pago.';
+        }
+      }
+      window._ckStepTitle = _ckStepTitle;
       ckNext.addEventListener('click', function(){
         ckModal.setAttribute('data-ck-step', '2');
+        _ckStepTitle(2);
         try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
       });
       var ckBack = document.createElement('button');
@@ -20102,6 +20172,7 @@ try {
       if (modSection) modSection.parentNode.insertBefore(ckBack, modSection);
       ckBack.addEventListener('click', function(){
         ckModal.setAttribute('data-ck-step', '1');
+        _ckStepTitle(1);
         try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
       });
       // Fragmento 2 → 3 (preferencias → totales y pago)
@@ -20111,7 +20182,18 @@ try {
       var prefSection = document.getElementById('ck-pref-section');
       if (prefSection) prefSection.parentNode.insertBefore(ckNext2, prefSection.nextSibling);
       ckNext2.addEventListener('click', function(){
+        // Gate (2026-09-01): con 2+ personas la modalidad es OBLIGATORIA — antes
+        // dejaba pasar al pago sin elegir al-mismo-tiempo/turnos/económica.
+        try {
+          var modSec = document.getElementById('ck-modalidad-section');
+          var modVisible = modSec && modSec.style.display !== 'none';
+          if (modVisible && !(window.citaPlace && citaPlace.modalidad)) {
+            if (typeof showFlowToast === 'function') showFlowToast('Elige cómo prefieren recibir el servicio para continuar.', 'warn');
+            return;
+          }
+        } catch(_){}
         ckModal.setAttribute('data-ck-step', '3');
+        _ckStepTitle(3);
         try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
       });
       var ckBack2 = document.createElement('button');
@@ -20121,6 +20203,7 @@ try {
       if (totEl) totEl.parentNode.insertBefore(ckBack2, totEl);
       ckBack2.addEventListener('click', function(){
         ckModal.setAttribute('data-ck-step', '2');
+        _ckStepTitle(2);
         try { ckModal.querySelector('.modal-body').scrollTop = 0; } catch(_){}
       });
     }
@@ -20154,7 +20237,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v286-grupo-mismo-servicio-calendario', stamp: '2026-09-01 02:53' };
+  var EX_BUILD = { version: 'v287-cta-sticky-titulos-antiredundancia', stamp: '2026-09-01 03:08' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
