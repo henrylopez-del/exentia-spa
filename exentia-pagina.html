@@ -11091,9 +11091,20 @@ try {
   }
   window.resetFlowState = resetFlowState;
 
+  // Alinea cartMeta con cart ANTES de cualquier mutación. Un desfase previo
+  // (por manipulación externa o bug) corrompía TODAS las asignaciones de persona
+  // siguientes — con esto cada operación arranca desde arrays consistentes.
+  function _syncCartMetaLen() {
+    try {
+      var _pidFix = (typeof currentPersonaId !== 'undefined' ? currentPersonaId : 1);
+      while (cartMeta.length > cart.length) cartMeta.pop();
+      while (cartMeta.length < cart.length) cartMeta.push({ personaId: _pidFix });
+    } catch(_){}
+  }
   // Hook cart.push para mantener cartMeta sincronizado
   const _origCartPush = cart.push.bind(cart);
   cart.push = function() {
+    _syncCartMetaLen();
     var wasEmpty = cart.length === 0;
     for (var i = 0; i < arguments.length; i++) {
       cartMeta.push({ personaId: currentPersonaId });
@@ -11113,6 +11124,7 @@ try {
   // Hook cart.splice
   const _origCartSplice = cart.splice.bind(cart);
   cart.splice = function(start, deleteCount) {
+    _syncCartMetaLen();
     var items = Array.prototype.slice.call(arguments, 2);
     var metaItems = items.map(function(){ return { personaId: currentPersonaId }; });
     cartMeta.splice.apply(cartMeta, [start, deleteCount || 0].concat(metaItems));
@@ -17907,40 +17919,123 @@ try {
       var _qty = window._sv2GroupQty || 0;
       if (svMode === 'grupo' && window.svGroupStep === 1 && _qty >= 2 && !window._groupSameAsked) {
         var _p1items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(1) : [];
-        if (_p1items.length > 0) {
-          var _svcName0 = String(_p1items[0].key).split(' · ')[0];
-          container.innerHTML = '<div class="svask-wrap">'
-            + '<div class="svask-icon">✦</div>'
-            + '<h3 class="svask-title">¿El mismo servicio para las ' + _qty + ' personas?</h3>'
-            + '<p class="svask-sub">' + _svcName0 + (_p1items.length > 1 ? ' y ' + (_p1items.length - 1) + ' más' : '') + ' para cada una.</p>'
-            + '<button type="button" class="ex-step-nav-btn svask-same" style="display:block;">Sí, el mismo para todas</button>'
-            + '<button type="button" class="ex-step-back svask-custom" style="display:inline-block;">No, personalizar por persona</button>'
-            + '</div>';
-          container.querySelector('.svask-same').onclick = function(){
-            window._groupSameAsked = true;
-            try {
-              var keys = getItemsForPersona(1).map(function(it){ return it.key; });
-              var prevPid = currentPersonaId;
-              for (var pi = 2; pi <= _qty; pi++) {
-                if (getItemsForPersona(pi).length > 0) continue;
-                currentPersonaId = pi;
-                keys.forEach(function(k){ cart.push(k); });
-              }
-              currentPersonaId = prevPid;
-            } catch(_){}
-            closeModal('modal-select');
-            if (typeof openGroupSummary === 'function') openGroupSummary(true);
-          };
-          container.querySelector('.svask-custom').onclick = function(){
-            window._groupSameAsked = true;
-            renderSelectView();
-          };
+        var _hasP1 = _p1items.length > 0;
+        var _svcName0 = _hasP1 ? String(_p1items[0].key).split(' · ')[0] : '';
+        // Vista intermedia del grupo: mismo-para-todas / paquete de pareja / por persona.
+        // El PAQUETE DE PAREJA en grupo (2026-09-01, pedido de Henry) se descompone en
+        // 2 servicios individuales (precio pareja ÷ 2 cada uno, marcados "Paquete pareja")
+        // asignados a las 2 personas del par — así los cupos/duraciones/comisiones del
+        // backend quedan exactos SIN tocar el modelo (solo entiende servicios por persona).
+        if (window._svGroupView === 'pkg') {
+          var pkgs = (typeof _ppGetTreatments === 'function') ? _ppGetTreatments('paquete') : [];
+          var ph = '<button type="button" class="svcats-backbar" data-pkg-back>‹ Volver</button>'
+            + '<h3 class="svask-title" style="text-align:center; font-size:20px; margin:6px 0 2px;">Paquetes de pareja</h3>'
+            + '<p class="svask-sub" style="text-align:center;">Elige el paquete y luego a cuáles 2 personas se les aplica.</p>'
+            + '<div class="sv2-list" style="margin-top:8px;">';
+          pkgs.forEach(function(x, xi){
+            var durs = getDurations(x.t);
+            durs.forEach(function(d, di){
+              if (!d.priceCouple) return;
+              ph += '<div class="sv2-row" data-pkg-idx="' + xi + '" data-pkg-dur="' + di + '" style="cursor:pointer;">'
+                + '<div class="sv2-row-info"><div class="sv2-row-name">' + x.t.name + (d.min ? ' · ' + d.min + ' min' : '') + '</div>'
+                + '<div class="sv2-row-desc">Cubre a 2 personas del grupo</div></div>'
+                + '<div class="sv2-row-price">' + d.priceCouple + '</div>'
+                + '</div>';
+            });
+          });
+          ph += '</div><div id="pkg-pair-picker" style="margin-top:10px;"></div>';
+          container.innerHTML = ph;
+          container.querySelector('[data-pkg-back]').onclick = function(){ window._svGroupView = null; renderSelectView(); };
+          container.querySelectorAll('[data-pkg-idx]').forEach(function(rowEl){
+            rowEl.onclick = function(){
+              var t = pkgs[parseInt(this.getAttribute('data-pkg-idx'), 10)].t;
+              var d = getDurations(t)[parseInt(this.getAttribute('data-pkg-dur'), 10)];
+              // Selector de par: todas las combinaciones de 2 personas
+              var picker = document.getElementById('pkg-pair-picker');
+              var pairs = [];
+              for (var a = 1; a <= _qty; a++) for (var b = a + 1; b <= _qty; b++) pairs.push([a, b]);
+              var phh = '<div class="svask-sub" style="text-align:center; font-weight:700; color:var(--brown,#5c3a1e);">' + t.name + (d.min ? ' · ' + d.min + ' min' : '') + ' · ¿para quiénes?</div><div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:8px;">';
+              pairs.forEach(function(pr){
+                phh += '<button type="button" class="ck-pref-chip" data-pair="' + pr[0] + '-' + pr[1] + '" style="flex:0 0 auto;">Persona ' + pr[0] + ' + Persona ' + pr[1] + '</button>';
+              });
+              phh += '</div>';
+              picker.innerHTML = phh;
+              try { picker.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(_){}
+              picker.querySelectorAll('[data-pair]').forEach(function(pb){
+                pb.onclick = function(){
+                  var pp = this.getAttribute('data-pair').split('-').map(Number);
+                  var full = parsePriceMXN(d.priceCouple) || 0;
+                  var half = full / 2;
+                  var halfStr = '$' + (half % 1 === 0 ? half.toLocaleString('en-US') : half.toFixed(2));
+                  var key = t.name + (d.min ? ' · ' + d.min + ' min' : '') + ' · Paquete pareja · ' + halfStr;
+                  var prevPid = currentPersonaId;
+                  pp.forEach(function(p){ currentPersonaId = p; cart.push(key); });
+                  currentPersonaId = prevPid;
+                  window._svGroupView = null;
+                  if (typeof showFlowToast === 'function') showFlowToast('Paquete agregado para Persona ' + pp[0] + ' y Persona ' + pp[1] + '.');
+                  renderSelectView();
+                };
+              });
+            };
+          });
           updateSvBottom();
           _fillPairHeader();
-          var _gf = document.getElementById('select-footer');
-          if (_gf) _gf.style.display = 'none';
+          var _gfp = document.getElementById('select-footer');
+          if (_gfp) _gfp.style.display = 'none';
           return;
         }
+        var _cubiertas = [];
+        for (var ci = 1; ci <= _qty; ci++) if (getItemsForPersona(ci).length > 0) _cubiertas.push(ci);
+        container.innerHTML = '<div class="svask-wrap">'
+          + '<div class="svask-icon">✦</div>'
+          + '<h3 class="svask-title">¿Cómo arman los servicios del grupo?</h3>'
+          + (_cubiertas.length ? '<p class="svask-sub">Con servicio: ' + _cubiertas.map(function(c){ return 'Persona ' + c; }).join(', ') + ' de ' + _qty + '.</p>' : '<p class="svask-sub">Son ' + _qty + ' personas.</p>')
+          + (_hasP1 ? '<button type="button" class="ex-step-nav-btn svask-same" style="display:block;">' + _svcName0 + ' para todas</button>' : '')
+          + '<button type="button" class="ex-step-nav-btn svask-pkg" style="display:block; background:var(--brown,#5c3a1e);">Agregar paquete de pareja</button>'
+          + '<button type="button" class="ex-step-nav-btn svask-custom" style="display:block;">Elegir por persona</button>'
+          + (_cubiertas.length >= _qty ? '<button type="button" class="ex-step-back svask-done" style="display:inline-block;">Todas listas · ver resumen</button>' : '')
+          + '</div>';
+        var _sameBtn = container.querySelector('.svask-same');
+        if (_sameBtn) _sameBtn.onclick = function(){
+          window._groupSameAsked = true;
+          try {
+            var keys = getItemsForPersona(1).map(function(it){ return it.key; });
+            var prevPid = currentPersonaId;
+            for (var pi = 2; pi <= _qty; pi++) {
+              if (getItemsForPersona(pi).length > 0) continue;
+              currentPersonaId = pi;
+              keys.forEach(function(k){ cart.push(k); });
+            }
+            currentPersonaId = prevPid;
+          } catch(_){}
+          closeModal('modal-select');
+          if (typeof openGroupSummary === 'function') openGroupSummary(true);
+        };
+        container.querySelector('.svask-pkg').onclick = function(){
+          window._svGroupView = 'pkg';
+          renderSelectView();
+        };
+        container.querySelector('.svask-custom').onclick = function(){
+          window._groupSameAsked = true;
+          // Arrancar en la primera persona SIN servicio (las del paquete ya están cubiertas)
+          try {
+            for (var fi = 1; fi <= _qty; fi++) {
+              if (getItemsForPersona(fi).length === 0) { window.svGroupStep = fi; currentPersonaId = fi; break; }
+            }
+          } catch(_){}
+          renderSelectView();
+        };
+        var _doneBtn = container.querySelector('.svask-done');
+        if (_doneBtn) _doneBtn.onclick = function(){
+          window._groupSameAsked = true;
+          closeModal('modal-select');
+          if (typeof openGroupSummary === 'function') openGroupSummary(true);
+        };
+        updateSvBottom();
+        _fillPairHeader();
+        var _gf = document.getElementById('select-footer');
+        if (_gf) _gf.style.display = 'none';
+        return;
       }
       var _inPairExtras = (svMode === 'parejas' && (window.svPairStep === 'p1' || window.svPairStep === 'p2'));
       window._svExtrasAsked = window._svExtrasAsked || {};
@@ -19136,6 +19231,15 @@ try {
     '＋ Agregar referencias (opcional)': '＋ Add references (optional)',
     'Sí, el mismo para todas': 'Yes, the same for everyone',
     'No, personalizar por persona': 'No, customize per person',
+    '¿Cómo arman los servicios del grupo?': 'How do you want to build the group’s services?',
+    'Agregar paquete de pareja': 'Add a couples package',
+    'Elegir por persona': 'Choose per person',
+    'Paquetes de pareja': 'Couples packages',
+    'Elige el paquete y luego a cuáles 2 personas se les aplica.': 'Pick the package, then which 2 people it applies to.',
+    'Cubre a 2 personas del grupo': 'Covers 2 people in the group',
+    'Todas listas · ver resumen': 'Everyone is set · view summary',
+    'Paquete pareja': 'Couples package',
+    '‹ Volver': '‹ Back',
     '¿El mismo servicio para las 2 personas?': 'The same service for both people?',
     '¿El mismo servicio para las 3 personas?': 'The same service for all 3 people?',
     '¿El mismo servicio para las 4 personas?': 'The same service for all 4 people?',
@@ -20254,7 +20358,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v288-sin-drawer-prelujo', stamp: '2026-09-01 03:17' };
+  var EX_BUILD = { version: 'v289-paquetes-pareja-en-grupo', stamp: '2026-09-01 03:25' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
