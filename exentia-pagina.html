@@ -5457,9 +5457,23 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   .select-helper-icon svg { display: block; }
 
   @media (max-width: 600px) {
-    .modal-footer-sticky { padding: 12px 16px; gap: 10px; }
-    .select-summary { font-size: 12px; }
-    .select-continue { padding: 11px 18px; font-size: 11px; }
+    /* Footer del catálogo en móvil (2026-09-01): el resumen ("Sin extras para
+       Persona 1") se colapsaba a una palabra por línea y el CTA se le encimaba.
+       Se apila: resumen arriba en una sola línea con ellipsis, botón abajo full-width. */
+    .modal-footer-sticky { padding: 12px 16px; gap: 8px; flex-wrap: wrap; }
+    .select-summary {
+      font-size: 12px;
+      flex: 1 1 100%;
+      min-width: 0;
+      white-space: nowrap;
+    }
+    .select-summary > span:last-child,
+    .select-summary #select-summary-text {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+    }
+    .select-actions { flex: 1 1 100%; }
+    .select-actions .select-continue { flex: 1; justify-content: center; }
+    .select-continue { padding: 12px 18px; font-size: 11px; }
   }
 
   /* ============ CUSTOM FORM (modal-form) ============ */
@@ -8066,7 +8080,7 @@ try {
     <div class="pp-step-labels"><span class="active">Para los 2</span><span>Persona 1</span><span>Persona 2</span></div>
     <div class="pp-badge-row"><span class="pp-badge pp-badge-pair">PARA LOS DOS</span></div>
     <h2 class="pp-title">Elijan un <em>paquete para los dos</em></h2>
-    <p class="pp-why">Estos paquetes cubren a las 2 personas con precio especial. Si no quieren ninguno, está bien — saltan al siguiente paso.</p>
+    <p class="pp-why">Aquí solo están los paquetes con precio especial de pareja. El catálogo completo (manicura, pedicura, cabello, maquillaje, depilación y más) lo eligen persona por persona en los siguientes 2 pasos.</p>
     <div class="pp-body" id="pp-list-paquete"></div>
     <div class="pp-running"><small>Subtotal del paso</small><span id="pp-sub-paquete">$0</span></div>
     <div class="pp-foot">
@@ -8091,8 +8105,8 @@ try {
     </div>
     <div class="pp-step-labels"><span>Para los 2</span><span class="active">Persona 1</span><span>Persona 2</span></div>
     <div class="pp-badge-row"><span class="pp-badge pp-badge-p1">PERSONA 1</span></div>
-    <h2 class="pp-title">¿Algo extra para <em>Persona 1</em>?</h2>
-    <p class="pp-why">Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes continuar sin elegir nada.</p>
+    <h2 class="pp-title">Servicios para <em>Persona 1</em></h2>
+    <p class="pp-why">Elige del catálogo completo los servicios individuales para ella. Si ya eligieron paquete, este paso es un bonus 100% opcional: puedes continuar sin agregar nada.</p>
     <div class="pp-body" id="pp-list-p1"></div>
     <div class="pp-running"><small>Subtotal Persona 1</small><span id="pp-sub-p1">$0</span></div>
     <div class="pp-foot">
@@ -8117,8 +8131,8 @@ try {
     </div>
     <div class="pp-step-labels"><span>Para los 2</span><span>Persona 1</span><span class="active">Persona 2</span></div>
     <div class="pp-badge-row"><span class="pp-badge pp-badge-p2">PERSONA 2</span></div>
-    <h2 class="pp-title">¿Algo extra para <em>Persona 2</em>?</h2>
-    <p class="pp-why">Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes ir directo al resumen sin elegir nada.</p>
+    <h2 class="pp-title">Servicios para <em>Persona 2</em></h2>
+    <p class="pp-why">Elige del catálogo completo los servicios individuales para ella. Si ya eligieron paquete, este paso es un bonus 100% opcional: puedes ir directo al resumen.</p>
     <div class="pp-body" id="pp-list-p2"></div>
     <div class="pp-running"><small>Subtotal Persona 2</small><span id="pp-sub-p2">$0</span></div>
     <div class="pp-foot">
@@ -18965,8 +18979,10 @@ try {
     'Aún no has seleccionado un servicio para la segunda persona.': 'You haven’t selected a service for the second person yet.',
     'Sin servicios adicionales · el paquete ya la cubre': 'No additional services · the package already covers her',
     'Aún no eligió servicios': 'No services selected yet',
-    'Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes continuar sin elegir nada.': 'This step is a 100% optional bonus: individual services just for her, on top of the package. You can continue without choosing anything.',
-    'Este paso es un bonus 100% opcional: servicios individuales solo para ella, además del paquete. Puedes ir directo al resumen sin elegir nada.': 'This step is a 100% optional bonus: individual services just for her, on top of the package. You can go straight to the summary without choosing anything.',
+    'Aquí solo están los paquetes con precio especial de pareja. El catálogo completo (manicura, pedicura, cabello, maquillaje, depilación y más) lo eligen persona por persona en los siguientes 2 pasos.': 'These are only the packages with special couples pricing. The full catalog (manicure, pedicure, hair, makeup, waxing and more) is chosen per person in the next 2 steps.',
+    'Servicios para': 'Services for',
+    'Elige del catálogo completo los servicios individuales para ella. Si ya eligieron paquete, este paso es un bonus 100% opcional: puedes continuar sin agregar nada.': 'Choose her individual services from the full catalog. If you already picked a package, this step is a 100% optional bonus: you can continue without adding anything.',
+    'Elige del catálogo completo los servicios individuales para ella. Si ya eligieron paquete, este paso es un bonus 100% opcional: puedes ir directo al resumen.': 'Choose her individual services from the full catalog. If you already picked a package, this step is a 100% optional bonus: you can go straight to the summary.',
     'Calle': 'Street', 'Núm. Ext.': 'Ext. No.', 'Núm. Int.': 'Int. No.',
     'Colonia / Zona': 'Neighborhood / Area', 'Referencias': 'References',
     'Necesitas fijar un pin en el mapa para continuar.': 'You need to drop a pin on the map to continue.',
@@ -19533,7 +19549,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v281-ajustes-checkout-olas-ABC', stamp: '2026-09-01 00:21' };
+  var EX_BUILD = { version: 'v281-ajustes-checkout-olas-ABC', stamp: '2026-09-01 00:43' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
