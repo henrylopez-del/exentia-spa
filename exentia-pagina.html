@@ -8180,7 +8180,7 @@ try {
     <div class="modal-footer-sticky" id="select-footer">
       <div class="select-summary" id="select-summary">
         <span class="select-summary-icon">✓</span>
-        <span id="select-summary-text">Aún no has elegido nada</span>
+        <span id="select-summary-text" aria-live="polite">Aún no has elegido nada</span>
       </div>
       <div class="select-actions">
         <button type="button" id="select-skip-btn" class="select-skip" onclick="selectAdvancePair()" style="display:none;">No, gracias · continuar →</button>
@@ -8813,6 +8813,7 @@ try {
           <span class="choice-arrow" aria-hidden="true">→</span>
         </button>
         <!-- Nota informativa para sucursal (visible cuando el pago final no es completo por Stripe). -->
+        <a class="ck-trust-link" onclick="location.hash = '#legal/cancelaciones'; closeAllFlowModals();">Cancelaciones y reembolsos: hasta 100% de devolución</a>
         <p id="ck-suc-note" class="ck-suc-note" style="display:none;margin:12px 4px 0;font-size:12px;color:#6a6551;line-height:1.5;text-align:center;">
           El resto se cobra directamente en <strong>Plaza Hive</strong> cuando llegues. Aceptamos efectivo, tarjeta y transferencia.
         </p>
@@ -13875,6 +13876,9 @@ try {
     // Vista inicial: lista de CATEGORÍAS (2026-09-01). Con producto pre-elegido
     // desde la landing, saltar directo a la lista de esa categoría.
     window._svCatView = window._pendingPickService ? 'list' : 'cats';
+    // El footer pudo quedar oculto por la vista-pregunta de extras; restaurarlo
+    // siempre al abrir (la vista-pregunta lo vuelve a ocultar si aplica).
+    try { var _sf = document.getElementById('select-footer'); if (_sf) _sf.style.display = ''; } catch(_){}
     // Si entramos con un producto pre-seleccionado (desde la landing), saltamos al tab correcto
     if (window._pendingPickCategory && window.SERVICES && window.SERVICES[window._pendingPickCategory]) {
       try { svActiveCat = window._pendingPickCategory; } catch(_){}
@@ -19046,6 +19050,7 @@ try {
     '¿Te gustaría agregar algún servicio extra para Persona 2?': 'Would you like to add any extra service for Person 2?',
     'Además del paquete que ya eligieron. Es completamente opcional.': 'On top of the package you already chose. Completely optional.',
     'Sí, ver servicios': 'Yes, show services', 'No, gracias · continuar': 'No, thanks · continue',
+    'Cancelaciones y reembolsos: hasta 100% de devolución': 'Cancellations & refunds: up to 100% back',
     '✓ Agregado · ¿algo más? Sigue eligiendo o usa': '✓ Added · anything else? Keep browsing or tap',
     'Continuar a detalles →': 'Continue to details →', '← Volver al mapa': '← Back to the map',
     '← Volver a tu reserva': '← Back to your booking', 'Continuar al pago →': 'Continue to payment →',
@@ -19875,6 +19880,23 @@ try {
   .md-card.active .md-card-check { transform: translateY(-50%) scale(1.08); }
 }
 
+/* ── Checklist storefront (2026-09-01): safe-area iOS + touch targets 44px ── */
+@media (max-width: 700px) {
+  .modal-footer-sticky, .pp-foot, .gs-footer, .mfa-footer {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+  }
+  .ck-pref-chip, .treatment-dur-chip, .sv2-dur-chip, .sv2-var-chip, .pp-row-dur-chip {
+    min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .ck-link, .svcats-backbar, .ex-step-back { min-height: 44px; }
+}
+/* Trust signal junto al botón de pago */
+.ck-trust-link {
+  display: block; text-align: center; margin-top: 10px;
+  font: 500 12px 'Lato', sans-serif; color: #9a8d75;
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+
 /* Botones de navegación entre fragmentos (existen solo en móvil) */
 .ex-step-nav-btn {
   width: 100%; padding: 14px 18px; border: none; border-radius: 10px;
@@ -20042,7 +20064,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v284-antiredundancia-extras-pregunta', stamp: '2026-09-01 02:29' };
+  var EX_BUILD = { version: 'v285-storefront-checklist', stamp: '2026-09-01 02:34' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
