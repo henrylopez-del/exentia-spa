@@ -4913,11 +4913,10 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
   /* Segundo nivel: el :30 aparece EN LINEA, justo despues de su hora.
      Los dos chips comparten fondo y borde para que se lea que son un par y que
      el segundo salio de tocar el primero. */
-  .cal2-slot.cal2-hour-open {
-    border-color: var(--olive, #9a9854);
-    background: #f6f3e0;
-    box-shadow: 0 0 0 3px rgba(154,152,84,0.14);
-  }
+  /* Fix 2026-09-01: la hora TOCADA ya queda seleccionada (verde sólido vía
+     cal2-slot-selected); este estado intermedio confundía — el :30 desplegado
+     brillaba más que la hora elegida. La hora abierta no lleva estilo extra. */
+  .cal2-slot.cal2-hour-open { }
   /* El par hora+:30 ocupa dos columnas y viaja junto: sin esto, una hora al final
      del renglon dejaba su :30 al inicio del siguiente y el conector apuntaba a nada. */
   .cal2-pair {
@@ -4926,20 +4925,12 @@ src="https://www.facebook.com/tr?id=1405416301317321&ev=PageView&noscript=1"
     gap: 8px;
   }
   .cal2-pair > .cal2-slot { flex: 1; min-width: 0; }
+  /* Fix 2026-09-01: el :30 desplegado se veía "elegido" (contorno verde) mientras
+     la hora realmente seleccionada quedaba pálida. Ahora el :30 es un slot NEUTRO
+     idéntico a los demás; solo el seleccionado lleva verde. */
   .cal2-subslot {
-    border-color: var(--olive, #9a9854);
-    background: #f6f3e0;
-    box-shadow: 0 0 0 3px rgba(154,152,84,0.14);
     position: relative;
     animation: cal2SubIn .16s ease-out;
-  }
-  /* Punto de union entre la hora y su :30 */
-  .cal2-subslot::before {
-    content: '';
-    position: absolute; left: -6px; top: 50%;
-    width: 6px; height: 1.5px;
-    background: var(--olive, #9a9854);
-    transform: translateY(-50%);
   }
   @keyframes cal2SubIn {
     from { opacity: 0; transform: translateX(-6px); }
@@ -14530,7 +14521,7 @@ try {
           + '<div class="gs-persona-head">'
           +   '<div class="gs-persona-badge" style="background:#f4e8c8;color:#7d5f1e;">2</div>'
           +   '<div class="gs-persona-info"><div class="gs-persona-name">Para los dos</div><div class="gs-persona-sub">Paquete en pareja · ' + paqItems.length + ' servicio' + (paqItems.length===1?'':'s') + '</div></div>'
-          +   '<button type="button" class="gs-edit-btn" data-gs-edit="paquete">Editar</button>'
+          +   '<button type="button" class="gs-edit-btn" data-gs-edit="paquete">Agregar o quitar</button>'
           + '</div>'
           + '<div class="gs-persona-services">' + paqHtml + '</div>'
           + '<div class="gs-persona-subtotal">Subtotal · ' + _gsFmt(paqSub) + '</div>'
@@ -14561,7 +14552,7 @@ try {
       // CTA: si la persona aún no tiene servicios propios → "Agregar adicionales"
       // (porque comparte el paquete con la otra y solo le falta sumar extras).
       // Si ya tiene servicios elegidos a su nombre → "Editar".
-      var ctaLabel = items.length === 0 ? 'Agregar adicionales' : 'Editar';
+      var ctaLabel = items.length === 0 ? 'Agregar adicionales' : 'Agregar o quitar';
       personasHtml += '<div class="gs-persona-card' + (items.length===0?' is-empty':'') + '">'
         + '<div class="gs-persona-head">'
         +   '<div class="gs-persona-badge">' + pid + '</div>'
@@ -14818,6 +14809,7 @@ try {
   }
   function openPairP1() {
     closeAllFlowModals();
+    if (typeof _clearTreatmentSelections === 'function') _clearTreatmentSelections();
     if (!personasMeta[1]) personasMeta[1] = { id: 1, label: 'Persona 1' };
     try { window.svPairStep = 'p1'; } catch(_){}
     try { window.svPairSection = 'adicional'; } catch(_){}
@@ -14829,6 +14821,7 @@ try {
   }
   function openPairP2() {
     closeAllFlowModals();
+    if (typeof _clearTreatmentSelections === 'function') _clearTreatmentSelections();
     if (!personasMeta[2]) personasMeta[2] = { id: 2, label: 'Persona 2' };
     try { window.svPairStep = 'p2'; } catch(_){}
     try { window.svPairSection = 'adicional'; } catch(_){}
@@ -14846,6 +14839,7 @@ try {
   var GSZ_MIN = 2, GSZ_MAX = 10;
   function openGroupSizeModal() {
     closeAllFlowModals();
+    window._groupSameAsked = false;   // la pregunta "¿mismo para todas?" se rehace por flujo
     openModal('modal-group-size');
     // Default 3 si no hay valor previo
     if (!window._sv2GroupQty || window._sv2GroupQty < GSZ_MIN) window._sv2GroupQty = 3;
@@ -14872,11 +14866,25 @@ try {
     }
   }
 
+  // Limpia selecciones internas de los tratamientos (duración/variante) para que
+  // NADA aparezca preseleccionado al cambiar de persona (pedido de Henry 2026-09-01).
+  function _clearTreatmentSelections() {
+    try {
+      Object.keys(SERVICES).forEach(function(k){
+        ((SERVICES[k] && SERVICES[k].treatments) || []).forEach(function(t){
+          delete t._ppDur; delete t._selDur; delete t._selVar;
+        });
+      });
+    } catch(_){}
+  }
+  window._clearTreatmentSelections = _clearTreatmentSelections;
+
   function openGroupPersona(pid) {
     var qty = window._sv2GroupQty || 1;
     if (pid < 1) pid = 1;
     if (pid > qty) pid = qty;
     closeAllFlowModals();
+    _clearTreatmentSelections();
     if (!personasMeta[pid]) personasMeta[pid] = { id: pid, label: 'Persona ' + pid };
     try { svMode = 'grupo'; } catch(_){}
     try { window.svGroupStep = pid; } catch(_){}
@@ -17868,6 +17876,47 @@ try {
       // antes de aventar el catálogo completo como "extras", se pregunta simple.
       // "No, continuar" avanza el flujo; "Sí" abre las categorías. Solo aplica en
       // pareja (el paquete ya cubre a ambas); en grupo cada quien DEBE elegir.
+      // ── Grupo: "¿El mismo servicio para las N?" (2026-09-01, pedido de Henry) ──
+      // Si la persona 1 ya trae servicio (elegido desde la página), ofrecer
+      // replicarlo a todas y saltar directo al resumen.
+      var _qty = window._sv2GroupQty || 0;
+      if (svMode === 'grupo' && window.svGroupStep === 1 && _qty >= 2 && !window._groupSameAsked) {
+        var _p1items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(1) : [];
+        if (_p1items.length > 0) {
+          var _svcName0 = String(_p1items[0].key).split(' · ')[0];
+          container.innerHTML = '<div class="svask-wrap">'
+            + '<div class="svask-icon">✦</div>'
+            + '<h3 class="svask-title">¿El mismo servicio para las ' + _qty + ' personas?</h3>'
+            + '<p class="svask-sub">' + _svcName0 + (_p1items.length > 1 ? ' y ' + (_p1items.length - 1) + ' más' : '') + ' para cada una.</p>'
+            + '<button type="button" class="ex-step-nav-btn svask-same" style="display:block;">Sí, el mismo para todas</button>'
+            + '<button type="button" class="ex-step-back svask-custom" style="display:inline-block;">No, personalizar por persona</button>'
+            + '</div>';
+          container.querySelector('.svask-same').onclick = function(){
+            window._groupSameAsked = true;
+            try {
+              var keys = getItemsForPersona(1).map(function(it){ return it.key; });
+              var prevPid = currentPersonaId;
+              for (var pi = 2; pi <= _qty; pi++) {
+                if (getItemsForPersona(pi).length > 0) continue;
+                currentPersonaId = pi;
+                keys.forEach(function(k){ cart.push(k); });
+              }
+              currentPersonaId = prevPid;
+            } catch(_){}
+            closeModal('modal-select');
+            if (typeof openGroupSummary === 'function') openGroupSummary(true);
+          };
+          container.querySelector('.svask-custom').onclick = function(){
+            window._groupSameAsked = true;
+            renderSelectView();
+          };
+          updateSvBottom();
+          _fillPairHeader();
+          var _gf = document.getElementById('select-footer');
+          if (_gf) _gf.style.display = 'none';
+          return;
+        }
+      }
       var _inPairExtras = (svMode === 'parejas' && (window.svPairStep === 'p1' || window.svPairStep === 'p2'));
       window._svExtrasAsked = window._svExtrasAsked || {};
       var _pNum = window.svPairStep === 'p2' ? 2 : 1;
@@ -19051,6 +19100,14 @@ try {
     'Además del paquete que ya eligieron. Es completamente opcional.': 'On top of the package you already chose. Completely optional.',
     'Sí, ver servicios': 'Yes, show services', 'No, gracias · continuar': 'No, thanks · continue',
     'Cancelaciones y reembolsos: hasta 100% de devolución': 'Cancellations & refunds: up to 100% back',
+    'Agregar o quitar': 'Add or remove',
+    'Sí, el mismo para todas': 'Yes, the same for everyone',
+    'No, personalizar por persona': 'No, customize per person',
+    '¿El mismo servicio para las 2 personas?': 'The same service for both people?',
+    '¿El mismo servicio para las 3 personas?': 'The same service for all 3 people?',
+    '¿El mismo servicio para las 4 personas?': 'The same service for all 4 people?',
+    '¿El mismo servicio para las 5 personas?': 'The same service for all 5 people?',
+    'para cada una.': 'for each of them.',
     '✓ Agregado · ¿algo más? Sigue eligiendo o usa': '✓ Added · anything else? Keep browsing or tap',
     'Continuar a detalles →': 'Continue to details →', '← Volver al mapa': '← Back to the map',
     '← Volver a tu reserva': '← Back to your booking', 'Continuar al pago →': 'Continue to payment →',
@@ -19845,7 +19902,19 @@ try {
      en tercios lógicos, no todo amontonado arriba */
   #modal-modality .modal-body { justify-content: space-evenly !important; }
   #modal-modality .md-options { margin: 0 !important; }
+  /* Fragmento preferencias/pago del checkout: nada se sale de su cuadro */
+  #modal-choice .modal-header h2 { font-size: 17.5px !important; line-height: 1.25; }
+  #modal-choice .modal-header p { font-size: 11.5px !important; }
+  #modal-choice .ck-mod-fee { min-width: 0 !important; max-width: 96px; }
+  #modal-choice .ck-mod-fee-amount { font-size: 13.5px !important; }
+  #modal-choice .ck-mod-fee-detail { font-size: 9.5px !important; white-space: normal; }
+  #modal-choice .ck-mod-title { font-size: 13px !important; }
+  #modal-choice .ck-mod-desc { font-size: 10.5px !important; }
+  #modal-choice .ck-section-label { font-size: 10px !important; letter-spacing: 0.8px !important; }
 }
+/* Píldora "Agregado": si el texto envuelve, que sea tarjeta redondeada legible,
+   nunca un círculo con letras apretadas */
+.ex-added-hint { border-radius: 16px; text-align: center; line-height: 1.4; flex-wrap: wrap; justify-content: center; }
 
 /* ── REGLA DE PROPORCIÓN Y NO-COLISIÓN (Henry, 2026-09-01, todos los viewports) ──
    1) Ningún ícono/símbolo pisa texto: todo elemento absoluto (palomitas de
@@ -19919,6 +19988,27 @@ try {
    No toca payloads, localStorage ni lógica de negocio. */
 (function(){
   function isMobile() { return window.matchMedia('(max-width: 700px)').matches; }
+
+  // Anti-zoom en el checkout de Stripe (2026-09-01): iOS hace un zoom leve al
+  // enfocar los inputs del iframe de Stripe. Mientras el modal de pago está
+  // abierto se fija maximum-scale=1; al cerrarlo se restaura el viewport normal.
+  function _exViewportLock(lock) {
+    try {
+      var m = document.querySelector('meta[name="viewport"]');
+      if (!m) return;
+      m.setAttribute('content', lock
+        ? 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+        : 'width=device-width, initial-scale=1.0');
+    } catch(_){}
+  }
+  var _origStripeOpen = window._pgStripeCheckout;
+  if (typeof _origStripeOpen === 'function') {
+    window._pgStripeCheckout = function(){ _exViewportLock(true); return _origStripeOpen.apply(this, arguments); };
+  }
+  var _origStripeClose = window._pgStripeClose;
+  if (typeof _origStripeClose === 'function') {
+    window._pgStripeClose = function(){ _exViewportLock(false); return _origStripeClose.apply(this, arguments); };
+  }
 
   // Reset del fragmento al abrir cada modal (envuelve openModal ya envuelto por el bridge)
   var _open = window.openModal;
@@ -20064,7 +20154,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v285-storefront-checklist', stamp: '2026-09-01 02:34' };
+  var EX_BUILD = { version: 'v286-grupo-mismo-servicio-calendario', stamp: '2026-09-01 02:53' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
