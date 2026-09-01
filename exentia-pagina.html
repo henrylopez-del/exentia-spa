@@ -17966,8 +17966,23 @@ try {
               libres.forEach(function(p){ currentPersonaId = p; cart.push(key); });
               currentPersonaId = prevPid;
               window._svGroupView = null;
+              // AVANZAR, no regresar al menú (bug del loop 2026-09-01): si queda gente
+              // sin servicio, directo a su catálogo; si ya todos tienen, al resumen.
+              window._groupSameAsked = true;
               if (typeof showFlowToast === 'function') showFlowToast('Paquete de pareja agregado (2 lugares del grupo).');
-              renderSelectView();
+              var _next = null;
+              for (var ni = 1; ni <= _qty; ni++) {
+                if (getItemsForPersona(ni).length === 0) { _next = ni; break; }
+              }
+              if (_next) {
+                window.svGroupStep = _next;
+                currentPersonaId = _next;
+                renderSelectView();
+                try { if (typeof _scrollSelectTop === 'function') _scrollSelectTop(); } catch(_){}
+              } else {
+                closeModal('modal-select');
+                if (typeof openGroupSummary === 'function') openGroupSummary(true);
+              }
             };
           });
           updateSvBottom();
@@ -20352,7 +20367,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v291-paquete-sin-selector-par', stamp: '2026-09-01 03:27' };
+  var EX_BUILD = { version: 'v292-fix-loop-paquete-grupo', stamp: '2026-09-01 03:28' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
