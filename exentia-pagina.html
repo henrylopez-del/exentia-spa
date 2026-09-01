@@ -10644,21 +10644,9 @@ try {
             <h2>Elige tu <em>tratamiento</em></h2>
             <p>Cada tratamiento está diseñado para ofrecerte una experiencia única. Selecciona el que más se ajuste a tus necesidades.</p>
           </div>
-          ${service.supportsParejas ? `
-          <div class="modality-toggle-wrap">
-            <div class="modality-toggle" id="modality-toggle" data-mode="individual" role="tablist" aria-label="Modalidad de precio">
-              <button type="button" class="modality-btn active" data-mode="individual" role="tab" aria-selected="true">
-                <svg class="modality-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-                <span class="modality-label">Individual</span>
-              </button>
-              <button type="button" class="modality-btn" data-mode="parejas" role="tab" aria-selected="false">
-                <svg class="modality-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="2.8"/><path d="M2 21c0-3.7 3.1-6.5 7-6.5s7 2.8 7 6.5"/><path d="M14.5 14.2c.7-.3 1.5-.5 2.5-.5 3.5 0 5 2.5 5 5"/></svg>
-                <span class="modality-label">Parejas</span>
-              </button>
-            </div>
-            <p class="modality-hint" style="margin-top:14px; margin-bottom:24px; line-height:1.5;">Las experiencias para parejas se realizan de forma simultánea en la misma cabina. Solo se mostrarán los tratamientos disponibles en modalidad para parejas.</p>
-          </div>
-          ` : ''}
+          ${''/* Toggle Individual/Parejas ELIMINADO de la vista detalle (2026-09-01, redundancia
+               señalada por Yaz): la modalidad se pregunta UNA sola vez dentro del flujo de
+               reserva. La vista detalle siempre muestra precios individuales. */}
           <div class="treatments-list">
             ${(() => {
               // Render de un treatment-card individual
@@ -14795,6 +14783,7 @@ try {
 
   function openPairPaquete() {
     closeAllFlowModals();
+    window._svExtrasAsked = {};   // la pregunta de extras se hace de nuevo por flujo
     if (!personasMeta[1]) personasMeta[1] = { id: 1, label: 'Persona 1' };
     if (!personasMeta[2]) personasMeta[2] = { id: 2, label: 'Persona 2' };
     try { svMode = 'parejas'; } catch(_){}
@@ -17871,6 +17860,37 @@ try {
     // productos con "← Categorías" para volver. Reemplaza la barra de tabs como
     // entrada. Solo presentación: mismo catálogo filtrado, mismos handlers.
     if (window._svCatView !== 'list') {
+      // ── Pregunta previa de EXTRAS en pareja (2026-09-01, feedback de Henry/Yaz):
+      // antes de aventar el catálogo completo como "extras", se pregunta simple.
+      // "No, continuar" avanza el flujo; "Sí" abre las categorías. Solo aplica en
+      // pareja (el paquete ya cubre a ambas); en grupo cada quien DEBE elegir.
+      var _inPairExtras = (svMode === 'parejas' && (window.svPairStep === 'p1' || window.svPairStep === 'p2'));
+      window._svExtrasAsked = window._svExtrasAsked || {};
+      var _pNum = window.svPairStep === 'p2' ? 2 : 1;
+      if (_inPairExtras && !window._svExtrasAsked[_pNum]) {
+        container.innerHTML = '<div class="svask-wrap">'
+          + '<div class="svask-icon">✦</div>'
+          + '<h3 class="svask-title">¿Te gustaría agregar algún servicio extra para Persona ' + _pNum + '?</h3>'
+          + '<p class="svask-sub">Además del paquete que ya eligieron. Es completamente opcional.</p>'
+          + '<button type="button" class="ex-step-nav-btn svask-yes" style="display:block;">Sí, ver servicios</button>'
+          + '<button type="button" class="ex-step-back svask-no" style="display:inline-block;">No, gracias · continuar</button>'
+          + '</div>';
+        container.querySelector('.svask-yes').onclick = function(){
+          window._svExtrasAsked[_pNum] = true;
+          renderSelectView();
+        };
+        container.querySelector('.svask-no').onclick = function(){
+          window._svExtrasAsked[_pNum] = true;
+          if (typeof selectAdvancePair === 'function') selectAdvancePair();
+        };
+        updateSvBottom();
+        _fillPairHeader();
+        var _foot = document.getElementById('select-footer');
+        if (_foot) _foot.style.display = 'none';
+        return;
+      }
+      var _footShow = document.getElementById('select-footer');
+      if (_footShow) _footShow.style.display = '';
       var _pidCnt = ((svMode === 'grupo' || svMode === 'parejas') && typeof currentPersonaId !== 'undefined') ? currentPersonaId : null;
       var catsHtml = '<div class="svcats-grid">';
       cats.forEach(function(s){
@@ -19022,6 +19042,10 @@ try {
     'Hazte': 'Become an', 'miembro Exentia': 'Exentia member', 'Hazte miembro Exentia': 'Become an Exentia member',
     '‹ Categorías': '‹ Categories', 'Categorías': 'Categories',
     'Para 2 personas': 'For 2 people', '3 o más personas': '3 or more people',
+    '¿Te gustaría agregar algún servicio extra para Persona 1?': 'Would you like to add any extra service for Person 1?',
+    '¿Te gustaría agregar algún servicio extra para Persona 2?': 'Would you like to add any extra service for Person 2?',
+    'Además del paquete que ya eligieron. Es completamente opcional.': 'On top of the package you already chose. Completely optional.',
+    'Sí, ver servicios': 'Yes, show services', 'No, gracias · continuar': 'No, thanks · continue',
     '✓ Agregado · ¿algo más? Sigue eligiendo o usa': '✓ Added · anything else? Keep browsing or tap',
     'Continuar a detalles →': 'Continue to details →', '← Volver al mapa': '← Back to the map',
     '← Volver a tu reserva': '← Back to your booking', 'Continuar al pago →': 'Continue to payment →',
@@ -19756,6 +19780,17 @@ try {
 .svcats-backbar b { color: var(--brown, #5c3a1e); }
 .svcats-backbar-sep { opacity: 0.5; }
 
+/* Pregunta previa de extras (pareja) — centrada, proporcional, sin ruido */
+.svask-wrap {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 10px; min-height: 46dvh; padding: 20px 10px;
+}
+.svask-icon { font-size: 30px; color: var(--olive, #9a9854); }
+.svask-title { font: 500 24px 'Playfair Display', serif; color: var(--brown, #5c3a1e); max-width: 420px; line-height: 1.25; margin: 0; }
+.svask-sub { font: 400 13.5px 'Lato', sans-serif; color: #9a8d75; margin: 0 0 8px; }
+.svask-wrap .ex-step-nav-btn { max-width: 340px; display: block !important; }
+.svask-wrap .ex-step-back { display: inline-block !important; }
+
 /* Pop-up "producto agregado — ¿algo más?" (se quita solo al hacer scroll) */
 .ex-added-hint {
   position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%);
@@ -20007,7 +20042,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v283-proporcion-geometria', stamp: '2026-09-01 01:42' };
+  var EX_BUILD = { version: 'v284-antiredundancia-extras-pregunta', stamp: '2026-09-01 02:29' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
