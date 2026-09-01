@@ -17908,19 +17908,17 @@ try {
     // El selector abre con la lista de categorías desglosada; tocar una abre SUS
     // productos con "← Categorías" para volver. Reemplaza la barra de tabs como
     // entrada. Solo presentación: mismo catálogo filtrado, mismos handlers.
-    if (window._svCatView !== 'list') {
-      // ── Pregunta previa de EXTRAS en pareja (2026-09-01, feedback de Henry/Yaz):
-      // antes de aventar el catálogo completo como "extras", se pregunta simple.
-      // "No, continuar" avanza el flujo; "Sí" abre las categorías. Solo aplica en
-      // pareja (el paquete ya cubre a ambas); en grupo cada quien DEBE elegir.
       // ── Grupo: "¿El mismo servicio para las N?" (2026-09-01, pedido de Henry) ──
       // Si la persona 1 ya trae servicio (elegido desde la página), ofrecer
       // replicarlo a todas y saltar directo al resumen.
       var _qty = window._sv2GroupQty || 0;
       if (svMode === 'grupo' && window.svGroupStep === 1 && _qty >= 2 && !window._groupSameAsked) {
         var _p1items = (typeof getItemsForPersona === 'function') ? getItemsForPersona(1) : [];
-        var _hasP1 = _p1items.length > 0;
-        var _svcName0 = _hasP1 ? String(_p1items[0].key).split(' · ')[0] : '';
+        // El producto pre-elegido desde la ficha aún no está en el carrito en este
+        // punto — cuenta igual para ofrecer "el mismo para todas".
+        var _pendingName = window._pendingPickService || '';
+        var _hasP1 = _p1items.length > 0 || !!_pendingName;
+        var _svcName0 = _p1items.length > 0 ? String(_p1items[0].key).split(' · ')[0] : _pendingName;
         // Vista intermedia del grupo: mismo-para-todas / paquete de pareja / por persona.
         // El PAQUETE DE PAREJA en grupo (2026-09-01, pedido de Henry) se descompone en
         // 2 servicios individuales (precio pareja ÷ 2 cada uno, marcados "Paquete pareja")
@@ -18007,8 +18005,22 @@ try {
           window._groupSameAsked = true;
           try {
             var keys = getItemsForPersona(1).map(function(it){ return it.key; });
+            // Producto pre-elegido de la ficha, aún fuera del carrito: armar su llave
+            // base (con duración por defecto) y usarla para TODAS, empezando por P1.
+            if (keys.length === 0 && _pendingName) {
+              var _tPend = null;
+              for (var _pk in SERVICES) {
+                _tPend = (SERVICES[_pk].treatments || []).find(function(x){ return x.name === _pendingName; });
+                if (_tPend) break;
+              }
+              if (_tPend) {
+                var _pd = (typeof getDurations === 'function') ? getDurations(_tPend) : (_tPend.durations || []);
+                keys = [(_pd.length > 1 && _pd[0] && _pd[0].min) ? (_tPend.name + ' · ' + _pd[0].min + ' min') : _tPend.name];
+              }
+              window._pendingPickService = null; window._pendingAutoAdd = false;
+            }
             var prevPid = currentPersonaId;
-            for (var pi = 2; pi <= _qty; pi++) {
+            for (var pi = 1; pi <= _qty; pi++) {
               if (getItemsForPersona(pi).length > 0) continue;
               currentPersonaId = pi;
               keys.forEach(function(k){ cart.push(k); });
@@ -18044,6 +18056,11 @@ try {
         if (_gf) _gf.style.display = 'none';
         return;
       }
+    if (window._svCatView !== 'list') {
+      // ── Pregunta previa de EXTRAS en pareja (2026-09-01, feedback de Henry/Yaz):
+      // antes de aventar el catálogo completo como "extras", se pregunta simple.
+      // "No, continuar" avanza el flujo; "Sí" abre las categorías. Solo aplica en
+      // pareja (el paquete ya cubre a ambas); en grupo cada quien DEBE elegir.
       var _inPairExtras = (svMode === 'parejas' && (window.svPairStep === 'p1' || window.svPairStep === 'p2'));
       window._svExtrasAsked = window._svExtrasAsked || {};
       var _pNum = window.svPairStep === 'p2' ? 2 : 1;
@@ -20367,7 +20384,7 @@ try {
   //     TZ=America/Cancun date '+%Y-%m-%d %H:%M'
   // Si se pone una hora inventada más adelante que el reloj del navegador,
   // el badge no puede calcular la antigüedad y pierde su utilidad.
-  var EX_BUILD = { version: 'v292-fix-loop-paquete-grupo', stamp: '2026-09-01 03:28' };
+  var EX_BUILD = { version: 'v293-pregunta-grupo-siempre', stamp: '2026-09-01 03:34' };
   // Si ?debug=1 en la URL, muestra el badge también en mobile (CSS lo oculta por default)
   try { if (new URLSearchParams(window.location.search).get('debug') === '1') document.documentElement.setAttribute('data-debug','1'); } catch(_){}
   var el = document.getElementById('ex-build-badge');
